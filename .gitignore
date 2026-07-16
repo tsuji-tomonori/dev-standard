@@ -1,0 +1,16 @@
+# Local reference material and generated caches
+.workspace/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Codex local runtime output
+.codex-log/
+.codex/runtime/
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
