@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "standard": {
+    "name": "SWEBOK Guide V4.0 + Cloud Well-Architected Reference",
+    "checklist": "checklist.xlsx",
+    "catalog": "governance/checklist/catalog.json"
+  },
+  "profiles": {
+    "CORE": {
+      "description": "全案件の中核ライフサイクル統制",
+      "sheets": [
+        "01_要件定義",
+        "02_アーキテクチャ",
+        "03_詳細設計",
+        "04_実装",
+        "05_テスト",
+        "06_運用",
+        "07_保守",
+        "08_構成管理",
+        "09_マネジメント",
+        "10_プロセス",
+        "12_品質保証",
+        "13_セキュリティ"
+      ]
+    },
+    "CLOUD-COMMON": {
+      "description": "クラウド共通統制",
+      "sheets": ["14_クラウド"]
+    },
+    "AWS-DELTA": {
+      "description": "AWS固有差分",
+      "sheets": ["15_AWS"]
+    },
+    "GCP-DELTA": {
+      "description": "Google Cloud固有差分",
+      "sheets": ["16_GoogleCloud"]
+    },
+    "AZURE-DELTA": {
+      "description": "Azure固有差分",
+      "sheets": ["17_Azure"]
+    },
+    "OCI-DELTA": {
+      "description": "OCI固有差分",
+      "sheets": ["18_OCI"]
+    },
+    "AI-CONDITIONAL": {
+      "description": "従来型ML・生成AI・エージェントAIの条件付き統制",
+      "sheets": ["19_AI"]
+    }
+  },
+  "phase_order": [
+    "intake",
+    "requirements",
+    "architecture",
+    "design",
+    "implementation",
+    "verification",
+    "operations",
+    "release",
+    "retrospective",
+    "closed"
+  ],
+  "phases": {
+    "intake": {
+      "title": "要求受付",
+      "required_docs": ["docs/00-request.md"],
+      "required_approvals": ["requester"]
+    },
+    "requirements": {
+      "title": "要件定義",
+      "required_docs": ["docs/01-requirements.md", "docs/01-traceability.md"],
+      "required_approvals": ["requester", "product-owner"]
+    },
+    "architecture": {
+      "title": "アーキテクチャ・リスク",
+      "required_docs": ["docs/02-architecture.md", "docs/02-risk-and-security.md", "docs/02-decisions.md"],
+      "required_approvals": ["architect", "security-owner"]
+    },
+    "design": {
+      "title": "詳細設計・テスト設計",
+      "required_docs": ["docs/03-detailed-design.md", "docs/03-test-plan.md"],
+      "required_approvals": ["architect", "qa-owner"]
+    },
+    "implementation": {
+      "title": "実装・構成管理",
+      "required_docs": ["docs/04-implementation-log.md"],
+      "required_approvals": []
+    },
+    "verification": {
+      "title": "検証・品質保証",
+      "required_docs": ["docs/05-test-report.md", "docs/05-security-review.md"],
+      "required_approvals": ["qa-owner", "security-owner"]
+    },
+    "operations": {
+      "title": "運用・保守準備",
+      "required_docs": ["docs/06-operations.md", "docs/06-maintenance.md"],
+      "required_approvals": ["operations-owner"]
+    },
+    "release": {
+      "title": "リリース判定",
+      "required_docs": ["docs/07-release.md"],
+      "required_approvals": ["requester", "release-owner"]
+    },
+    "retrospective": {
+      "title": "振り返り・改善",
+      "required_docs": ["docs/08-retrospective.md"],
+      "required_approvals": ["governance-owner"]
+    },
+    "closed": {
+      "title": "完了",
+      "required_docs": [],
+      "required_approvals": []
+    }
+  },
+  "document_placeholders": ["{{", "}}", "TBD", "TODO", "未記入", "未確定"],
+  "review_values": {
+    "applicability": ["undecided", "applicable", "not-applicable"],
+    "verdict": ["unreviewed", "pass", "fail"],
+    "severity": ["Critical", "High", "Medium", "Low"]
+  }
+}
