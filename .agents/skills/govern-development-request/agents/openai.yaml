@@ -1,0 +1,4 @@
+interface:
+  display_name: "統制付き開発要求"
+  short_description: "Govern requests through strict lifecycle approval gates"
+  default_prompt: "Use $govern-development-request to turn this request into an approved lifecycle work item."

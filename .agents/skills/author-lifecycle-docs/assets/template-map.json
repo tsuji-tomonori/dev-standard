@@ -1,0 +1,11 @@
+{
+  "intake": ["00-request.md"],
+  "requirements": ["01-requirements.md", "01-traceability.md"],
+  "architecture": ["02-architecture.md", "02-risk-and-security.md", "02-decisions.md"],
+  "design": ["03-detailed-design.md", "03-test-plan.md"],
+  "implementation": ["04-implementation-log.md"],
+  "verification": ["05-test-report.md", "05-security-review.md"],
+  "operations": ["06-operations.md", "06-maintenance.md"],
+  "release": ["07-release.md"],
+  "retrospective": ["08-retrospective.md"]
+}
