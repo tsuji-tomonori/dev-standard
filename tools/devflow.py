@@ -357,8 +357,12 @@ def cmd_init(args: argparse.Namespace) -> int:
         "actor": args.actor,
         "details": {"profiles": profiles, "catalog_items": len(selected)},
     })
+    try:
+        display_path = work.relative_to(ROOT)
+    except ValueError:
+        display_path = work
     print(work_id)
-    print(f"created {work.relative_to(ROOT)} with {len(selected)} checklist items")
+    print(f"created {display_path} with {len(selected)} checklist items")
     return 0
 
 
