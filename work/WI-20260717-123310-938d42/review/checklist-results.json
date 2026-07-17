@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 144734)
-Total output lines: 21341
-
 {
   "items": [
     {
@@ -7291,7 +7288,6664 @@ Total output lines: 21341
     {
       "applicability": "applicable",
       "base_severity": "Medium",
-   …44734 tokens truncated…plicable",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-311",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-312",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-401",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-402",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-403",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-404",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-405",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-406",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-407",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-408",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-409",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-410",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-411",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-412",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-501",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-502",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-503",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-504",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-505",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-506",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-601",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-602",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-603",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-604",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-605",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-606",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-607",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-608",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-701",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-702",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-703",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-704",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-705",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-706",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-801",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-802",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-803",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-804",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-805",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-806",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-807",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/05-test-report.md",
+        "docs/05-security-review.md"
+      ],
+      "exception": null,
+      "id": "TST-808",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "verification",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-verification",
+      "sheet": "05_テスト",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-001",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-002",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-003",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-004",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-005",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-006",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-007",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-901",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-010",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-011",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-012",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-013",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-020",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-021",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-022",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-023",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-024",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-025",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-030",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-031",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-032",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-033",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-034",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-035",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-036",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-037",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-040",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-041",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-042",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-043",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-044",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-045",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-CA01",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-CG02",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-050",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-051",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-052",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-053",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-054",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-055",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-056",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-060",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-061",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-062",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-063",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-064",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-065",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-066",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-902",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-070",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-071",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-072",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-073",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-074",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-075",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-076",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-077",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-078",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-080",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-081",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-082",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-083",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-084",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-085",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-090",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-091",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-092",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-093",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-094",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-095",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-096",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-097",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-098",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-099",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-100",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-101",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-102",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-103",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-104",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-110",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-111",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-112",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-113",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-114",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-115",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-116",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-117",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-118",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-903",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-120",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-121",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-122",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-123",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-124",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-125",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-126",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-127",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-CG01",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-130",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-131",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-132",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-133",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-134",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-904",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "OPS-CZ01",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "06_運用",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-001",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-002",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-003",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-004",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-005",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-006",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-007",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-008",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-009",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-020",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-021",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-022",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-023",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-024",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-025",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-026",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-040",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-041",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-042",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-043",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-044",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-045",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-046",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-047",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-048",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-049",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-060",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-061",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-062",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-063",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-064",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-065",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-066",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-067",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-080",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-081",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-082",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-083",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-084",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-085",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-086",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-100",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-101",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-102",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-103",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-104",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-105",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-903",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-120",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-121",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-122",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-123",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-124",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-125",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-902",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-140",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-141",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-142",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-143",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-144",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-145",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-160",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-161",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-162",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-163",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-164",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-901",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-180",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-181",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-182",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-183",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-184",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-185",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-186",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-187",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-200",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-201",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-202",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-203",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-204",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-220",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-221",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-222",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-223",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-224",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/06-operations.md",
+        "docs/06-maintenance.md"
+      ],
+      "exception": null,
+      "id": "MNT-904",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "operations",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-operations",
+      "sheet": "07_保守",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-001",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-002",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-003",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-004",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-005",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-006",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-007",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-008",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-009",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-010",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-011",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-012",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-020",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-021",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-022",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-023",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-024",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-025",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-026",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-027",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-028",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-029",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-030",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-901",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-040",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-041",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-042",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-043",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-044",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-045",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-046",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-047",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-048",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-049",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-060",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-061",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-062",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-063",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-064",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-065",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-066",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-067",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-080",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-081",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-082",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-083",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-084",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-085",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-086",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-087",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-088",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-089",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-090",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-100",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-101",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-102",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-103",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-104",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-105",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-110",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-111",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-112",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-113",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-114",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-115",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-120",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-121",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-122",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-123",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-124",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-125",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-126",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-127",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-128",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-129",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-130",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-140",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-141",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-142",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-143",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-144",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-145",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-146",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-147",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-148",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-149",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-902",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-CZ01",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-160",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-161",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-162",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-163",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-164",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-165",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-166",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Low",
+      "evidence": [
+        "docs/04-implementation-log.md"
+      ],
+      "exception": null,
+      "id": "SCM-903",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "implementation",
+      "project_severity": "Low",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-implementation",
+      "sheet": "08_構成管理",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-001",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-002",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-003",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-004",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-005",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-006",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-007",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-901",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-010",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-011",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-012",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-013",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-014",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-020",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-021",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-022",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-023",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-024",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-025",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-026",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-027",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-030",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-031",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-032",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-033",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-034",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-035",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-036",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-037",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-038",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-040",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-041",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-042",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-043",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-044",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-045",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-046",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-050",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-051",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-052",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-053",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Medium",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-054",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Medium",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-060",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-061",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "Critical",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-062",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "Critical",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-063",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-064",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-065",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
+      "base_severity": "High",
+      "evidence": [
+        "docs/07-release.md"
+      ],
+      "exception": null,
+      "id": "MGT-066",
+      "issue_id": "",
+      "na_rationale": "",
+      "phase": "release",
+      "project_severity": "High",
+      "reviewed_at": "2026-07-17T12:38:08Z",
+      "reviewer": "adversarial-release",
+      "sheet": "09_マネジメント",
+      "verdict": "pass"
+    },
+    {
+      "applicability": "applicable",
       "base_severity": "Medium",
       "evidence": [
         "docs/07-release.md"
