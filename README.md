@@ -1,8 +1,28 @@
-# Governed AI Development
+# Portable AI Development Skills and Agents
 
-SWEBOK Guide V4.0を固定参照し、クラウド／AIのWell-Architected観点を加えたチェックリストを、AI駆動開発の工程ゲートとして実行するためのリポジトリです。
+他のrepositoryへ選択的に移植できるskills、Codex custom agents、governance runtimeのreference collectionです。このrepository自身も同じ配置を使うself-hosting exampleです。
 
-Codexの`AGENTS.md`、repo-local skills、custom agents、lifecycle hooksと、決定論的なPythonハーネスを組み合わせます。人が最初に要件と自律実行計画を一度だけ承認し、AIはその権限境界内で後続工程を最後まで進めます。
+## 配置と移植単位
+
+| Collection | Source | Target | Notes |
+|---|---|---|---|
+| Portable skills | [`.agents/skills`](.agents/skills) | `<target>/.agents/skills` | current repository-scoped skill standard |
+| Codex agents | [`.codex/agents`](.codex/agents) | `<target>/.codex/agents` | Codex project custom agents; standalone TOML |
+| Codex hooks | [`.codex/hooks`](.codex/hooks) | same path | optional Codex integration |
+| Governance runtime | [`governance`](governance), [`tools/devflow.py`](tools/devflow.py), [`docs/templates`](docs/templates), `checklist.xlsx`, `requirements.txt` | same paths | lifecycle skillsの依存runtime |
+
+最短の導入はdry-runから始めます。
+
+```bash
+python3 tools/install_reference.py --target /path/to/target --profile communication
+python3 tools/install_reference.py --target /path/to/target --profile communication --apply
+```
+
+profile別のcopy対象、手動copy、依存、config merge、更新方法は[移植ガイド](docs/INSTALLATION.md)、machine-readable mappingは[distribution/manifest.json](distribution/manifest.json)を参照してください。対象固有の`AGENTS.md`と`.codex/config.toml`は上書きせず、installerが配置する`*.reference.*`を確認して必要部分だけmergeします。
+
+## Governance reference
+
+governance profileはSWEBOK Guide V4.0の固定参照とクラウド／AIのWell-Architected観点を工程gateへ適用します。人が最初に要件と自律実行計画を一度だけ承認し、AIはその権限境界内で後続工程を最後まで進めます。
 
 ## 保証すること
 
@@ -70,7 +90,7 @@ Codexで利用する場合は、このリポジトリをtrusted projectとして
 
 承認後は、各工程の文書、チェック、証跡、テストを満たして`advance`を続けます。architecture以降に人の工程承認はありません。要件または実行計画が変わると初回承認が失効し、後続工程は停止します。
 
-詳しい工程は[docs/FLOW.md](docs/FLOW.md)、統制モデルは[docs/GOVERNANCE.md](docs/GOVERNANCE.md)、AIへの恒久指示は[AGENTS.md](AGENTS.md)、自律境界・lean prompt・model routingは[docs/AI-OPERATING-POLICY.md](docs/AI-OPERATING-POLICY.md)を参照してください。
+詳しい工程は[docs/FLOW.md](docs/FLOW.md)、統制モデルは[docs/GOVERNANCE.md](docs/GOVERNANCE.md)、AIへの恒久指示は[AGENTS.md](AGENTS.md)、自律境界・minimal prompt・model routingは[docs/AI-OPERATING-POLICY.md](docs/AI-OPERATING-POLICY.md)を参照してください。
 
 ## チェックリスト参照版
 

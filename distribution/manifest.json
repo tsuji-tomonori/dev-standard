@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "standard_paths": {
+    "portable_skills": ".agents/skills/<skill-name>/SKILL.md",
+    "codex_project_agents": ".codex/agents/<agent-name>.toml",
+    "codex_project_config": ".codex/config.toml"
+  },
+  "inventory": {
+    "skills": [
+      "author-lifecycle-docs",
+      "authorize-autonomous-execution",
+      "calibrated-collaborative-listening",
+      "govern-development-request",
+      "inspect-quality-gates",
+      "japanese-git-commit-gitmoji",
+      "retrospect-and-improve"
+    ],
+    "agents": [
+      "architecture-reviewer",
+      "gate-auditor",
+      "improvement-coach",
+      "operations-reviewer",
+      "requirements-reviewer",
+      "security-reviewer",
+      "test-reviewer"
+    ]
+  },
+  "profiles": {
+    "communication": [
+      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
+    ],
+    "commit-style": [
+      {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"}
+    ],
+    "skills": [
+      {"source": ".agents/skills", "destination": ".agents/skills"}
+    ],
+    "agents": [
+      {"source": ".codex/agents", "destination": ".codex/agents"}
+    ],
+    "governance": [
+      {"source": ".agents/skills", "destination": ".agents/skills"},
+      {"source": ".codex/agents", "destination": ".codex/agents"},
+      {"source": "governance", "destination": "governance"},
+      {"source": "docs/templates", "destination": "docs/templates"},
+      {"source": "tools/devflow.py", "destination": "tools/devflow.py"},
+      {"source": "checklist.xlsx", "destination": "checklist.xlsx"},
+      {"source": "requirements.txt", "destination": "requirements.txt"},
+      {"source": "distribution/snippets/AGENTS.governance.md", "destination": "AGENTS.governance.reference.md"}
+    ],
+    "codex-hooks": [
+      {"source": ".codex/hooks", "destination": ".codex/hooks"},
+      {"source": ".codex/hooks.json", "destination": ".codex/hooks.json"},
+      {"source": "distribution/snippets/codex-config.toml", "destination": ".codex/config.reference.toml"}
+    ],
+    "full": [
+      {"source": ".agents/skills", "destination": ".agents/skills"},
+      {"source": ".codex/agents", "destination": ".codex/agents"},
+      {"source": ".codex/hooks", "destination": ".codex/hooks"},
+      {"source": ".codex/hooks.json", "destination": ".codex/hooks.json"},
+      {"source": "governance", "destination": "governance"},
+      {"source": "docs/templates", "destination": "docs/templates"},
+      {"source": "tools/devflow.py", "destination": "tools/devflow.py"},
+      {"source": "checklist.xlsx", "destination": "checklist.xlsx"},
+      {"source": "requirements.txt", "destination": "requirements.txt"},
+      {"source": "distribution/snippets/AGENTS.governance.md", "destination": "AGENTS.governance.reference.md"},
+      {"source": "distribution/snippets/codex-config.toml", "destination": ".codex/config.reference.toml"}
+    ]
+  }
+}

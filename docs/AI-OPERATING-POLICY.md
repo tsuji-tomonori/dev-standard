@@ -37,7 +37,7 @@ The 1,740-item catalog remains the deterministic validation contract and control
 4. Require a concrete rationale for N/A and an issue for Fail.
 5. Recheck preceding gates and run the full audit before release.
 
-## Lean-prompt regression checklist
+## Minimal-prompt regression checklist
 
 - [ ] Outcome, success criteria, authority boundary, evidence, and stop rules remain explicit.
 - [ ] No active instruction is repeated without a distinct purpose.

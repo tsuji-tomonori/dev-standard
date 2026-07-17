@@ -1,0 +1,15 @@
+{
+  "catalog_sha256": "a43bcfefad7b3c6479d36cbe749e77f7cad93e683ffa0520c2f13650405cecef",
+  "created_at": "2026-07-17T11:40:23Z",
+  "current_phase": "release",
+  "id": "WI-20260717-portable-reference-layout",
+  "profiles": [
+    "CORE",
+    "AI-CONDITIONAL"
+  ],
+  "schema_version": 1,
+  "status": "active",
+  "title": "Portable skills and agents reference layout",
+  "updated_at": "2026-07-17T11:48:12Z",
+  "workflow_schema_version": 2
+}

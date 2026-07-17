@@ -97,7 +97,7 @@ def validate_agents(failures: list[str]) -> None:
         if value.get("model_verbosity") != "low":
             fail(f"{path.relative_to(ROOT)}: reviewer output must use low verbosity", failures)
         if len(str(value.get("developer_instructions", ""))) > 900:
-            fail(f"{path.relative_to(ROOT)}: reviewer prompt exceeds lean budget", failures)
+            fail(f"{path.relative_to(ROOT)}: reviewer prompt exceeds minimal prompt budget", failures)
         if "reviewer" in path.stem or path.stem == "gate-auditor":
             if value.get("sandbox_mode") != "read-only":
                 fail(f"{path.relative_to(ROOT)}: reviewer must be read-only", failures)
@@ -147,17 +147,41 @@ def validate_repo(failures: list[str]) -> None:
         fail("docs/AI-OPERATING-POLICY.md missing", failures)
     else:
         text = operating_policy.read_text(encoding="utf-8")
-        for term in ["gpt-5.6-terra", "gpt-5.6-luna", "validation contract", "Lean-prompt regression checklist"]:
+        for term in ["gpt-5.6-terra", "gpt-5.6-luna", "validation contract", "Minimal-prompt regression checklist"]:
             if term not in text:
                 fail(f"AI operating policy missing: {term}", failures)
     try:
         codex_config = tomllib.loads((ROOT / ".codex" / "config.toml").read_text(encoding="utf-8"))
-        if codex_config.get("agents", {}).get("max_threads", 0) > 3:
+        agents_config = codex_config.get("agents", {})
+        if agents_config.get("max_threads", 0) > 3:
             fail("agents.max_threads must remain cost-bounded at 3 or fewer", failures)
-        if codex_config.get("agents", {}).get("max_depth") != 1:
+        if agents_config.get("max_depth") != 1:
             fail("agents.max_depth must remain 1", failures)
+        unexpected = sorted(key for key, value in agents_config.items() if isinstance(value, dict))
+        if unexpected:
+            fail(f"custom agents must be standalone .codex/agents files, not config mappings: {unexpected}", failures)
     except (FileNotFoundError, tomllib.TOMLDecodeError) as exc:
         fail(f".codex/config.toml invalid: {exc}", failures)
+    try:
+        manifest = json.loads((ROOT / "distribution" / "manifest.json").read_text(encoding="utf-8"))
+        inventory = manifest["inventory"]
+        skill_names = sorted(path.name for path in (ROOT / ".agents" / "skills").iterdir() if (path / "SKILL.md").is_file())
+        agent_names = sorted(path.stem for path in (ROOT / ".codex" / "agents").glob("*.toml"))
+        if sorted(inventory["skills"]) != skill_names:
+            fail("distribution manifest skill inventory is stale", failures)
+        if sorted(inventory["agents"]) != agent_names:
+            fail("distribution manifest agent inventory is stale", failures)
+        for required in ["communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+            if required not in manifest["profiles"]:
+                fail(f"distribution manifest profile missing: {required}", failures)
+        if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":
+            fail("portable skill standard path is invalid", failures)
+        if manifest["standard_paths"].get("codex_project_agents") != ".codex/agents/<agent-name>.toml":
+            fail("Codex custom agent standard path is invalid", failures)
+    except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError) as exc:
+        fail(f"distribution/manifest.json invalid: {exc}", failures)
+    if not (ROOT / "docs" / "INSTALLATION.md").is_file():
+        fail("docs/INSTALLATION.md missing", failures)
     validate_agents(failures)
 
 

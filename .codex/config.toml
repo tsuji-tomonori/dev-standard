@@ -5,38 +5,3 @@ hooks = true
 max_threads = 3
 max_depth = 1
 interrupt_message = true
-
-[agents."requirements-reviewer"]
-description = "要件の完全性、原子性、テスト可能性、トレーサビリティを独立レビューする"
-config_file = "agents/requirements-reviewer.toml"
-nickname_candidates = ["Seshat", "Kepler"]
-
-[agents."architecture-reviewer"]
-description = "アーキテクチャの境界、品質特性、代替案、障害設計を独立レビューする"
-config_file = "agents/architecture-reviewer.toml"
-nickname_candidates = ["Vitruvius", "Ada"]
-
-[agents."security-reviewer"]
-description = "脅威、プライバシー、セキュリティ、責任あるAIを独立レビューする"
-config_file = "agents/security-reviewer.toml"
-nickname_candidates = ["Athena", "Sentinel"]
-
-[agents."test-reviewer"]
-description = "テスト戦略、評価データ、合格閾値、証跡を独立レビューする"
-config_file = "agents/test-reviewer.toml"
-nickname_candidates = ["Turing", "Hypatia"]
-
-[agents."operations-reviewer"]
-description = "SLO、監視、復旧、運用、保守、リリース準備を独立レビューする"
-config_file = "agents/operations-reviewer.toml"
-nickname_candidates = ["Sagan", "Grace"]
-
-[agents."gate-auditor"]
-description = "工程横断で成果物、チェックリスト、初回承認、追跡性の欠落を監査する"
-config_file = "agents/gate-auditor.toml"
-nickname_candidates = ["Atlas", "Delta"]
-
-[agents."improvement-coach"]
-description = "振り返りの根本原因とskill改善案の安全性・再現性を評価する"
-config_file = "agents/improvement-coach.toml"
-nickname_candidates = ["Kaizen", "Deming"]

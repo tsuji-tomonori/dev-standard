@@ -79,7 +79,7 @@ class SkillContractTest(unittest.TestCase):
         ]:
             self.assertNotIn(removed, combined)
 
-    def test_custom_reviewers_use_lean_cost_bounded_models(self) -> None:
+    def test_custom_reviewers_use_minimal_cost_bounded_models(self) -> None:
         allowed_effort = {"low", "medium", "high"}
         for path in sorted((ROOT / ".codex" / "agents").glob("*.toml")):
             value = tomllib.loads(path.read_text(encoding="utf-8"))
@@ -97,7 +97,7 @@ class SkillContractTest(unittest.TestCase):
             "gpt-5.6-terra",
             "gpt-5.6-luna",
             "validation contract",
-            "Lean-prompt regression checklist",
+            "Minimal-prompt regression checklist",
         ]:
             self.assertIn(required, text)
 
