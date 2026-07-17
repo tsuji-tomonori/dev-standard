@@ -3,6 +3,10 @@
 Copy the relevant rules below into the target repository's `AGENTS.md`. Keep any
 target-specific build, test, ownership, and safety instructions already present.
 
+- Treat ordinary natural-language feature, fix, refactor, and design requests as
+  triggers for `chat-first-development`. Do not require skill names or commands.
+- The AI owns repository-local setup, dependency preparation, lifecycle commands,
+  tests, Git publication, and CI checks. Never ask the user to run them.
 - For a new development request, use `govern-development-request` to create the
   work item, requirements, traceability, and autonomous execution plan before
   implementation.
@@ -18,4 +22,3 @@ target-specific build, test, ownership, and safety instructions already present.
   work item's authorized requirement and execution-plan hashes as authoritative.
 - Use the smallest capable model for bounded checks. Escalate model capability
   only when the current model cannot satisfy a documented quality gate.
-

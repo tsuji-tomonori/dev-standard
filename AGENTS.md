@@ -4,6 +4,8 @@
 
 Deliver each requested repository change end to end with one bounded requester authorization and deterministic quality evidence. Choose the implementation path; do not ask for routine design, review, test, CI, or release decisions after authorization.
 
+The user interface is ordinary conversation. For any feature, fix, refactor, design concern, or incomplete development idea, start with `$chat-first-development` even when the user does not name a skill or workflow. Never ask the user to run setup, Python, test, Git, or governance commands.
+
 ## Invariants
 
 - Govern substantive changes with `$govern-development-request`. Freeze the request, requirements, traceability, execution plan, authority boundary, success criteria, and stopping conditions before implementation.
@@ -20,12 +22,20 @@ Deliver each requested repository change end to end with one bounded requester a
 - Use the lightest model and reasoning level that passes representative checks. Follow [docs/AI-OPERATING-POLICY.md](docs/AI-OPERATING-POLICY.md).
 - Treat the lifecycle checklist as a validation contract, not prompt content. Load only the current phase and relevant item details.
 
-## Commands
+## Automatic bootstrap
 
-- Setup: `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`
-- Full verification: `make verify`
-- Inspect: `.venv/bin/python tools/devflow.py inspect --work-item <ID>`
-- Audit: `.venv/bin/python tools/devflow.py audit`
+- On the first development request, inspect the repository and prepare the workflow automatically. Keep environments and dependencies repository-local.
+- If the full governance runtime is present, use it internally. If it is absent, use the chat-first skill's lightweight work record and continue; do not ask the user to install tooling.
+- Preserve existing target instructions and active configuration. Merge only a delimited compatible section as part of the reviewed repository change.
+- Translate natural language into requirements, acceptance criteria, traceability, and an execution plan. Ask only for the single initial authorization and any genuinely blocking fact.
+
+## AI-owned commands
+
+These are implementation details for the agent, not instructions for the user.
+
+- Prepare a repository-local environment and dependencies when required.
+- Run the full verification, current gate inspection, and audit before publication.
+- Discover and run the target repository's own build, test, lint, and type-check commands.
 
 ## Definition of done
 

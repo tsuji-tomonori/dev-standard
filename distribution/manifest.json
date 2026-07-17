@@ -10,6 +10,7 @@
       "author-lifecycle-docs",
       "authorize-autonomous-execution",
       "calibrated-collaborative-listening",
+      "chat-first-development",
       "govern-development-request",
       "inspect-quality-gates",
       "japanese-git-commit-gitmoji",
@@ -26,6 +27,10 @@
     ]
   },
   "profiles": {
+    "chat-first": [
+      {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
+      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
+    ],
     "communication": [
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
     ],

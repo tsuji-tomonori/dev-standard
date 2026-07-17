@@ -41,6 +41,7 @@ def validate_skills(failures: list[str]) -> None:
         "inspect-quality-gates",
         "authorize-autonomous-execution",
         "calibrated-collaborative-listening",
+        "chat-first-development",
         "retrospect-and-improve",
         "japanese-git-commit-gitmoji",
     }
@@ -171,7 +172,7 @@ def validate_repo(failures: list[str]) -> None:
             fail("distribution manifest skill inventory is stale", failures)
         if sorted(inventory["agents"]) != agent_names:
             fail("distribution manifest agent inventory is stale", failures)
-        for required in ["communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+        for required in ["chat-first", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
             if required not in manifest["profiles"]:
                 fail(f"distribution manifest profile missing: {required}", failures)
         if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":
@@ -182,6 +183,11 @@ def validate_repo(failures: list[str]) -> None:
         fail(f"distribution/manifest.json invalid: {exc}", failures)
     if not (ROOT / "docs" / "INSTALLATION.md").is_file():
         fail("docs/INSTALLATION.md missing", failures)
+    else:
+        installation = (ROOT / "docs" / "INSTALLATION.md").read_text(encoding="utf-8")
+        for term in ["copy, open, chat", "No installer command is required", "never needs to run Python"]:
+            if term not in installation:
+                fail(f"chat-first installation guidance missing: {term}", failures)
     validate_agents(failures)
 
 

@@ -1,5 +1,26 @@
 # Skills and agents installation
 
+## Recommended: copy, open, chat
+
+No installer command is required.
+
+1. Copy the `.agents/skills` folder into the target repository at the same path.
+2. Open the target repository with the AI development agent.
+3. Describe the desired change in ordinary language. The `chat-first-development` skill detects the request and owns setup, requirements, the one initial authorization, design, implementation, tests, PR creation, and CI verification.
+
+For the full deterministic governance flow, also copy these entries while preserving their relative paths:
+
+- `.codex/agents` (optional read-only reviewers);
+- `governance`;
+- `docs/templates`;
+- `tools`;
+- `checklist.xlsx`;
+- `requirements.txt`.
+
+If the target has no `AGENTS.md`, copy `distribution/snippets/AGENTS.governance.md` as `AGENTS.md`. If it already has one, leave it intact: the chat-first skill will propose a delimited compatible addition in the first reviewed change. The same rule applies to `.codex/config.toml`.
+
+The user never needs to run Python, a setup script, tests, Git, or lifecycle commands. The AI performs repository-local preparation automatically. If only the chat-first skill was copied, it uses a lightweight work record rather than stopping for missing governance files.
+
 ## Current standard paths
 
 | Asset | Canonical source in this repository | Copy destination | Portability |
@@ -15,6 +36,7 @@ Do not move repository skills to `.codex/skills`. Current Codex discovery scans 
 
 | Profile | Use when | Copies |
 |---|---|---|
+| `chat-first` | Natural-language development with automatic setup is needed | chat-first orchestrator and calibrated listening skills |
 | `communication` | Only calibrated listening and articulation are needed | one standalone skill |
 | `commit-style` | Only Japanese gitmoji commit guidance is needed | one standalone skill |
 | `skills` | All skills are wanted and dependencies will be handled separately | `.agents/skills` |
@@ -25,7 +47,9 @@ Do not move repository skills to `.codex/skills`. Current Codex discovery scans 
 
 The machine-readable source of these mappings is [`distribution/manifest.json`](../distribution/manifest.json).
 
-## Recommended installation
+## Optional maintainer automation
+
+The manifest-driven installer remains available for maintainers and CI. It is not part of the chat-first user workflow. The AI may invoke it internally when the reference repository is available.
 
 Preview first; the default performs no writes:
 

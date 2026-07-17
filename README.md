@@ -2,6 +2,16 @@
 
 他のrepositoryへ選択的に移植できるskills、Codex custom agents、governance runtimeのreference collectionです。このrepository自身も同じ配置を使うself-hosting exampleです。
 
+## 使い方: copyして相談するだけ
+
+1. 最小構成では、このrepositoryの`.agents/skills` folderを対象repositoryの`.agents/skills`へcopyします。
+2. 対象repositoryをAI development agentで開きます。
+3. 「検索が使いにくい」「この画面に絞り込みがほしい」のように、普段の言葉で相談します。
+
+skill名、Python、installer、work item、test commandを指定する必要はありません。AIが導入状態を確認し、曖昧な相談を要件・受入条件・実行計画へまとめます。要件と権限境界を一度だけ自然言語で承認した後は、設計、実装、test、PR作成、CI確認までAIが進めます。
+
+厳密なchecklist、hash付き承認、工程auditも使う場合は、`.agents`に加えて`governance`、`docs/templates`、`tools`、`checklist.xlsx`、`requirements.txt`を同じ相対pathへcopyします。依存準備と内部commandはAIが自動実行します。
+
 ## 配置と移植単位
 
 | Collection | Source | Target | Notes |
@@ -11,14 +21,7 @@
 | Codex hooks | [`.codex/hooks`](.codex/hooks) | same path | optional Codex integration |
 | Governance runtime | [`governance`](governance), [`tools/devflow.py`](tools/devflow.py), [`docs/templates`](docs/templates), `checklist.xlsx`, `requirements.txt` | same paths | lifecycle skillsの依存runtime |
 
-最短の導入はdry-runから始めます。
-
-```bash
-python3 tools/install_reference.py --target /path/to/target --profile communication
-python3 tools/install_reference.py --target /path/to/target --profile communication --apply
-```
-
-profile別のcopy対象、手動copy、依存、config merge、更新方法は[移植ガイド](docs/INSTALLATION.md)、machine-readable mappingは[distribution/manifest.json](distribution/manifest.json)を参照してください。対象固有の`AGENTS.md`と`.codex/config.toml`は上書きせず、installerが配置する`*.reference.*`を確認して必要部分だけmergeします。
+profile別のcopy対象、依存、config merge、更新方法は[移植ガイド](docs/INSTALLATION.md)、machine-readable mappingは[distribution/manifest.json](distribution/manifest.json)を参照してください。対象固有の`AGENTS.md`と`.codex/config.toml`は上書きせず、AIが既存内容を保ったまま必要部分をmergeします。
 
 ## Governance reference
 
@@ -35,60 +38,11 @@ governance profileはSWEBOK Guide V4.0の固定参照とクラウド／AIのWell
 - セッション終了時に振り返りを生成し、再発したゲート失敗をskill改善候補へ変換する
 - 計画外の改善候補は別work itemへ分離し、次の初回承認なしに恒久指示へ反映しない
 
-## セットアップ
+## AIが内部で行うこと
 
-```bash
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-.venv/bin/python tools/devflow.py catalog --check
-.venv/bin/python -m unittest discover -s tests -v
-```
+AIはrepository状態と既存instructionを確認し、必要ならrepository-local environmentと依存を準備します。続いて要求原文、要件、traceability、自律実行計画を生成し、内容を短く提示して一度だけ実行可否を確認します。
 
-Codexで利用する場合は、このリポジトリをtrusted projectとして開き、`/hooks`で`.codex/hooks.json`の内容を確認して信頼してください。skillsは`.agents/skills`、custom agentsは`.codex/agents`から自動検出されます。
-
-## 最初のwork item
-
-```bash
-.venv/bin/python tools/devflow.py init \
-  --title "ユーザー検索APIを追加" \
-  --request "氏名とメールアドレスでユーザーを検索できるAPIがほしい" \
-  --profile CORE \
-  --profile AWS-DELTA \
-  --actor "requester@example.com"
-```
-
-出力されたIDを使って、生成された`work/<ID>/docs/`を埋めます。未記入トークンが一つでも残るとゲートは失敗します。
-
-```bash
-.venv/bin/python tools/devflow.py inspect --work-item <ID>
-```
-
-チェック結果は`work/<ID>/review/checklist-results.json`へ記録します。1件ずつ記録する場合:
-
-```bash
-.venv/bin/python tools/devflow.py set-check \
-  --work-item <ID> \
-  --item REQ-001 \
-  --applicability applicable \
-  --verdict pass \
-  --severity High \
-  --reviewer "requirements-reviewer" \
-  --evidence "docs/01-requirements.md"
-```
-
-要求原文を保存した後、要件、トレーサビリティ、自律実行計画を完成させます。内容検査が通ったら、要求者が一度だけ実行可否を判断します。AIエージェント自身を承認者にしてはいけません。
-
-```bash
-.venv/bin/python tools/devflow.py authorize \
-  --work-item <ID> \
-  --decision approved \
-  --approver "owner@example.com" \
-  --comment "要件、実行計画、権限境界、完了条件を確認"
-
-.venv/bin/python tools/devflow.py advance --work-item <ID> --actor "owner@example.com"
-```
-
-承認後は、各工程の文書、チェック、証跡、テストを満たして`advance`を続けます。architecture以降に人の工程承認はありません。要件または実行計画が変わると初回承認が失効し、後続工程は停止します。
+承認後は、各工程の文書、check、証跡、testを満たしながら自動で状態を進めます。architecture以降に人の工程承認はありません。要件または実行計画が変わる場合だけ、元の権限境界が失効します。full runtimeをcopyしていない場合も、`chat-first-development`が軽量なwork recordを自動作成し、開発を止めません。
 
 詳しい工程は[docs/FLOW.md](docs/FLOW.md)、統制モデルは[docs/GOVERNANCE.md](docs/GOVERNANCE.md)、AIへの恒久指示は[AGENTS.md](AGENTS.md)、自律境界・minimal prompt・model routingは[docs/AI-OPERATING-POLICY.md](docs/AI-OPERATING-POLICY.md)を参照してください。
 
@@ -98,8 +52,4 @@ Codexで利用する場合は、このリポジトリをtrusted projectとして
 
 ## 検証
 
-```bash
-make verify
-```
-
-GitHub Actionsでも同じカタログ整合、テスト、リポジトリ構造、ハッシュチェーン監査を実行します。
+AIが対象repository固有のbuild、test、lint、type checkと、このreferenceのcatalog整合、構造検査、hash chain auditを実行します。GitHub Actionsでも同じ検査を行います。
