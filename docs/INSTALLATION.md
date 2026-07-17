@@ -36,7 +36,8 @@ Do not move repository skills to `.codex/skills`. Current Codex discovery scans 
 
 | Profile | Use when | Copies |
 |---|---|---|
-| `chat-first` | Natural-language development with automatic setup is needed | chat-first orchestrator and calibrated listening skills |
+| `adversarial-review` | Requirements, design, implementation, tests, or documents need a defect-seeking independent challenge | one standalone skill with research and challenge-playbook references |
+| `chat-first` | Natural-language development with automatic setup is needed | chat-first orchestrator, calibrated listening, and adversarial validation skills |
 | `communication` | Only calibrated listening and articulation are needed | one standalone skill |
 | `commit-style` | Only Japanese gitmoji commit guidance is needed | one standalone skill |
 | `skills` | All skills are wanted and dependencies will be handled separately | `.agents/skills` |

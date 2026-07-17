@@ -1,0 +1,21 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/05-test-report.md",
+      "sha256": "8cb63c4738df0f918b73f14dfb6bcaec1d7a26bb2c09b81dbb2eed926d321c4b"
+    },
+    {
+      "path": "docs/05-security-review.md",
+      "sha256": "e97c294e8d756b9d3791f9611a34c1393615b154c123a1cc61d7b113960ad756"
+    }
+  ],
+  "gate_digest": "34d3c7089b0798151ac0e74b77a0f9cf27ee0d5ae1d7f39574a5e45c61083b89",
+  "generated_at": "2026-07-17T14:06:22Z",
+  "passed": true,
+  "phase": "verification",
+  "review_item_count": 208,
+  "schema_version": 1,
+  "work_item": "WI-20260717-140101-8131b6"
+}

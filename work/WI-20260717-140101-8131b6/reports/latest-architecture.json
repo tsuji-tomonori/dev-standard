@@ -1,0 +1,25 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/02-architecture.md",
+      "sha256": "63231e65614eb2519404b0c22c9ba7a4c3d4ec088504aa17be97775e698d24df"
+    },
+    {
+      "path": "docs/02-risk-and-security.md",
+      "sha256": "2e3536ea401ecc5be044a2604a6c46e637c15edd99a673de3a76ce50a449504d"
+    },
+    {
+      "path": "docs/02-decisions.md",
+      "sha256": "c0f4ceae679740077fff2ed465f3e86b4b285234ef5c5618c01baee5d9068607"
+    }
+  ],
+  "gate_digest": "8be9b11658fcde325b9c813bbdcbc9df4ae8e7a89df7b6f37b22d0d08ae07ab5",
+  "generated_at": "2026-07-17T14:06:21Z",
+  "passed": true,
+  "phase": "architecture",
+  "review_item_count": 144,
+  "schema_version": 1,
+  "work_item": "WI-20260717-140101-8131b6"
+}

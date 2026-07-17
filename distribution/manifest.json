@@ -7,6 +7,7 @@
   },
   "inventory": {
     "skills": [
+      "adversarial-review",
       "author-lifecycle-docs",
       "authorize-autonomous-execution",
       "calibrated-collaborative-listening",
@@ -27,9 +28,13 @@
     ]
   },
   "profiles": {
+    "adversarial-review": [
+      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
+    ],
     "chat-first": [
       {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
-      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
+      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
+      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
     ],
     "communication": [
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}

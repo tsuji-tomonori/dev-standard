@@ -1,0 +1,33 @@
+{
+  "approval_status": {
+    "requester": null
+  },
+  "blockers": [
+    {
+      "code": "APPROVAL_MISSING",
+      "message": "現行成果物に対する承認がない",
+      "subject": "requester"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/01-requirements.md",
+      "sha256": "05bfdcf84cf028547b4f63f60e00402ad7671bc08952015db6a0f64242d98e1f"
+    },
+    {
+      "path": "docs/01-traceability.md",
+      "sha256": "7f829c68a7479c0b9961b23ccb056431769f86b7578078c930b2eb043c1ad501"
+    },
+    {
+      "path": "docs/01-execution-plan.md",
+      "sha256": "d0a6176abc2dd164c6dde3cac3f8bc482f25559a4624068b122225e49f7d5c41"
+    }
+  ],
+  "gate_digest": "3a5005ec7e4e59fa819ff797d1ba7698b3e6063970de19840f41b228da50f08b",
+  "generated_at": "2026-07-17T14:02:32Z",
+  "passed": false,
+  "phase": "requirements",
+  "review_item_count": 88,
+  "schema_version": 1,
+  "work_item": "WI-20260717-140101-8131b6"
+}

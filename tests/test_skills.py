@@ -11,6 +11,36 @@ SKILLS = ROOT / ".agents" / "skills"
 
 
 class SkillContractTest(unittest.TestCase):
+    def test_adversarial_review_seeks_defects_without_becoming_security_red_teaming(self) -> None:
+        skill = SKILLS / "adversarial-review"
+        text = (skill / "SKILL.md").read_text(encoding="utf-8")
+        research = (skill / "references" / "research-basis.md").read_text(encoding="utf-8")
+        playbook = (skill / "references" / "challenge-playbook.md").read_text(encoding="utf-8")
+        for required in [
+            "falsifiable claims",
+            "smallest observation that would prove this wrong",
+            "authoritative source",
+            "independently",
+            "positive assertions",
+            "metamorphic",
+            "swap pairwise order",
+            "not proof of correctness",
+            "not security red teaming",
+        ]:
+            self.assertIn(required, text)
+        for source in ["QuickCheck", "Metamorphic Testing", "Mutation Testing", "Active Design Reviews", "Perspective-Based Reading", "NASA"]:
+            self.assertIn(source, research)
+        for target in ["Requirements", "Architecture", "Implementation", "Tests", "Document/change set"]:
+            self.assertIn(target, playbook)
+        for security_specific in ["prompt injection", "jailbreak", "exfiltration", "attacker goal", "threat model"]:
+            self.assertNotIn(security_specific, text.lower())
+
+    def test_skills_catalog_matches_skill_directories(self) -> None:
+        text = (ROOT / "docs" / "SKILLS.md").read_text(encoding="utf-8")
+        listed = set(__import__("re").findall(r"^\| `([a-z0-9-]+)` \|", text, __import__("re").MULTILINE))
+        actual = {path.name for path in SKILLS.iterdir() if (path / "SKILL.md").is_file()}
+        self.assertEqual(listed, actual)
+
     def test_chat_first_skill_owns_setup_and_full_delivery(self) -> None:
         skill = SKILLS / "chat-first-development"
         text = (skill / "SKILL.md").read_text(encoding="utf-8")

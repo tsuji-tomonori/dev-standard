@@ -1,0 +1,17 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/07-release.md",
+      "sha256": "7b3bef9ec4d506ed5ccba5751658f2d5a14d6ff18947813163046af10df84cd9"
+    }
+  ],
+  "gate_digest": "f8f27eaff412d9a68de33fa2d008fd32d7e8f3fd49333d7ffb35c0e573aaa3c3",
+  "generated_at": "2026-07-17T12:44:35Z",
+  "passed": true,
+  "phase": "release",
+  "review_item_count": 188,
+  "schema_version": 1,
+  "work_item": "WI-20260717-123310-938d42"
+}

@@ -48,7 +48,7 @@ class InstallReferenceTest(unittest.TestCase):
 
     def test_chat_first_profile_is_self_starting_skill_pair(self) -> None:
         install_reference.install(self.target, ["chat-first"], apply=True, force=False)
-        for name in ["chat-first-development", "calibrated-collaborative-listening"]:
+        for name in ["chat-first-development", "calibrated-collaborative-listening", "adversarial-review"]:
             self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
         self.assertFalse((self.target / "tools").exists())
 
