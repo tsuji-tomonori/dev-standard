@@ -8,8 +8,8 @@
 
 | 変更 | 要求ID | 設計節 | コミット | レビュー |
 |---|---|---|---|---|
-| Skill/references rename and rewrite | REQ-001〜005 | detailed design | pending | contract tests |
-| manifest/docs/tests update | REQ-006 | integration design | pending | install/repo tests |
+| Skill/references rename and rewrite | REQ-001〜005 | detailed design | 0112ce0 | contract tests |
+| manifest/docs/tests update | REQ-006 | integration design | 0112ce0 | install/repo tests |
 
 ## セキュア実装・依存関係
 
