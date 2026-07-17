@@ -1,0 +1,25 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/02-architecture.md",
+      "sha256": "387a5fb1fc4cdbcab956b3557de8afe49068c2c5cb88b9aad289c9532407fccb"
+    },
+    {
+      "path": "docs/02-risk-and-security.md",
+      "sha256": "9643d5b5eb4f529b14e5dcc44f42d3658efe0bdbf99040a0947ffb0000faa0a4"
+    },
+    {
+      "path": "docs/02-decisions.md",
+      "sha256": "f01a645de36549cfeda6bab9b2abadbf0cdec29b16241306efbafc1baf28d806"
+    }
+  ],
+  "gate_digest": "f69bd4638a563372c9899bfb45ddd3d886a7d817725e3a46f71360b53d28b35a",
+  "generated_at": "2026-07-17T17:27:19Z",
+  "passed": true,
+  "phase": "architecture",
+  "review_item_count": 265,
+  "schema_version": 1,
+  "work_item": "WI-20260718-checklist-japanese-docs"
+}
