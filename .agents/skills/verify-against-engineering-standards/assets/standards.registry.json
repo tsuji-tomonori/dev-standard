@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "authority": "IEEE Computer Society",
+      "checked_at": "2026-07-17",
+      "id": "SWEBOK-V4",
+      "profiles": ["CORE"],
+      "refresh_days": 180,
+      "title": "Guide to the Software Engineering Body of Knowledge, Version 4.0",
+      "url": "https://www.computer.org/education/bodies-of-knowledge/software-engineering",
+      "version": "4.0"
+    },
+    {
+      "authority": "Amazon Web Services",
+      "checked_at": "2026-07-17",
+      "id": "AWS-WAF",
+      "profiles": ["CLOUD-COMMON", "AWS-DELTA"],
+      "refresh_days": 90,
+      "title": "AWS Well-Architected Framework",
+      "url": "https://docs.aws.amazon.com/wellarchitected/2025-02-25/framework/welcome.html",
+      "version": "2025-02-25"
+    },
+    {
+      "authority": "Microsoft",
+      "checked_at": "2026-07-17",
+      "id": "AZURE-WAF",
+      "profiles": ["CLOUD-COMMON", "AZURE-DELTA"],
+      "refresh_days": 90,
+      "title": "Azure Well-Architected Framework",
+      "url": "https://learn.microsoft.com/en-us/azure/well-architected/",
+      "version": "continuous"
+    },
+    {
+      "authority": "Google Cloud",
+      "checked_at": "2026-07-17",
+      "id": "GCP-WAF",
+      "profiles": ["CLOUD-COMMON", "GCP-DELTA"],
+      "refresh_days": 90,
+      "title": "Google Cloud Well-Architected Framework",
+      "url": "https://docs.cloud.google.com/docs/get-started/well-architected-framework",
+      "version": "continuous"
+    },
+    {
+      "authority": "Oracle",
+      "checked_at": "2026-07-17",
+      "id": "OCI-WAF",
+      "profiles": ["CLOUD-COMMON", "OCI-DELTA"],
+      "refresh_days": 90,
+      "title": "Best practices framework for Oracle Cloud Infrastructure",
+      "url": "https://docs.oracle.com/en/solutions/oci-best-practices/",
+      "version": "continuous"
+    }
+  ]
+}

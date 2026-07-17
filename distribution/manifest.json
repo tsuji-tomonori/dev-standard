@@ -3,7 +3,11 @@
   "standard_paths": {
     "portable_skills": ".agents/skills/<skill-name>/SKILL.md",
     "codex_project_agents": ".codex/agents/<agent-name>.toml",
-    "codex_project_config": ".codex/config.toml"
+    "codex_project_config": ".codex/config.toml",
+    "canonical_requirements": "spec/requirements/requirements.json",
+    "generated_requirements": "docs/requirements/REQUIREMENTS.md",
+    "generated_design": "docs/design/generated/",
+    "standards_registry": "governance/standards/registry.json"
   },
   "inventory": {
     "skills": [
@@ -12,10 +16,13 @@
       "authorize-autonomous-execution",
       "calibrated-collaborative-listening",
       "chat-first-development",
+      "generate-implementation-design",
       "govern-development-request",
       "inspect-quality-gates",
       "japanese-git-commit-gitmoji",
-      "retrospect-and-improve"
+      "maintain-canonical-requirements",
+      "retrospect-and-improve",
+      "verify-against-engineering-standards"
     ],
     "agents": [
       "architecture-reviewer",
@@ -34,6 +41,27 @@
     "chat-first": [
       {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
+      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"},
+      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
+      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
+      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"}
+    ],
+    "requirements": [
+      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
+      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
+    ],
+    "implementation-design": [
+      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"}
+    ],
+    "standards-verification": [
+      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
+      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
+    ],
+    "development-framework": [
+      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
+      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
+      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
+      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
       {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
     ],
     "communication": [

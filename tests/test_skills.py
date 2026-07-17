@@ -5,7 +5,6 @@ import tomllib
 import unittest
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / ".agents" / "skills"
 
@@ -64,6 +63,24 @@ class SkillContractTest(unittest.TestCase):
         self.assertIn("Never ask the user to run setup", text)
         self.assertIn("AI-owned commands", text)
         self.assertIn("ordinary conversation", text)
+        self.assertIn("spec/requirements/requirements.json", text)
+        self.assertIn("`work/<id>/` is noncanonical", text)
+
+    def test_three_pillar_skills_have_deterministic_contracts(self) -> None:
+        requirements = (SKILLS / "maintain-canonical-requirements" / "SKILL.md").read_text(encoding="utf-8")
+        design = (SKILLS / "generate-implementation-design" / "SKILL.md").read_text(encoding="utf-8")
+        standards = (SKILLS / "verify-against-engineering-standards" / "SKILL.md").read_text(encoding="utf-8")
+        for required in ["only durable requirements authority", "add", "update", "retire", "subject", "action", "object", "initial requester authorization"]:
+            self.assertIn(required, requirements)
+        for required in ["router.py", "functions.py", "OpenAPI", "SQLGlot AST", "CloudFormation", "SHA-256", "--check"]:
+            self.assertIn(required, design)
+        for required in ["official", "version", "fresh", "Pass", "N/A", "Fail", "direct evidence"]:
+            self.assertIn(required, standards)
+
+    def test_requirement_research_supports_listening_divergence_and_review_perspectives(self) -> None:
+        research = (SKILLS / "maintain-canonical-requirements" / "references" / "research-basis.md").read_text(encoding="utf-8")
+        for required in ["Design Council", "Double Diamond", "SWEBOK", "NASA", "Perspective-Based Reading", "stakeholder", "tester"]:
+            self.assertIn(required, research)
 
     def test_single_authorization_policy_has_no_later_phase_approvals(self) -> None:
         policy = json.loads((ROOT / "governance" / "policy.json").read_text(encoding="utf-8"))

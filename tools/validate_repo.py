@@ -6,10 +6,10 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 import tomllib
 from pathlib import Path
-
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -43,8 +43,11 @@ def validate_skills(failures: list[str]) -> None:
         "authorize-autonomous-execution",
         "calibrated-collaborative-listening",
         "chat-first-development",
+        "generate-implementation-design",
         "retrospect-and-improve",
         "japanese-git-commit-gitmoji",
+        "maintain-canonical-requirements",
+        "verify-against-engineering-standards",
     }
     actual = {path.name for path in skills_root.iterdir() if path.is_dir() and (path / "SKILL.md").is_file()}
     for name in sorted(expected - actual):
@@ -173,13 +176,21 @@ def validate_repo(failures: list[str]) -> None:
             fail("distribution manifest skill inventory is stale", failures)
         if sorted(inventory["agents"]) != agent_names:
             fail("distribution manifest agent inventory is stale", failures)
-        for required in ["adversarial-review", "chat-first", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+        for required in ["adversarial-review", "chat-first", "requirements", "implementation-design", "standards-verification", "development-framework", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
             if required not in manifest["profiles"]:
                 fail(f"distribution manifest profile missing: {required}", failures)
         if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":
             fail("portable skill standard path is invalid", failures)
         if manifest["standard_paths"].get("codex_project_agents") != ".codex/agents/<agent-name>.toml":
             fail("Codex custom agent standard path is invalid", failures)
+        for key, expected in {
+            "canonical_requirements": "spec/requirements/requirements.json",
+            "generated_requirements": "docs/requirements/REQUIREMENTS.md",
+            "generated_design": "docs/design/generated/",
+            "standards_registry": "governance/standards/registry.json",
+        }.items():
+            if manifest["standard_paths"].get(key) != expected:
+                fail(f"distribution standard path is invalid: {key}", failures)
     except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError) as exc:
         fail(f"distribution/manifest.json invalid: {exc}", failures)
     if not (ROOT / "docs" / "INSTALLATION.md").is_file():
@@ -197,6 +208,13 @@ def validate_repo(failures: list[str]) -> None:
         actual = {path.name for path in (ROOT / ".agents" / "skills").iterdir() if (path / "SKILL.md").is_file()}
         if listed != actual:
             fail(f"docs/SKILLS.md inventory mismatch: missing={sorted(actual - listed)} extra={sorted(listed - actual)}", failures)
+    for label, command in [
+        ("canonical requirements", [sys.executable, str(ROOT / ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"), "check", "--spec", str(ROOT / "spec/requirements/requirements.json"), "--out", str(ROOT / "docs/requirements/REQUIREMENTS.md")]),
+        ("standards registry", [sys.executable, str(ROOT / ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py"), "check", "--registry", str(ROOT / "governance/standards/registry.json"), "--out", str(ROOT / "docs/standards/SOURCES.md")]),
+    ]:
+        result = subprocess.run(command, text=True, capture_output=True, check=False)
+        if result.returncode:
+            fail(f"{label} validation failed: {(result.stdout + result.stderr).strip()}", failures)
     validate_agents(failures)
 
 

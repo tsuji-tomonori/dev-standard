@@ -10,6 +10,9 @@ target-specific build, test, ownership, and safety instructions already present.
 - For a new development request, use `govern-development-request` to create the
   work item, requirements, traceability, and autonomous execution plan before
   implementation.
+- Use `maintain-canonical-requirements` for intent discovery and revision-checked
+  add/update/retire operations. `spec/requirements/requirements.json` is the only
+  durable requirement authority; `work/<id>` is request-local context and evidence.
 - Ask the requester for one initial authorization covering the requirements,
   execution plan, authority boundary, and completion criteria.
 - After that authorization, continue autonomously inside the approved boundary.
@@ -18,7 +21,12 @@ target-specific build, test, ownership, and safety instructions already present.
 - Use `author-lifecycle-docs`, `authorize-autonomous-execution`,
   `inspect-quality-gates`, and `retrospect-and-improve` at their corresponding
   lifecycle stages.
-- Treat `governance/controls.yaml`, `governance/checklist-catalog.json`, and each
-  work item's authorized requirement and execution-plan hashes as authoritative.
+- Generate FastAPI/CDK detailed design from router/OpenAPI/SQL/CloudFormation
+  artifacts with `generate-implementation-design`; reject generated drift.
+- Verify requirements, design, implementation, and tests with
+  `verify-against-engineering-standards`, the selected checklist profiles, and
+  the fresh official sources in `governance/standards/registry.json`.
+- Treat `governance/policy.json`, `governance/checklist/catalog.json`, the canonical
+  requirements catalog, and each work item's authorized delta/plan hashes as authoritative.
 - Use the smallest capable model for bounded checks. Escalate model capability
   only when the current model cannot satisfy a documented quality gate.
