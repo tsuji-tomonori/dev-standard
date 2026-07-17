@@ -1,0 +1,15 @@
+{
+  "catalog_sha256": "a43bcfefad7b3c6479d36cbe749e77f7cad93e683ffa0520c2f13650405cecef",
+  "created_at": "2026-07-17T12:33:10Z",
+  "current_phase": "release",
+  "id": "WI-20260717-123310-938d42",
+  "profiles": [
+    "CORE",
+    "AI-CONDITIONAL"
+  ],
+  "schema_version": 1,
+  "status": "active",
+  "title": "Research-grounded adversarial validation skill and skill catalog",
+  "updated_at": "2026-07-17T12:38:08Z",
+  "workflow_schema_version": 2
+}

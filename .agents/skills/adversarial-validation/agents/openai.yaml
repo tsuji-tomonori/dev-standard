@@ -1,0 +1,5 @@
+interface:
+  display_name: "敵対的検証"
+  short_description: "Try to falsify a change with research-grounded attacks and independent oracles"
+  default_prompt: "Use $adversarial-validation to challenge this change, preserve reproducible counterexamples, and report bounded residual risk."
+

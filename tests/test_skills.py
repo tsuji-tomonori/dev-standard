@@ -11,6 +11,33 @@ SKILLS = ROOT / ".agents" / "skills"
 
 
 class SkillContractTest(unittest.TestCase):
+    def test_adversarial_validation_is_falsification_not_confirmation(self) -> None:
+        skill = SKILLS / "adversarial-validation"
+        text = (skill / "SKILL.md").read_text(encoding="utf-8")
+        research = (skill / "references" / "research-basis.md").read_text(encoding="utf-8")
+        playbook = (skill / "references" / "attack-playbook.md").read_text(encoding="utf-8")
+        for required in [
+            "falsifiable claims",
+            "threat model",
+            "oracle independent",
+            "metamorphic",
+            "surviving mutant",
+            "swap pairwise order",
+            "benign utility controls",
+            "No finding within a finite budget is not proof",
+        ]:
+            self.assertIn(required, text)
+        for source in ["QuickCheck", "Metamorphic Testing", "Mutation Testing", "AgentDojo", "NIST", "GPT-4o System Card"]:
+            self.assertIn(source, research)
+        for target in ["Requirements", "Architecture", "Implementation", "AI/model", "Tool-using agent", "Mitigation"]:
+            self.assertIn(target, playbook)
+
+    def test_skills_catalog_matches_skill_directories(self) -> None:
+        text = (ROOT / "docs" / "SKILLS.md").read_text(encoding="utf-8")
+        listed = set(__import__("re").findall(r"^\| `([a-z0-9-]+)` \|", text, __import__("re").MULTILINE))
+        actual = {path.name for path in SKILLS.iterdir() if (path / "SKILL.md").is_file()}
+        self.assertEqual(listed, actual)
+
     def test_chat_first_skill_owns_setup_and_full_delivery(self) -> None:
         skill = SKILLS / "chat-first-development"
         text = (skill / "SKILL.md").read_text(encoding="utf-8")

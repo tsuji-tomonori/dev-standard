@@ -2,6 +2,8 @@
 
 他のrepositoryへ選択的に移植できるskills、Codex custom agents、governance runtimeのreference collectionです。このrepository自身も同じ配置を使うself-hosting exampleです。
 
+収録skillの用途、trigger、依存、copy元は[Skills一覧](docs/SKILLS.md)を参照してください。
+
 ## 使い方: copyして相談するだけ
 
 1. 最小構成では、このrepositoryの`.agents/skills` folderを対象repositoryの`.agents/skills`へcopyします。

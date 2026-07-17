@@ -36,6 +36,7 @@ def frontmatter(path: Path, failures: list[str]) -> dict[str, str]:
 def validate_skills(failures: list[str]) -> None:
     skills_root = ROOT / ".agents" / "skills"
     expected = {
+        "adversarial-validation",
         "govern-development-request",
         "author-lifecycle-docs",
         "inspect-quality-gates",
@@ -172,7 +173,7 @@ def validate_repo(failures: list[str]) -> None:
             fail("distribution manifest skill inventory is stale", failures)
         if sorted(inventory["agents"]) != agent_names:
             fail("distribution manifest agent inventory is stale", failures)
-        for required in ["chat-first", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+        for required in ["adversarial-validation", "chat-first", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
             if required not in manifest["profiles"]:
                 fail(f"distribution manifest profile missing: {required}", failures)
         if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":
@@ -188,6 +189,14 @@ def validate_repo(failures: list[str]) -> None:
         for term in ["copy, open, chat", "No installer command is required", "never needs to run Python"]:
             if term not in installation:
                 fail(f"chat-first installation guidance missing: {term}", failures)
+    skills_catalog = ROOT / "docs" / "SKILLS.md"
+    if not skills_catalog.is_file():
+        fail("docs/SKILLS.md missing", failures)
+    else:
+        listed = set(re.findall(r"^\| `([a-z0-9-]+)` \|", skills_catalog.read_text(encoding="utf-8"), re.MULTILINE))
+        actual = {path.name for path in (ROOT / ".agents" / "skills").iterdir() if (path / "SKILL.md").is_file()}
+        if listed != actual:
+            fail(f"docs/SKILLS.md inventory mismatch: missing={sorted(actual - listed)} extra={sorted(listed - actual)}", failures)
     validate_agents(failures)
 
 
