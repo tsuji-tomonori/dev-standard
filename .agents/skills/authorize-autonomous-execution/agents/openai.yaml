@@ -1,0 +1,4 @@
+interface:
+  display_name: "自律実行の初回承認"
+  short_description: "Bind one requester decision to the complete execution boundary"
+  default_prompt: "Use $authorize-autonomous-execution to record this one explicit requester decision, then continue without phase approvals."

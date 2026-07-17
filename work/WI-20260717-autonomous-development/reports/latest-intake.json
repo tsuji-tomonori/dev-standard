@@ -1,0 +1,17 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/00-request.md",
+      "sha256": "ded4b834a4e628f43a3e372d23a1ddce04a5c5b0f8c74311c7ef4fca381e9d36"
+    }
+  ],
+  "gate_digest": "ef8068f8493252678eca9c5974b4f1865bbf449697f97143e57097d6931eaf09",
+  "generated_at": "2026-07-17T00:09:36Z",
+  "passed": true,
+  "phase": "intake",
+  "review_item_count": 0,
+  "schema_version": 1,
+  "work_item": "WI-20260717-autonomous-development"
+}

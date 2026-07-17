@@ -1,0 +1,21 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/05-test-report.md",
+      "sha256": "3bc6f882a2f3137b97787e9f42b8495abbb0006240b33f58df87547edb9de160"
+    },
+    {
+      "path": "docs/05-security-review.md",
+      "sha256": "4679692e4df39cc1ab876340835485393b470f33601c1af4dee78bfbf2fd4071"
+    }
+  ],
+  "gate_digest": "3e5675814a22d336522f0a7b1650736b022cb26ef001c1a1c91b28663b5be41b",
+  "generated_at": "2026-07-17T11:48:12Z",
+  "passed": true,
+  "phase": "verification",
+  "review_item_count": 227,
+  "schema_version": 1,
+  "work_item": "WI-20260717-portable-reference-layout"
+}

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "standard": {
     "name": "SWEBOK Guide V4.0 + Cloud Well-Architected Reference",
     "checklist": "checklist.xlsx",
@@ -60,26 +60,31 @@
     "retrospective",
     "closed"
   ],
+  "authorization": {
+    "phase": "requirements",
+    "role": "requester",
+    "title": "初回自律実行承認"
+  },
   "phases": {
     "intake": {
       "title": "要求受付",
       "required_docs": ["docs/00-request.md"],
-      "required_approvals": ["requester"]
+      "required_approvals": []
     },
     "requirements": {
       "title": "要件定義",
-      "required_docs": ["docs/01-requirements.md", "docs/01-traceability.md"],
-      "required_approvals": ["requester", "product-owner"]
+      "required_docs": ["docs/01-requirements.md", "docs/01-traceability.md", "docs/01-execution-plan.md"],
+      "required_approvals": ["requester"]
     },
     "architecture": {
       "title": "アーキテクチャ・リスク",
       "required_docs": ["docs/02-architecture.md", "docs/02-risk-and-security.md", "docs/02-decisions.md"],
-      "required_approvals": ["architect", "security-owner"]
+      "required_approvals": []
     },
     "design": {
       "title": "詳細設計・テスト設計",
       "required_docs": ["docs/03-detailed-design.md", "docs/03-test-plan.md"],
-      "required_approvals": ["architect", "qa-owner"]
+      "required_approvals": []
     },
     "implementation": {
       "title": "実装・構成管理",
@@ -89,22 +94,22 @@
     "verification": {
       "title": "検証・品質保証",
       "required_docs": ["docs/05-test-report.md", "docs/05-security-review.md"],
-      "required_approvals": ["qa-owner", "security-owner"]
+      "required_approvals": []
     },
     "operations": {
       "title": "運用・保守準備",
       "required_docs": ["docs/06-operations.md", "docs/06-maintenance.md"],
-      "required_approvals": ["operations-owner"]
+      "required_approvals": []
     },
     "release": {
       "title": "リリース判定",
       "required_docs": ["docs/07-release.md"],
-      "required_approvals": ["requester", "release-owner"]
+      "required_approvals": []
     },
     "retrospective": {
       "title": "振り返り・改善",
       "required_docs": ["docs/08-retrospective.md"],
-      "required_approvals": ["governance-owner"]
+      "required_approvals": []
     },
     "closed": {
       "title": "完了",

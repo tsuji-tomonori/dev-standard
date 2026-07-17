@@ -22,13 +22,22 @@ class DevflowTest(unittest.TestCase):
         self.report_root = self.root / "reports"
         self.template_root.mkdir(parents=True)
         self.policy = {
-            "schema_version": 1,
+            "schema_version": 2,
             "standard": {"checklist": "checklist.xlsx", "catalog": "governance/checklist/catalog.json"},
             "profiles": {"CORE": {"description": "test", "sheets": ["01_要件定義"]}},
             "phase_order": ["intake", "requirements", "closed"],
+            "authorization": {"phase": "requirements", "role": "requester", "title": "initial"},
             "phases": {
-                "intake": {"title": "intake", "required_docs": ["docs/00-request.md"], "required_approvals": ["requester"]},
-                "requirements": {"title": "requirements", "required_docs": ["docs/01-requirements.md"], "required_approvals": []},
+                "intake": {"title": "intake", "required_docs": ["docs/00-request.md"], "required_approvals": []},
+                "requirements": {
+                    "title": "requirements",
+                    "required_docs": [
+                        "docs/01-requirements.md",
+                        "docs/01-traceability.md",
+                        "docs/01-execution-plan.md",
+                    ],
+                    "required_approvals": ["requester"],
+                },
                 "closed": {"title": "closed", "required_docs": [], "required_approvals": []},
             },
             "document_placeholders": ["TBD", "{{", "}}"],
@@ -60,6 +69,8 @@ class DevflowTest(unittest.TestCase):
             encoding="utf-8",
         )
         (self.template_root / "01-requirements.md").write_text("# Requirements\n\n" + "complete requirement\n" * 20, encoding="utf-8")
+        (self.template_root / "01-traceability.md").write_text("# Traceability\n\n" + "complete trace\n" * 20, encoding="utf-8")
+        (self.template_root / "01-execution-plan.md").write_text("# Plan\n\n" + "complete plan\n" * 20, encoding="utf-8")
         self.patchers = [
             patch.object(devflow, "ROOT", self.root),
             patch.object(devflow, "POLICY_PATH", self.policy_path),
@@ -82,31 +93,115 @@ class DevflowTest(unittest.TestCase):
         self.assertEqual(devflow.cmd_init(args), 0)
         return self.work_root / work_id
 
-    def test_approval_is_bound_to_current_document_digest(self) -> None:
+    def approve_requirements(self, work_id: str = "WI-test") -> None:
+        work = self.work_root / work_id
+        state = devflow.read_json(work / "state.json")
+        state["current_phase"] = "requirements"
+        devflow.atomic_write_json(work / "state.json", state)
+        results = devflow.read_json(work / "review" / "checklist-results.json")
+        item = results["items"][0]
+        item.update({
+            "applicability": "applicable",
+            "verdict": "pass",
+            "reviewer": "reviewer",
+            "reviewed_at": "2026-01-01T00:00:00Z",
+            "evidence": ["docs/01-requirements.md"],
+        })
+        devflow.atomic_write_json(work / "review" / "checklist-results.json", results)
+        approve = argparse.Namespace(
+            work_item=work_id,
+            phase=None,
+            decision="approved",
+            approver="user@example.com",
+            role=None,
+            comment="要件と自律実行計画を確認",
+        )
+        self.assertEqual(devflow.cmd_approve(approve), 0)
+
+    def test_initial_authorization_is_bound_to_requirements_and_plan_digest(self) -> None:
         work = self.init_item()
         state = devflow.read_json(work / "state.json")
+        state["current_phase"] = "requirements"
+        devflow.atomic_write_json(work / "state.json", state)
         results = devflow.read_json(work / "review" / "checklist-results.json")
-        before = devflow.gate_snapshot(work, state, results, "intake", include_approvals=True)
+        item = results["items"][0]
+        item.update({
+            "applicability": "applicable",
+            "verdict": "pass",
+            "reviewer": "reviewer",
+            "reviewed_at": "2026-01-01T00:00:00Z",
+            "evidence": ["docs/01-requirements.md"],
+        })
+        devflow.atomic_write_json(work / "review" / "checklist-results.json", results)
+        before = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=True)
         self.assertIn("APPROVAL_MISSING", {item["code"] for item in before["blockers"]})
 
         approve = argparse.Namespace(
             work_item="WI-test",
-            phase="intake",
+            phase=None,
             decision="approved",
             approver="user@example.com",
-            role="requester",
-            comment="要求原文と目的を確認",
+            role=None,
+            comment="要件と自律実行計画を確認",
         )
         self.assertEqual(devflow.cmd_approve(approve), 0)
-        approved = devflow.gate_snapshot(work, state, results, "intake", include_approvals=True)
+        approved = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=True)
         self.assertTrue(approved["passed"])
 
-        with (work / "docs" / "00-request.md").open("a", encoding="utf-8") as stream:
+        with (work / "docs" / "01-execution-plan.md").open("a", encoding="utf-8") as stream:
             stream.write("\nmaterial change\n")
-        changed = devflow.gate_snapshot(work, state, results, "intake", include_approvals=True)
+        changed = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=True)
         self.assertFalse(changed["passed"])
-        self.assertNotEqual(before["gate_digest"], changed["gate_digest"])
+        self.assertNotEqual(approved["gate_digest"], changed["gate_digest"])
         self.assertIn("APPROVAL_MISSING", {item["code"] for item in changed["blockers"]})
+
+    def test_initial_authorization_cannot_be_recorded_in_another_phase(self) -> None:
+        self.init_item()
+        approve = argparse.Namespace(
+            work_item="WI-test",
+            phase=None,
+            decision="rejected",
+            approver="user@example.com",
+            role=None,
+            comment="not ready",
+        )
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_approve(approve)
+
+    def test_later_phase_needs_no_new_human_approval(self) -> None:
+        work = self.init_item()
+        self.approve_requirements()
+        state = devflow.read_json(work / "state.json")
+        state["current_phase"] = "requirements"
+        devflow.atomic_write_json(work / "state.json", state)
+        self.assertEqual(devflow.cmd_advance(argparse.Namespace(work_item="WI-test", actor="agent")), 0)
+        self.assertEqual(devflow.read_json(work / "state.json")["current_phase"], "closed")
+
+    def test_advance_rechecks_authorized_requirements(self) -> None:
+        work = self.init_item()
+        self.approve_requirements()
+        state = devflow.read_json(work / "state.json")
+        state["current_phase"] = "requirements"
+        devflow.atomic_write_json(work / "state.json", state)
+        self.assertEqual(devflow.cmd_advance(argparse.Namespace(work_item="WI-test", actor="agent")), 0)
+        with (work / "docs" / "01-requirements.md").open("a", encoding="utf-8") as stream:
+            stream.write("\nunauthorized scope change\n")
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_advance(argparse.Namespace(work_item="WI-test", actor="agent"))
+
+    def test_legacy_work_item_requires_explicit_migration(self) -> None:
+        work = self.init_item()
+        state = devflow.read_json(work / "state.json")
+        state.pop("workflow_schema_version")
+        devflow.atomic_write_json(work / "state.json", state)
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_status(argparse.Namespace(work_item="WI-test", json=False))
+        self.assertEqual(
+            devflow.cmd_migrate(argparse.Namespace(work_item="WI-test", actor="owner")),
+            0,
+        )
+        migrated = devflow.read_json(work / "state.json")
+        self.assertEqual(migrated["workflow_schema_version"], 2)
 
     def test_applicable_check_requires_reachable_evidence(self) -> None:
         work = self.init_item()
@@ -143,6 +238,62 @@ class DevflowTest(unittest.TestCase):
         passed = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=False)
         self.assertTrue(passed["passed"])
 
+    def test_fail_remains_blocking_without_later_risk_approval(self) -> None:
+        work = self.init_item()
+        state = devflow.read_json(work / "state.json")
+        state["current_phase"] = "requirements"
+        devflow.atomic_write_json(work / "state.json", state)
+        results = devflow.read_json(work / "review" / "checklist-results.json")
+        item = results["items"][0]
+        item.update({
+            "applicability": "applicable",
+            "verdict": "fail",
+            "issue_id": "ISSUE-1",
+            "reviewer": "reviewer",
+            "reviewed_at": "2026-01-01T00:00:00Z",
+            "exception": {
+                "status": "approved",
+                "approver": "owner",
+                "role": "governance-owner",
+                "rationale": "accept",
+                "expires_at": "2099-01-01T00:00:00Z",
+            },
+        })
+        report = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=False)
+        self.assertIn("CHECK_FAIL_BLOCKING", {failure["code"] for failure in report["blockers"]})
+
+    def test_batch_check_update_is_atomic_and_auditable(self) -> None:
+        work = self.init_item()
+        (work / "evidence" / "proof.txt").write_text("proof", encoding="utf-8")
+        batch = self.root / "batch.json"
+        batch.write_text(json.dumps([{
+            "item": "REQ-001",
+            "applicability": "applicable",
+            "verdict": "pass",
+            "severity": "High",
+            "reviewer": "batch-reviewer",
+            "evidence": ["evidence/proof.txt"],
+        }]), encoding="utf-8")
+        args = argparse.Namespace(work_item="WI-test", input=str(batch), actor="batch-reviewer")
+        self.assertEqual(devflow.cmd_set_checks(args), 0)
+        result = devflow.read_json(work / "review" / "checklist-results.json")["items"][0]
+        self.assertEqual((result["applicability"], result["verdict"]), ("applicable", "pass"))
+        events = devflow.verify_chain(work / "events.jsonl")
+        self.assertEqual(events[-1]["event"], "checklist-batch-updated")
+        self.assertEqual(events[-1]["details"]["count"], 1)
+
+        batch.write_text(json.dumps([{
+            "item": "REQ-001",
+            "applicability": "not-applicable",
+            "verdict": "unreviewed",
+            "severity": "High",
+            "reviewer": "batch-reviewer",
+        }]), encoding="utf-8")
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_set_checks(args)
+        unchanged = devflow.read_json(work / "review" / "checklist-results.json")["items"][0]
+        self.assertEqual(unchanged["applicability"], "applicable")
+
     def test_tampered_approval_chain_is_rejected(self) -> None:
         path = self.root / "approvals.jsonl"
         devflow.append_chained(path, {"event": "one"})
@@ -152,10 +303,7 @@ class DevflowTest(unittest.TestCase):
         with self.assertRaises(devflow.GovernanceError):
             devflow.verify_chain(path)
 
-    def test_approved_improvement_updates_target_skill_once(self) -> None:
-        skill = self.root / ".agents" / "skills" / "inspect-quality-gates"
-        (skill / "references").mkdir(parents=True)
-        (skill / "SKILL.md").write_text("---\nname: inspect-quality-gates\ndescription: test\n---\n", encoding="utf-8")
+    def test_improvement_proposal_remains_pending_for_a_new_work_item(self) -> None:
         proposal = devflow.propose_improvement(
             "inspect-quality-gates",
             "証跡不足が再発",
@@ -164,12 +312,9 @@ class DevflowTest(unittest.TestCase):
             "session-1",
         )
         proposals = devflow.load_improvements()
-        proposals[0].update({"status": "approved", "approved_by": "owner", "approved_at": "2026-01-01T00:00:00Z"})
-        devflow.save_improvements(proposals)
-        self.assertEqual(devflow.apply_approved_improvements(), [proposal["id"]])
-        self.assertEqual(devflow.apply_approved_improvements(), [])
-        learned = (skill / "references" / "learned-rules.md").read_text(encoding="utf-8")
-        self.assertEqual(learned.count(proposal["id"]), 1)
+        self.assertEqual(proposals[0]["status"], "pending")
+        self.assertEqual(proposals[0]["id"], proposal["id"])
+        self.assertFalse(hasattr(devflow, "apply_approved_improvements"))
 
 
 if __name__ == "__main__":

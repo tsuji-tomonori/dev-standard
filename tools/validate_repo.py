@@ -39,7 +39,8 @@ def validate_skills(failures: list[str]) -> None:
         "govern-development-request",
         "author-lifecycle-docs",
         "inspect-quality-gates",
-        "record-governance-approval",
+        "authorize-autonomous-execution",
+        "calibrated-collaborative-listening",
         "retrospect-and-improve",
         "japanese-git-commit-gitmoji",
     }
@@ -89,6 +90,14 @@ def validate_agents(failures: list[str]) -> None:
                 fail(f"{path.relative_to(ROOT)}: {key} missing", failures)
         if value.get("name") != path.stem:
             fail(f"{path.relative_to(ROOT)}: agent name must match filename", failures)
+        if value.get("model") != "gpt-5.6-terra":
+            fail(f"{path.relative_to(ROOT)}: custom reviewer must use gpt-5.6-terra", failures)
+        if value.get("model_reasoning_effort") not in {"low", "medium", "high"}:
+            fail(f"{path.relative_to(ROOT)}: reasoning effort must be explicitly cost-bounded", failures)
+        if value.get("model_verbosity") != "low":
+            fail(f"{path.relative_to(ROOT)}: reviewer output must use low verbosity", failures)
+        if len(str(value.get("developer_instructions", ""))) > 900:
+            fail(f"{path.relative_to(ROOT)}: reviewer prompt exceeds minimal prompt budget", failures)
         if "reviewer" in path.stem or path.stem == "gate-auditor":
             if value.get("sandbox_mode") != "read-only":
                 fail(f"{path.relative_to(ROOT)}: reviewer must be read-only", failures)
@@ -100,6 +109,17 @@ def validate_repo(failures: list[str]) -> None:
     phases = set(policy["phase_order"])
     if policy["phase_order"][-1] != "closed":
         fail("phase_order must end with closed", failures)
+    authorization = policy.get("authorization", {})
+    authorization_phase = authorization.get("phase")
+    authorization_role = authorization.get("role")
+    if authorization_phase != "requirements" or authorization_role != "requester":
+        fail("single authorization must be requirements / requester", failures)
+    for phase, definition in policy["phases"].items():
+        expected = [authorization_role] if phase == authorization_phase else []
+        if definition.get("required_approvals") != expected:
+            fail(f"{phase}: unexpected phase approvals; expected {expected}", failures)
+    if "docs/01-execution-plan.md" not in policy["phases"]["requirements"]["required_docs"]:
+        fail("requirements must bind docs/01-execution-plan.md", failures)
     for item in catalog["items"]:
         if item["phase"] not in phases:
             fail(f"catalog item {item['id']} has unknown phase", failures)
@@ -122,6 +142,46 @@ def validate_repo(failures: list[str]) -> None:
     for path in ["AGENTS.md", "README.md", ".github/workflows/governance.yml"]:
         if not (ROOT / path).is_file():
             fail(f"required repository file missing: {path}", failures)
+    operating_policy = ROOT / "docs" / "AI-OPERATING-POLICY.md"
+    if not operating_policy.is_file():
+        fail("docs/AI-OPERATING-POLICY.md missing", failures)
+    else:
+        text = operating_policy.read_text(encoding="utf-8")
+        for term in ["gpt-5.6-terra", "gpt-5.6-luna", "validation contract", "Minimal-prompt regression checklist"]:
+            if term not in text:
+                fail(f"AI operating policy missing: {term}", failures)
+    try:
+        codex_config = tomllib.loads((ROOT / ".codex" / "config.toml").read_text(encoding="utf-8"))
+        agents_config = codex_config.get("agents", {})
+        if agents_config.get("max_threads", 0) > 3:
+            fail("agents.max_threads must remain cost-bounded at 3 or fewer", failures)
+        if agents_config.get("max_depth") != 1:
+            fail("agents.max_depth must remain 1", failures)
+        unexpected = sorted(key for key, value in agents_config.items() if isinstance(value, dict))
+        if unexpected:
+            fail(f"custom agents must be standalone .codex/agents files, not config mappings: {unexpected}", failures)
+    except (FileNotFoundError, tomllib.TOMLDecodeError) as exc:
+        fail(f".codex/config.toml invalid: {exc}", failures)
+    try:
+        manifest = json.loads((ROOT / "distribution" / "manifest.json").read_text(encoding="utf-8"))
+        inventory = manifest["inventory"]
+        skill_names = sorted(path.name for path in (ROOT / ".agents" / "skills").iterdir() if (path / "SKILL.md").is_file())
+        agent_names = sorted(path.stem for path in (ROOT / ".codex" / "agents").glob("*.toml"))
+        if sorted(inventory["skills"]) != skill_names:
+            fail("distribution manifest skill inventory is stale", failures)
+        if sorted(inventory["agents"]) != agent_names:
+            fail("distribution manifest agent inventory is stale", failures)
+        for required in ["communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+            if required not in manifest["profiles"]:
+                fail(f"distribution manifest profile missing: {required}", failures)
+        if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":
+            fail("portable skill standard path is invalid", failures)
+        if manifest["standard_paths"].get("codex_project_agents") != ".codex/agents/<agent-name>.toml":
+            fail("Codex custom agent standard path is invalid", failures)
+    except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError) as exc:
+        fail(f"distribution/manifest.json invalid: {exc}", failures)
+    if not (ROOT / "docs" / "INSTALLATION.md").is_file():
+        fail("docs/INSTALLATION.md missing", failures)
     validate_agents(failures)
 
 

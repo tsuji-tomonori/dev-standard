@@ -1,0 +1,958 @@
+{
+  "approval_status": {},
+  "blockers": [
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-001"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-002"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-003"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-004"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-005"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-006"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-007"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-010"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-011"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-012"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-013"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-014"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-020"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-021"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-022"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-023"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-024"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-025"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-026"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-027"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-030"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-031"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-032"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-033"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-034"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-035"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-036"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-037"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-038"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-040"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-041"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-042"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-043"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-044"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-045"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-046"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-050"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-051"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-052"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-053"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-054"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-060"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-061"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-062"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-063"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-064"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-065"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-066"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-067"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-068"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-069"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-070"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-071"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-072"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-073"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-080"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-081"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-082"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-083"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-084"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-090"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-091"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-092"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-093"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-094"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-095"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-096"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-097"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-100"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-101"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-102"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-103"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-104"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-110"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-111"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-112"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-113"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-114"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-115"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-120"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-121"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-122"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-123"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-124"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-130"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-131"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-132"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-133"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-901"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-902"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-903"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-904"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "MGT-905"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-001"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-002"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-003"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-004"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-005"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-006"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-007"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-008"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-009"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-010"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-011"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-012"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-013"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-014"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-015"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-016"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-017"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-018"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-019"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-020"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-021"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-022"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-023"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-024"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-025"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-026"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-027"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-028"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-029"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-030"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-031"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-032"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-033"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-034"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-035"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-036"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-037"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-038"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-039"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-040"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-041"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-042"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-043"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-044"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-045"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-046"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-047"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-048"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-049"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-050"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-051"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-052"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-053"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-054"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-055"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-056"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-057"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-058"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-059"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-060"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-061"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-062"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-063"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-064"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-065"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-066"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-067"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-068"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-069"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-070"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-071"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-072"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-073"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-074"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-075"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-076"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-077"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-078"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-079"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-080"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-081"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-082"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-083"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-084"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-085"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-086"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-087"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-088"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-089"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-090"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-091"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-092"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-901"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-902"
+    },
+    {
+      "code": "CHECK_APPLICABILITY",
+      "message": "適用判定が未決定",
+      "subject": "PRC-903"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/07-release.md",
+      "sha256": "686888c0a6b453f0181f8e9c5d76e991962f358ae92adb14d95125ebf14a6d5c"
+    }
+  ],
+  "gate_digest": "ecff4472f4aef8556009b71fed0e148c82c4919413f4214d2bbfd18cf4af1c83",
+  "generated_at": "2026-07-17T00:34:33Z",
+  "passed": false,
+  "phase": "release",
+  "review_item_count": 188,
+  "schema_version": 1,
+  "work_item": "WI-20260717-autonomous-development"
+}

@@ -1,4 +1,4 @@
 interface:
   display_name: "品質ゲート検査"
-  short_description: "Inspect documents evidence checklist and approvals"
+  short_description: "Inspect evidence, initial authorization, and every preceding gate"
   default_prompt: "Use $inspect-quality-gates to strictly inspect the active phase and list every blocker."

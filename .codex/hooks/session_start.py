@@ -29,9 +29,10 @@ def main() -> int:
             pending = []
     context = [
         "This repository requires the governed lifecycle in AGENTS.md.",
-        "Use $govern-development-request before implementation and never self-approve a gate.",
+        "Use $govern-development-request before implementation and never invent initial authorization.",
+        "After authorization, continue autonomously through all quality gates within the approved execution plan.",
         "Active work items: " + (", ".join(active) if active else "none"),
-        "Pending skill improvements requiring governance-owner review: " + (", ".join(pending) if pending else "none"),
+        "Pending skill improvements requiring a separately authorized work item: " + (", ".join(pending) if pending else "none"),
     ]
     print(json.dumps({
         "continue": True,

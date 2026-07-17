@@ -1,0 +1,17 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/07-release.md",
+      "sha256": "7ad08c406abf47e33daa6666d844859320c2cde315bf7aeeb4e9618a18e603b5"
+    }
+  ],
+  "gate_digest": "16578e7db0cddec0ba690193e19e3e0a38e24d5e7242c97a4426004828a688c1",
+  "generated_at": "2026-07-17T11:51:54Z",
+  "passed": true,
+  "phase": "release",
+  "review_item_count": 188,
+  "schema_version": 1,
+  "work_item": "WI-20260717-portable-reference-layout"
+}

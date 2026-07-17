@@ -1,0 +1,21 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/05-test-report.md",
+      "sha256": "860734383844f3d3429a03aa0f176de299a1616a76bd292819b1c1f5ef95154b"
+    },
+    {
+      "path": "docs/05-security-review.md",
+      "sha256": "ef7f9ae54ebb894eea81e7bed4b92d4ad5c32e157e050af5976a70993a5acfbf"
+    }
+  ],
+  "gate_digest": "ce2c4595d475cd53916afd4584357eaabbb9b7993f5ca1a76c7e9e7831e841f6",
+  "generated_at": "2026-07-17T00:27:03Z",
+  "passed": true,
+  "phase": "verification",
+  "review_item_count": 227,
+  "schema_version": 1,
+  "work_item": "WI-20260717-autonomous-development"
+}

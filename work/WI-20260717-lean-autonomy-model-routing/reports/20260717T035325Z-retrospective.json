@@ -1,0 +1,17 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/08-retrospective.md",
+      "sha256": "9532316f603039ec722f46fb521b3b5e97c698354c2207c3994b99bc8773edb2"
+    }
+  ],
+  "gate_digest": "203af26bdba2cfc8d8aa1fb68db9c9e9b18c5ba04116781ae7a395e324e413bf",
+  "generated_at": "2026-07-17T03:53:25Z",
+  "passed": true,
+  "phase": "retrospective",
+  "review_item_count": 0,
+  "schema_version": 1,
+  "work_item": "WI-20260717-lean-autonomy-model-routing"
+}

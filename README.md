@@ -1,18 +1,39 @@
-# Governed AI Development
+# Portable AI Development Skills and Agents
 
-SWEBOK Guide V4.0を固定参照し、クラウド／AIのWell-Architected観点を加えたチェックリストを、AI駆動開発の工程ゲートとして実行するためのリポジトリです。
+他のrepositoryへ選択的に移植できるskills、Codex custom agents、governance runtimeのreference collectionです。このrepository自身も同じ配置を使うself-hosting exampleです。
 
-Codexの`AGENTS.md`、repo-local skills、custom agents、lifecycle hooksと、決定論的なPythonハーネスを組み合わせます。AIは文書作成とレビューを支援しますが、ユーザーや各責任者の承認を代行しません。
+## 配置と移植単位
+
+| Collection | Source | Target | Notes |
+|---|---|---|---|
+| Portable skills | [`.agents/skills`](.agents/skills) | `<target>/.agents/skills` | current repository-scoped skill standard |
+| Codex agents | [`.codex/agents`](.codex/agents) | `<target>/.codex/agents` | Codex project custom agents; standalone TOML |
+| Codex hooks | [`.codex/hooks`](.codex/hooks) | same path | optional Codex integration |
+| Governance runtime | [`governance`](governance), [`tools/devflow.py`](tools/devflow.py), [`docs/templates`](docs/templates), `checklist.xlsx`, `requirements.txt` | same paths | lifecycle skillsの依存runtime |
+
+最短の導入はdry-runから始めます。
+
+```bash
+python3 tools/install_reference.py --target /path/to/target --profile communication
+python3 tools/install_reference.py --target /path/to/target --profile communication --apply
+```
+
+profile別のcopy対象、手動copy、依存、config merge、更新方法は[移植ガイド](docs/INSTALLATION.md)、machine-readable mappingは[distribution/manifest.json](distribution/manifest.json)を参照してください。対象固有の`AGENTS.md`と`.codex/config.toml`は上書きせず、installerが配置する`*.reference.*`を確認して必要部分だけmergeします。
+
+## Governance reference
+
+governance profileはSWEBOK Guide V4.0の固定参照とクラウド／AIのWell-Architected観点を工程gateへ適用します。人が最初に要件と自律実行計画を一度だけ承認し、AIはその権限境界内で後続工程を最後まで進めます。
 
 ## 保証すること
 
 - ユーザー要望の原文から要求、設計、実装、検証、運用、リリース、振り返りまで成果物を保持する
 - 選択プロファイルに含まれるチェック項目を工程へ割り当て、適用／N/A、Pass／Fail、証跡を検査する
 - N/Aに根拠、Passに到達可能な証跡、FailにIssueと期限付き例外承認を要求する
-- 成果物とレビュー結果のハッシュへ承認を結び付け、承認後の変更を自動失効させる
-- 承認・工程イベントをハッシュチェーン付きJSONLで追跡する
+- 要件、トレーサビリティ、実行計画、レビュー結果のハッシュへ初回承認を結び付け、承認後の変更を自動失効させる
+- 初回承認・工程イベントをハッシュチェーン付きJSONLで追跡する
+- 後続工程では人の承認を求めず、全先行品質ゲートと初回承認の有効性を再検査して自律継続する
 - セッション終了時に振り返りを生成し、再発したゲート失敗をskill改善候補へ変換する
-- governance-ownerが承認した改善だけを、次のStop hookでskillへ自動反映する
+- 計画外の改善候補は別work itemへ分離し、次の初回承認なしに恒久指示へ反映しない
 
 ## セットアップ
 
@@ -55,20 +76,21 @@ Codexで利用する場合は、このリポジトリをtrusted projectとして
   --evidence "docs/01-requirements.md"
 ```
 
-ゲート内容が揃った後、実在する責任者が判断を記録します。AIエージェント自身を承認者にしてはいけません。
+要求原文を保存した後、要件、トレーサビリティ、自律実行計画を完成させます。内容検査が通ったら、要求者が一度だけ実行可否を判断します。AIエージェント自身を承認者にしてはいけません。
 
 ```bash
-.venv/bin/python tools/devflow.py approve \
+.venv/bin/python tools/devflow.py authorize \
   --work-item <ID> \
   --decision approved \
   --approver "owner@example.com" \
-  --role requester \
-  --comment "要求原文、目的、受入条件を確認"
+  --comment "要件、実行計画、権限境界、完了条件を確認"
 
 .venv/bin/python tools/devflow.py advance --work-item <ID> --actor "owner@example.com"
 ```
 
-詳しい工程は[docs/FLOW.md](docs/FLOW.md)、統制モデルは[docs/GOVERNANCE.md](docs/GOVERNANCE.md)、AIへの恒久指示は[AGENTS.md](AGENTS.md)を参照してください。
+承認後は、各工程の文書、チェック、証跡、テストを満たして`advance`を続けます。architecture以降に人の工程承認はありません。要件または実行計画が変わると初回承認が失効し、後続工程は停止します。
+
+詳しい工程は[docs/FLOW.md](docs/FLOW.md)、統制モデルは[docs/GOVERNANCE.md](docs/GOVERNANCE.md)、AIへの恒久指示は[AGENTS.md](AGENTS.md)、自律境界・minimal prompt・model routingは[docs/AI-OPERATING-POLICY.md](docs/AI-OPERATING-POLICY.md)を参照してください。
 
 ## チェックリスト参照版
 

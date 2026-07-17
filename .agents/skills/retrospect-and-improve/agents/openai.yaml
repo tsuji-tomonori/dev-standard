@@ -1,4 +1,4 @@
 interface:
   display_name: "振り返りと改善"
-  short_description: "Turn session evidence into approved skill improvements"
-  default_prompt: "Use $retrospect-and-improve to review this session and apply approved lessons safely."
+  short_description: "Turn session evidence into pending improvement work items"
+  default_prompt: "Use $retrospect-and-improve to review this session and propose a testable future work item without auto-applying it."

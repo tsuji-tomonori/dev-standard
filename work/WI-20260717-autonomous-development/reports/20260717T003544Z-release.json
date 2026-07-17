@@ -1,0 +1,23 @@
+{
+  "approval_status": {},
+  "blockers": [
+    {
+      "code": "CHECK_FAIL_BLOCKING",
+      "message": "単一承認workflowではFailを後続承認で受容できない。原因を修正すること",
+      "subject": "MGT-112"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/07-release.md",
+      "sha256": "686888c0a6b453f0181f8e9c5d76e991962f358ae92adb14d95125ebf14a6d5c"
+    }
+  ],
+  "gate_digest": "5fd07119334b146962f12c248261bce4cd49ed3da83eee3fc114b1834f3f598f",
+  "generated_at": "2026-07-17T00:35:44Z",
+  "passed": false,
+  "phase": "release",
+  "review_item_count": 188,
+  "schema_version": 1,
+  "work_item": "WI-20260717-autonomous-development"
+}
