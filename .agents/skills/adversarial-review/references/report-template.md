@@ -1,4 +1,4 @@
-# Adversarial validation report
+# Adversarial review report
 
 ## Target and claims
 
@@ -7,35 +7,34 @@
 - Forbidden outcomes:
 - Authorized boundary:
 
-## Threat model and budget
+## Scope and review budget
 
-- Assets/lifecycle stage:
-- Attacker goal, capability, knowledge, and access:
+- Authoritative sources:
+- Perspectives used:
 - Time/query/case budget:
 - Included/excluded surfaces:
 
-## Oracles and evaluator controls
+## Independent oracles and evaluator controls
 
 - Independent oracle(s):
 - Judge stability/bias checks:
-- Benign utility baseline:
+- Independent derivation:
 
 ## Portfolio and results
 
-| Case | Technique | Reproducer/artifact | Expected | Actual | Severity/confidence | Status |
+| Claim | Defect hypothesis | Minimal evidence/counterexample | Expected | Actual | Impact/confidence | Status |
 |---|---|---|---|---|---|---|
 
 ## Repair and retest
 
 - Root cause and repair:
 - Unchanged reproducer result:
-- Regression/benign control result:
-- Holdout/adaptive variant result:
+- Regression result:
+- Holdout variant result:
 
 ## Conclusion
 
 - Counterexamples found/fixed/open:
 - No-counterexample scope and budget:
-- Untested surfaces and residual risk:
+- Unexamined surfaces and remaining uncertainty:
 - Release recommendation:
-

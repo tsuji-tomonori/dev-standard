@@ -11,26 +11,29 @@ SKILLS = ROOT / ".agents" / "skills"
 
 
 class SkillContractTest(unittest.TestCase):
-    def test_adversarial_validation_is_falsification_not_confirmation(self) -> None:
-        skill = SKILLS / "adversarial-validation"
+    def test_adversarial_review_seeks_defects_without_becoming_security_red_teaming(self) -> None:
+        skill = SKILLS / "adversarial-review"
         text = (skill / "SKILL.md").read_text(encoding="utf-8")
         research = (skill / "references" / "research-basis.md").read_text(encoding="utf-8")
-        playbook = (skill / "references" / "attack-playbook.md").read_text(encoding="utf-8")
+        playbook = (skill / "references" / "challenge-playbook.md").read_text(encoding="utf-8")
         for required in [
             "falsifiable claims",
-            "threat model",
-            "oracle independent",
+            "smallest observation that would prove this wrong",
+            "authoritative source",
+            "independently",
+            "positive assertions",
             "metamorphic",
-            "surviving mutant",
             "swap pairwise order",
-            "benign utility controls",
-            "No finding within a finite budget is not proof",
+            "not proof of correctness",
+            "not security red teaming",
         ]:
             self.assertIn(required, text)
-        for source in ["QuickCheck", "Metamorphic Testing", "Mutation Testing", "AgentDojo", "NIST", "GPT-4o System Card"]:
+        for source in ["QuickCheck", "Metamorphic Testing", "Mutation Testing", "Active Design Reviews", "Perspective-Based Reading", "NASA"]:
             self.assertIn(source, research)
-        for target in ["Requirements", "Architecture", "Implementation", "AI/model", "Tool-using agent", "Mitigation"]:
+        for target in ["Requirements", "Architecture", "Implementation", "Tests", "Document/change set"]:
             self.assertIn(target, playbook)
+        for security_specific in ["prompt injection", "jailbreak", "exfiltration", "attacker goal", "threat model"]:
+            self.assertNotIn(security_specific, text.lower())
 
     def test_skills_catalog_matches_skill_directories(self) -> None:
         text = (ROOT / "docs" / "SKILLS.md").read_text(encoding="utf-8")

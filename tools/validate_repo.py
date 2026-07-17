@@ -36,7 +36,7 @@ def frontmatter(path: Path, failures: list[str]) -> dict[str, str]:
 def validate_skills(failures: list[str]) -> None:
     skills_root = ROOT / ".agents" / "skills"
     expected = {
-        "adversarial-validation",
+        "adversarial-review",
         "govern-development-request",
         "author-lifecycle-docs",
         "inspect-quality-gates",
@@ -173,7 +173,7 @@ def validate_repo(failures: list[str]) -> None:
             fail("distribution manifest skill inventory is stale", failures)
         if sorted(inventory["agents"]) != agent_names:
             fail("distribution manifest agent inventory is stale", failures)
-        for required in ["adversarial-validation", "chat-first", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+        for required in ["adversarial-review", "chat-first", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
             if required not in manifest["profiles"]:
                 fail(f"distribution manifest profile missing: {required}", failures)
         if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":

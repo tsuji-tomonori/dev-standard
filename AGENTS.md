@@ -12,7 +12,7 @@ The user interface is ordinary conversation. For any feature, fix, refactor, des
 - Record one real requester decision with `$authorize-autonomous-execution`; never infer it. A changed authorized artifact requires a new authorization boundary.
 - Preserve the original request in `docs/00-request.md`. Use `$calibrated-collaborative-listening` only when consequential ambiguity changes that boundary, and ask only for the smallest blocking fact.
 - Use `$inspect-quality-gates` as gate truth. Pass requires direct evidence; N/A requires a scope or risk rationale; Fail remains blocking.
-- Use `$adversarial-validation` before release for security-sensitive, safety-critical, AI/agent, authorization, or externally exposed changes, and after a mitigation or escaped defect. Seek counterexamples with an independent oracle; absence of findings is not proof.
+- Use `$adversarial-review` when requirements, design, implementation, or tests need an independent challenge, and after an escaped defect or consequential correction. Assume mistakes may exist, seek counterexamples with an independent oracle, and do not treat absence of findings as proof.
 - After authorization, act autonomously within scope until `closed`. Stop only for unavailable capability or authority outside the plan, and record the exact blocker.
 - Keep secrets, raw transcripts, personal data, `.workspace/`, and production evidence out of Git.
 

@@ -1,0 +1,14 @@
+{
+  "catalog_sha256": "a43bcfefad7b3c6479d36cbe749e77f7cad93e683ffa0520c2f13650405cecef",
+  "created_at": "2026-07-17T14:01:01Z",
+  "current_phase": "release",
+  "id": "WI-20260717-140101-8131b6",
+  "profiles": [
+    "CORE"
+  ],
+  "schema_version": 1,
+  "status": "active",
+  "title": "敵対的検証Skillを批判的レビューへ再定義",
+  "updated_at": "2026-07-17T14:06:23Z",
+  "workflow_schema_version": 2
+}

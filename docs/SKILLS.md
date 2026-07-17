@@ -4,7 +4,7 @@ Copy a skill folder to `<target>/.agents/skills/<name>/`. The `SKILL.md` metadat
 
 | Skill | Purpose and trigger | Dependencies | Copy source |
 |---|---|---|---|
-| `adversarial-validation` | Falsify requirements, designs, code, tests, mitigations, and AI/agent behavior; use for red teaming, robustness, high-risk release, or independent challenge | Standalone; can consume lifecycle evidence | `.agents/skills/adversarial-validation` |
+| `adversarial-review` | Assume mistakes may exist and critically challenge requirements, designs, code, tests, or documents with contradictions, omissions, counterexamples, and independent evidence | Standalone; can consume lifecycle evidence | `.agents/skills/adversarial-review` |
 | `author-lifecycle-docs` | Create and maintain phase documents and traceability | Full governance runtime | `.agents/skills/author-lifecycle-docs` |
 | `authorize-autonomous-execution` | Record the one explicit requester authorization | Full governance runtime | `.agents/skills/authorize-autonomous-execution` |
 | `calibrated-collaborative-listening` | Infer and gently confirm ambiguous intent without sycophancy or meaning loss | Standalone | `.agents/skills/calibrated-collaborative-listening` |
@@ -16,7 +16,7 @@ Copy a skill folder to `<target>/.agents/skills/<name>/`. The `SKILL.md` metadat
 
 ## Collections
 
-- Minimal conversational development: `chat-first-development`, `calibrated-collaborative-listening`, and `adversarial-validation` (the `chat-first` profile).
-- Defensive challenge only: copy `adversarial-validation` by itself.
+- Minimal conversational development: `chat-first-development`, `calibrated-collaborative-listening`, and `adversarial-review` (the `chat-first` profile).
+- Critical challenge only: copy `adversarial-review` by itself.
 - Full governed lifecycle: copy all skills plus the runtime listed in [INSTALLATION.md](INSTALLATION.md).
 - Codex custom reviewer agents are separate and live under `.codex/agents`; they are listed in [INSTALLATION.md](INSTALLATION.md).

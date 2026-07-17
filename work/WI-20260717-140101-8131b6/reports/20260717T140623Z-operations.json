@@ -1,0 +1,21 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/06-operations.md",
+      "sha256": "aada11b4717f974fbbb8c1891c1e0398b8e1e1a0680355e4619fde0b4177481c"
+    },
+    {
+      "path": "docs/06-maintenance.md",
+      "sha256": "37b95bcdaf7cdb41c8447e881e9ed9eb4803bb91be8c17b7d1ac809291d3de93"
+    }
+  ],
+  "gate_digest": "d75e1f28a3d53aaa1dea1033207fc80fe877e059d1b17e22bae0e1f4e9c7072e",
+  "generated_at": "2026-07-17T14:06:23Z",
+  "passed": true,
+  "phase": "operations",
+  "review_item_count": 191,
+  "schema_version": 1,
+  "work_item": "WI-20260717-140101-8131b6"
+}
