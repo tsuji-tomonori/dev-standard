@@ -4,130 +4,94 @@
 
 No installer command is required.
 
-1. Copy the `.agents/skills` folder into the target repository at the same path.
+1. Copy `.agents/skills` into the target repository at the same path.
 2. Open the target repository with the AI development agent.
-3. Describe the desired change in ordinary language. The `chat-first-development` skill detects the request and owns setup, requirements, the one initial authorization, design, implementation, tests, PR creation, and CI verification.
+3. Describe the desired outcome in ordinary language.
 
-For the full deterministic governance flow, also copy these entries while preserving their relative paths:
+The user never needs to run Python, an installer, setup, tests, Git, or lifecycle commands. The AI inspects the target, creates repository-local prerequisites, bootstraps the target's canonical requirements and standards registry, and owns internal commands.
 
-- `.codex/agents` (optional read-only reviewers);
-- `governance`;
+Copying skills does not copy this reference repository's product requirements. On first use, `$maintain-canonical-requirements` creates the target-specific `spec/requirements/requirements.json` from its bundled empty template. It generates `docs/requirements/REQUIREMENTS.md`; `$verify-against-engineering-standards` similarly bootstraps `governance/standards/registry.json` from its bundled official-source registry.
+
+For the full deterministic governance flow, also copy these entries while preserving relative paths:
+
+- `.codex/agents` for optional read-only reviewers;
+- `governance` for policy, checklist, and standards registry;
 - `docs/templates`;
 - `tools`;
 - `checklist.xlsx`;
 - `requirements.txt`.
 
-If the target has no `AGENTS.md`, copy `distribution/snippets/AGENTS.governance.md` as `AGENTS.md`. If it already has one, leave it intact: the chat-first skill will propose a delimited compatible addition in the first reviewed change. The same rule applies to `.codex/config.toml`.
-
-The user never needs to run Python, a setup script, tests, Git, or lifecycle commands. The AI performs repository-local preparation automatically. If only the chat-first skill was copied, it uses a lightweight work record rather than stopping for missing governance files.
+If the target has no `AGENTS.md`, copy `distribution/snippets/AGENTS.governance.md` as `AGENTS.md`. If it already has one, leave it intact; the agent adds only a clearly delimited compatible section as part of the reviewed change. Apply the same preservation rule to `.codex/config.toml`.
 
 ## Current standard paths
 
-| Asset | Canonical source in this repository | Copy destination | Portability |
+| Asset | Reference source | Target | Rule |
 |---|---|---|---|
-| Reusable skill | `.agents/skills/<name>/` | `<target>/.agents/skills/<name>/` | Open skill layout; preferred for reuse across repositories |
-| Codex custom agent | `.codex/agents/<name>.toml` | `<target>/.codex/agents/<name>.toml` | Codex-specific; project-scoped and auto-discovered |
-| Codex hooks | `.codex/hooks/`, `.codex/hooks.json` | same paths | Codex-specific; requires trusted project and `hooks = true` |
-| Governance runtime | `governance/`, `docs/templates/`, `tools/devflow.py`, `checklist.xlsx`, `requirements.txt` | same paths | Required by the lifecycle governance skills |
+| Reusable skill | `.agents/skills/<name>/` | `<target>/.agents/skills/<name>/` | current repository-scoped portable layout |
+| Durable requirements | skill template | `<target>/spec/requirements/requirements.json` | target-specific, generated at first intake |
+| Generated requirements | canonical catalog | `<target>/docs/requirements/REQUIREMENTS.md` | never edit directly |
+| Generated implementation design | source/OpenAPI/SQL/CFn | `<target>/docs/design/generated/` | source digest and drift checked |
+| Standards registry | skill asset or governance profile | `<target>/governance/standards/registry.json` | official source, version, check date, refresh interval |
+| Codex custom agent | `.codex/agents/<name>.toml` | same path | optional project-scoped reviewer |
+| Codex hooks | `.codex/hooks/`, `.codex/hooks.json` | same paths | optional trusted-project integration |
 
-Do not move repository skills to `.codex/skills`. Current Codex discovery scans repository `.agents/skills` directories. Personal skills use `$HOME/.agents/skills`; this installer intentionally does not write there. Custom agents are standalone TOML files under `.codex/agents` and do not need duplicate entries in `.codex/config.toml`.
+Repository skills belong in `.agents/skills`, not `.codex/skills`. Personal skills may use `$HOME/.agents/skills`, but this collection deliberately makes no global writes.
 
-## Choose a profile
+## Choose a copy profile
 
 | Profile | Use when | Copies |
 |---|---|---|
-| `adversarial-review` | Requirements, design, implementation, tests, or documents need a defect-seeking independent challenge | one standalone skill with research and challenge-playbook references |
-| `chat-first` | Natural-language development with automatic setup is needed | chat-first orchestrator, calibrated listening, and adversarial validation skills |
-| `communication` | Only calibrated listening and articulation are needed | one standalone skill |
-| `commit-style` | Only Japanese gitmoji commit guidance is needed | one standalone skill |
-| `skills` | All skills are wanted and dependencies will be handled separately | `.agents/skills` |
+| `requirements` | Conversation, articulation, atomic durable requirements | canonical-requirements and calibrated-listening skills |
+| `implementation-design` | FastAPI/CDK implementation-derived design | detailed-design generator skill |
+| `standards-verification` | SWEBOK/cloud best-practice checks | standards and adversarial-review skills |
+| `development-framework` | All three guarantees are needed | the five supporting skills above |
+| `chat-first` | Ordinary conversation should orchestrate the complete flow | development framework plus chat-first orchestrator |
+| `adversarial-review` | A standalone critical correctness review is needed | adversarial-review skill |
+| `communication` | Only calibrated listening is needed | calibrated-listening skill |
+| `commit-style` | Only Japanese gitmoji commits are needed | commit style skill |
+| `skills` | Every portable skill is wanted | `.agents/skills` |
 | `agents` | Read-only Codex reviewers are wanted | `.codex/agents` |
-| `governance` | Full governed lifecycle is needed | all skills and reviewers, policy/catalog, workbook, templates, harness, dependency pin, `AGENTS.md` merge reference |
-| `codex-hooks` | Session and retrospective hooks are wanted | hook scripts and hook declaration |
-| `full` | The target should use the complete reference set | all skills, agents, hooks, governance runtime |
+| `governance` | Deterministic phases, checks, authorization, and audit are needed | skills, agents, runtime, templates, dependency pin, merge reference |
+| `codex-hooks` | Lifecycle hooks are wanted | hook scripts and declaration |
+| `full` | The complete reference set is wanted | all skills, agents, hooks, and governance runtime |
 
-The machine-readable source of these mappings is [`distribution/manifest.json`](../distribution/manifest.json).
+Mappings are defined once in [`distribution/manifest.json`](../distribution/manifest.json).
 
-## Optional maintainer automation
+## Dependencies and automatic bootstrap
 
-The manifest-driven installer remains available for maintainers and CI. It is not part of the chat-first user workflow. The AI may invoke it internally when the reference repository is available.
+- Listening, canonical requirements, adversarial review, and standards registry validation use the Python standard library or natural-language instructions.
+- Implementation design pins PyYAML and SQLGlot in its own `requirements.txt`. The agent prepares them in a repository-local environment only when the generator is used.
+- Governance skills additionally use `tools/devflow.py`, `checklist.xlsx`, and root `requirements.txt`.
+- If only skill folders are present, chat-first uses a lightweight `work/<id>` record but still maintains the durable catalog outside `work/`.
 
-Preview first; the default performs no writes:
+Missing automation is an agent setup task, not a user question. Setup must not overwrite target-owned files, weaken checks, deploy production, merge a PR, or write global configuration without explicit authority.
+
+## Optional maintainer installer
+
+The manifest-driven installer is available for maintainers and CI; it is not part of the user workflow. Preview is the default and performs no writes:
 
 ```bash
 python3 tools/install_reference.py \
   --target /absolute/path/to/target-repository \
-  --profile communication \
-  --profile agents
+  --profile development-framework
 ```
 
-Apply the reviewed plan:
+Apply a reviewed plan:
 
 ```bash
 python3 tools/install_reference.py \
   --target /absolute/path/to/target-repository \
-  --profile communication \
-  --profile agents \
+  --profile development-framework \
   --apply
 ```
 
-The installer refuses differing existing files before copying anything. Use `--force` only after reviewing the dry-run and target diff. It never writes to `/`, the home directory, or a global skill location.
+The installer refuses differing existing files before any write. `--force` is only for a separately reviewed replacement. It never targets `/`, the home directory, or a global skill location.
 
-## Manual copy
+## Update and removal
 
-Copy one portable skill:
+Copy or run the installer again to compare a newer collection. Requirements updates occur through revision-checked add/update/retire deltas, not by replacing the catalog. Remove copied skills manually so automation cannot delete target-owned files. Retire a durable requirement instead of erasing its history.
 
-```bash
-mkdir -p TARGET/.agents/skills
-cp -R .agents/skills/calibrated-collaborative-listening TARGET/.agents/skills/
-```
-
-Copy all Codex custom agents:
-
-```bash
-mkdir -p TARGET/.codex/agents
-cp .codex/agents/*.toml TARGET/.codex/agents/
-```
-
-For hooks, also merge this setting into the target's existing `.codex/config.toml`; do not replace the entire file. The `codex-hooks` and `full` profiles install the same content as `.codex/config.reference.toml` for review:
-
-```toml
-[features]
-hooks = true
-```
-
-Optional cost bounds can be merged when they fit the target workload:
-
-```toml
-[agents]
-max_threads = 3
-max_depth = 1
-interrupt_message = true
-```
-
-## Dependency notes
-
-- `calibrated-collaborative-listening` and `japanese-git-commit-gitmoji` are standalone.
-- `govern-development-request`, `author-lifecycle-docs`, `authorize-autonomous-execution`, `inspect-quality-gates`, and `retrospect-and-improve` depend on the governance runtime. Use the `governance` profile.
-- Custom reviewers expect lifecycle documents and checklist evidence when used with governance, but their TOML files can be copied independently.
-- Target-specific `AGENTS.md` and `.codex/config.toml` should be merged intentionally. The installer never overwrites them. The `governance` profile writes `AGENTS.governance.reference.md`, and hook-enabled profiles write `.codex/config.reference.toml`; review and merge the applicable sections, then remove the reference copies if desired.
-
-## Verify the target
-
-From the target repository:
-
-```bash
-python3 tools/devflow.py catalog --check      # governance/full profile
-python3 tools/devflow.py audit                # governance/full profile
-```
-
-For a standalone skill, run the current skill validator available in the Codex skill-creator workflow and confirm the skill appears after reopening or refreshing the repository.
-
-## Update or remove
-
-Run the installer again without `--apply` to preview drift. To update, review the diff and use `--apply --force`. Removal is intentionally manual so the installer cannot delete target-owned files or configuration.
-
-## Official references
+## Official layout references
 
 - [Codex skills](https://learn.chatgpt.com/docs/build-skills)
 - [Codex custom agents](https://learn.chatgpt.com/docs/agent-configuration/subagents)

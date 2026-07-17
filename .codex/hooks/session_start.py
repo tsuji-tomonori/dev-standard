@@ -8,9 +8,9 @@ from pathlib import Path
 
 def main() -> int:
     try:
-        event = json.load(sys.stdin)
+        json.load(sys.stdin)
     except json.JSONDecodeError:
-        event = {}
+        pass
     root = Path(__file__).resolve().parents[2]
     active = []
     for state_path in sorted((root / "work").glob("*/state.json")):

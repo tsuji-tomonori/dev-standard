@@ -46,11 +46,28 @@ class InstallReferenceTest(unittest.TestCase):
         expected = sorted(path.name for path in (install_reference.ROOT / ".codex" / "agents").glob("*.toml"))
         self.assertEqual(installed, expected)
 
-    def test_chat_first_profile_is_self_starting_skill_pair(self) -> None:
+    def test_chat_first_profile_is_self_starting_three_pillar_collection(self) -> None:
         install_reference.install(self.target, ["chat-first"], apply=True, force=False)
-        for name in ["chat-first-development", "calibrated-collaborative-listening", "adversarial-review"]:
+        for name in [
+            "chat-first-development",
+            "calibrated-collaborative-listening",
+            "adversarial-review",
+            "maintain-canonical-requirements",
+            "generate-implementation-design",
+            "verify-against-engineering-standards",
+        ]:
             self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
         self.assertFalse((self.target / "tools").exists())
+
+    def test_development_framework_profile_contains_three_guarantees(self) -> None:
+        install_reference.install(self.target, ["development-framework"], apply=True, force=False)
+        for name in [
+            "maintain-canonical-requirements",
+            "generate-implementation-design",
+            "verify-against-engineering-standards",
+        ]:
+            self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
+        self.assertTrue((self.target / ".agents/skills/generate-implementation-design/requirements.txt").is_file())
 
     def test_full_profile_preserves_target_configuration_and_installs_merge_references(self) -> None:
         agents_file = self.target / "AGENTS.md"

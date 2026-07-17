@@ -8,11 +8,10 @@ from pathlib import Path
 
 from openpyxl import load_workbook
 from openpyxl.comments import Comment
-from openpyxl.formatting.rule import CellIsRule, FormulaRule
+from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter, quote_sheetname
 from openpyxl.worksheet.datavalidation import DataValidation
-
 
 BOOK = Path("checklist.xlsx")
 SWEBOK = Path(".workspace/swebok-v4.pdf")

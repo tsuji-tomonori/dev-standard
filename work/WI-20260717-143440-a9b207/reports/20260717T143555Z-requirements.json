@@ -1,0 +1,39 @@
+{
+  "approval_status": {
+    "requester": {
+      "approver": "tsuji-tomonori",
+      "comment": "永続要件の発見・保守、FastAPI/CDKの実装由来詳細設計、SWEBOK/クラウドvendor best practices検証の3本柱へ点検・修正しPRを作成するという本メッセージを初回方針決定として記録。",
+      "decision": "approved",
+      "gate_digest": "cac352e1770e4c81397e19ac72e968f4f0f15b2be53c16d025350a96d952ec5e",
+      "index": 1,
+      "phase": "requirements",
+      "previous_hash": "GENESIS",
+      "record_hash": "6780d85cd6957a46708801b9154b6c07b99961991fe52c40715d6bc42d8a6653",
+      "role": "requester",
+      "timestamp": "2026-07-17T14:35:55Z",
+      "work_item": "WI-20260717-143440-a9b207"
+    }
+  },
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/01-requirements.md",
+      "sha256": "624915fe54ffaa01308fa2e9988ffd38e11af7b6a2dda06209e50a394a7beb28"
+    },
+    {
+      "path": "docs/01-traceability.md",
+      "sha256": "1bc3731e9debf1ea71e8a81d24691f3c1ec7e16ee9ccb28ada17abaae452769d"
+    },
+    {
+      "path": "docs/01-execution-plan.md",
+      "sha256": "3ff441b09db6d13b65f0345fc1cbbe26bd360346c6acac3233242ee81dc6223d"
+    }
+  ],
+  "gate_digest": "cac352e1770e4c81397e19ac72e968f4f0f15b2be53c16d025350a96d952ec5e",
+  "generated_at": "2026-07-17T14:35:55Z",
+  "passed": true,
+  "phase": "requirements",
+  "review_item_count": 88,
+  "schema_version": 1,
+  "work_item": "WI-20260717-143440-a9b207"
+}

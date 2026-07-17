@@ -1,0 +1,16 @@
+{
+  "catalog_sha256": "a43bcfefad7b3c6479d36cbe749e77f7cad93e683ffa0520c2f13650405cecef",
+  "created_at": "2026-07-17T14:34:40Z",
+  "current_phase": "closed",
+  "id": "WI-20260717-143440-a9b207",
+  "profiles": [
+    "CORE",
+    "CLOUD-COMMON",
+    "AWS-DELTA"
+  ],
+  "schema_version": 1,
+  "status": "closed",
+  "title": "永続要件・実装由来設計・標準検証フレームを追加",
+  "updated_at": "2026-07-17T15:06:52Z",
+  "workflow_schema_version": 2
+}
