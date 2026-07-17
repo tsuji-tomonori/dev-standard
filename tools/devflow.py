@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic lifecycle governance harness for AI-driven development."""
+"""AI開発のライフサイクルを決定的に統制する実行基盤。"""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ import subprocess
 import sys
 import tempfile
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -23,6 +23,7 @@ WORK_ROOT = ROOT / "work"
 TEMPLATE_ROOT = ROOT / "docs" / "templates"
 IMPROVEMENTS_PATH = ROOT / "governance" / "improvements" / "proposals.json"
 REPORT_ROOT = ROOT / "reports"
+RESULTS_SCHEMA_VERSION = 2
 
 
 class GovernanceError(RuntimeError):
@@ -288,6 +289,56 @@ def normalize_profiles(values: Iterable[str]) -> list[str]:
     return profiles
 
 
+def result_history_snapshot(item: dict[str, Any]) -> dict[str, Any]:
+    """現在のレビュー判断を、再確認可能な履歴レコードへ変換する。"""
+    fields = [
+        "applicability",
+        "na_rationale",
+        "verdict",
+        "evidence",
+        "issue_id",
+        "reviewer",
+        "reviewed_at",
+        "project_severity",
+        "severity_rationale",
+        "remediation_plan",
+        "due_at",
+        "recheck",
+    ]
+    return {field: item.get(field) for field in fields}
+
+
+def append_result_history(item: dict[str, Any]) -> None:
+    if item.get("applicability") == "undecided" and item.get("verdict") == "unreviewed":
+        return
+    history = item.setdefault("history", [])
+    if not isinstance(history, list):
+        raise GovernanceError(f"{item.get('id')}: invalid review history")
+    history.append(result_history_snapshot(item))
+
+
+def parse_due_at(value: str) -> date:
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise GovernanceError("是正期限はYYYY-MM-DD形式で指定する") from exc
+
+
+def recheck_valid(work: Path, recheck: Any) -> tuple[bool, str]:
+    if not isinstance(recheck, dict):
+        return False, "Fail是正後の再確認記録がない"
+    required = ["verdict", "evidence", "reviewer", "reviewed_at"]
+    missing = [field for field in required if not recheck.get(field)]
+    if missing:
+        return False, f"再確認項目が不足: {', '.join(missing)}"
+    if recheck["verdict"] != "pass":
+        return False, "再確認結果がPassでない"
+    evidence = recheck["evidence"]
+    if not isinstance(evidence, list) or not evidence_valid(work, [str(value) for value in evidence]):
+        return False, "再確認を裏付ける到達可能な証跡がない"
+    return True, ""
+
+
 def cmd_init(args: argparse.Namespace) -> int:
     policy = load_policy()
     catalog = load_catalog()
@@ -324,13 +375,18 @@ def cmd_init(args: argparse.Namespace) -> int:
             "phase": item["phase"],
             "base_severity": item["base_severity"],
             "project_severity": item["base_severity"],
+            "severity_rationale": "",
             "applicability": "undecided",
             "na_rationale": "",
             "verdict": "unreviewed",
             "evidence": [],
             "issue_id": "",
+            "remediation_plan": "",
+            "due_at": "",
             "reviewer": "",
             "reviewed_at": "",
+            "recheck": None,
+            "history": [],
             "exception": None,
         })
     state = {
@@ -346,7 +402,10 @@ def cmd_init(args: argparse.Namespace) -> int:
         "catalog_sha256": sha256_bytes(canonical_bytes(stable_catalog(catalog))),
     }
     atomic_write_json(work / "state.json", state)
-    atomic_write_json(work / "review" / "checklist-results.json", {"schema_version": 1, "items": selected})
+    atomic_write_json(
+        work / "review" / "checklist-results.json",
+        {"schema_version": RESULTS_SCHEMA_VERSION, "items": selected},
+    )
     (work / "approvals.jsonl").touch()
     (work / "events.jsonl").touch()
     append_chained(work / "events.jsonl", {
@@ -367,7 +426,30 @@ def cmd_init(args: argparse.Namespace) -> int:
 
 def load_work(work_item: str) -> tuple[Path, dict[str, Any], dict[str, Any]]:
     work = safe_work_path(work_item)
-    return work, read_json(work / "state.json"), read_json(work / "review" / "checklist-results.json")
+    results = read_json(work / "review" / "checklist-results.json")
+    validate_results_envelope(results)
+    return work, read_json(work / "state.json"), results
+
+
+def validate_results_envelope(results: Any) -> None:
+    if not isinstance(results, dict) or set(results) != {"schema_version", "items"}:
+        raise GovernanceError("invalid checklist result envelope")
+    if results["schema_version"] not in {1, RESULTS_SCHEMA_VERSION} or not isinstance(results["items"], list):
+        raise GovernanceError("unsupported checklist result schema")
+    if results["schema_version"] < RESULTS_SCHEMA_VERSION:
+        return
+    required = {
+        "severity_rationale",
+        "remediation_plan",
+        "due_at",
+        "recheck",
+        "history",
+    }
+    for item in results["items"]:
+        if not isinstance(item, dict) or not required <= set(item):
+            raise GovernanceError(f"{item.get('id') if isinstance(item, dict) else '?'}: auditable result fields missing")
+        if not isinstance(item["history"], list):
+            raise GovernanceError(f"{item['id']}: review history must be a list")
 
 
 def require_current_workflow(state: dict[str, Any]) -> None:
@@ -452,12 +534,17 @@ def gate_snapshot(work: Path, state: dict[str, Any], results: dict[str, Any], ph
             documents.append(document)
         blockers.extend(failures)
     review_slice = sorted((item for item in results["items"] if item["phase"] == phase), key=lambda item: item["id"])
+    auditable_results = int(results.get("schema_version", 1)) >= RESULTS_SCHEMA_VERSION
     for item in review_slice:
         item_id = item["id"]
         applicability = item.get("applicability")
         if applicability == "undecided":
             blockers.append({"code": "CHECK_APPLICABILITY", "subject": item_id, "message": "適用判定が未決定"})
             continue
+        if not str(item.get("reviewer") or "").strip() or not str(item.get("reviewed_at") or "").strip():
+            blockers.append({"code": "CHECK_REVIEWER", "subject": item_id, "message": "レビュアーまたはレビュー日時がない"})
+        if auditable_results and not str(item.get("severity_rationale") or "").strip():
+            blockers.append({"code": "CHECK_SEVERITY_RATIONALE", "subject": item_id, "message": "案件重要度の判断根拠がない"})
         if applicability == "not-applicable":
             if not str(item.get("na_rationale") or "").strip():
                 blockers.append({"code": "CHECK_NA_RATIONALE", "subject": item_id, "message": "N/A根拠がない"})
@@ -470,9 +557,28 @@ def gate_snapshot(work: Path, state: dict[str, Any], results: dict[str, Any], ph
             evidence = item.get("evidence") or []
             if not isinstance(evidence, list) or not evidence_valid(work, [str(value) for value in evidence]):
                 blockers.append({"code": "CHECK_EVIDENCE", "subject": item_id, "message": "Passを裏付ける到達可能な証跡がない"})
+            if auditable_results and any(
+                isinstance(entry, dict) and entry.get("verdict") == "fail"
+                for entry in item.get("history", [])
+            ):
+                valid, reason = recheck_valid(work, item.get("recheck"))
+                if not valid:
+                    blockers.append({"code": "CHECK_RECHECK", "subject": item_id, "message": reason})
         elif verdict == "fail":
             if not str(item.get("issue_id") or "").strip():
                 blockers.append({"code": "CHECK_ISSUE", "subject": item_id, "message": "FailにIssue IDがない"})
+            if auditable_results:
+                if not str(item.get("remediation_plan") or "").strip():
+                    blockers.append({"code": "CHECK_REMEDIATION", "subject": item_id, "message": "Failに対応方針がない"})
+                due_at = str(item.get("due_at") or "")
+                try:
+                    if not due_at:
+                        raise ValueError
+                    due = date.fromisoformat(due_at)
+                    if due < datetime.now(timezone.utc).date():
+                        blockers.append({"code": "CHECK_DUE_OVERDUE", "subject": item_id, "message": "是正期限を超過している"})
+                except ValueError:
+                    blockers.append({"code": "CHECK_DUE", "subject": item_id, "message": "Failに有効な是正期限がない"})
             if state.get("workflow_schema_version") == policy["schema_version"]:
                 blockers.append({
                     "code": "CHECK_FAIL_BLOCKING",
@@ -485,8 +591,6 @@ def gate_snapshot(work: Path, state: dict[str, Any], results: dict[str, Any], ph
                     blockers.append({"code": "CHECK_EXCEPTION", "subject": item_id, "message": reason})
         else:
             blockers.append({"code": "CHECK_VERDICT", "subject": item_id, "message": "適用項目の判定が未確認"})
-        if not str(item.get("reviewer") or "").strip() or not str(item.get("reviewed_at") or "").strip():
-            blockers.append({"code": "CHECK_REVIEWER", "subject": item_id, "message": "レビュアーまたはレビュー日時がない"})
     digest_payload = {
         "work_item": state["id"],
         "phase": phase,
@@ -557,17 +661,49 @@ def cmd_set_check(args: argparse.Namespace) -> int:
         raise GovernanceError("invalid verdict")
     if args.severity not in policy["review_values"]["severity"]:
         raise GovernanceError("invalid project severity")
+    auditable_results = int(results.get("schema_version", 1)) >= RESULTS_SCHEMA_VERSION
+    if args.applicability == "not-applicable" and not str(args.na_rationale or "").strip():
+        raise GovernanceError("N/A rationale required")
+    if args.applicability == "applicable" and args.verdict == "pass" and not args.evidence:
+        raise GovernanceError("Pass evidence required")
+    if args.applicability == "applicable" and args.verdict == "fail" and not str(args.issue or "").strip():
+        raise GovernanceError("Fail issue required")
+    severity_rationale = str(getattr(args, "severity_rationale", "") or "")
+    remediation_plan = str(getattr(args, "remediation_plan", "") or "")
+    due_at = str(getattr(args, "due_at", "") or "")
+    recheck_evidence = getattr(args, "recheck_evidence", None)
+    recheck_reviewer = str(getattr(args, "recheck_reviewer", "") or "")
+    if auditable_results and not severity_rationale.strip():
+        raise GovernanceError("project severity rationale required")
+    if auditable_results and args.applicability == "applicable" and args.verdict == "fail":
+        if not remediation_plan.strip():
+            raise GovernanceError("Fail remediation plan required")
+        parse_due_at(due_at)
     if args.exception_approver and state.get("workflow_schema_version") == policy["schema_version"]:
         raise GovernanceError("single-authorization workflow does not accept later human risk exceptions")
+    append_result_history(match)
+    reviewed_at = utcnow()
+    recheck = None
+    if recheck_evidence or recheck_reviewer:
+        recheck = {
+            "verdict": "pass",
+            "evidence": recheck_evidence or [],
+            "reviewer": recheck_reviewer or args.reviewer,
+            "reviewed_at": reviewed_at,
+        }
     match.update({
         "applicability": args.applicability,
         "na_rationale": args.na_rationale or "",
         "verdict": args.verdict,
         "evidence": args.evidence or [],
         "issue_id": args.issue or "",
+        "remediation_plan": remediation_plan,
+        "due_at": due_at,
         "reviewer": args.reviewer,
-        "reviewed_at": utcnow(),
+        "reviewed_at": reviewed_at,
         "project_severity": args.severity,
+        "severity_rationale": severity_rationale,
+        "recheck": recheck,
     })
     if args.exception_approver:
         match["exception"] = {
@@ -580,10 +716,10 @@ def cmd_set_check(args: argparse.Namespace) -> int:
     elif args.clear_exception:
         match["exception"] = None
     atomic_write_json(work / "review" / "checklist-results.json", results)
-    state["updated_at"] = utcnow()
+    state["updated_at"] = reviewed_at
     atomic_write_json(work / "state.json", state)
     append_chained(work / "events.jsonl", {
-        "timestamp": utcnow(),
+        "timestamp": reviewed_at,
         "event": "checklist-result-updated",
         "phase": match["phase"],
         "actor": args.reviewer,
@@ -601,6 +737,7 @@ def cmd_set_checks(args: argparse.Namespace) -> int:
     if not isinstance(payload, list) or not payload:
         raise GovernanceError("batch input must be a non-empty JSON list")
     by_id = {item["id"]: item for item in results["items"]}
+    auditable_results = int(results.get("schema_version", 1)) >= RESULTS_SCHEMA_VERSION
     seen: set[str] = set()
     validated: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for entry in payload:
@@ -630,18 +767,40 @@ def cmd_set_checks(args: argparse.Namespace) -> int:
             raise GovernanceError(f"{item_id}: Fail issue required")
         if not str(entry.get("reviewer") or "").strip():
             raise GovernanceError(f"{item_id}: reviewer required")
+        if auditable_results and not str(entry.get("severity_rationale") or "").strip():
+            raise GovernanceError(f"{item_id}: project severity rationale required")
+        if auditable_results and applicability == "applicable" and verdict == "fail":
+            if not str(entry.get("remediation_plan") or "").strip():
+                raise GovernanceError(f"{item_id}: Fail remediation plan required")
+            try:
+                parse_due_at(str(entry.get("due_at") or ""))
+            except GovernanceError as exc:
+                raise GovernanceError(f"{item_id}: {exc}") from exc
+        failed_before = match.get("verdict") == "fail" or any(
+            isinstance(history, dict) and history.get("verdict") == "fail"
+            for history in match.get("history", [])
+        )
+        if auditable_results and applicability == "applicable" and verdict == "pass" and failed_before:
+            valid, reason = recheck_valid(work, entry.get("recheck"))
+            if not valid:
+                raise GovernanceError(f"{item_id}: {reason}")
         validated.append((match, entry))
     reviewed_at = utcnow()
     for match, entry in validated:
+        append_result_history(match)
         match.update({
             "applicability": entry["applicability"],
             "na_rationale": str(entry.get("na_rationale") or ""),
             "verdict": entry["verdict"],
             "evidence": [str(value) for value in entry.get("evidence") or []],
             "issue_id": str(entry.get("issue") or ""),
+            "remediation_plan": str(entry.get("remediation_plan") or ""),
+            "due_at": str(entry.get("due_at") or ""),
             "reviewer": str(entry["reviewer"]),
             "reviewed_at": reviewed_at,
             "project_severity": entry["severity"],
+            "severity_rationale": str(entry.get("severity_rationale") or ""),
+            "recheck": entry.get("recheck"),
             "exception": None,
         })
     atomic_write_json(work / "review" / "checklist-results.json", results)
@@ -972,6 +1131,7 @@ def cmd_audit(args: argparse.Namespace) -> int:
             try:
                 state = read_json(state_path)
                 results = read_json(work / "review" / "checklist-results.json")
+                validate_results_envelope(results)
                 verify_chain(work / "events.jsonl")
                 verify_chain(work / "approvals.jsonl")
                 require_current_workflow(state)
@@ -1044,10 +1204,15 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument("--applicability", required=True)
     check.add_argument("--verdict", required=True)
     check.add_argument("--severity", required=True)
+    check.add_argument("--severity-rationale")
     check.add_argument("--reviewer", required=True)
     check.add_argument("--evidence", action="append")
     check.add_argument("--na-rationale")
     check.add_argument("--issue")
+    check.add_argument("--remediation-plan")
+    check.add_argument("--due-at")
+    check.add_argument("--recheck-evidence", action="append")
+    check.add_argument("--recheck-reviewer")
     check.add_argument("--exception-approver")
     check.add_argument("--exception-role")
     check.add_argument("--exception-rationale")

@@ -14,8 +14,9 @@ from openpyxl.utils import get_column_letter, quote_sheetname
 from openpyxl.worksheet.datavalidation import DataValidation
 
 BOOK = Path("checklist.xlsx")
-SWEBOK = Path(".workspace/swebok-v4.pdf")
-UPDATED = date(2026, 7, 16)
+SWEBOK = Path(os.environ.get("SWEBOK_PDF", ".workspace/swebok-v4a.pdf"))
+EXPECTED_SWEBOK_SHA256 = "b3cb8028fecb9607f757504c861947fa3bf423087ea8bf08c58020f0ba3596dc"
+UPDATED = date(2026, 7, 18)
 
 REVIEW_SHEETS = [
     "01_要件定義",
@@ -80,6 +81,20 @@ def find_row(ws, item_id: str) -> int:
         if ws.cell(row, 1).value == item_id:
             return row
     raise KeyError(f"{ws.title}: {item_id}")
+
+
+def normalize_swebok_references(wb) -> None:
+    for sheet in REVIEW_SHEETS:
+        ws = wb[sheet]
+        for row in range(2, ws.max_row + 1):
+            reference = ws.cell(row, 8).value
+            if isinstance(reference, str):
+                ws.cell(row, 8).value = reference.replace("swebok-v4.pdf", "swebok-v4a.pdf")
+    summary = wb["サマリ"]
+    for row in range(5, 5 + len(REVIEW_SHEETS)):
+        target = summary.cell(row, 3).value
+        if isinstance(target, str):
+            summary.cell(row, 3).value = target.replace("swebok-v4.pdf", "swebok-v4a.pdf")
 
 
 def set_item(ws, item_id: str, *, check: str, criterion: str, intent: str, reference: str | None = None) -> None:
@@ -398,7 +413,7 @@ def apply_content_fixes(wb) -> None:
 
 
 SOURCE_ROWS = [
-    ("SRC-SWEBOK-V4", "Guide to the Software Engineering Body of Knowledge (SWEBOK Guide) V4.0", "V4.0（ローカル固定参照版）", "https://www.computer.org/education/bodies-of-knowledge/software-engineering", "KA 1-10, 12, 13を直接参照。オンライン最新版ではなく同梱PDFを基準とする。"),
+    ("SRC-SWEBOK-V4A", "Guide to the Software Engineering Body of Knowledge (SWEBOK Guide) v4.0a", "v4.0a / 2025-09（ローカル固定参照版）", "https://www.computer.org/education/bodies-of-knowledge/software-engineering", "全18KAを対応付け、KA 1〜10・12・13を直接参照、KA 11・14・15を部分整合、KA 16〜18を理由付き対象外とする。"),
     ("SRC-AWS-WAF", "AWS Well-Architected Framework", "継続更新", "https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html", "AWSおよびクラウド共通"),
     ("SRC-AWS-GENAI", "AWS Well-Architected Generative AI Lens", "継続更新", "https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html", "生成AI"),
     ("SRC-AWS-RAI", "AWS Well-Architected Responsible AI Lens", "2025-11-19", "https://docs.aws.amazon.com/wellarchitected/latest/responsible-ai-lens/responsible-ai-lens.html", "責任あるAI"),
@@ -423,6 +438,16 @@ SOURCE_ROWS = [
     ("SRC-PRACTICE", "組織・案件固有の実務補完", "案件ごとに根拠を登録", "", "外部規範ではない。証跡欄に組織標準・意思決定記録を添付する。"),
 ]
 
+SOURCE_CHANGE_SUMMARY = {
+    "SRC-SWEBOK-V4A": "v4.0から2025年9月の軽微改訂版v4.0aへ更新。完全準拠ではなく対象範囲を明示した参照・整合へ位置付けを修正。",
+    "SRC-AWS-GENAI": "2025年11月19日公開の現行Generative AI Lensを生成AI用途へ対応付け。",
+    "SRC-AWS-RAI": "2025年11月19日公開のResponsible AI Lensを追加し、案件固有の考慮事項として扱う。",
+    "SRC-AWS-ML": "2025年11月19日公開のMachine Learning Lensを従来型ML用途へ追加。",
+    "SRC-AWS-AGENTIC": "2026年6月10日公開のAgentic AI Lensを追加し、自律性・追跡・監督の統制へ対応付け。",
+    "SRC-GCP-AIML": "AI/ML perspectiveを一般WAFから分離してAI条件付きプロファイルへ対応付け。",
+    "SRC-AZR-AI": "Azure AI Workload資料を一般WAFから分離してAI条件付きプロファイルへ対応付け。",
+}
+
 
 def source_ids(sheet: str, reference: str) -> str:
     text = reference or ""
@@ -433,8 +458,8 @@ def source_ids(sheet: str, reference: str) -> str:
         if value not in ids:
             ids.append(value)
 
-    if "swebok-v4.pdf" in low:
-        add("SRC-SWEBOK-V4")
+    if "swebok-v4.pdf" in low or "swebok-v4a.pdf" in low:
+        add("SRC-SWEBOK-V4A")
     if "responsible ai lens" in low:
         add("SRC-AWS-RAI")
     if "agentic ai lens" in low:
@@ -471,7 +496,7 @@ def source_ids(sheet: str, reference: str) -> str:
         add("SRC-DORA")
     if "finops" in low:
         add("SRC-FINOPS")
-    if "ieee" in low and "SRC-SWEBOK-V4" not in ids and not any(value.startswith("SRC-ISO-") for value in ids):
+    if "ieee" in low and "SRC-SWEBOK-V4A" not in ids and not any(value.startswith("SRC-ISO-") for value in ids):
         add("SRC-IEEE-GENERAL")
     if "実務補完" in text or not ids:
         add("SRC-PRACTICE")
@@ -610,9 +635,9 @@ def build_guide(wb, swebok_hash: str) -> None:
     ws = wb.create_sheet("利用ガイド", 1)
     title_cell(ws, "利用ガイド — 適用、判定、重複統制、リリースゲート", 7)
     rows = [
-        (3, "位置づけ", "SWEBOK Guide V4.0と各社Well-Architected Frameworkを参照・整合させたレビュー観点マスター兼実施記録。規格認証や全SWEBOK KAへの準拠を表明するものではない。"),
-        (4, "SWEBOK参照版", f"同梱 .workspace/swebok-v4.pdf を固定参照版とする（SHA-256: {swebok_hash}）。v4.0aへは更新しない。"),
-        (5, "SWEBOK対象範囲", "KA 1〜10、12、13を直接参照。全18 KAとの関係と対象外理由は「KA対応表」を参照。"),
+        (3, "位置づけ", "SWEBOK Guide v4.0aと各社Well-Architected Frameworkを参照・整合させたレビュー観点マスター兼実施記録。規格認証や全SWEBOK KAへの完全準拠を表明するものではない。"),
+        (4, "SWEBOK参照版", f"ローカルの .workspace/swebok-v4a.pdf を固定参照版とする（SHA-256: {swebok_hash}）。PDF本体は再配布しない。"),
+        (5, "SWEBOK対象範囲", "全18 KAを対応付ける。KA 1〜10・12・13は直接参照、KA 11・14・15は部分整合、KA 16〜18は前提知識として理由付き対象外。詳細は「KA対応表」を参照。"),
         (6, "WAFの扱い", "WAFは設計判断・リスク・トレードオフを評価する助言資料。各項目は案件のSLO、RTO/RPO、規制、データ分類、費用制約を入力に適用判定する。"),
     ]
     for row, label, value in rows:
@@ -640,9 +665,9 @@ def build_guide(wb, swebok_hash: str) -> None:
     ws.cell(15, 1, "レビュー実施手順")
     workflow = [
         "1. 適用プロファイルを選び、各行の「適用判定」を適用／N/Aで記録する。N/Aは「証跡・参照箇所」に根拠を残す。",
-        "2. 基準重要度を出発点に、案件の重要度・データ分類・規制・SLOを反映して「案件重要度」を設定する。",
-        "3. Pass／Fail／未確認を記録し、Passは証跡、Failは指摘・Issue ID、対応方針、期限、担当情報を残す。",
-        "4. 例外・リスク受容は承認者を記名し、承認記録を証跡へリンクする。是正後は再確認結果を記録する。",
+        "2. 基準重要度を助言値として、案件の重要度・データ分類・規制・SLOを反映した「案件重要度」と判断根拠を設定する。",
+        "3. Pass／Fail／未確認を記録し、Passは証跡、Failは指摘・Issue ID、対応方針、是正期限、担当情報を残す。",
+        "4. N/Aにもレビュアーと日付を残す。Fail是正後は明示的な再確認記録によりPassを確認し、変更履歴を保持する。",
     ]
     for r, value in enumerate(workflow, 16):
         ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=7)
@@ -690,23 +715,24 @@ def build_source_master(wb, swebok_hash: str) -> None:
     if "出典マスター" in wb.sheetnames:
         del wb["出典マスター"]
     ws = wb.create_sheet("出典マスター", 2)
-    title_cell(ws, "出典マスター", 9)
-    headers = ["Source ID", "正式名称", "版・公開日", "URL", "参照日", "適用範囲", "変更確認日", "固定参照物", "注記"]
+    title_cell(ws, "出典マスター", 10)
+    headers = ["Source ID", "正式名称", "版・公開日", "URL", "参照日", "適用範囲", "変更確認日", "前版との差分", "固定参照物", "注記"]
     for c, value in enumerate(headers, 1):
         ws.cell(3, c, value)
     for r, (source_id, name, version, url, scope) in enumerate(SOURCE_ROWS, 4):
-        fixed = f".workspace/swebok-v4.pdf / SHA-256 {swebok_hash}" if source_id == "SRC-SWEBOK-V4" else ""
-        note = "オンライン版の更新と切り離し、v4.0を固定参照。" if source_id == "SRC-SWEBOK-V4" else ""
-        values = [source_id, name, version, url, UPDATED, scope, UPDATED, fixed, note]
+        fixed = f".workspace/swebok-v4a.pdf / SHA-256 {swebok_hash}" if source_id == "SRC-SWEBOK-V4A" else ""
+        note = "添付物の同一性だけを固定し、PDF本体は再配布しない。" if source_id == "SRC-SWEBOK-V4A" else "継続更新型資料は変更確認日に再確認する。"
+        change_summary = SOURCE_CHANGE_SUMMARY.get(source_id, "前回登録内容から適用範囲・版の変更なし。")
+        values = [source_id, name, version, url, UPDATED, scope, UPDATED, change_summary, fixed, note]
         for c, value in enumerate(values, 1):
             ws.cell(r, c, value)
         if url:
             ws.cell(r, 4).hyperlink = url
             ws.cell(r, 4).style = "Hyperlink"
-    style_table(ws, 3, 1, 9, 3 + len(SOURCE_ROWS))
-    for col, width in {"A": 23, "B": 48, "C": 24, "D": 65, "E": 14, "F": 42, "G": 14, "H": 68, "I": 42}.items():
+    style_table(ws, 3, 1, 10, 3 + len(SOURCE_ROWS))
+    for col, width in {"A": 23, "B": 48, "C": 24, "D": 65, "E": 14, "F": 48, "G": 14, "H": 58, "I": 68, "J": 42}.items():
         ws.column_dimensions[col].width = width
-    ws.auto_filter.ref = f"A3:I{ws.max_row}"
+    ws.auto_filter.ref = f"A3:J{ws.max_row}"
     ws.freeze_panes = "A4"
 
 
@@ -714,7 +740,7 @@ def build_ka_map(wb) -> None:
     if "KA対応表" in wb.sheetnames:
         del wb["KA対応表"]
     ws = wb.create_sheet("KA対応表", 3)
-    title_cell(ws, "SWEBOK V4.0 Knowledge Area 対応表", 7)
+    title_cell(ws, "SWEBOK v4.0a Knowledge Area 対応表", 7)
     headers = ["KA", "Knowledge Area", "扱い", "対応シート", "適用範囲・除外根拠", "主な証跡", "備考"]
     for c, value in enumerate(headers, 1):
         ws.cell(3, c, value)
@@ -797,19 +823,20 @@ def build_addition_register(wb) -> None:
 
 def update_summary(wb, swebok_hash: str) -> None:
     ws = wb["サマリ"]
-    ws["A1"] = "SWEBOK Guide V4.0（固定参照版）+ クラウドWell-Architected Framework 参照・整合 開発レビューチェックリスト"
+    ws["A1"] = "SWEBOK Guide v4.0a（固定参照版）・クラウドWell-Architected Framework参照・整合 開発レビューチェックリスト"
     ws["A2"] = (
-        f"更新: {UPDATED.isoformat()} / SWEBOK参照版: .workspace/swebok-v4.pdf (SHA-256: {swebok_hash})。"
-        "対象KAは1〜10・12・13。全18KAとの関係は「KA対応表」を参照。WAFは規範的な一律要件ではなく、案件条件に基づき適用判定する。"
+        f"更新: {UPDATED.isoformat()} / SWEBOK参照版: v4.0a / .workspace/swebok-v4a.pdf (SHA-256: {swebok_hash})。"
+        "全18KAとの関係と適用・除外理由は「KA対応表」を参照。WAFは規範的な一律要件ではなく、案件条件に基づき適用判定する。"
         "各レビューシートに適用／N/A、Pass／Fail、証跡、指摘、例外承認、再確認の実施記録列を追加。"
         "出典は「出典マスター」、運用は「利用ガイド」、追加承認65件は「追加項目管理」を参照。"
     )
     ws.cell(4, 4).value = "項目数（数式）"
     for row, sheet in enumerate(REVIEW_SHEETS, 5):
         q = quote_sheetname(sheet)
-        ws.cell(row, 4).value = f"=COUNTA({q}!$A$2:$A$1048576)"
+        end_row = wb[sheet].max_row
+        ws.cell(row, 4).value = f"=COUNTA({q}!$A$2:$A${end_row})"
         for col, severity in zip(range(5, 9), ["Critical", "High", "Medium", "Low"]):
-            ws.cell(row, col).value = f'=COUNTIF({q}!$D$2:$D$1048576,"{severity}")'
+            ws.cell(row, col).value = f'=COUNTIF({q}!$D$2:$D${end_row},"{severity}")'
     total_row = 5 + len(REVIEW_SHEETS)
     ws.cell(total_row, 1).value = "合計"
     for col in range(4, 9):
@@ -820,7 +847,8 @@ def update_summary(wb, swebok_hash: str) -> None:
     ws.freeze_panes = "A5"
 
 
-def verify(wb) -> None:
+def verify(wb, swebok_hash: str) -> None:
+    assert swebok_hash == EXPECTED_SWEBOK_SHA256, "unexpected SWEBOK v4.0a artifact"
     all_ids: list[str] = []
     source_set = {row[0] for row in SOURCE_ROWS}
     for sheet in REVIEW_SHEETS:
@@ -839,18 +867,29 @@ def verify(wb) -> None:
     addition_ws = wb["追加項目管理"]
     assert addition_ws.max_row - 3 == 65, addition_ws.max_row - 3
     assert len(wb["KA対応表"]["A"]) - 3 == 18
+    assert wb["出典マスター"].max_column == 10
+    assert wb["出典マスター"].cell(3, 8).value == "前版との差分"
+    for row in wb["サマリ"].iter_rows():
+        for cell in row:
+            if isinstance(cell.value, str) and cell.value.startswith("="):
+                assert "1048576" not in cell.value, cell.coordinate
+            if isinstance(cell.value, str):
+                assert "swebok-v4.pdf" not in cell.value, cell.coordinate
     for required in ["CLD-065", "CLD-066", "AI-080", "AI-076", "AZR-286"]:
         assert required in all_ids, required
 
 
 def main() -> None:
     if not BOOK.exists() or not SWEBOK.exists():
-        raise SystemExit("checklist.xlsx and .workspace/swebok-v4.pdf are required")
+        raise SystemExit(f"checklist.xlsx and {SWEBOK} are required")
     swebok_hash = sha256(SWEBOK)
+    if swebok_hash != EXPECTED_SWEBOK_SHA256:
+        raise SystemExit(f"unexpected SWEBOK v4.0a SHA-256: {swebok_hash}")
     wb = load_workbook(BOOK)
     for generated in ["利用ガイド", "出典マスター", "KA対応表", "追加項目管理"]:
         if generated in wb.sheetnames:
             del wb[generated]
+    normalize_swebok_references(wb)
     apply_content_fixes(wb)
     extend_review_sheets(wb)
     build_guide(wb, swebok_hash)
@@ -858,12 +897,12 @@ def main() -> None:
     build_ka_map(wb)
     build_addition_register(wb)
     update_summary(wb, swebok_hash)
-    verify(wb)
+    verify(wb, swebok_hash)
     wb.calculation.fullCalcOnLoad = True
     wb.calculation.forceFullCalc = True
     wb.calculation.calcMode = "auto"
-    wb.properties.title = "SWEBOK Guide V4.0 + Cloud Well-Architected Reference Development Review Checklist"
-    wb.properties.subject = "Review master and review execution record"
+    wb.properties.title = "SWEBOK Guide v4.0a・クラウドWell-Architected参照 開発レビューチェックリスト"
+    wb.properties.subject = "レビュー観点マスター・レビュー実施記録"
     wb.properties.modified = datetime.combine(UPDATED, datetime.min.time())
     stale_temp = BOOK.with_name(f".{BOOK.name}.tmp")
     if stale_temp.exists():
@@ -872,7 +911,7 @@ def main() -> None:
     wb.save(temp)
     # Reopen the serialized artifact before replacing the original.
     check = load_workbook(temp, data_only=False)
-    verify(check)
+    verify(check, swebok_hash)
     check.close()
     os.replace(temp, BOOK)
     print(f"updated {BOOK} / SWEBOK SHA-256 {swebok_hash}")

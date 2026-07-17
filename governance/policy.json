@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "standard": {
-    "name": "SWEBOK Guide V4.0 + Cloud Well-Architected Reference",
+    "name": "SWEBOK Guide v4.0a・クラウドWell-Architected参照",
     "checklist": "checklist.xlsx",
     "catalog": "governance/checklist/catalog.json"
   },
