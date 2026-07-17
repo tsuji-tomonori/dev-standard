@@ -10,4 +10,4 @@
 - work item audit: success
 - skill quick validation: 2/2 success
 
-`make verify PYTHON=python3`はsuccess。GitHub Actions結果をrelease前に追記する。未解決code defectはない。
+`make verify PYTHON=python3`はsuccess。GitHub Governance workflow run 29553424390もsuccess。未解決code defectはない。

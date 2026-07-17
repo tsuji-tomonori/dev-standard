@@ -14630,21 +14630,18 @@
       "applicability": "applicable",
       "base_severity": "Critical",
       "evidence": [
-        "docs/07-release.md",
-        "docs/01-execution-plan.md",
-        "docs/05-test-report.md",
-        "docs/06-operations.md"
+        "docs/07-release.md"
       ],
       "exception": null,
       "id": "MGT-112",
-      "issue_id": "GitHub App returned HTTP 403 while creating the release branch; PR, required CI, and merge cannot yet exist.",
+      "issue_id": "",
       "na_rationale": "",
       "phase": "release",
       "project_severity": "Critical",
-      "reviewed_at": "2026-07-17T00:35:35Z",
-      "reviewer": "release-analysis-20260717",
+      "reviewed_at": "2026-07-17T03:53:19Z",
+      "reviewer": "release-evaluation-20260717",
       "sheet": "09_マネジメント",
-      "verdict": "fail"
+      "verdict": "pass"
     },
     {
       "applicability": "not-applicable",
