@@ -1,0 +1,5 @@
+interface:
+  display_name: "チャットだけで自律開発"
+  short_description: "Turn a casual request into a tested PR without user-run commands"
+  default_prompt: "Use $chat-first-development to turn this conversation into requirements, obtain one compact authorization, and finish the tested PR autonomously."
+

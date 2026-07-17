@@ -1,0 +1,27 @@
+{
+  "approval_status": {
+    "requester": null
+  },
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/01-requirements.md",
+      "sha256": "9adc761df547b130fdf64f7e0f052d7a56c748c811467c113cd40e83149fe8c4"
+    },
+    {
+      "path": "docs/01-traceability.md",
+      "sha256": "a5eeef5b65a163c96ae07d225cbb61b8ef4842813f519246492f2aaf61ed1ccc"
+    },
+    {
+      "path": "docs/01-execution-plan.md",
+      "sha256": "08bd50301f5b00cc65625af14cf5c35c1863bcf2e85acd7c1617c41d5fb242f1"
+    }
+  ],
+  "gate_digest": "dd61966d92e14be04a8182c9fa1c6dd69825f0e7c4b1149fb9e15e261e587e1f",
+  "generated_at": "2026-07-17T12:02:07Z",
+  "passed": true,
+  "phase": "requirements",
+  "review_item_count": 97,
+  "schema_version": 1,
+  "work_item": "WI-20260717-120030-753e90"
+}

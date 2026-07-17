@@ -46,6 +46,12 @@ class InstallReferenceTest(unittest.TestCase):
         expected = sorted(path.name for path in (install_reference.ROOT / ".codex" / "agents").glob("*.toml"))
         self.assertEqual(installed, expected)
 
+    def test_chat_first_profile_is_self_starting_skill_pair(self) -> None:
+        install_reference.install(self.target, ["chat-first"], apply=True, force=False)
+        for name in ["chat-first-development", "calibrated-collaborative-listening"]:
+            self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
+        self.assertFalse((self.target / "tools").exists())
+
     def test_full_profile_preserves_target_configuration_and_installs_merge_references(self) -> None:
         agents_file = self.target / "AGENTS.md"
         config_file = self.target / ".codex" / "config.toml"

@@ -7,6 +7,8 @@ description: Record the single explicit requester decision that authorizes a gov
 
 Bind one real human decision to the complete boundary within which the agent must finish without further approval pauses.
 
+Obtain the decision in ordinary conversation. The agent runs every authorization command internally; never ask the requester to invoke a script or know the work-item identifier.
+
 ## Workflow
 
 1. Read `references/authorization-boundary.md` and any approved `references/learned-rules.md`.

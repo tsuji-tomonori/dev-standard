@@ -5,6 +5,8 @@ description: Strictly inspect lifecycle documents, checklist applicability, verd
 
 # Inspect Quality Gates
 
+All inspection and verification commands are agent-owned implementation details. Never transfer them to the user.
+
 Use the deterministic harness as the source of gate truth and explain every blocker.
 
 ## Workflow

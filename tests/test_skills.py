@@ -11,6 +11,30 @@ SKILLS = ROOT / ".agents" / "skills"
 
 
 class SkillContractTest(unittest.TestCase):
+    def test_chat_first_skill_owns_setup_and_full_delivery(self) -> None:
+        skill = SKILLS / "chat-first-development"
+        text = (skill / "SKILL.md").read_text(encoding="utf-8")
+        reference = (skill / "references" / "bootstrap-and-conversation.md").read_text(encoding="utf-8")
+        for required in [
+            "ordinary natural-language conversation",
+            "Automatically prepare",
+            "Never ask the user to run Python",
+            "one explicit approve/reject decision",
+            "PR creation",
+            "CI verification",
+            "lightweight",
+        ]:
+            self.assertIn(required, text)
+        for required in ["repository-local", "Do not stop", "Lightweight record", "Do not merge"]:
+            self.assertIn(required, reference)
+
+    def test_root_instructions_make_commands_ai_owned(self) -> None:
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("$chat-first-development", text)
+        self.assertIn("Never ask the user to run setup", text)
+        self.assertIn("AI-owned commands", text)
+        self.assertIn("ordinary conversation", text)
+
     def test_single_authorization_policy_has_no_later_phase_approvals(self) -> None:
         policy = json.loads((ROOT / "governance" / "policy.json").read_text(encoding="utf-8"))
         authorization = policy["authorization"]

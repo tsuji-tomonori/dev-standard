@@ -1,0 +1,12 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [],
+  "gate_digest": "bd91ed4f2fb8a3a1da8d2389935a34608bccbc975fef3d77e3d10cb6b1d6859a",
+  "generated_at": "2026-07-17T12:09:36Z",
+  "passed": true,
+  "phase": "closed",
+  "review_item_count": 0,
+  "schema_version": 1,
+  "work_item": "WI-20260717-120030-753e90"
+}

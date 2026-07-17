@@ -7,6 +7,8 @@ description: Govern a development request by defining requirements and a complet
 
 Turn the user's request into one bounded authorization followed by uninterrupted, traceable execution.
 
+This skill is an internal lifecycle component. The user speaks naturally; the agent owns all work-item, setup, checklist, test, and publication commands. Never instruct the user to run them.
+
 ## Workflow
 
 1. Read `references/work-item-contract.md` and current state. Select only scope-relevant profiles: `CORE`, a cloud delta when used, and `AI-CONDITIONAL` for model or agent work.
