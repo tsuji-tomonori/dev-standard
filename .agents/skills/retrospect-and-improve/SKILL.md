@@ -1,11 +1,11 @@
 ---
 name: retrospect-and-improve
-description: Generate and review session retrospectives, detect repeated gate failures, propose durable workflow improvements, obtain governance approval, and apply approved lessons to repository skills. Use at session end, after rework or escaped defects, and when recurring agent mistakes should update future behavior.
+description: Generate and review session retrospectives, detect repeated gate failures, and propose testable durable improvements without auto-applying them. Use at session end, after rework or escaped defects, and when recurring agent mistakes should become a separately planned and initially authorized work item.
 ---
 
 # Retrospect and Improve
 
-Turn observed friction into approved, testable skill improvements.
+Turn observed friction into evidence-backed candidates for a future governed work item.
 
 ## Workflow
 
@@ -13,14 +13,13 @@ Turn observed friction into approved, testable skill improvements.
 2. Read the newest report, affected work item events, inspection reports, user corrections, and test outcomes.
 3. Separate one-off noise from recurring process failures. Read `references/improvement-policy.md`.
 4. Use the automatically generated proposal when the same blocker recurs across sessions. Add a manual proposal only with concrete evidence.
-5. Ask `improvement-coach` to challenge the root cause and verify that the proposed rule is preventive and testable.
-6. Present pending proposals to the governance-owner. Do not approve your own proposal.
-7. After explicit approval, run `python tools/devflow.py improvement-approve --id <ID> --approver <identity>`.
-8. The next Stop hook applies approved proposals automatically; `improvement-apply` can apply immediately.
-9. Validate the changed skill and repository. Confirm in a later task that the failure no longer recurs.
+5. Ask `improvement-coach` to challenge the root cause when subagents are available and permitted.
+6. Do not auto-apply the proposal. If it is outside the current authorized execution plan, leave it pending.
+7. When selected, create a new governed work item that names the exact skill, change, evidence, evaluation, and rollback in its requirements and execution plan.
+8. Obtain that work item's one initial requester authorization, implement it autonomously, validate the skill and repository, and confirm in a later task that the failure no longer recurs.
 
 ## Update boundary
 
-Automatic application may append only to the target skill's `references/learned-rules.md`. Changing core `SKILL.md`, `AGENTS.md`, hooks, agents, policy, or gate code requires a normal governed work item and review.
+No retrospective proposal is automatically applied. Any durable change to `references/learned-rules.md`, core `SKILL.md`, `AGENTS.md`, hooks, agents, policy, or gate code requires inclusion in an initially authorized execution plan.
 
-Never ingest secrets or raw transcripts into learned rules. Store concise behavior, evidence identifiers, approval identity, and approval time.
+Never ingest secrets or raw transcripts into proposals or learned rules. Store concise behavior and evidence identifiers.

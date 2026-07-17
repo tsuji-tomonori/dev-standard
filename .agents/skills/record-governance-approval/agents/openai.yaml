@@ -1,4 +1,0 @@
-interface:
-  display_name: "統制承認記録"
-  short_description: "Record human approvals bound to artifact digests"
-  default_prompt: "Use $record-governance-approval to record this explicit human gate decision."

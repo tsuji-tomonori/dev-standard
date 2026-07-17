@@ -26,8 +26,6 @@ def main() -> int:
     try:
         code, output = run([sys.executable, devflow, "session-retrospective", "--session-id", session_id, "--cwd", cwd], root)
         messages.append(("retrospective" if code == 0 else "retrospective warning") + ": " + (output or f"exit {code}"))
-        code, output = run([sys.executable, devflow, "improvement-apply"], root)
-        messages.append(("skill update" if code == 0 else "skill update warning") + ": " + (output or f"exit {code}"))
     except (OSError, subprocess.SubprocessError) as exc:
         messages.append(f"retrospective hook warning: {exc}")
     print(json.dumps({

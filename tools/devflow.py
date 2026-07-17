@@ -337,6 +337,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         })
     state = {
         "schema_version": 1,
+        "workflow_schema_version": policy["schema_version"],
         "id": work_id,
         "title": args.title,
         "created_at": created,
@@ -369,6 +370,27 @@ def cmd_init(args: argparse.Namespace) -> int:
 def load_work(work_item: str) -> tuple[Path, dict[str, Any], dict[str, Any]]:
     work = safe_work_path(work_item)
     return work, read_json(work / "state.json"), read_json(work / "review" / "checklist-results.json")
+
+
+def require_current_workflow(state: dict[str, Any]) -> None:
+    current = load_policy()["schema_version"]
+    actual = state.get("workflow_schema_version")
+    if actual != current:
+        shown = "legacy" if actual is None else str(actual)
+        raise GovernanceError(
+            f"work item workflow schema is {shown}; run migrate --work-item {state['id']} before continuing"
+        )
+
+
+def authorization_definition() -> tuple[str, str]:
+    authorization = load_policy().get("authorization")
+    if not isinstance(authorization, dict):
+        raise GovernanceError("policy authorization definition is missing")
+    phase = str(authorization.get("phase") or "")
+    role = str(authorization.get("role") or "")
+    if phase not in load_policy()["phases"] or not role:
+        raise GovernanceError("policy authorization definition is invalid")
+    return phase, role
 
 
 def evidence_valid(work: Path, evidence: list[str]) -> bool:
@@ -453,9 +475,16 @@ def gate_snapshot(work: Path, state: dict[str, Any], results: dict[str, Any], ph
         elif verdict == "fail":
             if not str(item.get("issue_id") or "").strip():
                 blockers.append({"code": "CHECK_ISSUE", "subject": item_id, "message": "FailにIssue IDがない"})
-            valid, reason = exception_valid(item)
-            if not valid:
-                blockers.append({"code": "CHECK_EXCEPTION", "subject": item_id, "message": reason})
+            if state.get("workflow_schema_version") == policy["schema_version"]:
+                blockers.append({
+                    "code": "CHECK_FAIL_BLOCKING",
+                    "subject": item_id,
+                    "message": "単一承認workflowではFailを後続承認で受容できない。原因を修正すること",
+                })
+            else:
+                valid, reason = exception_valid(item)
+                if not valid:
+                    blockers.append({"code": "CHECK_EXCEPTION", "subject": item_id, "message": reason})
         else:
             blockers.append({"code": "CHECK_VERDICT", "subject": item_id, "message": "適用項目の判定が未確認"})
         if not str(item.get("reviewer") or "").strip() or not str(item.get("reviewed_at") or "").strip():
@@ -530,6 +559,8 @@ def cmd_set_check(args: argparse.Namespace) -> int:
         raise GovernanceError("invalid verdict")
     if args.severity not in policy["review_values"]["severity"]:
         raise GovernanceError("invalid project severity")
+    if args.exception_approver and state.get("workflow_schema_version") == policy["schema_version"]:
+        raise GovernanceError("single-authorization workflow does not accept later human risk exceptions")
     match.update({
         "applicability": args.applicability,
         "na_rationale": args.na_rationale or "",
@@ -564,13 +595,93 @@ def cmd_set_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_set_checks(args: argparse.Namespace) -> int:
+    """Atomically record a validated batch of checklist dispositions."""
+    policy = load_policy()
+    work, state, results = load_work(args.work_item)
+    payload = read_json(Path(args.input))
+    if not isinstance(payload, list) or not payload:
+        raise GovernanceError("batch input must be a non-empty JSON list")
+    by_id = {item["id"]: item for item in results["items"]}
+    seen: set[str] = set()
+    validated: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    for entry in payload:
+        if not isinstance(entry, dict):
+            raise GovernanceError("batch entry must be an object")
+        item_id = str(entry.get("item") or "")
+        if item_id in seen:
+            raise GovernanceError(f"duplicate batch item: {item_id}")
+        seen.add(item_id)
+        match = by_id.get(item_id)
+        if match is None:
+            raise GovernanceError(f"checklist item not selected by profiles: {item_id}")
+        applicability = entry.get("applicability")
+        verdict = entry.get("verdict")
+        severity = entry.get("severity")
+        if applicability not in policy["review_values"]["applicability"]:
+            raise GovernanceError(f"{item_id}: invalid applicability")
+        if verdict not in policy["review_values"]["verdict"]:
+            raise GovernanceError(f"{item_id}: invalid verdict")
+        if severity not in policy["review_values"]["severity"]:
+            raise GovernanceError(f"{item_id}: invalid project severity")
+        if applicability == "not-applicable" and not str(entry.get("na_rationale") or "").strip():
+            raise GovernanceError(f"{item_id}: N/A rationale required")
+        if applicability == "applicable" and verdict == "pass" and not entry.get("evidence"):
+            raise GovernanceError(f"{item_id}: Pass evidence required")
+        if applicability == "applicable" and verdict == "fail" and not str(entry.get("issue") or "").strip():
+            raise GovernanceError(f"{item_id}: Fail issue required")
+        if not str(entry.get("reviewer") or "").strip():
+            raise GovernanceError(f"{item_id}: reviewer required")
+        validated.append((match, entry))
+    reviewed_at = utcnow()
+    for match, entry in validated:
+        match.update({
+            "applicability": entry["applicability"],
+            "na_rationale": str(entry.get("na_rationale") or ""),
+            "verdict": entry["verdict"],
+            "evidence": [str(value) for value in entry.get("evidence") or []],
+            "issue_id": str(entry.get("issue") or ""),
+            "reviewer": str(entry["reviewer"]),
+            "reviewed_at": reviewed_at,
+            "project_severity": entry["severity"],
+            "exception": None,
+        })
+    atomic_write_json(work / "review" / "checklist-results.json", results)
+    state["updated_at"] = reviewed_at
+    atomic_write_json(work / "state.json", state)
+    append_chained(work / "events.jsonl", {
+        "timestamp": reviewed_at,
+        "event": "checklist-batch-updated",
+        "phase": state["current_phase"],
+        "actor": args.actor,
+        "details": {
+            "count": len(validated),
+            "items_sha256": sha256_bytes(canonical_bytes(sorted(seen))),
+        },
+    })
+    print(f"updated {len(validated)} checklist items atomically")
+    return 0
+
+
 def cmd_approve(args: argparse.Namespace) -> int:
     work, state, results = load_work(args.work_item)
-    phase = args.phase or state["current_phase"]
+    require_current_workflow(state)
+    authorization_phase, authorization_role = authorization_definition()
+    phase = getattr(args, "phase", None) or authorization_phase
+    if state["current_phase"] != authorization_phase:
+        raise GovernanceError(
+            f"initial authorization can be recorded only while current phase is {authorization_phase}"
+        )
     policy = load_policy()
     allowed_roles = policy["phases"][phase]["required_approvals"]
-    if args.role not in allowed_roles:
-        raise GovernanceError(f"role {args.role} is not an approval role for {phase}: {', '.join(allowed_roles) or '(none)'}")
+    role = getattr(args, "role", None) or authorization_role
+    if phase != authorization_phase or role != authorization_role:
+        raise GovernanceError(
+            f"schema {policy['schema_version']} permits human authorization only for "
+            f"{authorization_phase} / {authorization_role}"
+        )
+    if role not in allowed_roles:
+        raise GovernanceError(f"role {role} is not an authorization role for {phase}")
     report = gate_snapshot(work, state, results, phase, include_approvals=False)
     content_blockers = [blocker for blocker in report["blockers"] if not blocker["code"].startswith("APPROVAL_")]
     if args.decision == "approved" and content_blockers:
@@ -583,23 +694,72 @@ def cmd_approve(args: argparse.Namespace) -> int:
         "gate_digest": report["gate_digest"],
         "decision": args.decision,
         "approver": args.approver,
-        "role": args.role,
+        "role": role,
         "comment": args.comment,
     })
     append_chained(work / "events.jsonl", {
         "timestamp": utcnow(),
-        "event": "approval-recorded",
+        "event": "initial-authorization-recorded",
         "phase": phase,
         "actor": args.approver,
-        "details": {"role": args.role, "decision": args.decision, "approval_hash": record["record_hash"]},
+        "details": {"role": role, "decision": args.decision, "approval_hash": record["record_hash"]},
     })
-    print(f"recorded {args.decision}: {phase} / {args.role} / {record['record_hash']}")
+    print(f"recorded {args.decision}: {phase} / {role} / {record['record_hash']}")
     return 0
+
+
+def cmd_migrate(args: argparse.Namespace) -> int:
+    work, state, _ = load_work(args.work_item)
+    target = load_policy()["schema_version"]
+    if state.get("workflow_schema_version") == target:
+        raise GovernanceError(f"work item already uses workflow schema {target}")
+    if state.get("current_phase") not in {"intake", "requirements"}:
+        raise GovernanceError(
+            "legacy work items beyond requirements cannot be migrated in place; create a new work item"
+        )
+    execution_plan = work / "docs" / "01-execution-plan.md"
+    if not execution_plan.is_file():
+        raise GovernanceError("migration requires docs/01-execution-plan.md")
+    previous = state.get("workflow_schema_version")
+    state["workflow_schema_version"] = target
+    state["updated_at"] = utcnow()
+    atomic_write_json(work / "state.json", state)
+    append_chained(work / "events.jsonl", {
+        "timestamp": utcnow(),
+        "event": "workflow-migrated",
+        "phase": state["current_phase"],
+        "actor": args.actor,
+        "details": {"from": previous, "to": target, "prior_authorizations_reused": False},
+    })
+    print(f"migrated {state['id']}: {previous or 'legacy'} -> {target}; fresh authorization required")
+    return 0
+
+
+def preceding_phase_reports(
+    work: Path,
+    state: dict[str, Any],
+    results: dict[str, Any],
+    phase: str,
+) -> list[dict[str, Any]]:
+    policy = load_policy()
+    order = policy["phase_order"]
+    position = order.index(phase)
+    return [
+        gate_snapshot(work, state, results, previous, include_approvals=True)
+        for previous in order[:position]
+    ]
 
 
 def cmd_advance(args: argparse.Namespace) -> int:
     work, state, results = load_work(args.work_item)
+    require_current_workflow(state)
     current = state["current_phase"]
+    prior_reports = preceding_phase_reports(work, state, results, current)
+    failed_prior = next((report for report in prior_reports if not report["passed"]), None)
+    if failed_prior is not None:
+        write_inspection(work, failed_prior)
+        print_report(failed_prior, False)
+        raise GovernanceError(f"preceding phase gate is no longer valid: {failed_prior['phase']}")
     report = gate_snapshot(work, state, results, current, include_approvals=True)
     write_inspection(work, report)
     if not report["passed"]:
@@ -628,14 +788,18 @@ def cmd_advance(args: argparse.Namespace) -> int:
 
 def cmd_status(args: argparse.Namespace) -> int:
     work, state, results = load_work(args.work_item)
+    require_current_workflow(state)
     report = gate_snapshot(work, state, results, state["current_phase"], include_approvals=True)
-    payload = {**state, "gate": report}
+    authorization_phase, _ = authorization_definition()
+    authorization = gate_snapshot(work, state, results, authorization_phase, include_approvals=True)
+    payload = {**state, "gate": report, "initial_authorization": authorization}
     if args.json:
         print(json.dumps(payload, ensure_ascii=False, indent=2))
     else:
         print(f"{state['id']}: {state['title']}")
         print(f"phase={state['current_phase']} status={state['status']} profiles={','.join(state['profiles'])}")
         print(f"gate={'PASS' if report['passed'] else 'BLOCKED'} blockers={len(report['blockers'])}")
+        print(f"initial_authorization={'VALID' if authorization['passed'] else 'MISSING_OR_STALE'}")
     return 0
 
 
@@ -689,7 +853,7 @@ def skill_for_blocker(code: str) -> str:
     if code.startswith("CHECK_"):
         return "inspect-quality-gates"
     if code.startswith("APPROVAL_"):
-        return "record-governance-approval"
+        return "authorize-autonomous-execution"
     return "govern-development-request"
 
 
@@ -767,9 +931,9 @@ def session_retrospective(session_id: str, cwd: str) -> Path:
         lines.append("- 再発条件を満たす自動改善候補なし")
     lines.extend([
         "",
-        "## 改善適用ルール",
+        "## 改善候補の扱い",
         "",
-        "改善候補はgovernance-ownerの承認後にのみskillへ反映する。承認済み候補はStop hookで自動適用される。",
+        "改善候補は自動適用しない。現在の実行計画外であれば別work itemへ分離し、要件と実行計画の初回承認後に実装する。",
         "",
     ])
     filename = f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{re.sub(r'[^A-Za-z0-9._-]', '_', session_id)[:48]}.md"
@@ -781,63 +945,6 @@ def session_retrospective(session_id: str, cwd: str) -> Path:
 def cmd_session_retrospective(args: argparse.Namespace) -> int:
     path = session_retrospective(args.session_id, args.cwd)
     print(path.relative_to(ROOT))
-    return 0
-
-
-def cmd_improvement_approve(args: argparse.Namespace) -> int:
-    proposals = load_improvements()
-    proposal = next((item for item in proposals if item["id"] == args.id), None)
-    if proposal is None:
-        raise GovernanceError(f"improvement proposal not found: {args.id}")
-    if proposal["status"] == "applied":
-        raise GovernanceError("improvement already applied")
-    proposal["status"] = "approved"
-    proposal["approved_by"] = args.approver
-    proposal["approved_at"] = utcnow()
-    save_improvements(proposals)
-    print(f"approved {args.id}")
-    return 0
-
-
-def apply_approved_improvements() -> list[str]:
-    proposals = load_improvements()
-    applied: list[str] = []
-    for proposal in proposals:
-        if proposal["status"] != "approved":
-            continue
-        skill = ROOT / ".agents" / "skills" / proposal["skill"]
-        if not (skill / "SKILL.md").is_file():
-            raise GovernanceError(f"target skill does not exist: {proposal['skill']}")
-        learned = skill / "references" / "learned-rules.md"
-        learned.parent.mkdir(parents=True, exist_ok=True)
-        if not learned.exists():
-            learned.write_text("# 承認済み学習ルール\n\n", encoding="utf-8")
-        content = learned.read_text(encoding="utf-8")
-        marker = f"## {proposal['id']}"
-        if marker not in content:
-            with learned.open("a", encoding="utf-8") as stream:
-                stream.write(
-                    f"{marker}\n\n"
-                    f"- 問題: {proposal['problem']}\n"
-                    f"- 追加ルール: {proposal['change']}\n"
-                    f"- 根拠: {', '.join(proposal['evidence'])}\n"
-                    f"- 承認者: {proposal['approved_by']}\n"
-                    f"- 承認日時: {proposal['approved_at']}\n\n"
-                )
-        proposal["status"] = "applied"
-        proposal["applied_at"] = utcnow()
-        applied.append(proposal["id"])
-    if applied:
-        save_improvements(proposals)
-    return applied
-
-
-def cmd_improvement_apply(args: argparse.Namespace) -> int:
-    applied = apply_approved_improvements()
-    if applied:
-        print("applied: " + ", ".join(applied))
-    else:
-        print("no approved improvements")
     return 0
 
 
@@ -869,11 +976,29 @@ def cmd_audit(args: argparse.Namespace) -> int:
                 results = read_json(work / "review" / "checklist-results.json")
                 verify_chain(work / "events.jsonl")
                 verify_chain(work / "approvals.jsonl")
+                require_current_workflow(state)
                 ids = [item["id"] for item in results["items"]]
                 if len(ids) != len(set(ids)):
                     failures.append(f"{state['id']}: duplicate checklist results")
                 if state["current_phase"] not in load_policy()["phase_order"]:
                     failures.append(f"{state['id']}: invalid phase")
+                    continue
+                phases_to_verify = preceding_phase_reports(
+                    work,
+                    state,
+                    results,
+                    state["current_phase"],
+                )
+                if state.get("status") == "closed":
+                    phases_to_verify.append(
+                        gate_snapshot(work, state, results, "closed", include_approvals=True)
+                    )
+                for report in phases_to_verify:
+                    if not report["passed"]:
+                        codes = ",".join(blocker["code"] for blocker in report["blockers"][:5])
+                        failures.append(
+                            f"{state['id']}: preceding gate invalid: {report['phase']} ({codes})"
+                        )
             except GovernanceError as exc:
                 failures.append(str(exc))
     for proposal in load_improvements():
@@ -932,14 +1057,32 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument("--clear-exception", action="store_true")
     check.set_defaults(func=cmd_set_check)
 
-    approve = sub.add_parser("approve", help="append a tamper-evident gate decision")
+    checks = sub.add_parser("set-checks", help="atomically record checklist results from JSON")
+    checks.add_argument("--work-item", required=True)
+    checks.add_argument("--input", required=True)
+    checks.add_argument("--actor", required=True)
+    checks.set_defaults(func=cmd_set_checks)
+
+    migrate = sub.add_parser("migrate", help="migrate a legacy work item to the current workflow schema")
+    migrate.add_argument("--work-item", required=True)
+    migrate.add_argument("--actor", required=True)
+    migrate.set_defaults(func=cmd_migrate)
+
+    approve = sub.add_parser("approve", help="deprecated alias for initial authorization")
     approve.add_argument("--work-item", required=True)
     approve.add_argument("--phase")
     approve.add_argument("--decision", choices=["approved", "rejected"], required=True)
     approve.add_argument("--approver", required=True)
-    approve.add_argument("--role", required=True)
+    approve.add_argument("--role")
     approve.add_argument("--comment", required=True)
     approve.set_defaults(func=cmd_approve)
+
+    authorize = sub.add_parser("authorize", help="record the single initial autonomous-execution decision")
+    authorize.add_argument("--work-item", required=True)
+    authorize.add_argument("--decision", choices=["approved", "rejected"], required=True)
+    authorize.add_argument("--approver", required=True)
+    authorize.add_argument("--comment", required=True)
+    authorize.set_defaults(func=cmd_approve, phase=None, role=None)
 
     advance = sub.add_parser("advance", help="advance after the current gate passes")
     advance.add_argument("--work-item", required=True)
@@ -955,14 +1098,6 @@ def build_parser() -> argparse.ArgumentParser:
     improve_list.add_argument("--status", choices=["pending", "approved", "applied", "rejected"])
     improve_list.add_argument("--json", action="store_true")
     improve_list.set_defaults(func=cmd_improvement_list)
-
-    improve_approve = sub.add_parser("improvement-approve", help="approve a skill improvement")
-    improve_approve.add_argument("--id", required=True)
-    improve_approve.add_argument("--approver", required=True)
-    improve_approve.set_defaults(func=cmd_improvement_approve)
-
-    improve_apply = sub.add_parser("improvement-apply", help="apply approved skill improvements")
-    improve_apply.set_defaults(func=cmd_improvement_apply)
 
     audit = sub.add_parser("audit", help="audit catalog and tamper-evident records")
     audit.set_defaults(func=cmd_audit)

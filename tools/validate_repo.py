@@ -39,7 +39,8 @@ def validate_skills(failures: list[str]) -> None:
         "govern-development-request",
         "author-lifecycle-docs",
         "inspect-quality-gates",
-        "record-governance-approval",
+        "authorize-autonomous-execution",
+        "calibrated-collaborative-listening",
         "retrospect-and-improve",
         "japanese-git-commit-gitmoji",
     }
@@ -89,6 +90,14 @@ def validate_agents(failures: list[str]) -> None:
                 fail(f"{path.relative_to(ROOT)}: {key} missing", failures)
         if value.get("name") != path.stem:
             fail(f"{path.relative_to(ROOT)}: agent name must match filename", failures)
+        if value.get("model") != "gpt-5.6-terra":
+            fail(f"{path.relative_to(ROOT)}: custom reviewer must use gpt-5.6-terra", failures)
+        if value.get("model_reasoning_effort") not in {"low", "medium", "high"}:
+            fail(f"{path.relative_to(ROOT)}: reasoning effort must be explicitly cost-bounded", failures)
+        if value.get("model_verbosity") != "low":
+            fail(f"{path.relative_to(ROOT)}: reviewer output must use low verbosity", failures)
+        if len(str(value.get("developer_instructions", ""))) > 900:
+            fail(f"{path.relative_to(ROOT)}: reviewer prompt exceeds lean budget", failures)
         if "reviewer" in path.stem or path.stem == "gate-auditor":
             if value.get("sandbox_mode") != "read-only":
                 fail(f"{path.relative_to(ROOT)}: reviewer must be read-only", failures)
@@ -100,6 +109,17 @@ def validate_repo(failures: list[str]) -> None:
     phases = set(policy["phase_order"])
     if policy["phase_order"][-1] != "closed":
         fail("phase_order must end with closed", failures)
+    authorization = policy.get("authorization", {})
+    authorization_phase = authorization.get("phase")
+    authorization_role = authorization.get("role")
+    if authorization_phase != "requirements" or authorization_role != "requester":
+        fail("single authorization must be requirements / requester", failures)
+    for phase, definition in policy["phases"].items():
+        expected = [authorization_role] if phase == authorization_phase else []
+        if definition.get("required_approvals") != expected:
+            fail(f"{phase}: unexpected phase approvals; expected {expected}", failures)
+    if "docs/01-execution-plan.md" not in policy["phases"]["requirements"]["required_docs"]:
+        fail("requirements must bind docs/01-execution-plan.md", failures)
     for item in catalog["items"]:
         if item["phase"] not in phases:
             fail(f"catalog item {item['id']} has unknown phase", failures)
@@ -122,6 +142,22 @@ def validate_repo(failures: list[str]) -> None:
     for path in ["AGENTS.md", "README.md", ".github/workflows/governance.yml"]:
         if not (ROOT / path).is_file():
             fail(f"required repository file missing: {path}", failures)
+    operating_policy = ROOT / "docs" / "AI-OPERATING-POLICY.md"
+    if not operating_policy.is_file():
+        fail("docs/AI-OPERATING-POLICY.md missing", failures)
+    else:
+        text = operating_policy.read_text(encoding="utf-8")
+        for term in ["gpt-5.6-terra", "gpt-5.6-luna", "validation contract", "Lean-prompt regression checklist"]:
+            if term not in text:
+                fail(f"AI operating policy missing: {term}", failures)
+    try:
+        codex_config = tomllib.loads((ROOT / ".codex" / "config.toml").read_text(encoding="utf-8"))
+        if codex_config.get("agents", {}).get("max_threads", 0) > 3:
+            fail("agents.max_threads must remain cost-bounded at 3 or fewer", failures)
+        if codex_config.get("agents", {}).get("max_depth") != 1:
+            fail("agents.max_depth must remain 1", failures)
+    except (FileNotFoundError, tomllib.TOMLDecodeError) as exc:
+        fail(f".codex/config.toml invalid: {exc}", failures)
     validate_agents(failures)
 
 

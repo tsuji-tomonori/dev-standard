@@ -2,7 +2,7 @@
 hooks = true
 
 [agents]
-max_threads = 6
+max_threads = 3
 max_depth = 1
 interrupt_message = true
 
@@ -32,7 +32,7 @@ config_file = "agents/operations-reviewer.toml"
 nickname_candidates = ["Sagan", "Grace"]
 
 [agents."gate-auditor"]
-description = "工程横断で成果物、チェックリスト、承認、追跡性の欠落を監査する"
+description = "工程横断で成果物、チェックリスト、初回承認、追跡性の欠落を監査する"
 config_file = "agents/gate-auditor.toml"
 nickname_candidates = ["Atlas", "Delta"]
 

@@ -1,0 +1,24 @@
+{
+  "approval_status": {
+    "product-owner": null,
+    "requester": null
+  },
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/01-requirements.md",
+      "sha256": "6ed531770ca776cc4bddb2fa06fdb27a84f9dabb7a33f7c9cdcbb7db79d12232"
+    },
+    {
+      "path": "docs/01-traceability.md",
+      "sha256": "4c1c62dab6dab66c864e0552ef879991f229fa34df9150050371b01295f80c4d"
+    }
+  ],
+  "gate_digest": "9b39117d5fef2f477647110b8a75ed3888addaa5877edb4a84f6446c18f9b491",
+  "generated_at": "2026-07-17T00:05:20Z",
+  "passed": true,
+  "phase": "requirements",
+  "review_item_count": 97,
+  "schema_version": 1,
+  "work_item": "WI-20260717-autonomous-development"
+}
