@@ -1,74 +1,74 @@
-# Skills and agents installation
+# Skills・agents導入ガイド
 
-## Recommended: copy, open, chat
+## 推奨手順: コピーして開き、相談する
 
-No installer command is required.
+利用者がインストーラーを実行する必要はない。
 
-1. Copy `.agents/skills` into the target repository at the same path.
-2. Open the target repository with the AI development agent.
-3. Describe the desired outcome in ordinary language.
+1. `.agents/skills`を対象リポジトリの同じ相対パスへコピーする。
+2. 対象リポジトリをAI開発エージェントで開く。
+3. 実現したい結果を普段の言葉で相談する。
 
-The user never needs to run Python, an installer, setup, tests, Git, or lifecycle commands. The AI inspects the target, creates repository-local prerequisites, bootstraps the target's canonical requirements and standards registry, and owns internal commands.
+利用者にPython、インストーラー、初期設定、テスト、Git、ライフサイクルコマンドを実行させない。AIが対象を調査し、リポジトリ内の前提環境を作り、対象固有の要件正本と出典台帳を初期化し、内部コマンドを実行する。
 
-Copying skills does not copy this reference repository's product requirements. On first use, `$maintain-canonical-requirements` creates the target-specific `spec/requirements/requirements.json` from its bundled empty template. It generates `docs/requirements/REQUIREMENTS.md`; `$verify-against-engineering-standards` similarly bootstraps `governance/standards/registry.json` from its bundled official-source registry.
+Skillsをコピーしても、この参照リポジトリ固有の製品要件はコピーしない。初回利用時に`$maintain-canonical-requirements`が同梱の空テンプレートから対象固有の`spec/requirements/requirements.json`を作り、`docs/requirements/REQUIREMENTS.md`を生成する。`$verify-against-engineering-standards`も同様に、同梱の公式資料台帳から`governance/standards/registry.json`を初期化する。
 
-For the full deterministic governance flow, also copy these entries while preserving relative paths:
+決定的な統制フローをすべて使う場合は、相対パスを保って次もコピーする。
 
-- `.codex/agents` for optional read-only reviewers;
-- `governance` for policy, checklist, and standards registry;
-- `docs/templates`;
-- `tools`;
-- `checklist.xlsx`;
-- `requirements.txt`.
+- 読取専用レビュー用の`.codex/agents`
+- 方針、チェックリスト、出典台帳を持つ`governance`
+- `docs/templates`
+- `tools`
+- `checklist.xlsx`
+- `requirements.txt`
 
-If the target has no `AGENTS.md`, copy `distribution/snippets/AGENTS.governance.md` as `AGENTS.md`. If it already has one, leave it intact; the agent adds only a clearly delimited compatible section as part of the reviewed change. Apply the same preservation rule to `.codex/config.toml`.
+対象に`AGENTS.md`がなければ、`distribution/snippets/AGENTS.governance.md`を`AGENTS.md`としてコピーする。すでに存在する場合は上書きせず、AIが互換性を確認した区切り付きの節だけをレビュー対象の変更として追加する。`.codex/config.toml`も同様に保護する。
 
-## Current standard paths
+## 現行の標準配置
 
-| Asset | Reference source | Target | Rule |
+| 成果物 | このリポジトリのコピー元 | 対象リポジトリ | 規則 |
 |---|---|---|---|
-| Reusable skill | `.agents/skills/<name>/` | `<target>/.agents/skills/<name>/` | current repository-scoped portable layout |
-| Durable requirements | skill template | `<target>/spec/requirements/requirements.json` | target-specific, generated at first intake |
-| Generated requirements | canonical catalog | `<target>/docs/requirements/REQUIREMENTS.md` | never edit directly |
-| Generated implementation design | source/OpenAPI/SQL/CFn | `<target>/docs/design/generated/` | source digest and drift checked |
-| Standards registry | skill asset or governance profile | `<target>/governance/standards/registry.json` | official source, version, check date, refresh interval |
-| Codex custom agent | `.codex/agents/<name>.toml` | same path | optional project-scoped reviewer |
-| Codex hooks | `.codex/hooks/`, `.codex/hooks.json` | same paths | optional trusted-project integration |
+| 再利用可能なSkill | `.agents/skills/<name>/` | `<target>/.agents/skills/<name>/` | リポジトリ単位の移植用標準配置 |
+| 永続要件 | Skill同梱テンプレート | `<target>/spec/requirements/requirements.json` | 対象固有、初回受付時に生成 |
+| 生成要件文書 | 要件正本 | `<target>/docs/requirements/REQUIREMENTS.md` | 直接編集しない |
+| 生成詳細設計 | ソース/OpenAPI/SQL/CFn | `<target>/docs/design/generated/` | ソースdigestと差分を検査 |
+| 出典台帳 | Skill同梱台帳または統制プロファイル | `<target>/governance/standards/registry.json` | 公式資料、版、確認日、差分、更新間隔を保持 |
+| Codexカスタムagent | `.codex/agents/<name>.toml` | 同じ相対パス | 任意のプロジェクト単位レビュー担当 |
+| Codex hooks | `.codex/hooks/`、`.codex/hooks.json` | 同じ相対パス | 任意の信頼済みプロジェクト連携 |
 
-Repository skills belong in `.agents/skills`, not `.codex/skills`. Personal skills may use `$HOME/.agents/skills`, but this collection deliberately makes no global writes.
+リポジトリ用Skillsは`.agents/skills`へ置き、`.codex/skills`には置かない。個人用Skillsは`$HOME/.agents/skills`を利用できるが、このコレクションはグローバル領域へ書き込まない。
 
-## Choose a copy profile
+## コピープロファイル
 
-| Profile | Use when | Copies |
+| プロファイル | 用途 | コピー内容 |
 |---|---|---|
-| `requirements` | Conversation, articulation, atomic durable requirements | canonical-requirements and calibrated-listening skills |
-| `implementation-design` | FastAPI/CDK implementation-derived design | detailed-design generator skill |
-| `standards-verification` | SWEBOK/cloud best-practice checks | standards and adversarial-review skills |
-| `development-framework` | All three guarantees are needed | the five supporting skills above |
-| `chat-first` | Ordinary conversation should orchestrate the complete flow | development framework plus chat-first orchestrator |
-| `adversarial-review` | A standalone critical correctness review is needed | adversarial-review skill |
-| `communication` | Only calibrated listening is needed | calibrated-listening skill |
-| `commit-style` | Only Japanese gitmoji commits are needed | commit style skill |
-| `skills` | Every portable skill is wanted | `.agents/skills` |
-| `agents` | Read-only Codex reviewers are wanted | `.codex/agents` |
-| `governance` | Deterministic phases, checks, authorization, and audit are needed | skills, agents, runtime, templates, dependency pin, merge reference |
-| `codex-hooks` | Lifecycle hooks are wanted | hook scripts and declaration |
-| `full` | The complete reference set is wanted | all skills, agents, hooks, and governance runtime |
+| `requirements` | 対話、言語化、原子的な永続要件 | 要件正本管理と傾聴のSkills |
+| `implementation-design` | FastAPI/CDKの実装由来設計 | 詳細設計生成Skill |
+| `standards-verification` | SWEBOK・クラウドのベストプラクティス検証 | 標準検証と批判的レビューのSkills |
+| `development-framework` | 3つの品質保証をすべて利用 | 上記を支える6つのSkills |
+| `chat-first` | 普通の相談から全工程を自動実行 | 開発フレームワークと会話起点の統括Skill |
+| `adversarial-review` | 独立した批判的な正しさのレビュー | 批判的レビューSkill |
+| `communication` | 傾聴だけを利用 | 傾聴Skill |
+| `commit-style` | 日本語gitmojiコミットだけを利用 | コミット形式Skill |
+| `skills` | すべての移植用Skills | `.agents/skills` |
+| `agents` | 読取専用Codexレビュー担当を利用 | `.codex/agents` |
+| `governance` | 決定的工程、チェック、承認、監査を利用 | Skills、agents、実行基盤、テンプレート、依存固定、統合用参照 |
+| `codex-hooks` | ライフサイクルhookを利用 | hookスクリプトと宣言 |
+| `full` | 完全な参照セットを利用 | 全Skills、agents、hooks、統制実行基盤 |
 
-Mappings are defined once in [`distribution/manifest.json`](../distribution/manifest.json).
+対応関係の正本は[`distribution/manifest.json`](../distribution/manifest.json)である。
 
-## Dependencies and automatic bootstrap
+## 依存関係と自動初期化
 
-- Listening, canonical requirements, adversarial review, and standards registry validation use the Python standard library or natural-language instructions.
-- Implementation design pins PyYAML and SQLGlot in its own `requirements.txt`. The agent prepares them in a repository-local environment only when the generator is used.
-- Governance skills additionally use `tools/devflow.py`, `checklist.xlsx`, and root `requirements.txt`.
-- If only skill folders are present, chat-first uses a lightweight `work/<id>` record but still maintains the durable catalog outside `work/`.
+- 傾聴、要件正本、批判的レビュー、出典台帳の検証は、Python標準ライブラリまたは自然言語の指示だけを使う。
+- 実装設計は、自身の`requirements.txt`でPyYAMLとSQLGlotを固定する。AIが生成器を使う場合だけリポジトリ内環境へ準備する。
+- 統制Skillsは`tools/devflow.py`、`checklist.xlsx`、ルートの`requirements.txt`も使う。
+- Skillフォルダだけがある場合、会話起点Skillは軽量な`work/<id>`記録を使うが、永続カタログは`work/`外で維持する。
 
-Missing automation is an agent setup task, not a user question. Setup must not overwrite target-owned files, weaken checks, deploy production, merge a PR, or write global configuration without explicit authority.
+不足する自動化はAIの導入作業であり、利用者への質問ではない。導入時も対象所有ファイルの上書き、検査の弱体化、本番デプロイ、PRのマージ、明示権限のないグローバル設定変更は行わない。
 
-## Optional maintainer installer
+## 保守者向け任意インストーラー
 
-The manifest-driven installer is available for maintainers and CI; it is not part of the user workflow. Preview is the default and performs no writes:
+manifest駆動のインストーラーは保守者とCI向けであり、利用者の通常フローには含めない。既定は書込みを行わないプレビューである。
 
 ```bash
 python3 tools/install_reference.py \
@@ -76,7 +76,7 @@ python3 tools/install_reference.py \
   --profile development-framework
 ```
 
-Apply a reviewed plan:
+レビュー済み計画を適用する場合:
 
 ```bash
 python3 tools/install_reference.py \
@@ -85,14 +85,14 @@ python3 tools/install_reference.py \
   --apply
 ```
 
-The installer refuses differing existing files before any write. `--force` is only for a separately reviewed replacement. It never targets `/`, the home directory, or a global skill location.
+既存ファイルの内容が異なる場合、インストーラーは一件も書き込む前に停止する。`--force`は別途レビューした置換だけに使う。`/`、ホームディレクトリ、グローバルSkill領域を対象にしない。
 
-## Update and removal
+## 更新と削除
 
-Copy or run the installer again to compare a newer collection. Requirements updates occur through revision-checked add/update/retire deltas, not by replacing the catalog. Remove copied skills manually so automation cannot delete target-owned files. Retire a durable requirement instead of erasing its history.
+新しいコレクションとの比較には、再コピーまたはインストーラーを使う。要件はカタログ全体の置換ではなく、版競合を検査したadd/update/retire差分で更新する。自動化が対象所有ファイルを削除しないよう、コピーしたSkillsの削除は手動で行う。永続要件は履歴を消さず廃止する。
 
-## Official layout references
+## 公式の配置資料
 
-- [Codex skills](https://learn.chatgpt.com/docs/build-skills)
-- [Codex custom agents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
-- [Codex project configuration](https://learn.chatgpt.com/docs/config-file/config-basic)
+- [Codex Skills](https://learn.chatgpt.com/docs/build-skills)
+- [Codexカスタムagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+- [Codexプロジェクト設定](https://learn.chatgpt.com/docs/config-file/config-basic)

@@ -1,32 +1,15 @@
-# Governance integration reference
+# 統制ルールの統合用参照
 
-Copy the relevant rules below into the target repository's `AGENTS.md`. Keep any
-target-specific build, test, ownership, and safety instructions already present.
+以下のうち必要な規則を対象リポジトリの`AGENTS.md`へコピーする。対象固有のビルド、テスト、所有権、安全性の指示は維持する。
 
-- Treat ordinary natural-language feature, fix, refactor, and design requests as
-  triggers for `chat-first-development`. Do not require skill names or commands.
-- The AI owns repository-local setup, dependency preparation, lifecycle commands,
-  tests, Git publication, and CI checks. Never ask the user to run them.
-- For a new development request, use `govern-development-request` to create the
-  work item, requirements, traceability, and autonomous execution plan before
-  implementation.
-- Use `maintain-canonical-requirements` for intent discovery and revision-checked
-  add/update/retire operations. `spec/requirements/requirements.json` is the only
-  durable requirement authority; `work/<id>` is request-local context and evidence.
-- Ask the requester for one initial authorization covering the requirements,
-  execution plan, authority boundary, and completion criteria.
-- After that authorization, continue autonomously inside the approved boundary.
-  Stop only for a material scope change, missing authority, destructive action,
-  external coordination, unresolved safety risk, or failed completion gate.
-- Use `author-lifecycle-docs`, `authorize-autonomous-execution`,
-  `inspect-quality-gates`, and `retrospect-and-improve` at their corresponding
-  lifecycle stages.
-- Generate FastAPI/CDK detailed design from router/OpenAPI/SQL/CloudFormation
-  artifacts with `generate-implementation-design`; reject generated drift.
-- Verify requirements, design, implementation, and tests with
-  `verify-against-engineering-standards`, the selected checklist profiles, and
-  the fresh official sources in `governance/standards/registry.json`.
-- Treat `governance/policy.json`, `governance/checklist/catalog.json`, the canonical
-  requirements catalog, and each work item's authorized delta/plan hashes as authoritative.
-- Use the smallest capable model for bounded checks. Escalate model capability
-  only when the current model cannot satisfy a documented quality gate.
+- 自然言語による機能追加、修正、リファクタリング、設計の依頼を`chat-first-development`の起動条件として扱い、Skill名やコマンドを要求しない。
+- リポジトリ内の初期設定、依存準備、ライフサイクルコマンド、テスト、Git公開、CI確認はAIが行い、利用者へ実行を依頼しない。
+- 新しい開発要求では、実装前に`govern-development-request`でwork item、要件、トレーサビリティ、自律実行計画を作る。
+- 意図探索と版競合を検査したadd/update/retire操作には`maintain-canonical-requirements`を使う。永続要件の唯一の正本は`spec/requirements/requirements.json`とし、`work/<id>`は要求ごとの文脈と証跡だけに使う。
+- 要件、実行計画、権限境界、完了条件をまとめた初回承認を要求者へ一度だけ求める。
+- 初回承認後は承認範囲内で自律実行する。重大なスコープ変更、権限不足、破壊的操作、外部調整、未解決の安全リスク、完了ゲート失敗だけで停止する。
+- 各工程で`author-lifecycle-docs`、`authorize-autonomous-execution`、`inspect-quality-gates`、`retrospect-and-improve`を使う。
+- `generate-implementation-design`でrouter/OpenAPI/SQL/CloudFormation成果物からFastAPI/CDKの詳細設計を生成し、生成差分を拒否する。
+- `verify-against-engineering-standards`、選択したチェックリストプロファイル、`governance/standards/registry.json`の鮮度確認済み公式資料で要件、設計、実装、テストを検証する。
+- `governance/policy.json`、`governance/checklist/catalog.json`、要件正本、各work itemの承認済み差分・計画ハッシュを権威ある情報として扱う。
+- 範囲の限定された検査には、合格できる最小能力のモデルを使う。文書化された品質ゲートを満たせない場合だけ能力を引き上げる。

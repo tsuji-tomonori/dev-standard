@@ -74,7 +74,18 @@ class SkillContractTest(unittest.TestCase):
             self.assertIn(required, requirements)
         for required in ["router.py", "functions.py", "OpenAPI", "SQLGlot AST", "CloudFormation", "SHA-256", "--check"]:
             self.assertIn(required, design)
-        for required in ["official", "version", "fresh", "Pass", "N/A", "Fail", "direct evidence"]:
+        for required in [
+            "official",
+            "version",
+            "fresh",
+            "Pass",
+            "N/A",
+            "Fail",
+            "direct Pass evidence",
+            "project severity",
+            "remediation plan",
+            "recheck",
+        ]:
             self.assertIn(required, standards)
 
     def test_requirement_research_supports_listening_divergence_and_review_perspectives(self) -> None:
@@ -162,13 +173,13 @@ class SkillContractTest(unittest.TestCase):
     def test_ai_operating_policy_preserves_outcome_and_checks(self) -> None:
         text = (ROOT / "docs" / "AI-OPERATING-POLICY.md").read_text(encoding="utf-8")
         for required in [
-            "outcome",
-            "success criteria",
-            "authority boundary",
+            "達成結果",
+            "成功条件",
+            "権限境界",
             "gpt-5.6-terra",
             "gpt-5.6-luna",
-            "validation contract",
-            "Minimal-prompt regression checklist",
+            "決定的な検証契約",
+            "最小指示の回帰チェック",
         ]:
             self.assertIn(required, text)
 

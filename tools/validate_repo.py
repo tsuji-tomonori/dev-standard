@@ -152,7 +152,7 @@ def validate_repo(failures: list[str]) -> None:
         fail("docs/AI-OPERATING-POLICY.md missing", failures)
     else:
         text = operating_policy.read_text(encoding="utf-8")
-        for term in ["gpt-5.6-terra", "gpt-5.6-luna", "validation contract", "Minimal-prompt regression checklist"]:
+        for term in ["gpt-5.6-terra", "gpt-5.6-luna", "決定的な検証契約", "最小指示の回帰チェック"]:
             if term not in text:
                 fail(f"AI operating policy missing: {term}", failures)
     try:
@@ -197,7 +197,7 @@ def validate_repo(failures: list[str]) -> None:
         fail("docs/INSTALLATION.md missing", failures)
     else:
         installation = (ROOT / "docs" / "INSTALLATION.md").read_text(encoding="utf-8")
-        for term in ["copy, open, chat", "No installer command is required", "never needs to run Python"]:
+        for term in ["コピーして開き、相談する", "インストーラーを実行する必要はない", "利用者にPython"]:
             if term not in installation:
                 fail(f"chat-first installation guidance missing: {term}", failures)
     skills_catalog = ROOT / "docs" / "SKILLS.md"
@@ -208,6 +208,24 @@ def validate_repo(failures: list[str]) -> None:
         actual = {path.name for path in (ROOT / ".agents" / "skills").iterdir() if (path / "SKILL.md").is_file()}
         if listed != actual:
             fail(f"docs/SKILLS.md inventory mismatch: missing={sorted(actual - listed)} extra={sorted(listed - actual)}", failures)
+    japanese = re.compile(r"[ぁ-んァ-ヶ一-龠々]")
+    user_docs = [ROOT / "README.md", ROOT / "CONTRIBUTING.md", ROOT / "SECURITY.md"]
+    user_docs.extend(sorted((ROOT / "docs").rglob("*.md")))
+    user_docs.append(ROOT / "distribution" / "snippets" / "AGENTS.governance.md")
+    for path in user_docs:
+        content = path.read_text(encoding="utf-8")
+        for line_number, line in enumerate(content.splitlines(), 1):
+            if re.match(r"^#{1,6} ", line) and not japanese.search(line):
+                fail(f"{path.relative_to(ROOT)}:{line_number}: Markdown heading must be Japanese", failures)
+        for phrase in [
+            "Work item:",
+            "Canonical source:",
+            "Base catalog revision:",
+            "Change set:",
+            "| 操作 | 対象 | 影響 | rollback |",
+        ]:
+            if phrase in content:
+                fail(f"{path.relative_to(ROOT)}: untranslated document label: {phrase}", failures)
     for label, command in [
         ("canonical requirements", [sys.executable, str(ROOT / ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"), "check", "--spec", str(ROOT / "spec/requirements/requirements.json"), "--out", str(ROOT / "docs/requirements/REQUIREMENTS.md")]),
         ("standards registry", [sys.executable, str(ROOT / ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py"), "check", "--registry", str(ROOT / "governance/standards/registry.json"), "--out", str(ROOT / "docs/standards/SOURCES.md")]),
