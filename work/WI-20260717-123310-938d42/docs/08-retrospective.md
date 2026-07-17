@@ -10,11 +10,11 @@ primary source優先、independent oracle、finite-budget wording、safe boundar
 
 ## 手戻り・ゲート失敗・見逃し
 
-検索queryの一般語ではsoftware primary sourcesが十分出ず、technique別にqueryを分割した。実装手戻りなし。
+検索queryの一般語ではsoftware primary sourcesが十分出ず、technique別にqueryを分割した。また、GitHub連携で大容量JSONが切り詰められ、初回remote auditが失敗した。実装・テスト自体の手戻りはなし。
 
 ## 根本原因
 
-adversarial validationの対象範囲がsoftware/AI両方に跨るため、単一queryでは検索rankingがAMLへ偏った。
+adversarial validationの対象範囲がsoftware/AI両方に跨るため、単一queryでは検索rankingがAMLへ偏った。大容量JSONの失敗は、標準出力を介した転送上限を事前検査していなかったことが原因。
 
 ## 改善提案
 
