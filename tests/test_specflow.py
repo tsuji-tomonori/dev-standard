@@ -27,7 +27,8 @@ class SpecflowTest(unittest.TestCase):
         catalog = specflow.validate_catalog(specflow.read_json(ROOT / "spec/requirements/requirements.json"))
         generated = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")
         self.assertEqual(generated, specflow.render(catalog))
-        self.assertEqual(len(catalog["requirements"]), 14)
+        self.assertEqual(len(catalog["requirements"]), 17)
+        self.assertIn("# dev-standard 要件一覧", generated)
 
     def test_composite_action_and_clause_are_rejected(self) -> None:
         catalog = specflow.read_json(ROOT / "spec/requirements/requirements.json")
@@ -53,14 +54,14 @@ class SpecflowTest(unittest.TestCase):
             "operations": [{
                 "op": "update",
                 "id": "REQ-FRAME-001",
-                "expected_revision": 1,
-                "changes": {"rationale": "Updated rationale for a test."},
+                "expected_revision": 2,
+                "changes": {"rationale": "テストで更新した根拠。"},
             }],
         }
         updated = specflow.apply_change(catalog, change)
         item = next(value for value in updated["requirements"] if value["id"] == "REQ-FRAME-001")
-        self.assertEqual(item["revision"], 2)
-        self.assertEqual(updated["catalog_revision"], 2)
+        self.assertEqual(item["revision"], 3)
+        self.assertEqual(updated["catalog_revision"], 3)
         self.assertEqual(catalog, original)
         stale = copy.deepcopy(change)
         stale["base_catalog_revision"] = 0
@@ -71,14 +72,14 @@ class SpecflowTest(unittest.TestCase):
     def test_retire_preserves_tombstone_and_apply_regenerates_docs(self) -> None:
         catalog = specflow.read_json(ROOT / "spec/requirements/requirements.json")
         change = {
-            "base_catalog_revision": 1,
+            "base_catalog_revision": catalog["catalog_revision"],
             "changed_at": "2026-07-18",
             "work_item": "WI-TEST-RETIRE",
             "operations": [{
                 "op": "retire",
                 "id": "REQ-FRAME-001",
-                "expected_revision": 1,
-                "reason": "Superseded in a lifecycle test",
+                "expected_revision": 2,
+                "reason": "ライフサイクルテストで置換されたため",
             }],
         }
         with tempfile.TemporaryDirectory() as directory:
@@ -93,7 +94,7 @@ class SpecflowTest(unittest.TestCase):
             retired = specflow.read_json(source)
             item = next(value for value in retired["requirements"] if value["id"] == "REQ-FRAME-001")
             self.assertEqual(item["status"], "retired")
-            self.assertIn("Superseded", item["retirement_reason"])
+            self.assertIn("置換", item["retirement_reason"])
             self.assertEqual(output.read_text(encoding="utf-8"), specflow.render(retired))
 
 

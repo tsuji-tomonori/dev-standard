@@ -1,232 +1,768 @@
 {
-  "catalog_revision": 1,
+  "catalog_revision": 2,
   "product": "dev-standard",
   "requirements": [
     {
-      "acceptance_criteria": [{"given": "a governed request exists", "id": "AC-FRAME-001-1", "then": "work contains only request-local fragments, decisions, plans, and evidence", "when": "the request is recorded"}],
-      "action": "separate",
-      "id": "REQ-FRAME-001",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "transient work records from durable product requirements",
-      "rationale": "A work item is an execution context and must not silently become the product specification.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17"],
-      "status": "active",
-      "subject": "The repository",
-      "title": "Work and specification boundary",
-      "traces": {"design": ["docs/FLOW.md"], "implementation": [".agents/skills/maintain-canonical-requirements/SKILL.md"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_specflow.py"]},
-      "type": "constraint",
-      "verification": {"evidence": "repository validation and skill contract tests", "method": "automated inspection"}
-    },
-    {
-      "acceptance_criteria": [{"given": "a user expresses an incomplete or ambiguous need", "id": "AC-DISC-001-1", "then": "the agent presents the inferred goal, constraints, tension, and smallest consequential question without sycophancy", "when": "different interpretations would change the outcome"}],
-      "action": "discover",
-      "id": "REQ-DISC-001",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "the user's intended outcome through calibrated dialogue",
-      "rationale": "Comfortable listening and precise articulation are necessary to find the real requirement without burdening the user.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17", "Design Council Double Diamond", "calibrated listening research"],
-      "status": "active",
-      "subject": "The development agent",
-      "title": "Research-backed intent discovery",
-      "traces": {"design": [".agents/skills/maintain-canonical-requirements/references/research-basis.md"], "implementation": [".agents/skills/maintain-canonical-requirements/SKILL.md", ".agents/skills/calibrated-collaborative-listening/SKILL.md"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_skills.py"]},
-      "type": "functional",
-      "verification": {"evidence": "skill instructions and research reference", "method": "contract review"}
-    },
-    {
-      "acceptance_criteria": [{"given": "a durable obligation is accepted", "id": "AC-DISC-002-1", "then": "it has one ID, subject, normalized action, object, status, acceptance criteria, verification, and traces in the canonical catalog", "when": "the requirement is persisted"}],
-      "action": "maintain",
-      "id": "REQ-DISC-002",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "one atomic obligation per canonical requirement identifier",
-      "rationale": "Atomic requirements support independent change, verification, and traceability.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17", "SWEBOK Software Requirements"],
-      "status": "active",
-      "subject": "The requirements catalog",
-      "title": "Atomic durable requirements",
-      "traces": {"design": [".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"], "implementation": [".agents/skills/maintain-canonical-requirements/scripts/specflow.py"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_specflow.py"]},
-      "type": "data",
-      "verification": {"evidence": "schema validator rejects composite or incomplete obligations", "method": "automated test"}
-    },
-    {
-      "acceptance_criteria": [{"given": "a change set names current catalog and item revisions", "id": "AC-DISC-003-1", "then": "the complete candidate validates before an atomic file replacement", "when": "add, update, or retire is applied"}, {"given": "a delete is requested for a previously authoritative requirement", "id": "AC-DISC-003-2", "then": "the item remains as a retired tombstone with a reason", "when": "the change is accepted"}],
-      "action": "apply",
-      "id": "REQ-DISC-003",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "version-checked add, update, and retirement operations",
-      "rationale": "Optimistic concurrency and tombstones prevent lost updates and erased history.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17"],
-      "status": "active",
-      "subject": "The specification workflow",
-      "title": "Safe requirement lifecycle changes",
-      "traces": {"design": [".agents/skills/maintain-canonical-requirements/SKILL.md"], "implementation": [".agents/skills/maintain-canonical-requirements/scripts/specflow.py"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_specflow.py"]},
-      "type": "functional",
-      "verification": {"evidence": "revision conflict and retirement tests", "method": "automated test"}
-    },
-    {
-      "acceptance_criteria": [{"given": "the canonical catalog is valid", "id": "AC-DISC-004-1", "then": "human-readable requirement documentation is reproducible and byte-current", "when": "documentation generation and drift checks run"}],
-      "action": "generate",
-      "id": "REQ-DISC-004",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "human-readable requirement documentation from the canonical catalog",
-      "rationale": "Generated views serve readers without creating a competing editable authority.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17"],
-      "status": "active",
-      "subject": "The specification workflow",
-      "title": "Generated requirements documentation",
-      "traces": {"design": ["docs/requirements/REQUIREMENTS.md"], "implementation": [".agents/skills/maintain-canonical-requirements/scripts/specflow.py"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_specflow.py"]},
-      "type": "functional",
-      "verification": {"evidence": "generated document equality check", "method": "automated test"}
-    },
-    {
-      "acceptance_criteria": [{"given": "a FastAPI operation is implemented", "id": "AC-DESIGN-001-1", "then": "router.py exposes orchestration and functions.py contains concrete processing", "when": "the source structure is reviewed"}],
+      "acceptance_criteria": [
+        {
+          "given": "FastAPI operationを実装している",
+          "id": "AC-DESIGN-001-1",
+          "then": "router.pyが処理の流れを公開し、functions.pyが具体処理を持つ",
+          "when": "ソース構成を検査する"
+        }
+      ],
       "action": "structure",
       "id": "REQ-DESIGN-001",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "FastAPI operations into orchestration routers and concrete functions",
-      "rationale": "A stable operation boundary makes flow derivation and detailed design inspection deterministic.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17"],
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "router.pyのオーケストレーションとfunctions.pyの具体処理に分けたoperation",
+      "rationale": "安定したoperation境界により、処理フローの導出と詳細設計の決定的な検査ができる。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17"
+      ],
       "status": "active",
-      "subject": "The FastAPI implementation framework",
-      "title": "FastAPI operation structure",
-      "traces": {"design": [".agents/skills/generate-implementation-design/references/fastapi-contract.md"], "implementation": [".agents/skills/generate-implementation-design/SKILL.md"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_designflow.py"]},
+      "subject": "FastAPI実装フレーム",
+      "title": "FastAPI operation構成",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/fastapi-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/SKILL.md"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_designflow.py"
+        ]
+      },
       "type": "constraint",
-      "verification": {"evidence": "router AST contract tests", "method": "automated test"}
+      "verification": {
+        "evidence": "routerのAST契約テスト",
+        "method": "自動テスト"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "router.py contains valid route functions", "id": "AC-DESIGN-002-1", "then": "the generated Mermaid sequence preserves runtime call order and excludes decorators", "when": "the FastAPI design generator runs"}],
+      "acceptance_criteria": [
+        {
+          "given": "router.pyに有効なroute関数がある",
+          "id": "AC-DESIGN-002-1",
+          "then": "生成Mermaidが実行時の呼出順を保ち、decoratorを除外する",
+          "when": "FastAPI設計生成器を実行する"
+        }
+      ],
       "action": "derive",
       "id": "REQ-DESIGN-002",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "operation sequence diagrams from FastAPI router syntax trees",
-      "rationale": "Source-derived flow documentation stays aligned with implementation.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17"],
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "FastAPI routerの構文木から得たoperationシーケンス図",
+      "rationale": "実装から導出したフロー文書はソースとの整合を維持できる。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17"
+      ],
       "status": "active",
-      "subject": "The design generator",
-      "title": "Router-derived sequence diagrams",
-      "traces": {"design": [".agents/skills/generate-implementation-design/references/fastapi-contract.md"], "implementation": [".agents/skills/generate-implementation-design/scripts/designflow.py"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_designflow.py"]},
+      "subject": "設計生成器",
+      "title": "routerからのシーケンス図導出",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/fastapi-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_designflow.py"
+        ]
+      },
       "type": "functional",
-      "verification": {"evidence": "sequence output assertions", "method": "automated test"}
+      "verification": {
+        "evidence": "シーケンス出力のアサーション",
+        "method": "自動テスト"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "the application-produced OpenAPI document is available", "id": "AC-DESIGN-003-1", "then": "API, request, response, and schema documentation is generated without duplicate operation identifiers", "when": "the FastAPI design generator runs"}],
+      "acceptance_criteria": [
+        {
+          "given": "アプリケーションが生成したOpenAPI文書がある",
+          "id": "AC-DESIGN-003-1",
+          "then": "operation IDを重複させずにAPI、request、response、schema文書を生成する",
+          "when": "FastAPI設計生成器を実行する"
+        }
+      ],
       "action": "derive",
       "id": "REQ-DESIGN-003",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "API and interface catalogs from an OpenAPI document",
-      "rationale": "OpenAPI is the executable interface source and avoids duplicated manual catalogs.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17", "OpenAPI Specification 3.1.1", "FastAPI OpenAPI documentation"],
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "OpenAPI文書からのAPIとインターフェースの一覧",
+      "rationale": "OpenAPIを実行可能なIF正本とすることで、手作業カタログの重複を避ける。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17",
+        "OpenAPI Specification 3.1.1",
+        "FastAPI OpenAPI documentation"
+      ],
       "status": "active",
-      "subject": "The design generator",
-      "title": "OpenAPI-derived interface design",
-      "traces": {"design": [".agents/skills/generate-implementation-design/references/fastapi-contract.md"], "implementation": [".agents/skills/generate-implementation-design/scripts/designflow.py"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_designflow.py"]},
+      "subject": "設計生成器",
+      "title": "OpenAPIからのインターフェース設計導出",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/fastapi-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_designflow.py"
+        ]
+      },
       "type": "interface",
-      "verification": {"evidence": "OpenAPI fixture output assertions", "method": "automated test"}
+      "verification": {
+        "evidence": "OpenAPI fixtureの出力アサーション",
+        "method": "自動テスト"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "executable raw SQL files exist", "id": "AC-DESIGN-004-1", "then": "query objects and table CRUD relationships are generated from parsed SQL syntax trees", "when": "the FastAPI design generator runs"}],
+      "acceptance_criteria": [
+        {
+          "given": "実行可能な生SQLファイルがある",
+          "id": "AC-DESIGN-004-1",
+          "then": "SQL構文木からquery objectとtable CRUD関係を生成する",
+          "when": "FastAPI設計生成器を実行する"
+        }
+      ],
       "action": "parse",
       "id": "REQ-DESIGN-004",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "raw SQL into query-object and CRUD documentation",
-      "rationale": "AST parsing provides structural evidence and rejects invalid SQL instead of guessing from text.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17", "SQLGlot documentation"],
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "生SQLからのquery objectとCRUD文書",
+      "rationale": "AST解析は構造的な証跡を作り、無効なSQLを推測せず拒否する。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17",
+        "SQLGlot documentation"
+      ],
       "status": "active",
-      "subject": "The design generator",
-      "title": "SQL-derived data design",
-      "traces": {"design": [".agents/skills/generate-implementation-design/references/fastapi-contract.md"], "implementation": [".agents/skills/generate-implementation-design/scripts/designflow.py"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_designflow.py"]},
+      "subject": "設計生成器",
+      "title": "SQLからのデータ設計導出",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/fastapi-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_designflow.py"
+        ]
+      },
       "type": "data",
-      "verification": {"evidence": "SQL AST fixture and CRUD output assertions", "method": "automated test"}
+      "verification": {
+        "evidence": "SQL AST fixtureとCRUD出力のアサーション",
+        "method": "自動テスト"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "an AWS CDK stack has synthesized a CloudFormation YAML or JSON template", "id": "AC-DESIGN-005-1", "then": "resource and parameter detail documentation is generated from that template", "when": "the CDK design generator runs"}],
+      "acceptance_criteria": [
+        {
+          "given": "AWS CDK stackがCloudFormation YAMLまたはJSONを合成している",
+          "id": "AC-DESIGN-005-1",
+          "then": "テンプレートからresourceとparameterの詳細文書を生成する",
+          "when": "CDK設計生成器を実行する"
+        }
+      ],
       "action": "derive",
       "id": "REQ-DESIGN-005",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "resource and parameter catalogs from synthesized CloudFormation",
-      "rationale": "The synthesized deployment template is the concrete infrastructure interface.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17", "AWS CDK synth documentation", "CloudFormation template anatomy"],
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "合成済みCloudFormationからのresourceとparameter一覧",
+      "rationale": "合成されたデプロイテンプレートが具体的なインフラストラクチャIFである。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17",
+        "AWS CDK synth documentation",
+        "CloudFormation template anatomy"
+      ],
       "status": "active",
-      "subject": "The design generator",
-      "title": "CDK deployment design generation",
-      "traces": {"design": [".agents/skills/generate-implementation-design/references/cdk-contract.md"], "implementation": [".agents/skills/generate-implementation-design/scripts/designflow.py"], "standards": ["AWS-WAF"], "tests": ["tests/test_designflow.py"]},
+      "subject": "設計生成器",
+      "title": "CDKデプロイ設計の生成",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/cdk-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "AWS-WAF"
+        ],
+        "tests": [
+          "tests/test_designflow.py"
+        ]
+      },
       "type": "functional",
-      "verification": {"evidence": "CloudFormation fixture output assertions", "method": "automated test"}
+      "verification": {
+        "evidence": "CloudFormation fixtureの出力アサーション",
+        "method": "自動テスト"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "generated detailed design exists", "id": "AC-DESIGN-006-1", "then": "a source SHA-256 manifest exists and a clean regeneration is byte-identical", "when": "the design drift check runs"}],
+      "acceptance_criteria": [
+        {
+          "given": "自動生成された詳細設計がある",
+          "id": "AC-DESIGN-006-1",
+          "then": "ソースSHA-256 manifestが存在し、クリーンな再生成結果がバイト単位で一致する",
+          "when": "設計差分検査を実行する"
+        }
+      ],
       "action": "detect",
       "id": "REQ-DESIGN-006",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "drift between implementation artifacts and generated detailed design",
-      "rationale": "Digest and byte comparison enforce one-to-one reproducibility.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17"],
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "実装成果物と自動生成された詳細設計の差分",
+      "rationale": "digestとバイト比較により実装と設計の1対1再現性を強制する。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17"
+      ],
       "status": "active",
-      "subject": "The design workflow",
-      "title": "Implementation-to-design drift detection",
-      "traces": {"design": [".agents/skills/generate-implementation-design/SKILL.md"], "implementation": [".agents/skills/generate-implementation-design/scripts/designflow.py"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_designflow.py"]},
+      "subject": "設計フロー",
+      "title": "実装と設計の差分検出",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/SKILL.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_designflow.py"
+        ]
+      },
       "type": "quality",
-      "verification": {"evidence": "mutated source drift test", "method": "automated test"}
+      "verification": {
+        "evidence": "変更済みソースを用いた差分検出テスト",
+        "method": "自動テスト"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "a quality profile is selected", "id": "AC-QUALITY-001-1", "then": "every source has an official URL, version, checked date, and freshness interval", "when": "the standards registry is validated"}],
+      "acceptance_criteria": [
+        {
+          "given": "ユーザーの要求が不完全または曖昧である",
+          "id": "AC-DISC-001-1",
+          "then": "推定した目的、制約、葛藤、最小限の重要質問を迎合せず提示する",
+          "when": "解釈差が成果を変える"
+        }
+      ],
+      "action": "discover",
+      "id": "REQ-DISC-001",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "適切な対話を通じたユーザーの意図する成果",
+      "rationale": "言語化しきれていない要求を負担なく探り当てるには、心地よい傾聴と精密な言語化が必要である。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17",
+        "Design Council Double Diamond",
+        "calibrated listening research"
+      ],
+      "status": "active",
+      "subject": "開発エージェント",
+      "title": "研究に裏付けられた意図の探索",
+      "traces": {
+        "design": [
+          ".agents/skills/maintain-canonical-requirements/references/research-basis.md"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-canonical-requirements/SKILL.md",
+          ".agents/skills/calibrated-collaborative-listening/SKILL.md"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_skills.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "Skill指示と研究根拠",
+        "method": "契約レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "永続的な義務が受け入れられている",
+          "id": "AC-DISC-002-1",
+          "then": "一つのID、主体、正規化action、対象、状態、受入条件、検証、traceを正本に持つ",
+          "when": "要件を永続化する"
+        }
+      ],
       "action": "maintain",
-      "id": "REQ-QUALITY-001",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "a versioned registry of SWEBOK and official cloud guidance",
-      "rationale": "Versioned official sources make checklist claims reproducible while exposing stale guidance.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17", "SWEBOK V4", "AWS Well-Architected", "Azure Well-Architected", "Google Cloud Well-Architected", "OCI Best Practices"],
+      "id": "REQ-DISC-002",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "正本要件IDごとの一つの原子的な義務",
+      "rationale": "原子的な要件は独立した変更、検証、トレーサビリティを可能にする。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17",
+        "SWEBOK Software Requirements"
+      ],
       "status": "active",
-      "subject": "The quality framework",
-      "title": "Versioned standards source registry",
-      "traces": {"design": ["docs/standards/SOURCES.md"], "implementation": [".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py", "governance/standards/registry.json"], "standards": ["SWEBOK-V4", "AWS-WAF", "AZURE-WAF", "GCP-WAF", "OCI-WAF"], "tests": ["tests/test_standardsflow.py"]},
-      "type": "operational",
-      "verification": {"evidence": "official host and freshness tests", "method": "automated test"}
+      "subject": "要件カタログ",
+      "title": "原子的な永続要件",
+      "traces": {
+        "design": [
+          ".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_specflow.py"
+        ]
+      },
+      "type": "data",
+      "verification": {
+        "evidence": "複合または不完全な義務をスキーマ検証が拒否する記録",
+        "method": "自動テスト"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "requirements, generated design, implementation, and tests are reviewed", "id": "AC-QUALITY-002-1", "then": "each selected checklist item records Pass with direct evidence, N/A with a scope reason, or Fail with an issue and retest method", "when": "a quality gate is evaluated"}],
-      "action": "verify",
-      "id": "REQ-QUALITY-002",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "delivery artifacts against applicable evidence-based checklists",
-      "rationale": "A consistent evidence contract turns best-practice guidance into auditable quality gates.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17", "SWEBOK V4", "cloud vendor official guidance"],
+      "acceptance_criteria": [
+        {
+          "given": "変更セットが現行カタログ版と項目版を指定している",
+          "id": "AC-DISC-003-1",
+          "then": "完全な候補を検証してから正本を原子的に置換する",
+          "when": "追加、更新、廃止を適用する"
+        },
+        {
+          "given": "正本だった要件の削除が要求される",
+          "id": "AC-DISC-003-2",
+          "then": "理由付きの廃止墓標として項目を残す",
+          "when": "変更を受け入れる"
+        }
+      ],
+      "action": "apply",
+      "id": "REQ-DISC-003",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "版競合を検査した追加、更新、廃止操作",
+      "rationale": "楽観的同時実行制御と廃止墓標により、更新消失と履歴消去を防ぐ。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17"
+      ],
       "status": "active",
-      "subject": "The quality workflow",
-      "title": "Evidence-backed standards verification",
-      "traces": {"design": [".agents/skills/verify-against-engineering-standards/SKILL.md"], "implementation": ["tools/devflow.py"], "standards": ["SWEBOK-V4", "AWS-WAF", "AZURE-WAF", "GCP-WAF", "OCI-WAF"], "tests": ["tests/test_devflow.py", "tests/test_standardsflow.py"]},
+      "subject": "仕様管理フロー",
+      "title": "安全な要件ライフサイクル変更",
+      "traces": {
+        "design": [
+          ".agents/skills/maintain-canonical-requirements/SKILL.md"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_specflow.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "版競合と廃止操作のテスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "正本カタログが有効である",
+          "id": "AC-DISC-004-1",
+          "then": "日本語の要件文書を再現でき、正本とバイト単位で一致する",
+          "when": "文書生成と差分検査を実行する"
+        }
+      ],
+      "action": "generate",
+      "id": "REQ-DISC-004",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "正本カタログからの日本語の人間向け要件文書",
+      "rationale": "生成ビューは競合する編集可能な正本を作らずに読者へ情報を提供する。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17"
+      ],
+      "status": "active",
+      "subject": "仕様管理フロー",
+      "title": "要件文書の自動生成",
+      "traces": {
+        "design": [
+          "docs/requirements/REQUIREMENTS.md"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_specflow.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "生成文書の完全一致検査",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "利用者向けMarkdownまたは生成文書がある",
+          "id": "AC-DOCS-001-1",
+          "then": "見出しと説明が日本語であり、生成物が日本語テンプレートから再現される",
+          "when": "リポジトリ検証を実行する"
+        }
+      ],
+      "action": "provide",
+      "id": "REQ-DOCS-001",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "識別子と固有名詞を除いて日本語で統一された利用者向け文書",
+      "rationale": "導入・運用・監査の文書言語を統一し、意味の取り違えと二重保守を防ぐ。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18"
+      ],
+      "status": "active",
+      "subject": "文書生成フロー",
+      "title": "日本語の利用者向け文書",
+      "traces": {
+        "design": [
+          "docs/README.md"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-canonical-requirements/scripts/specflow.py",
+          ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_validate_repo.py",
+          "tests/test_specflow.py",
+          "tests/test_standardsflow.py"
+        ]
+      },
       "type": "quality",
-      "verification": {"evidence": "gate audit and standards registry tests", "method": "automated audit"}
+      "verification": {
+        "evidence": "日本語文書検査と生成差分テスト",
+        "method": "自動検査"
+      }
     },
     {
-      "acceptance_criteria": [{"given": "the relevant skill folders are copied to a target repository", "id": "AC-PORTABLE-001-1", "then": "ordinary chat triggers automatic bootstrap, requirements handling, design, implementation, tests, and publication without user-run commands", "when": "a user describes a development need"}],
+      "acceptance_criteria": [
+        {
+          "given": "統制対象の要求が存在する",
+          "id": "AC-FRAME-001-1",
+          "then": "workには要求断片、判断、計画、証跡だけが残り、永続要件は正本へ保存される",
+          "when": "要求を記録する"
+        }
+      ],
+      "action": "separate",
+      "id": "REQ-FRAME-001",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "一時的な作業記録と永続的な製品要件",
+      "rationale": "work itemは実行文脈であり、暗黙に製品仕様の正本へ変わってはならない。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17"
+      ],
+      "status": "active",
+      "subject": "リポジトリ",
+      "title": "workと正本の境界",
+      "traces": {
+        "design": [
+          "docs/FLOW.md"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-canonical-requirements/SKILL.md"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_specflow.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "リポジトリ検証とSkill契約テスト",
+        "method": "自動検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象Skillsフォルダを別リポジトリへコピーしている",
+          "id": "AC-PORTABLE-001-1",
+          "then": "通常のチャットから導入、要件、設計、実装、テスト、公開までを自動実行する",
+          "when": "利用者が自然言語で開発要求を相談する"
+        }
+      ],
       "action": "enable",
       "id": "REQ-PORTABLE-001",
-      "last_changed_by": "WI-20260717-143440-a9b207",
-      "object": "copy-and-chat adoption in another repository",
-      "rationale": "The collection is a reusable reference, so users should not need to operate its internal machinery.",
-      "revision": 1,
-      "source_refs": ["user:2026-07-17"],
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "別リポジトリへのcopy-and-chat方式の導入",
+      "rationale": "本リポジトリは再利用可能な参照集であり、利用者が内部ツールを手動操作せずに使える必要がある。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17"
+      ],
       "status": "active",
-      "subject": "The portable skill collection",
-      "title": "Chat-first portable adoption",
-      "traces": {"design": ["docs/INSTALLATION.md"], "implementation": ["distribution/manifest.json", ".agents/skills/chat-first-development/SKILL.md"], "standards": ["SWEBOK-V4"], "tests": ["tests/test_install_reference.py", "tests/test_skills.py"]},
+      "subject": "移植可能なSkills集",
+      "title": "チャットだけで移植できる導入",
+      "traces": {
+        "design": [
+          "docs/INSTALLATION.md"
+        ],
+        "implementation": [
+          "distribution/manifest.json",
+          ".agents/skills/chat-first-development/SKILL.md"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_install_reference.py",
+          "tests/test_skills.py"
+        ]
+      },
       "type": "operational",
-      "verification": {"evidence": "profile installation and skill discovery tests", "method": "automated test"}
+      "verification": {
+        "evidence": "プロファイル導入とSkill検出テスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "品質プロファイルを選択している",
+          "id": "AC-QUALITY-001-1",
+          "then": "各資料が公式URL、版、参照日、更新間隔、適用範囲、変更確認日、前版との差分を持ち、固定参照物はSHA-256を持つ",
+          "when": "出典台帳を検証する"
+        },
+        {
+          "given": "添付SWEBOKを参照する",
+          "id": "AC-QUALITY-001-2",
+          "then": "v4.0aの正式名称、18KA対応、固定SHA-256が台帳と一致する",
+          "when": "版の同一性を検証する"
+        }
+      ],
+      "action": "maintain",
+      "id": "REQ-QUALITY-001",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "SWEBOKとクラウド・AI公式資料の監査可能な出典台帳",
+      "rationale": "正式名称、版、URL、参照範囲、差分、固定物ハッシュを保存することで、レビュー根拠を再現し更新を検知できる。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17",
+        "SWEBOK V4",
+        "AWS Well-Architected",
+        "Azure Well-Architected",
+        "Google Cloud Well-Architected",
+        "OCI Best Practices"
+      ],
+      "status": "active",
+      "subject": "品質フレーム",
+      "title": "版管理された出典台帳",
+      "traces": {
+        "design": [
+          "docs/standards/SOURCES.md"
+        ],
+        "implementation": [
+          ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py",
+          "governance/standards/registry.json"
+        ],
+        "standards": [
+          "SWEBOK-V4A",
+          "AWS-WAF",
+          "AWS-GENAI-LENS",
+          "AWS-RAI-LENS",
+          "AWS-ML-LENS",
+          "AWS-AGENTIC-LENS",
+          "AZURE-WAF",
+          "AZURE-AI-WAF",
+          "GCP-WAF",
+          "GCP-AIML-WAF",
+          "OCI-WAF"
+        ],
+        "tests": [
+          "tests/test_standardsflow.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "公式host、鮮度、範囲、差分、ハッシュのテスト",
+        "method": "自動検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "要件、設計、実装、テストをレビューする",
+          "id": "AC-QUALITY-002-1",
+          "then": "各選択項目が案件重要度と根拠、Passと直接証跡、N/Aと範囲理由、またはFailとIssue、対応方針、期限、レビュアー、日付を記録する",
+          "when": "品質ゲートを評価する"
+        },
+        {
+          "given": "以前の判定がFailである",
+          "id": "AC-QUALITY-002-2",
+          "then": "旧Failを履歴に残し、到達可能な証跡、再確認者、再確認日を含むPassの再確認記録を持つ",
+          "when": "是正後にPassへ変更する"
+        }
+      ],
+      "action": "verify",
+      "id": "REQ-QUALITY-002",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "適用可能な証拠ベースのチェックリストによる成果物検証",
+      "rationale": "適用判断から再確認までの完全な実施記録により、観点集を監査可能な品質ゲートへ変える。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-17",
+        "SWEBOK V4",
+        "cloud vendor official guidance"
+      ],
+      "status": "active",
+      "subject": "品質フロー",
+      "title": "証跡に裏付けられた標準検証",
+      "traces": {
+        "design": [
+          ".agents/skills/verify-against-engineering-standards/SKILL.md"
+        ],
+        "implementation": [
+          "tools/devflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A",
+          "AWS-WAF",
+          "AWS-GENAI-LENS",
+          "AWS-RAI-LENS",
+          "AWS-ML-LENS",
+          "AWS-AGENTIC-LENS",
+          "AZURE-WAF",
+          "AZURE-AI-WAF",
+          "GCP-WAF",
+          "GCP-AIML-WAF",
+          "OCI-WAF"
+        ],
+        "tests": [
+          "tests/test_devflow.py",
+          "tests/test_standardsflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "品質ゲート監査と実施結果スキーマのテスト",
+        "method": "自動監査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "チェック項目を追加または更新する",
+          "id": "AC-QUALITY-003-1",
+          "then": "独立した合否条件を持つ統制へ分割され、既知の複合項目が再発しない",
+          "when": "ワークブックを生成・検証する"
+        }
+      ],
+      "action": "maintain",
+      "id": "REQ-QUALITY-003",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "一項目・一統制・一証跡で独立判定できるチェック項目",
+      "rationale": "複数統制を一行へ詰め込むと部分実装を一意にPassまたはFailと判定できない。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "SWEBOK Software Quality"
+      ],
+      "status": "active",
+      "subject": "チェックリスト生成フロー",
+      "title": "原子的なチェック統制",
+      "traces": {
+        "design": [
+          "docs/GOVERNANCE.md"
+        ],
+        "implementation": [
+          "update_checklist.py",
+          ".agents/skills/verify-against-engineering-standards/SKILL.md"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_checklist.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "原子性回帰テストとチェック項目カタログ",
+        "method": "自動テストと批判的レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "チェック項目の行数が変わる",
+          "id": "AC-WORKBOOK-001-1",
+          "then": "集計式が各シートの実データ最終行へ更新され、実数と一致し、全列参照を含まない",
+          "when": "ワークブックを再生成する"
+        }
+      ],
+      "action": "generate",
+      "id": "REQ-WORKBOOK-001",
+      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "object": "実データ範囲だけを集計し決定的に再現できるレビュー用ワークブック",
+      "rationale": "Excel全行参照は読込時に過大なメモリを消費し、固定集計値は項目追加時に陳腐化する。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18"
+      ],
+      "status": "active",
+      "subject": "チェックリスト生成フロー",
+      "title": "再現可能で有界なワークブック",
+      "traces": {
+        "design": [
+          "docs/GOVERNANCE.md"
+        ],
+        "implementation": [
+          "update_checklist.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_checklist.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "数式範囲テスト、項目数照合、代表シートの描画結果",
+        "method": "自動検査と描画確認"
+      }
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-07-17"
+  "updated_at": "2026-07-18"
 }
