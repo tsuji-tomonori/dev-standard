@@ -1,0 +1,12 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [],
+  "gate_digest": "f7feffb243402cb905b292552ef2e3831a5c4f2aaf5e0bd71c6614a4fc673312",
+  "generated_at": "2026-07-17T11:51:54Z",
+  "passed": true,
+  "phase": "closed",
+  "review_item_count": 0,
+  "schema_version": 1,
+  "work_item": "WI-20260717-portable-reference-layout"
+}
