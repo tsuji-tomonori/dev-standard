@@ -1,0 +1,4 @@
+interface:
+  display_name: "フロントエンド体験テスト"
+  short_description: "機能・状態・アクセシビリティ・使いやすさ・視覚品質を検証する"
+  default_prompt: "Use $test-frontend-experience to verify the implemented frontend against canonical requirements and detailed design using traceable functional, state, accessibility, usability, responsive, visual, performance, and supported-environment evidence, while separating automated results from human evaluation."
