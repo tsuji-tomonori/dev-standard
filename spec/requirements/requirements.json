@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 2,
+  "catalog_revision": 3,
   "product": "dev-standard",
   "requirements": [
     {
@@ -469,6 +469,177 @@
       "verification": {
         "evidence": "日本語文書検査と生成差分テスト",
         "method": "自動検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "自然言語のrepository変更依頼がある",
+          "id": "AC-EXEC-001-1",
+          "then": "L1からL3、risk、confidence、soft budget、最小検証をschema検証済み台帳へ記録し、高リスク変更をL3にする",
+          "when": "実装前のscopeを推定する"
+        }
+      ],
+      "action": "estimate",
+      "id": "REQ-EXEC-001",
+      "last_changed_by": "WI-20260718-right-size-execution",
+      "object": "repository変更のscope、risk、confidence、予算、最小検証",
+      "rationale": "成功条件と重大リスクを満たす最小十分な経路を作業前に固定し、単純な変更の過剰探索と重大変更の過小評価を避ける。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "適正規模の初期推定",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/scope-levels.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/scopeflow.py",
+          ".agents/skills/right-size-execution/assets/execution-policy.json"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_scopeflow.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "scope分類、risk floor、schemaの回帰テスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "検証失敗またはscope推定を覆す証拠がある",
+          "id": "AC-EXEC-002-1",
+          "then": "許可された理由、直接証拠、actorを記録し、一回につき一軸を一段だけ拡張する",
+          "when": "実行経路を拡張する"
+        }
+      ],
+      "action": "expand",
+      "id": "REQ-EXEC-002",
+      "last_changed_by": "WI-20260718-right-size-execution",
+      "object": "検証失敗または新証拠に対応する一つの実行軸",
+      "rationale": "推定誤りを回復しつつ、無関係なcontext、review、model能力を同時に増やすコストを防ぐ。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "根拠付きの段階的拡張",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/expansion-rules.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/scopeflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_scopeflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "拡張理由、一軸制約、回数上限、能力引上げ前提の回帰テスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "repository作業を実行している",
+          "id": "AC-EXEC-003-1",
+          "then": "token取得可否にかかわらずtool、search、file、byte、range、重複、時間、Expand、成功、成功後探索を記録し、ACRRをoracleなしで表明しない",
+          "when": "効率reportを確定する"
+        }
+      ],
+      "action": "measure",
+      "id": "REQ-EXEC-003",
+      "last_changed_by": "WI-20260718-right-size-execution",
+      "object": "適正規模実行の予算、実績、拡張、停止結果",
+      "rationale": "oracleなしの単一指標を最適化せず、成功率と重大欠陥を保ちながら冗長性を改善するには、生指標と理由の再現可能な台帳が必要である。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "実行効率の生指標計測",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/measurement-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/scopeflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_scopeflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "efficiency report、overrun、成功後停止の回帰テスト",
+        "method": "自動テストとbenchmark"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "schema検証済みscopeとversion固定catalogがある",
+          "id": "AC-EXEC-004-1",
+          "then": "always-on、成果物tag、risk tag、工程、scope levelから候補を決め、selector版、入力特徴、選択ID、digestを保存する",
+          "when": "標準チェックを選択する"
+        }
+      ],
+      "action": "select",
+      "id": "REQ-EXEC-004",
+      "last_changed_by": "WI-20260718-right-size-execution",
+      "object": "scope、成果物、risk、工程へ一致するチェック項目",
+      "rationale": "プロファイル全量をpromptと実施記録へ登録せず、選択入力と結果を保存することで実行効率と監査可能性を両立する。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034"
+      ],
+      "status": "active",
+      "subject": "標準検証基盤",
+      "title": "タスク固有の標準チェック選択",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/SKILL.md"
+        ],
+        "implementation": [
+          "tools/devflow.py",
+          "governance/checklist/catalog.json"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_scopeflow.py",
+          "tests/test_devflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "同一入力の選択再現性とwork item初期化テスト",
+        "method": "自動テスト"
       }
     },
     {

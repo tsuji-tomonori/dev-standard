@@ -59,6 +59,11 @@ class DevflowTest(unittest.TestCase):
                     "sheet": "01_要件定義",
                     "phase": "requirements",
                     "base_severity": "High",
+                    "profile": "CORE",
+                    "always_on": True,
+                    "artifact_tags": ["requirements"],
+                    "risk_tags": [],
+                    "scope_levels": [1, 2, 3],
                 }
             ],
         }
@@ -92,6 +97,36 @@ class DevflowTest(unittest.TestCase):
         args = argparse.Namespace(id=work_id, title="Test", request="Build safely", profile=["CORE"], actor="tester")
         self.assertEqual(devflow.cmd_init(args), 0)
         return self.work_root / work_id
+
+    def test_init_uses_scope_selector_and_preserves_audit_input(self) -> None:
+        scopeflow = devflow.load_scopeflow()
+        state = scopeflow.estimate_scope(
+            "要件を更新する", expected_files=1, domains=["requirements"],
+            artifact_tags=["requirements"], risk_tags=[],
+        )
+        scope_path = self.root / "estimate.json"
+        devflow.atomic_write_json(scope_path, state)
+        args = argparse.Namespace(
+            id="WI-scoped", title="Scoped", request="要件を更新する",
+            profile=["CORE"], actor="tester", scope_file=str(scope_path),
+        )
+        self.assertEqual(devflow.cmd_init(args), 0)
+        work = self.work_root / "WI-scoped"
+        saved = devflow.read_json(work / "execution-scope.json")
+        self.assertEqual(saved["selection"]["selector_version"], "scope-selector-v1")
+        self.assertEqual(saved["selection"]["selected_item_ids"], ["REQ-001"])
+        self.assertTrue(devflow.read_json(work / "state.json")["execution_scope_sha256"])
+
+    def test_invalid_scope_does_not_leave_partial_work_item(self) -> None:
+        scope_path = self.root / "invalid-scope.json"
+        scope_path.write_text("{}", encoding="utf-8")
+        args = argparse.Namespace(
+            id="WI-invalid", title="Invalid", request="要件を更新する",
+            profile=["CORE"], actor="tester", scope_file=str(scope_path),
+        )
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_init(args)
+        self.assertFalse((self.work_root / "WI-invalid").exists())
 
     def approve_requirements(self, work_id: str = "WI-test") -> None:
         work = self.work_root / work_id

@@ -1,7 +1,7 @@
 <!-- specflow.pyによる自動生成。spec/requirements/requirements.jsonを編集すること。 -->
 # dev-standard 要件一覧
 
-- カタログ版: 2
+- カタログ版: 3
 - 更新日: 2026-07-18
 - 正本: `spec/requirements/requirements.json`
 
@@ -18,6 +18,10 @@
 | `REQ-DISC-003` | 2 | 有効 | 機能 | 仕様管理フローは、版競合を検査した追加、更新、廃止操作を**適用する** | 自動テスト |
 | `REQ-DISC-004` | 2 | 有効 | 機能 | 仕様管理フローは、正本カタログからの日本語の人間向け要件文書を**生成する** | 自動テスト |
 | `REQ-DOCS-001` | 1 | 有効 | 品質 | 文書生成フローは、識別子と固有名詞を除いて日本語で統一された利用者向け文書を**提供する** | 自動検査 |
+| `REQ-EXEC-001` | 1 | 有効 | 運用 | 開発実行基盤は、repository変更のscope、risk、confidence、予算、最小検証を**estimate** | 自動テスト |
+| `REQ-EXEC-002` | 1 | 有効 | 品質 | 開発実行基盤は、検証失敗または新証拠に対応する一つの実行軸を**expand** | 自動テスト |
+| `REQ-EXEC-003` | 1 | 有効 | 品質 | 開発実行基盤は、適正規模実行の予算、実績、拡張、停止結果を**measure** | 自動テストとbenchmark |
+| `REQ-EXEC-004` | 1 | 有効 | 品質 | 標準検証基盤は、scope、成果物、risk、工程へ一致するチェック項目を**select** | 自動テスト |
 | `REQ-FRAME-001` | 2 | 有効 | 制約 | リポジトリは、一時的な作業記録と永続的な製品要件を**分離する** | 自動検査 |
 | `REQ-PORTABLE-001` | 2 | 有効 | 運用 | 移植可能なSkills集は、別リポジトリへのcopy-and-chat方式の導入を**実現する** | 自動テスト |
 | `REQ-QUALITY-001` | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する** | 自動検査 |
@@ -168,6 +172,58 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 要求源: user:2026-07-18
 検証証跡: 日本語文書検査と生成差分テスト
 トレース: 設計=docs/README.md; 実装=.agents/skills/maintain-canonical-requirements/scripts/specflow.py,.agents/skills/verify-against-engineering-standards/scripts/standardsflow.py; テスト=tests/test_validate_repo.py,tests/test_specflow.py,tests/test_standardsflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-001: 適正規模の初期推定
+
+開発実行基盤は、repository変更のscope、risk、confidence、予算、最小検証を**estimate**。
+
+根拠: 成功条件と重大リスクを満たす最小十分な経路を作業前に固定し、単純な変更の過剰探索と重大変更の過小評価を避ける。
+
+受入条件:
+- `AC-EXEC-001-1` 前提: 自然言語のrepository変更依頼がある。条件: 実装前のscopeを推定する。期待結果: L1からL3、risk、confidence、soft budget、最小検証をschema検証済み台帳へ記録し、高リスク変更をL3にする。
+
+要求源: user:2026-07-18, arXiv:2607.13034
+検証証跡: scope分類、risk floor、schemaの回帰テスト
+トレース: 設計=.agents/skills/right-size-execution/references/scope-levels.md; 実装=.agents/skills/right-size-execution/scripts/scopeflow.py,.agents/skills/right-size-execution/assets/execution-policy.json; テスト=tests/test_scopeflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-002: 根拠付きの段階的拡張
+
+開発実行基盤は、検証失敗または新証拠に対応する一つの実行軸を**expand**。
+
+根拠: 推定誤りを回復しつつ、無関係なcontext、review、model能力を同時に増やすコストを防ぐ。
+
+受入条件:
+- `AC-EXEC-002-1` 前提: 検証失敗またはscope推定を覆す証拠がある。条件: 実行経路を拡張する。期待結果: 許可された理由、直接証拠、actorを記録し、一回につき一軸を一段だけ拡張する。
+
+要求源: user:2026-07-18, arXiv:2607.13034
+検証証跡: 拡張理由、一軸制約、回数上限、能力引上げ前提の回帰テスト
+トレース: 設計=.agents/skills/right-size-execution/references/expansion-rules.md; 実装=.agents/skills/right-size-execution/scripts/scopeflow.py; テスト=tests/test_scopeflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-003: 実行効率の生指標計測
+
+開発実行基盤は、適正規模実行の予算、実績、拡張、停止結果を**measure**。
+
+根拠: oracleなしの単一指標を最適化せず、成功率と重大欠陥を保ちながら冗長性を改善するには、生指標と理由の再現可能な台帳が必要である。
+
+受入条件:
+- `AC-EXEC-003-1` 前提: repository作業を実行している。条件: 効率reportを確定する。期待結果: token取得可否にかかわらずtool、search、file、byte、range、重複、時間、Expand、成功、成功後探索を記録し、ACRRをoracleなしで表明しない。
+
+要求源: user:2026-07-18, arXiv:2607.13034
+検証証跡: efficiency report、overrun、成功後停止の回帰テスト
+トレース: 設計=.agents/skills/right-size-execution/references/measurement-contract.md; 実装=.agents/skills/right-size-execution/scripts/scopeflow.py; テスト=tests/test_scopeflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-004: タスク固有の標準チェック選択
+
+標準検証基盤は、scope、成果物、risk、工程へ一致するチェック項目を**select**。
+
+根拠: プロファイル全量をpromptと実施記録へ登録せず、選択入力と結果を保存することで実行効率と監査可能性を両立する。
+
+受入条件:
+- `AC-EXEC-004-1` 前提: schema検証済みscopeとversion固定catalogがある。条件: 標準チェックを選択する。期待結果: always-on、成果物tag、risk tag、工程、scope levelから候補を決め、selector版、入力特徴、選択ID、digestを保存する。
+
+要求源: user:2026-07-18, arXiv:2607.13034
+検証証跡: 同一入力の選択再現性とwork item初期化テスト
+トレース: 設計=.agents/skills/right-size-execution/SKILL.md; 実装=tools/devflow.py,governance/checklist/catalog.json; テスト=tests/test_scopeflow.py,tests/test_devflow.py; 参照資料=SWEBOK-V4A
 
 ## REQ-FRAME-001: workと正本の境界
 

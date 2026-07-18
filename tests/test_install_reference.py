@@ -50,6 +50,7 @@ class InstallReferenceTest(unittest.TestCase):
         install_reference.install(self.target, ["chat-first"], apply=True, force=False)
         for name in [
             "chat-first-development",
+            "right-size-execution",
             "calibrated-collaborative-listening",
             "adversarial-review",
             "maintain-canonical-requirements",
@@ -65,6 +66,7 @@ class InstallReferenceTest(unittest.TestCase):
             "maintain-canonical-requirements",
             "generate-implementation-design",
             "verify-against-engineering-standards",
+            "right-size-execution",
         ]:
             self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
         self.assertTrue((self.target / ".agents/skills/generate-implementation-design/requirements.txt").is_file())

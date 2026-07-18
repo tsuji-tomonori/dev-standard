@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "selector_version": "scope-selector-v1",
+  "max_metadata_probes": 1,
+  "max_expansions": 2,
+  "high_risk_confidence_floor": 0.8,
+  "expansion_order": ["scope", "dependencies", "verification", "review", "capability"],
+  "risk_floor_l3": [
+    "security", "authentication", "authorization", "data-loss", "database-schema",
+    "migration", "public-api", "event-contract", "iac", "network", "permissions",
+    "dependency", "lockfile", "durable-requirements", "governance", "checklist",
+    "generator", "confidential", "pii", "external-side-effect", "irreversible"
+  ],
+  "levels": {
+    "1": {
+      "name": "Local",
+      "model_tier": "light",
+      "reasoning_level": "low",
+      "context_budget": {"unique_files": 3, "read_bytes": 40000, "read_ranges": 8},
+      "tool_budget": {"searches": 1, "tool_calls": 12, "subagents": 0},
+      "verification": ["targeted-test", "syntax", "affected-lint"]
+    },
+    "2": {
+      "name": "Bounded",
+      "model_tier": "standard",
+      "reasoning_level": "medium",
+      "context_budget": {"unique_files": 12, "read_bytes": 180000, "read_ranges": 32},
+      "tool_budget": {"searches": 3, "tool_calls": 32, "subagents": 0},
+      "verification": ["module-test", "type-check", "related-lint"]
+    },
+    "3": {
+      "name": "Systemic",
+      "model_tier": "standard",
+      "reasoning_level": "medium",
+      "context_budget": {"unique_files": 40, "read_bytes": 800000, "read_ranges": 100},
+      "tool_budget": {"searches": 8, "tool_calls": 80, "subagents": 1},
+      "verification": ["full-gate", "integration-test", "ci", "defect-seeking-review"]
+    }
+  }
+}

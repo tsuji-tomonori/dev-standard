@@ -57,6 +57,19 @@ class SkillContractTest(unittest.TestCase):
         for required in ["repository-local", "Do not stop", "Lightweight record", "Do not merge"]:
             self.assertIn(required, reference)
 
+    def test_right_size_execution_is_one_auditable_state_machine(self) -> None:
+        skill = SKILLS / "right-size-execution"
+        text = (skill / "SKILL.md").read_text(encoding="utf-8")
+        policy = json.loads((skill / "assets" / "execution-policy.json").read_text(encoding="utf-8"))
+        for required in [
+            "Estimate／Execute／Expand", "一つの状態機械", "soft limit", "metadata-only probe",
+            "最小の決定的検証", "ACRR", "read bytes", "成功後",
+        ]:
+            self.assertIn(required, text)
+        self.assertEqual(policy["max_metadata_probes"], 1)
+        self.assertEqual(policy["expansion_order"], ["scope", "dependencies", "verification", "review", "capability"])
+        self.assertIn("governance", policy["risk_floor_l3"])
+
     def test_root_instructions_make_commands_ai_owned(self) -> None:
         text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("$chat-first-development", text)

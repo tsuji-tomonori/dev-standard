@@ -45,6 +45,7 @@ def validate_skills(failures: list[str]) -> None:
         "chat-first-development",
         "generate-implementation-design",
         "retrospect-and-improve",
+        "right-size-execution",
         "japanese-git-commit-gitmoji",
         "maintain-canonical-requirements",
         "verify-against-engineering-standards",
@@ -176,7 +177,7 @@ def validate_repo(failures: list[str]) -> None:
             fail("distribution manifest skill inventory is stale", failures)
         if sorted(inventory["agents"]) != agent_names:
             fail("distribution manifest agent inventory is stale", failures)
-        for required in ["adversarial-review", "chat-first", "requirements", "implementation-design", "standards-verification", "development-framework", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+        for required in ["adversarial-review", "chat-first", "requirements", "implementation-design", "right-size-execution", "standards-verification", "development-framework", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
             if required not in manifest["profiles"]:
                 fail(f"distribution manifest profile missing: {required}", failures)
         if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":
@@ -191,6 +192,10 @@ def validate_repo(failures: list[str]) -> None:
         }.items():
             if manifest["standard_paths"].get(key) != expected:
                 fail(f"distribution standard path is invalid: {key}", failures)
+        scope_skill = ROOT / ".agents" / "skills" / "right-size-execution"
+        for path in ["assets/execution-policy.json", "assets/execution-scope.schema.json", "assets/benchmark-cases.json", "scripts/scopeflow.py"]:
+            if not (scope_skill / path).is_file():
+                fail(f"right-size-execution asset missing: {path}", failures)
     except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError) as exc:
         fail(f"distribution/manifest.json invalid: {exc}", failures)
     if not (ROOT / "docs" / "INSTALLATION.md").is_file():
@@ -229,6 +234,7 @@ def validate_repo(failures: list[str]) -> None:
     for label, command in [
         ("canonical requirements", [sys.executable, str(ROOT / ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"), "check", "--spec", str(ROOT / "spec/requirements/requirements.json"), "--out", str(ROOT / "docs/requirements/REQUIREMENTS.md")]),
         ("standards registry", [sys.executable, str(ROOT / ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py"), "check", "--registry", str(ROOT / "governance/standards/registry.json"), "--out", str(ROOT / "docs/standards/SOURCES.md")]),
+        ("execution benchmark", [sys.executable, str(ROOT / ".agents/skills/right-size-execution/scripts/scopeflow.py"), "benchmark"]),
     ]:
         result = subprocess.run(command, text=True, capture_output=True, check=False)
         if result.returncode:

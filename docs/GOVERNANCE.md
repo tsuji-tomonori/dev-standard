@@ -4,6 +4,8 @@
 
 自然言語のSkillとagentは作業方法を指示します。合否判定、ハッシュ、初回承認、状態遷移は`tools/devflow.py`が決定的に実行します。AIの自己申告をゲート証跡や人の承認にしません。
 
+実行範囲の正本は`work/<id>/execution-scope.json`です。`right-size-execution`がscope、risk、confidence、soft budget、最小検証、Expand、実績、選択結果をschemaとpolicyに基づいて記録します。これは製品要件の正本ではなく、そのwork itemの実行制御台帳です。
+
 永続要件の正本は`spec/requirements/requirements.json`です。`work/<id>/docs/01-requirements.md`は、その時点の会話から得た変更差分と承認境界であり、正本ではありません。承認後に版付き差分を正本へ適用し、`docs/requirements/REQUIREMENTS.md`を生成します。削除は履歴を残す`retire`です。
 
 ## 初回承認に結び付く成果物
@@ -31,8 +33,15 @@
 - Fail是正後の旧判定履歴、再確認証跡、再確認者、再確認日
 - 現在の初回承認
 - 全先行工程の現行ダイジェスト
+- scope schema、L3 risk floor、Expand根拠、予算超過、能力引上げ、決定的成功後の探索
 
 失敗を追加承認へ転嫁しません。承認済み範囲内で原因を解消します。
+
+適正規模ポリシーは導入当初、構造破損と改ざんだけをblockingとし、過小推定・overrun・成功後探索は警告と計測にします。リポジトリ固有benchmarkと実績が揃った後、別の承認済み要件変更でblockingへ昇格します。
+
+## チェック選択の監査
+
+カタログ項目は`always_on`、`artifact_tags`、`risk_tags`、`scope_levels`、`phase`を持ちます。work item初期化時にprofile、scope、変更成果物、risk、工程から候補を決め、selector版、入力特徴、選択ID、digestを保存します。未選択項目を一括N/Aとして数えません。
 
 ## 改ざん検知
 

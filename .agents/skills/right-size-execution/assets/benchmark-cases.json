@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {"id": "local-doc-string", "request": "README.mdの誤字を1箇所修正する", "expected_files": 1, "domains": ["docs"], "artifact_tags": ["documentation"], "risk_tags": [], "expected_level": 1},
+    {"id": "local-bug", "request": "明示された関数の境界条件を修正する", "expected_files": 1, "domains": ["module"], "artifact_tags": ["implementation"], "risk_tags": [], "expected_level": 1},
+    {"id": "bounded-module", "request": "同一moduleの呼出元とtestを更新する", "expected_files": 4, "domains": ["module"], "artifact_tags": ["implementation", "test"], "risk_tags": [], "expected_level": 2},
+    {"id": "public-api", "request": "公開APIのresponse contractを変更する", "expected_files": 2, "domains": ["api"], "artifact_tags": ["public-api"], "risk_tags": ["public-api"], "expected_level": 3},
+    {"id": "governance", "request": "永続要件とgovernance generatorを変更する", "expected_files": 3, "domains": ["governance"], "artifact_tags": ["requirements", "generator"], "risk_tags": ["durable-requirements", "governance", "generator"], "expected_level": 3},
+    {"id": "security-db-iac", "request": "認可、DB migration、IaCを変更する", "expected_files": 3, "domains": ["security", "data", "infra"], "artifact_tags": ["database", "iac"], "risk_tags": ["authorization", "migration", "iac"], "expected_level": 3},
+    {"id": "hidden-dependency", "request": "1 fileに見えるがlockfileへ間接影響する更新", "expected_files": 1, "domains": ["runtime"], "artifact_tags": ["dependency"], "risk_tags": ["lockfile"], "expected_level": 3}
+  ],
+  "variants": ["current-flow", "e3-without-estimate", "e3-without-expand", "full-e3"]
+}

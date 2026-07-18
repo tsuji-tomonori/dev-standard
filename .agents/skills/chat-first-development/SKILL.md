@@ -16,9 +16,10 @@ Make the chat the only user interface. Own setup and lifecycle mechanics interna
    - ensure `$verify-against-engineering-standards` has a versioned source registry and generated source view;
    - with `tools/devflow.py`, prepare a repository-local environment and use the full governed flow;
    - without it, create a lightweight `work/<id>/` record containing only request-local fragments, the proposed canonical delta, plan, design, test evidence, release result, and retrospective.
-4. Summarize the intended outcome, atomic requirement add/update/retire delta, acceptance criteria, scope, external effects, defaults, stop conditions, and completion definition in one compact natural-language authorization package. Ask for one explicit approve/reject decision.
-5. After approval, apply the canonical delta, choose implementation details, and continue through design, implementation, review, tests, PR creation, CI verification, and closure. For FastAPI/CDK, use `$generate-implementation-design`; use `$adversarial-review` when correctness needs an independent, defect-seeking challenge. Repair in-scope failures without routine questions or approvals.
-6. Report only useful progress, results, or a genuine blocker. Never expose lifecycle commands as work for the user.
+4. Before governance initialization, use `$right-size-execution` to Estimate an L1/L2/L3 operating point from the request and at most one reusable metadata-only probe. Persist the scope ledger for repository changes and let it select task-specific checklist rows.
+5. Summarize the intended outcome, atomic requirement add/update/retire delta, acceptance criteria, scope, external effects, defaults, stop conditions, and completion definition in one compact natural-language authorization package. Ask for one explicit approve/reject decision.
+6. After approval, apply the canonical delta and follow `$right-size-execution` Execute/Expand. Expand one axis only on verification failure, new evidence, or measured overrun; stop after decisive success. Continue through design, implementation, review, tests, PR creation, CI verification, and closure. For FastAPI/CDK, use `$generate-implementation-design`; use `$adversarial-review` when correctness needs an independent, defect-seeking challenge. Repair in-scope failures without routine questions or approvals.
+7. Finalize the efficiency report, then report only useful progress, results, or a genuine blocker. Never expose lifecycle commands as work for the user.
 
 ## Interaction contract
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -24,6 +25,7 @@ TEMPLATE_ROOT = ROOT / "docs" / "templates"
 IMPROVEMENTS_PATH = ROOT / "governance" / "improvements" / "proposals.json"
 REPORT_ROOT = ROOT / "reports"
 RESULTS_SCHEMA_VERSION = 2
+SCOPEFLOW_PATH = ROOT / ".agents" / "skills" / "right-size-execution" / "scripts" / "scopeflow.py"
 
 
 class GovernanceError(RuntimeError):
@@ -36,11 +38,15 @@ def utcnow() -> str:
 
 def read_json(path: Path) -> Any:
     try:
+        display = path.relative_to(ROOT)
+    except ValueError:
+        display = path
+    try:
         return json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
-        raise GovernanceError(f"required file not found: {path.relative_to(ROOT)}") from exc
+        raise GovernanceError(f"required file not found: {display}") from exc
     except json.JSONDecodeError as exc:
-        raise GovernanceError(f"invalid JSON: {path.relative_to(ROOT)}: {exc}") from exc
+        raise GovernanceError(f"invalid JSON: {display}: {exc}") from exc
 
 
 def canonical_bytes(value: Any) -> bytes:
@@ -134,6 +140,64 @@ def infer_phase(sheet: str, category: str, check: str) -> str:
     return "architecture"
 
 
+def checklist_scope_attributes(sheet: str, category: str, check: str, phase: str) -> dict[str, Any]:
+    """Derive deterministic selector attributes without adding review-result columns."""
+    text = f"{sheet} {category} {check}".lower()
+    artifact_rules = [
+        (["要件", "要求", "受入基準", "トレーサビリティ"], "requirements"),
+        (["設計", "アーキテクチャ"], "design"),
+        (["api", "インターフェース", "契約"], "public-api"),
+        (["データベース", "db", "sql", "スキーマ", "マイグレーション"], "database"),
+        (["実装", "コード", "コーディング"], "implementation"),
+        (["テスト", "検証", "評価"], "test"),
+        (["文書", "ドキュメント"], "documentation"),
+        (["iac", "cloudformation", "terraform", "cdk"], "iac"),
+        (["依存", "ライブラリ", "sbom", "lock"], "dependency"),
+        (["ガバナンス", "チェックリスト", "プロセス", "品質ゲート"], "governance"),
+        (["生成", "ジェネレータ"], "generator"),
+        (["運用", "監視", "ログ", "アラート"], "operations"),
+    ]
+    risk_rules = [
+        (["セキュリティ", "脆弱性", "攻撃", "脅威"], "security"),
+        (["認証"], "authentication"),
+        (["認可", "権限", "最小権限"], "authorization"),
+        (["データ削除", "データ損失"], "data-loss"),
+        (["スキーマ", "マイグレーション"], "database-schema"),
+        (["公開api", "外部api", "イベント契約"], "public-api"),
+        (["iac", "cloudformation", "terraform", "cdk", "ネットワーク", "デプロイ"], "iac"),
+        (["依存", "ライブラリ", "sbom", "lock"], "dependency"),
+        (["個人情報", "個人データ", "pii", "機密"], "pii"),
+        (["ガバナンス", "チェックリスト", "正本", "生成器"], "governance"),
+    ]
+    artifacts = sorted({tag for words, tag in artifact_rules if any(word in text for word in words)})
+    risks = sorted({tag for words, tag in risk_rules if any(word in text for word in words)})
+    always_terms = ["受入基準", "トレーサビリティ", "完了条件", "変更管理", "証跡", "再現可能"]
+    always_on = any(term in text for term in always_terms)
+    if risks:
+        scope_levels = [3]
+    elif always_on or phase in {"implementation", "verification"}:
+        scope_levels = [1, 2, 3]
+    else:
+        scope_levels = [2, 3]
+    return {
+        "always_on": always_on,
+        "artifact_tags": artifacts,
+        "risk_tags": risks,
+        "scope_levels": scope_levels,
+    }
+
+
+def load_scopeflow() -> Any:
+    if not SCOPEFLOW_PATH.is_file():
+        raise GovernanceError(f"scopeflow not found: {SCOPEFLOW_PATH.relative_to(ROOT)}")
+    spec = importlib.util.spec_from_file_location("dev_standard_scopeflow", SCOPEFLOW_PATH)
+    if spec is None or spec.loader is None:
+        raise GovernanceError("scopeflow module cannot be loaded")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def workbook_catalog() -> dict[str, Any]:
     try:
         from openpyxl import load_workbook
@@ -168,6 +232,7 @@ def workbook_catalog() -> dict[str, Any]:
                 continue
             category = str(values[index["カテゴリ"]] or "")
             check = str(values[index["チェック項目"]] or "")
+            phase = infer_phase(sheet, category, check)
             item = {
                 "id": str(item_id),
                 "sheet": sheet,
@@ -182,7 +247,8 @@ def workbook_catalog() -> dict[str, Any]:
                 "applicability_condition": str(values[index["適用条件"]] or "") if "適用条件" in index else "",
                 "source_ids": [value for value in str(values[index["出典ID"]] or "").split(";") if value] if "出典ID" in index else [],
                 "duplicate_groups": [value for value in str(values[index["重複統制グループ"]] or "").split(";") if value] if "重複統制グループ" in index else [],
-                "phase": infer_phase(sheet, category, check),
+                "phase": phase,
+                **checklist_scope_attributes(sheet, category, check, phase),
             }
             items.append(item)
     wb.close()
@@ -190,7 +256,7 @@ def workbook_catalog() -> dict[str, Any]:
     if len(ids) != len(set(ids)):
         raise GovernanceError("checklist contains duplicate IDs")
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": utcnow(),
         "source": str(book_path.relative_to(ROOT)),
         "source_sha256": sha256_file(book_path),
@@ -350,24 +416,33 @@ def cmd_init(args: argparse.Namespace) -> int:
     work = WORK_ROOT / work_id
     if work.exists():
         raise GovernanceError(f"work item already exists: {work_id}")
-    for directory in [work / "docs", work / "review", work / "evidence", work / "reports"]:
-        directory.mkdir(parents=True, exist_ok=True)
-    created = utcnow()
-    replacements = {
-        "{{WORK_ITEM}}": work_id,
-        "{{TITLE}}": args.title,
-        "{{CREATED_AT}}": created,
-        "{{PROFILES}}": ", ".join(profiles),
-        "{{REQUEST}}": args.request,
-    }
-    for template in sorted(TEMPLATE_ROOT.glob("*.md")):
-        content = template.read_text(encoding="utf-8")
-        for old, new in replacements.items():
-            content = content.replace(old, new)
-        (work / "docs" / template.name).write_text(content, encoding="utf-8")
+    scope_state = None
+    selected_ids = None
+    if getattr(args, "scope_file", None):
+        scope_path = Path(args.scope_file)
+        if not scope_path.is_file():
+            raise GovernanceError(f"execution scope not found: {scope_path}")
+        scopeflow = load_scopeflow()
+        scope_state = read_json(scope_path)
+        scope_errors = scopeflow.validate_scope(scope_state)
+        if scope_errors:
+            raise GovernanceError("invalid execution scope: " + "; ".join(scope_errors))
+        selection = scopeflow.select_catalog_items(
+            catalog,
+            scope_state,
+            profiles=profiles,
+            phases=list(policy["phases"]),
+        )
+        if not selection["selected_item_ids"]:
+            raise GovernanceError("execution scope selected no checklist items")
+        scope_state["selection"] = selection
+        scope_state["updated_at"] = utcnow()
+        selected_ids = set(selection["selected_item_ids"])
     selected = []
     for item in catalog["items"]:
         if item["sheet"] not in sheets:
+            continue
+        if selected_ids is not None and item["id"] not in selected_ids:
             continue
         selected.append({
             "id": item["id"],
@@ -389,6 +464,23 @@ def cmd_init(args: argparse.Namespace) -> int:
             "history": [],
             "exception": None,
         })
+    for directory in [work / "docs", work / "review", work / "evidence", work / "reports"]:
+        directory.mkdir(parents=True, exist_ok=True)
+    created = utcnow()
+    replacements = {
+        "{{WORK_ITEM}}": work_id,
+        "{{TITLE}}": args.title,
+        "{{CREATED_AT}}": created,
+        "{{PROFILES}}": ", ".join(profiles),
+        "{{REQUEST}}": args.request,
+    }
+    for template in sorted(TEMPLATE_ROOT.glob("*.md")):
+        content = template.read_text(encoding="utf-8")
+        for old, new in replacements.items():
+            content = content.replace(old, new)
+        (work / "docs" / template.name).write_text(content, encoding="utf-8")
+    if scope_state:
+        atomic_write_json(work / "execution-scope.json", scope_state)
     state = {
         "schema_version": 1,
         "workflow_schema_version": policy["schema_version"],
@@ -400,6 +492,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         "status": "active",
         "profiles": profiles,
         "catalog_sha256": sha256_bytes(canonical_bytes(stable_catalog(catalog))),
+        "execution_scope_sha256": sha256_bytes(canonical_bytes(scope_state)) if scope_state else "",
     }
     atomic_write_json(work / "state.json", state)
     atomic_write_json(
@@ -413,7 +506,11 @@ def cmd_init(args: argparse.Namespace) -> int:
         "event": "work-item-created",
         "phase": "intake",
         "actor": args.actor,
-        "details": {"profiles": profiles, "catalog_items": len(selected)},
+        "details": {
+            "profiles": profiles,
+            "catalog_items": len(selected),
+            "selector_version": scope_state.get("selection", {}).get("selector_version", "legacy-full-profile") if scope_state else "legacy-full-profile",
+        },
     })
     try:
         display_path = work.relative_to(ROOT)
@@ -1118,6 +1215,7 @@ def cmd_improvement_list(args: argparse.Namespace) -> int:
 
 def cmd_audit(args: argparse.Namespace) -> int:
     failures: list[str] = []
+    warnings: list[str] = []
     try:
         candidate = workbook_catalog()
         current = load_catalog()
@@ -1138,6 +1236,14 @@ def cmd_audit(args: argparse.Namespace) -> int:
                 ids = [item["id"] for item in results["items"]]
                 if len(ids) != len(set(ids)):
                     failures.append(f"{state['id']}: duplicate checklist results")
+                scope_path = work / "execution-scope.json"
+                if scope_path.is_file():
+                    scopeflow = load_scopeflow()
+                    scope_report = scopeflow.audit_scope(read_json(scope_path))
+                    failures.extend(f"{state['id']}: execution scope: {message}" for message in scope_report["errors"])
+                    warnings.extend(f"{state['id']}: execution scope: {message}" for message in scope_report["warnings"])
+                    if state.get("status") == "closed" and not (work / "reports" / "execution-efficiency.json").is_file():
+                        failures.append(f"{state['id']}: execution efficiency report missing")
                 if state["current_phase"] not in load_policy()["phase_order"]:
                     failures.append(f"{state['id']}: invalid phase")
                     continue
@@ -1166,6 +1272,8 @@ def cmd_audit(args: argparse.Namespace) -> int:
         for failure in failures:
             print(f"FAIL: {failure}")
         return 1
+    for warning in warnings:
+        print(f"WARN: {warning}")
     print("audit OK")
     return 0
 
@@ -1183,6 +1291,7 @@ def build_parser() -> argparse.ArgumentParser:
     init.add_argument("--title", required=True)
     init.add_argument("--request", required=True)
     init.add_argument("--profile", action="append", default=["CORE"])
+    init.add_argument("--scope-file", help="scopeflow estimate used for task-specific checklist selection")
     init.add_argument("--actor", required=True)
     init.set_defaults(func=cmd_init)
 

@@ -4,9 +4,9 @@
 
 ```text
 自然言語の相談
-   │  意図探索・発散/収束
+   │  意図探索・発散/収束、Estimate（L1/L2/L3）
    ▼
-work/<id>  ── 要求断片・正本差分・初回承認・計画・証跡（非正本）
+work/<id>  ── execution-scope.json・要求断片・正本差分・初回承認・計画・証跡（非正本）
    │  版付き add / update / retire
    ▼
 spec/requirements/requirements.json          ← 永続要件の唯一の正本
@@ -32,13 +32,14 @@ docs/requirements/REQUIREMENTS.md      実装・テスト
 
 ## 初回承認まで
 
-1. ユーザー原文と解釈を`work/<id>/docs/00-request.md`へ保存する。
-2. 現在の正本を読み、対話で目的・制約・例外・代替案を探索する。
-3. 義務を原子化し、正本の基準版に対する`add`、`update`、`retire`差分を`docs/01-requirements.md`へ記録する。
-4. `docs/01-traceability.md`へ正本IDと予定設計・実装・テスト・参照資料の対応を記録する。
-5. `docs/01-execution-plan.md`へ全作業、対象、許可操作、外部副作用、既定判断、検証、rollback、停止条件、完了条件を列挙する。
-6. 結果を変える曖昧さだけを、融和的な一問で確認する。低リスクで可逆な詳細は既定値を明記する。
-7. 差分と計画を一体として短く提示し、要求者の明示的な判断を一度だけ記録する。会話継続やAIの推測は承認にしない。
+1. ユーザー原文、最大1回のmetadata-only probe、risk floorから`right-size-execution`がL1〜L3、confidence、soft budget、最小検証を`execution-scope.json`へ記録する。
+2. ユーザー原文と解釈を`work/<id>/docs/00-request.md`へ保存する。
+3. 現在の正本を読み、対話で目的・制約・例外・代替案を探索する。
+4. 義務を原子化し、正本の基準版に対する`add`、`update`、`retire`差分を`docs/01-requirements.md`へ記録する。
+5. `docs/01-traceability.md`へ正本IDと予定設計・実装・テスト・参照資料の対応を記録する。
+6. `docs/01-execution-plan.md`へscopeの派生要約、全作業、権限境界、検証、rollback、停止条件、完了条件を記録する。
+7. 結果を変える曖昧さだけを、融和的な一問で確認する。低リスクで可逆な詳細は既定値を明記する。
+8. 差分と計画を一体として短く提示し、要求者の明示的な判断を一度だけ記録する。会話継続やAIの推測は承認にしない。
 
 ## 初回承認後
 
@@ -46,9 +47,10 @@ docs/requirements/REQUIREMENTS.md      実装・テスト
 2. 要件文書を生成し、バイト単位の一致を検査する。
 3. アーキテクチャ、詳細設計、実装、テスト設計を正本IDへtraceする。
 4. FastAPI/CDKでは実装成果物から詳細設計を生成し、ソースdigestと乖離を検査する。
-5. 適用するSWEBOK・クラウドプロファイルを選び、出典の鮮度と全項目を証跡付きで評価する。
-6. 欠陥を独立したoracle、反例、境界値、mutationで探し、承認範囲内の失敗を自動修正する。
-7. PRを作りCIを確認し、リリースと振り返りを含む全工程が通れば`closed`にする。
+5. profile内から`always_on + 成果物tag + risk tag + 現在工程`に合う項目を選び、selector版、入力、選択ID、digestを保存する。
+6. 最小検証が失敗するか新証拠・予算超過がある場合だけ、scope→dependency→verification→review→capabilityの一軸を一段拡張する。
+7. 欠陥を独立したoracle、反例、境界値、mutationで探し、承認範囲内の失敗を自動修正する。
+8. 決定的成功後は追加探索を止め、効率reportを生成する。PRを作りCIを確認し、全工程が通れば`closed`にする。
 
 定型的な設計選択、実装詳細、レビュー修正、テスト修正では追加承認を求めません。承認外の新要件、不可逆な外部操作、利用不能な権限だけを停止理由にします。
 

@@ -11,6 +11,7 @@ Durable product requirements live only in `spec/requirements/requirements.json`.
 ## Invariants
 
 - Govern substantive changes with `$govern-development-request`. Freeze the request, requirements, traceability, execution plan, authority boundary, success criteria, and stopping conditions before implementation.
+- Before work-item initialization, use `$right-size-execution` to record the L1/L2/L3 operating point, risk floor, confidence, soft budgets, minimum decisive verification, and task-specific checklist selection. Treat Estimate/Execute/Expand as one state machine.
 - Record one real requester decision with `$authorize-autonomous-execution`; never infer it. A changed authorized artifact requires a new authorization boundary.
 - Preserve the original request in `docs/00-request.md`. Use `$calibrated-collaborative-listening` only when consequential ambiguity changes that boundary, and ask only for the smallest blocking fact.
 - Include the proposed canonical requirement delta and base revision in the one initial authorization. Apply that delta after authorization and reject stale catalog or item revisions.
@@ -24,6 +25,8 @@ Durable product requirements live only in `spec/requirements/requirements.json`.
 ## Efficient execution
 
 - Optimize for the outcome, not a prescribed procedure. Prefer reversible assumptions and the fewest useful tool loops.
+- Expand one axis only after verification failure, new dependency/contract evidence, or measured overrun. Expand scope and dependencies before model capability; stop exploration after decisive success.
+- Preserve selector version, input features, selected checklist IDs, and digest. Do not register every unselected row as N/A.
 - Keep the root agent focused on decisions and implementation. Delegate only bounded, independent, read-heavy review that materially improves quality or latency; reviewers remain read-only.
 - Use the lightest model and reasoning level that passes representative checks. Follow [docs/AI-OPERATING-POLICY.md](docs/AI-OPERATING-POLICY.md).
 - Treat the lifecycle checklist as a validation contract, not prompt content. Load only the current phase and relevant item details.
