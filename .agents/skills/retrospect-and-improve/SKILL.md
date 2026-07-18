@@ -1,25 +1,75 @@
 ---
 name: retrospect-and-improve
-description: Generate and review session retrospectives, detect repeated gate failures, and propose testable durable improvements without auto-applying them. Use at session end, after rework or escaped defects, and when recurring agent mistakes should become a separately planned and initially authorized work item.
+description: Analyze evidence-backed process failures only after regulated work, escaped defects, repeated user corrections, critical control misses, rollback, repeated CI repair, or periodic governance audit. Do not generate a retrospective for every ordinary session or change.
 ---
 
 # Retrospect and Improve
 
-Turn observed friction into evidence-backed candidates for a future governed work item.
+実際の品質欠陥、利用者影響、反復した非効率から、検証可能な改善候補を作る。
+
+## 起動条件
+
+- active regulated workの終了
+- escaped defect
+- repeated user correction
+- critical control miss
+- rollbackまたはincident
+- 同一原因のCI再修正
+- false blockerの反復
+- periodic governance audit
+
+通常セッションの終了、単一のtemplate未入力、形式的なgate errorだけを理由に起動しない。
+
+## 入力
+
+- defect / incident
+- user correction
+- review YAML
+- GitHub Actions / deployment / monitoring結果
+- selector miss
+- false blocker
+- tool / context / reviewer cost
+- advisory滞留
+
+生の会話全文、secret、PII、production dumpを保存しない。
 
 ## Workflow
 
-1. Let the Stop hook create the session report, or run `scripts/retrospect.py --session-id <ID>`.
-2. Read the newest report, affected work item events, `reports/execution-efficiency.json`, inspection reports, user corrections, and test outcomes.
-3. Separate one-off noise from recurring process failures. Read `references/improvement-policy.md`. Aggregate scope under/over-estimation, assurance-floor misses, Estimate overhead, unnecessary metadata probes, repeated reads and searches, ineffective compute escalation, unnecessary subagents, Expand recovery rate, selector false negatives, post-success activity, and unexecuted Skill behavior constraints.
-4. Use the automatically generated proposal when the same blocker recurs across sessions. Add a manual proposal only with concrete evidence.
-5. Ask `improvement-coach` to challenge the root cause when subagents are available and permitted.
-6. Do not auto-apply the proposal. If it is outside the current authorized execution plan, leave it pending.
-7. When selected, create a new governed work item that names the exact skill, change, evidence, evaluation, and rollback in its requirements and execution plan.
-8. Obtain that work item's one initial requester authorization, implement it autonomously, validate the skill and repository, and confirm in a later task that the failure no longer recurs.
+1. 防ぎたい実際の成果上の欠陥を特定する。
+2. 利用者、security、operation、costへの影響を確認する。
+3. 一回限りのnoiseと反復するsystemic failureを分ける。
+4. 現行rule、Skill、tool、test、selectorが防げなかった理由を確認する。
+5. 新rule以外の代替を先に検討する。
+6. 改善案ごとに適用trigger、予想cost、評価方法、rollback、再評価日を定義する。
+7. まずshadowまたはAdvisoryとして評価する。
+8. 実測で価値が確認された場合だけInvariantまたはblockingへ昇格する。
 
-## Update boundary
+## 改善候補に必須の内容
 
-No retrospective proposal is automatically applied. Any durable change to `references/learned-rules.md`, core `SKILL.md`, `AGENTS.md`, hooks, agents, policy, or gate code requires inclusion in an initially authorized execution plan.
+- problem
+- user / system impact
+- evidence
+- root cause hypothesis
+- proposed change
+- scope / trigger
+- expected benefit
+- expected cost
+- evaluation
+- rollback
+- review or sunset date
 
-Never ingest secrets or raw transcripts into proposals or learned rules. Store concise behavior and evidence identifiers.
+## Boundaries
+
+- gate error回数だけからruleを追加しない。
+- 形式的な文書不足を品質欠陥と同一視しない。
+- instructionを追加する前に、既存instructionの削除・統合を検討する。
+- CIで強制できるものをpromptだけへ追加しない。
+- 現在の変更と無関係な改善を同じPRへ混ぜない。
+
+## Completion
+
+- 実際の欠陥または反復costに基づく。
+- 新ruleの適用triggerが限定される。
+- 既存ruleで代替できない理由がある。
+- shadow評価と再評価条件がある。
+- 不要なrule増殖を避けている。
