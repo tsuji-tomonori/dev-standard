@@ -40,30 +40,41 @@ class SkillContractTest(unittest.TestCase):
         actual = {path.name for path in SKILLS.iterdir() if (path / "SKILL.md").is_file()}
         self.assertEqual(listed, actual)
 
-    def test_chat_first_skill_owns_setup_and_full_delivery(self) -> None:
+    def test_chat_first_skill_owns_adaptive_setup_and_delivery(self) -> None:
         skill = SKILLS / "chat-first-development"
         text = (skill / "SKILL.md").read_text(encoding="utf-8")
         reference = (skill / "references" / "bootstrap-and-conversation.md").read_text(encoding="utf-8")
         for required in [
             "ordinary natural-language conversation",
-            "Automatically prepare",
-            "Never ask the user to run Python",
-            "one explicit approve/reject decision",
-            "PR creation",
-            "CI verification",
-            "lightweight",
+            "direct",
+            "assured",
+            "regulated",
+            "Commit Comment",
+            "governance/reviews",
+            "PRを作成",
+            "GitHub Actions",
+            ".devflow/run/",
         ]:
             self.assertIn(required, text)
         for required in ["repository-local", "Do not stop", "Lightweight record", "Do not merge"]:
             self.assertIn(required, reference)
 
-    def test_right_size_execution_is_one_auditable_state_machine(self) -> None:
+    def test_right_size_execution_selects_an_auditable_adaptive_profile(self) -> None:
         skill = SKILLS / "right-size-execution"
         text = (skill / "SKILL.md").read_text(encoding="utf-8")
         policy = json.loads((skill / "assets" / "execution-policy.json").read_text(encoding="utf-8"))
         for required in [
-            "一回につき一軸", "soft budget", "metadata probe",
-            "scope", "assurance", "compute", "mode", "ACRR", "成功後",
+            "direct",
+            "assured",
+            "regulated",
+            "soft budget",
+            ".devflow/run/",
+            "同時拡張",
+            "scope",
+            "assurance",
+            "compute",
+            "mode",
+            "成功条件",
         ]:
             self.assertIn(required, text)
         self.assertEqual(policy["max_metadata_probes"], 1)
@@ -72,34 +83,53 @@ class SkillContractTest(unittest.TestCase):
         self.assertIn("governance", policy["assurance_floors"]["elevated"])
         self.assertEqual(policy["rollout_phase"], "shadow")
 
-    def test_root_instructions_make_commands_ai_owned(self) -> None:
+    def test_root_instructions_make_commands_and_artifacts_ai_owned(self) -> None:
         text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-        self.assertIn("$chat-first-development", text)
-        self.assertIn("Never ask the user to run setup", text)
-        self.assertIn("AI-owned commands", text)
-        self.assertIn("ordinary conversation", text)
-        self.assertIn("spec/requirements/requirements.json", text)
-        self.assertIn("`work/<id>/` is noncanonical", text)
+        for required in [
+            "$chat-first-development",
+            "direct",
+            "assured",
+            "regulated",
+            "Commit Comment",
+            "governance/reviews",
+            ".devflow/run/",
+            "spec/requirements/requirements.json",
+            "CI結果",
+        ]:
+            self.assertIn(required, text)
+        self.assertIn("利用者へSkill名", (SKILLS / "chat-first-development" / "SKILL.md").read_text(encoding="utf-8"))
+        self.assertIn("通常変更で恒久的な`work/<id>/`", text)
 
     def test_three_pillar_skills_have_deterministic_contracts(self) -> None:
         requirements = (SKILLS / "maintain-canonical-requirements" / "SKILL.md").read_text(encoding="utf-8")
         design = (SKILLS / "generate-implementation-design" / "SKILL.md").read_text(encoding="utf-8")
         standards = (SKILLS / "verify-against-engineering-standards" / "SKILL.md").read_text(encoding="utf-8")
-        for required in ["only durable requirements authority", "add", "update", "retire", "subject", "action", "object", "initial requester authorization"]:
+        for required in [
+            "永続要件の唯一の正本",
+            "add",
+            "update",
+            "retire",
+            "主体",
+            "行為",
+            "対象",
+            "acceptance criteria",
+            "Commit Comment",
+        ]:
             self.assertIn(required, requirements)
         for required in ["router.py", "functions.py", "OpenAPI", "SQLGlot AST", "CloudFormation", "SHA-256", "--check"]:
             self.assertIn(required, design)
         for required in [
             "official",
             "version",
-            "fresh",
+            "Invariant",
+            "Risk-selected",
+            "Advisory",
+            "Periodic",
             "Pass",
             "N/A",
             "Fail",
-            "direct Pass evidence",
-            "project severity",
-            "remediation plan",
-            "recheck",
+            "review YAML",
+            "GitHub Actions",
         ]:
             self.assertIn(required, standards)
 
