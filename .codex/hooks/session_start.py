@@ -11,8 +11,9 @@ def main() -> int:
         json.load(sys.stdin)
     except json.JSONDecodeError:
         pass
+
     root = Path(__file__).resolve().parents[2]
-    active = []
+    active: list[str] = []
     for state_path in sorted((root / "work").glob("*/state.json")):
         try:
             state = json.loads(state_path.read_text(encoding="utf-8"))
@@ -20,20 +21,18 @@ def main() -> int:
             continue
         if state.get("status") == "active":
             active.append(f"{state.get('id')}:{state.get('current_phase')}")
-    pending = []
-    proposals = root / "governance" / "improvements" / "proposals.json"
-    if proposals.exists():
-        try:
-            pending = [item["id"] for item in json.loads(proposals.read_text(encoding="utf-8")) if item.get("status") == "pending"]
-        except (OSError, json.JSONDecodeError, KeyError):
-            pending = []
+
     context = [
-        "This repository requires the governed lifecycle in AGENTS.md.",
-        "Use $govern-development-request before implementation and never invent initial authorization.",
-        "After authorization, continue autonomously through all quality gates within the approved execution plan.",
-        "Active work items: " + (", ".join(active) if active else "none"),
-        "Pending skill improvements requiring a separately authorized work item: " + (", ".join(pending) if pending else "none"),
+        "Use the repository's direct / assured / regulated profile selection.",
+        "Do not create a permanent work item for direct or assured changes.",
+        "Use structured Commit Comments, repository review YAML, and external CI results.",
     ]
+    if active:
+        context.extend([
+            "Active regulated work items: " + ", ".join(active),
+            "Resume their recorded authority boundary and regulated gate state before acting.",
+        ])
+
     print(json.dumps({
         "continue": True,
         "hookSpecificOutput": {
