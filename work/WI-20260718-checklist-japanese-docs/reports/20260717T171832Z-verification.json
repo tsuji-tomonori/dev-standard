@@ -1,0 +1,21 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/05-test-report.md",
+      "sha256": "11f2cdd923c4422ffa0b978151665ddb912b3f12d06c6faae8e8b50df7a08121"
+    },
+    {
+      "path": "docs/05-security-review.md",
+      "sha256": "310f622ab0a22f247bdddae923acc52c72e8600875a2ef531e13316af8d82aba"
+    }
+  ],
+  "gate_digest": "55299ed5cbcb9cfcdcb5034812bbe8b8536d11b64ac2aa49a4b55bf3e9ddb120",
+  "generated_at": "2026-07-17T17:18:32Z",
+  "passed": true,
+  "phase": "verification",
+  "review_item_count": 254,
+  "schema_version": 1,
+  "work_item": "WI-20260718-checklist-japanese-docs"
+}

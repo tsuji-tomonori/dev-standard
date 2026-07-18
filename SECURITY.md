@@ -1,4 +1,4 @@
-# Security Policy
+# セキュリティ方針
 
 脆弱性は公開Issueへ詳細を書かず、GitHubのPrivate vulnerability reportingを利用してください。
 

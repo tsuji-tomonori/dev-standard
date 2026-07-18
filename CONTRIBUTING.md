@@ -1,4 +1,4 @@
-# Contributing
+# コントリビューションガイド
 
 1. `tools/devflow.py init`でwork itemを作成する。
 2. 要件、トレーサビリティ、自律実行計画を作成し、要求者の初回承認を一度だけ記録する。

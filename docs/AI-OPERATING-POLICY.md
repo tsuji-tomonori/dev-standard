@@ -1,54 +1,55 @@
-# AI operating policy
+# AI運用方針
 
-## Goal
+## 目的
 
-Give the agent the outcome, hard constraints, evidence requirements, authority boundary, and stopping conditions. Leave reversible implementation choices to the agent. Human intervention is reserved for the initial authorization and genuinely new authority.
+AIには、達成結果、絶対条件、必要な証跡、権限境界、停止条件を渡す。可逆な実装判断はAIに委ね、人の介在は初回承認と新たな権限が本当に必要な場合に限定する。
 
-## Prompt contract
+## 指示の構成
 
-State each instruction once. Keep the user-visible outcome, success criteria, hard constraints, evidence requirements, authority boundary, required output, and stop rules. Remove repeated process narration, generic examples, broad absolute rules, and instructions already enforced by code. Prefer decision rules over step-by-step prescriptions.
+同じ指示を繰り返さない。利用者が得る結果、成功条件、絶対条件、証跡、権限境界、必要な出力、停止規則だけを残す。一般論の例、広すぎる絶対規則、コードですでに強制する手順説明は削る。逐次手順より判断規則を優先し、AIの実装上の独創性を不必要に狭めない。
 
-## Autonomy boundary
+## 自律実行の境界
 
-- Answer, review, diagnose, or plan: inspect and report; do not silently implement.
-- Change, build, or fix: make all in-scope reversible changes and validate without another approval.
-- Stop for an external write, destructive or costly action, or scope expansion only when it was not included in the initial execution plan.
-- Stop tool loops when the outcome has sufficient evidence. Retry only when a missing required fact has a meaningful fallback.
+- 回答、レビュー、診断、計画の依頼では、調査して報告し、依頼されていない実装を行わない。
+- 変更、構築、修正の依頼では、初回計画内の可逆な変更と検証を追加承認なしで完了する。
+- 初回計画に含まれない外部書込み、破壊的・高額な操作、重大なスコープ拡張だけで停止する。
+- 必要な結論を裏付ける証跡が揃ったらツールの反復を止める。必須事実が欠け、意味のある代替手段がある場合だけ再試行する。
 
-## Model routing
+## モデル選択
 
-The root agent is not pinned so Codex can match capability to the task. Custom read-only reviewers use `gpt-5.6-terra`, the documented lower-cost Codex option.
+ルートエージェントは固定せず、Codexが作業に合う能力を選べるようにする。独立した読取専用レビューには、Codexで文書化された低コスト側の`gpt-5.6-terra`を使う。
 
-| Work shape | Model | Reasoning | Escalate when |
+| 作業の性質 | モデル | 推論量 | 引き上げ条件 |
 |---|---|---|---|
-| Inventory, document scan, routine operations review | `gpt-5.6-terra` | `low` | evidence conflicts or consequential ambiguity appears |
-| Requirements, architecture, test, process review | `gpt-5.6-terra` | `medium` | representative checks expose a quality gap |
-| Security and cross-phase audit | `gpt-5.6-terra` | `high` | measured quality remains insufficient; then use unpinned root judgment |
+| 棚卸し、文書走査、定型的な運用レビュー | `gpt-5.6-terra` | `low` | 証跡が矛盾する、または結果を変える曖昧さがある |
+| 要件、アーキテクチャ、テスト、プロセスのレビュー | `gpt-5.6-terra` | `medium` | 代表検査で品質上の欠落が見つかる |
+| セキュリティと工程横断監査 | `gpt-5.6-terra` | `high` | 測定品質が不足する場合に限り、固定していないルート判断へ戻す |
 
-Do not select `max`, `xhigh`, pro mode, or extra agents by default. Increase capability or reasoning one level at a time only when a named check fails. For API workloads outside Codex, `gpt-5.6-luna` is the efficient high-volume family member; it is not pinned here because the current Codex manual documents `gpt-5.6-terra` for lighter subagents.
+`max`、`xhigh`、pro mode、追加エージェントを既定にしない。名前付きの検査が失敗した場合だけ、能力または推論量を一段ずつ上げる。Codex以外のAPIで大量処理を行う場合は`gpt-5.6-luna`が軽量候補だが、このリポジトリではCodexの軽量サブエージェントとして文書化された`gpt-5.6-terra`だけを設定する。
 
-## Checklist use
+## チェックリストの利用
 
-The 1,740-item catalog remains the deterministic validation contract and control source; do not copy it into the system prompt.
+1,740項目のカタログは、決定的な検証契約と統制の参照元として維持し、システムプロンプトへ全量を複製しない。
 
-1. Select profiles from actual scope.
-2. Load only the current phase's selected items.
-3. Record applicability, verdict, severity, reviewer, timestamp, and direct evidence.
-4. Require a concrete rationale for N/A and an issue for Fail.
-5. Recheck preceding gates and run the full audit before release.
+1. 実際のスコープからプロファイルを選ぶ。
+2. 現在工程の選択項目だけを読み込む。
+3. 適用判定、案件重要度と根拠、判定、レビュー担当、日時、直接証跡を記録する。
+4. N/Aには具体的な範囲理由、FailにはIssue、対応方針、期限を必須とする。
+5. Fail是正後は旧判定を履歴に残し、証跡付きで再確認する。
+6. リリース前に先行ゲートと全体監査を再実行する。
 
-## Minimal-prompt regression checklist
+## 最小指示の回帰チェック
 
-- [ ] Outcome, success criteria, authority boundary, evidence, and stop rules remain explicit.
-- [ ] No active instruction is repeated without a distinct purpose.
-- [ ] Examples remain only for a product requirement or measured failure.
-- [ ] Only relevant tools and checklist details enter context.
-- [ ] Root reasoning and creative implementation choices are not prescribed.
-- [ ] Reviewer model and effort are the least expensive settings that pass tests.
-- [ ] Validation covers behavior, prompt contracts, model routing, repository rules, and audit integrity.
+- [ ] 達成結果、成功条件、権限境界、証跡、停止規則が明示されている。
+- [ ] 異なる目的のない重複指示がない。
+- [ ] 例は製品要件または計測済み失敗に必要なものだけである。
+- [ ] 関連するツールとチェック項目だけを文脈へ入れている。
+- [ ] ルート推論や創造的な実装選択を過剰に指定していない。
+- [ ] レビュー用モデルと推論量が、検査に合格する最小コスト設定である。
+- [ ] 振る舞い、指示契約、モデル選択、リポジトリ規則、監査完全性を検証している。
 
-## Sources
+## 参照資料
 
-- [Using GPT-5.6](https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.6)
-- [Prompting guidance for GPT-5.6](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6)
-- [Codex subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+- [GPT-5.6の利用方法](https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.6)
+- [GPT-5.6のプロンプト指針](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6)
+- [Codexサブエージェント](https://learn.chatgpt.com/docs/agent-configuration/subagents)

@@ -106,6 +106,7 @@ class DevflowTest(unittest.TestCase):
             "reviewer": "reviewer",
             "reviewed_at": "2026-01-01T00:00:00Z",
             "evidence": ["docs/01-requirements.md"],
+            "severity_rationale": "テスト用の案件重要度",
         })
         devflow.atomic_write_json(work / "review" / "checklist-results.json", results)
         approve = argparse.Namespace(
@@ -131,6 +132,7 @@ class DevflowTest(unittest.TestCase):
             "reviewer": "reviewer",
             "reviewed_at": "2026-01-01T00:00:00Z",
             "evidence": ["docs/01-requirements.md"],
+            "severity_rationale": "テスト用の案件重要度",
         })
         devflow.atomic_write_json(work / "review" / "checklist-results.json", results)
         before = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=True)
@@ -216,6 +218,7 @@ class DevflowTest(unittest.TestCase):
             "reviewer": "reviewer",
             "reviewed_at": "2026-01-01T00:00:00Z",
             "evidence": ["evidence/missing.txt"],
+            "severity_rationale": "テスト用の案件重要度",
         })
         devflow.atomic_write_json(work / "review" / "checklist-results.json", results)
         blocked = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=False)
@@ -231,7 +234,13 @@ class DevflowTest(unittest.TestCase):
         state = devflow.read_json(work / "state.json")
         results = devflow.read_json(work / "review" / "checklist-results.json")
         item = results["items"][0]
-        item.update({"applicability": "not-applicable", "na_rationale": ""})
+        item.update({
+            "applicability": "not-applicable",
+            "na_rationale": "",
+            "reviewer": "reviewer",
+            "reviewed_at": "2026-01-01T00:00:00Z",
+            "severity_rationale": "非該当でも基準重要度を維持",
+        })
         blocked = devflow.gate_snapshot(work, state, results, "requirements", include_approvals=False)
         self.assertIn("CHECK_NA_RATIONALE", {failure["code"] for failure in blocked["blockers"]})
         item["na_rationale"] = "外部APIを持たないため非該当"
@@ -249,8 +258,11 @@ class DevflowTest(unittest.TestCase):
             "applicability": "applicable",
             "verdict": "fail",
             "issue_id": "ISSUE-1",
+            "remediation_plan": "欠陥を修正して再試験する",
+            "due_at": "2099-01-01",
             "reviewer": "reviewer",
             "reviewed_at": "2026-01-01T00:00:00Z",
+            "severity_rationale": "未解決なら要求品質を損なう",
             "exception": {
                 "status": "approved",
                 "approver": "owner",
@@ -273,6 +285,7 @@ class DevflowTest(unittest.TestCase):
             "severity": "High",
             "reviewer": "batch-reviewer",
             "evidence": ["evidence/proof.txt"],
+            "severity_rationale": "要求工程の主要統制",
         }]), encoding="utf-8")
         args = argparse.Namespace(work_item="WI-test", input=str(batch), actor="batch-reviewer")
         self.assertEqual(devflow.cmd_set_checks(args), 0)
@@ -288,11 +301,77 @@ class DevflowTest(unittest.TestCase):
             "verdict": "unreviewed",
             "severity": "High",
             "reviewer": "batch-reviewer",
+            "severity_rationale": "非該当でも基準重要度を維持",
         }]), encoding="utf-8")
         with self.assertRaises(devflow.GovernanceError):
             devflow.cmd_set_checks(args)
         unchanged = devflow.read_json(work / "review" / "checklist-results.json")["items"][0]
         self.assertEqual(unchanged["applicability"], "applicable")
+
+    def test_fail_requires_remediation_due_date_and_recheck_history(self) -> None:
+        work = self.init_item()
+        (work / "evidence" / "proof.txt").write_text("proof", encoding="utf-8")
+        batch = self.root / "batch.json"
+        common = {
+            "item": "REQ-001",
+            "applicability": "applicable",
+            "severity": "Critical",
+            "severity_rationale": "未解決なら要件追跡が成立しない",
+            "reviewer": "critical-reviewer",
+        }
+        batch.write_text(json.dumps([{**common, "verdict": "fail", "issue": "ISSUE-1"}]), encoding="utf-8")
+        args = argparse.Namespace(work_item="WI-test", input=str(batch), actor="critical-reviewer")
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_set_checks(args)
+
+        batch.write_text(json.dumps([{
+            **common,
+            "verdict": "fail",
+            "issue": "ISSUE-1",
+            "remediation_plan": "一意IDを付与して再検査する",
+            "due_at": "2099-01-01",
+        }]), encoding="utf-8")
+        self.assertEqual(devflow.cmd_set_checks(args), 0)
+
+        batch.write_text(json.dumps([{
+            **common,
+            "verdict": "pass",
+            "evidence": ["evidence/proof.txt"],
+        }]), encoding="utf-8")
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_set_checks(args)
+
+        batch.write_text(json.dumps([{
+            **common,
+            "verdict": "pass",
+            "evidence": ["evidence/proof.txt"],
+            "recheck": {
+                "verdict": "pass",
+                "evidence": ["evidence/proof.txt"],
+                "reviewer": "recheck-reviewer",
+                "reviewed_at": "2026-01-02T00:00:00Z",
+            },
+        }]), encoding="utf-8")
+        self.assertEqual(devflow.cmd_set_checks(args), 0)
+        result = devflow.read_json(work / "review" / "checklist-results.json")["items"][0]
+        self.assertEqual(result["history"][-1]["verdict"], "fail")
+        self.assertEqual(result["recheck"]["verdict"], "pass")
+
+    def test_not_applicable_still_requires_reviewer_and_severity_rationale(self) -> None:
+        work = self.init_item()
+        results = devflow.read_json(work / "review" / "checklist-results.json")
+        item = results["items"][0]
+        item.update({"applicability": "not-applicable", "na_rationale": "外部APIなし"})
+        report = devflow.gate_snapshot(
+            work,
+            devflow.read_json(work / "state.json"),
+            results,
+            "requirements",
+            include_approvals=False,
+        )
+        codes = {failure["code"] for failure in report["blockers"]}
+        self.assertIn("CHECK_REVIEWER", codes)
+        self.assertIn("CHECK_SEVERITY_RATIONALE", codes)
 
     def test_tampered_approval_chain_is_rejected(self) -> None:
         path = self.root / "approvals.jsonl"

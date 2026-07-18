@@ -1,29 +1,29 @@
-# Skills catalog
+# Skills一覧
 
-Copy a folder to `<target>/.agents/skills/<name>/`. `SKILL.md` metadata determines automatic triggering; users normally describe the problem without naming a skill.
+必要なフォルダを`<target>/.agents/skills/<name>/`へコピーする。`SKILL.md`のmetadataが自動起動条件を定めるため、通常はSkill名を指定せず、問題を自然言語で相談すればよい。
 
-| Skill | Purpose and trigger | Dependencies | Copy source |
+| Skill | 目的・起動条件 | 依存関係 | コピー元 |
 |---|---|---|---|
-| `adversarial-review` | Critically challenge requirements, design, implementation, tests, and documents under the assumption that defects may exist | Standalone | `.agents/skills/adversarial-review` |
-| `author-lifecycle-docs` | Maintain request-local phase documents, canonical delta, plan, and traceability | Full governance runtime | `.agents/skills/author-lifecycle-docs` |
-| `authorize-autonomous-execution` | Record the one explicit requester authorization for delta and execution plan | Full governance runtime | `.agents/skills/authorize-autonomous-execution` |
-| `calibrated-collaborative-listening` | Infer and gently confirm ambiguous intent without sycophancy, patronizing, or meaning loss | Standalone | `.agents/skills/calibrated-collaborative-listening` |
-| `chat-first-development` | Turn ordinary conversation into automatic setup, requirements, design, implementation, tests, PR, and CI | Development-framework skills; full runtime preferred | `.agents/skills/chat-first-development` |
-| `generate-implementation-design` | Generate FastAPI sequence/OpenAPI/SQL design and CDK CloudFormation design with drift checks | Bundled PyYAML/SQLGlot dependency pin | `.agents/skills/generate-implementation-design` |
-| `govern-development-request` | Orchestrate the single-authorization governed lifecycle | Full governance runtime | `.agents/skills/govern-development-request` |
-| `inspect-quality-gates` | Inspect deterministic phase gates and evidence contracts | Full governance runtime | `.agents/skills/inspect-quality-gates` |
-| `japanese-git-commit-gitmoji` | Produce Japanese Git commits with the repository's gitmoji convention | Standalone | `.agents/skills/japanese-git-commit-gitmoji` |
-| `maintain-canonical-requirements` | Discover intent and persist atomic add/update/retire requirements outside work items | Listening skill recommended; bundled schema/script | `.agents/skills/maintain-canonical-requirements` |
-| `retrospect-and-improve` | Generate retrospectives and authorized improvement proposals | Full governance runtime | `.agents/skills/retrospect-and-improve` |
-| `verify-against-engineering-standards` | Verify artifacts against fresh, versioned SWEBOK/cloud official sources and evidence-based checklists | Standards registry; adversarial review recommended | `.agents/skills/verify-against-engineering-standards` |
+| `adversarial-review` | 欠陥がある前提で要件、設計、実装、テスト、文書の正しさを批判的に検証する | 単体利用可 | `.agents/skills/adversarial-review` |
+| `author-lifecycle-docs` | 要求ごとの工程文書、正本差分、計画、トレーサビリティを保守する | 統制実行基盤一式 | `.agents/skills/author-lifecycle-docs` |
+| `authorize-autonomous-execution` | 要件差分と実行計画に対する要求者の一度だけの明示承認を記録する | 統制実行基盤一式 | `.agents/skills/authorize-autonomous-execution` |
+| `calibrated-collaborative-listening` | 迎合、上から目線、意味の欠落を避けながら曖昧な意図を推定し、穏やかに確認する | 単体利用可 | `.agents/skills/calibrated-collaborative-listening` |
+| `chat-first-development` | 普通の相談を、導入、要件、設計、実装、テスト、PR、CIまでの自動フローへ載せる | 開発フレームワーク。統制実行基盤一式を推奨 | `.agents/skills/chat-first-development` |
+| `generate-implementation-design` | FastAPIのシーケンス/OpenAPI/SQL設計とCDKのCloudFormation設計を生成し、差分を検査する | 同梱のPyYAML/SQLGlot依存固定 | `.agents/skills/generate-implementation-design` |
+| `govern-development-request` | 一度だけの承認で統制されたライフサイクル全体を進行する | 統制実行基盤一式 | `.agents/skills/govern-development-request` |
+| `inspect-quality-gates` | 決定的な工程ゲートと証跡契約を検査する | 統制実行基盤一式 | `.agents/skills/inspect-quality-gates` |
+| `japanese-git-commit-gitmoji` | リポジトリ規約に従う日本語gitmojiコミットを作る | 単体利用可 | `.agents/skills/japanese-git-commit-gitmoji` |
+| `maintain-canonical-requirements` | 意図を探り、原子的なadd/update/retire要件をwork item外へ永続化する | 傾聴Skillを推奨。schemaとscriptを同梱 | `.agents/skills/maintain-canonical-requirements` |
+| `retrospect-and-improve` | 振り返りと、承認対象にできる改善提案を生成する | 統制実行基盤一式 | `.agents/skills/retrospect-and-improve` |
+| `verify-against-engineering-standards` | 版管理されたSWEBOK・クラウド公式資料と証拠ベースのチェックリストで成果物を検証する | 出典台帳。批判的レビューSkillを推奨 | `.agents/skills/verify-against-engineering-standards` |
 
-## Collections
+## 組合せ
 
-- Atomic requirements: `maintain-canonical-requirements` + `calibrated-collaborative-listening`.
-- Implementation-derived design: `generate-implementation-design`.
-- Standards validation: `verify-against-engineering-standards` + `adversarial-review`.
-- Three-pillar framework: the six skills above (`development-framework`).
-- Complete conversational development: three-pillar framework + `chat-first-development` (`chat-first`).
-- Full governed lifecycle: all skills plus the runtime listed in [INSTALLATION.md](INSTALLATION.md).
+- 原子的要件: `maintain-canonical-requirements` + `calibrated-collaborative-listening`
+- 実装由来設計: `generate-implementation-design`
+- 標準検証: `verify-against-engineering-standards` + `adversarial-review`
+- 3本柱のフレームワーク: 上記を支える6つのSkills（`development-framework`）
+- 会話だけで進む開発: 3本柱 + `chat-first-development`（`chat-first`）
+- 統制ライフサイクル一式: 全Skills + [導入ガイド](INSTALLATION.md)の実行基盤
 
-Codex custom reviewer agents are separate under `.codex/agents`; skills remain portable and do not require those agents to function.
+Codexのカスタムレビューagentsは`.codex/agents`に分離している。Skillsはこれらのagentsがなくても移植・実行できる。

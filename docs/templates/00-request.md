@@ -4,7 +4,7 @@
 
 ## メタデータ
 
-- Work item: {{WORK_ITEM}}
+- 作業項目: {{WORK_ITEM}}
 - タイトル: {{TITLE}}
 - 作成日時: {{CREATED_AT}}
 - 要求者: TBD

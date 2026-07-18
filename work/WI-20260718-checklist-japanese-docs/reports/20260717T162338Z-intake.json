@@ -1,0 +1,17 @@
+{
+  "approval_status": {},
+  "blockers": [],
+  "documents": [
+    {
+      "path": "docs/00-request.md",
+      "sha256": "255c0120af8fc6a380ac81a8e04abdb010a15cb007c109f37ad75f50e54cbbde"
+    }
+  ],
+  "gate_digest": "6f8e5125660fa59aad0893e67060de28f69d4dcb3686772cc579c690cd3e88db",
+  "generated_at": "2026-07-17T16:23:38Z",
+  "passed": true,
+  "phase": "intake",
+  "review_item_count": 0,
+  "schema_version": 1,
+  "work_item": "WI-20260718-checklist-japanese-docs"
+}
