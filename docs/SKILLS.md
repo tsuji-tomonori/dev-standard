@@ -1,39 +1,70 @@
 # Skills一覧
 
-必要なフォルダを`<target>/.agents/skills/<name>/`へコピーする。`SKILL.md`のmetadataが自動起動条件を定めるため、通常はSkill名を指定せず、問題を自然言語で相談すればよい。
+通常はSkill名を指定せず、実現したい結果を自然言語で相談する。`$chat-first-development`がprofileと必要Skillを選ぶ。
 
-| Skill | 目的・起動条件 | 依存関係 | コピー元 |
-|---|---|---|---|
-| `adversarial-review` | 欠陥がある前提で要件、設計、実装、テスト、文書の正しさを批判的に検証する | 単体利用可 | `.agents/skills/adversarial-review` |
-| `author-lifecycle-docs` | 要求ごとの工程文書、正本差分、計画、トレーサビリティを保守する | 統制実行基盤一式 | `.agents/skills/author-lifecycle-docs` |
-| `authorize-autonomous-execution` | 要件差分と実行計画に対する要求者の一度だけの明示承認を記録する | 統制実行基盤一式 | `.agents/skills/authorize-autonomous-execution` |
-| `calibrated-collaborative-listening` | 迎合、上から目線、意味の欠落を避けながら曖昧な意図を推定し、穏やかに確認する | 単体利用可 | `.agents/skills/calibrated-collaborative-listening` |
-| `chat-first-development` | 普通の相談を、導入、要件、設計、実装、テスト、PR、CIまでの自動フローへ載せる | 開発フレームワーク。統制実行基盤一式を推奨 | `.agents/skills/chat-first-development` |
-| `design-frontend-experience` | 承認済み要件から情報設計、操作、状態、レスポンシブ、アクセシビリティ、視覚、トークン、コンポーネントを実装可能な詳細設計へ落とす | UI要求獲得Skill、工程文書Skill、既存デザインシステムを推奨 | `.agents/skills/design-frontend-experience` |
-| `elicit-frontend-requirements` | デザイン用語を知らない要求者から、人間中心で検証可能なフロントエンド要件を獲得する | 傾聴Skillと要件正本化Skillを必須利用 | `.agents/skills/elicit-frontend-requirements` |
-| `generate-implementation-design` | FastAPIのシーケンス/OpenAPI/SQL設計とCDKのCloudFormation設計を生成し、差分を検査する | 同梱のPyYAML/SQLGlot依存固定 | `.agents/skills/generate-implementation-design` |
-| `govern-development-request` | 一度だけの承認で統制されたライフサイクル全体を進行する | 統制実行基盤一式 | `.agents/skills/govern-development-request` |
-| `implement-frontend-experience` | 要件と詳細設計から、状態・意味・フォーカス・レスポンシブ規則を失わず本番フロントエンドへ実装する | UI設計Skill、工程文書Skill、対象リポジトリのテスト基盤 | `.agents/skills/implement-frontend-experience` |
-| `inspect-quality-gates` | 決定的な工程ゲートと証跡契約を検査する | 統制実行基盤一式 | `.agents/skills/inspect-quality-gates` |
-| `japanese-git-commit-gitmoji` | リポジトリ規約に従う日本語gitmojiコミットを作る | 単体利用可 | `.agents/skills/japanese-git-commit-gitmoji` |
-| `maintain-canonical-requirements` | 意図を探り、原子的なadd/update/retire要件をwork item外へ永続化する | 傾聴Skillを推奨。schemaとscriptを同梱 | `.agents/skills/maintain-canonical-requirements` |
-| `retrospect-and-improve` | 振り返りと、承認対象にできる改善提案を生成する | 統制実行基盤一式 | `.agents/skills/retrospect-and-improve` |
-| `right-size-execution` | scope、assurance、compute、modeを独立に推定し、新証拠に基づく単軸Expand、成功後停止、選択漏れと効率を監査する | 単体利用可。work item・標準選択には統制実行基盤を推奨 | `.agents/skills/right-size-execution` |
-| `test-frontend-experience` | 要件・設計・実装に対し、機能、状態、アクセシビリティ、ユーザビリティ、視覚、レスポンシブ、性能を証拠付きで検証する | UI実装Skill、標準検証Skill、批判的レビューSkillを推奨 | `.agents/skills/test-frontend-experience` |
-| `verify-against-engineering-standards` | 版管理されたSWEBOK・クラウド公式資料と証拠ベースのチェックリストで成果物を検証する | 出典台帳。批判的レビューSkillを推奨 | `.agents/skills/verify-against-engineering-standards` |
+## 既定で利用できるSkills
 
-## 組合せ
+| Skill | 目的・起動条件 |
+|---|---|
+| `chat-first-development` | ordinary requestをdirect / assured / regulatedへ振り分け、実装、review、Commit Comment、PR、CIまで進める |
+| `right-size-execution` | profile、scope、verification、review、computeを最小十分に選ぶ |
+| `calibrated-collaborative-listening` | 結果を変える曖昧さだけを穏やかに確認する |
+| `maintain-canonical-requirements` | 永続要件が変わる場合だけ正本へadd / update / retireを適用する |
+| `generate-implementation-design` | 実装からas-built設計を生成しdriftを検査する |
+| `verify-against-engineering-standards` | 関連する標準controlだけをInvariant / Risk-selected / Advisory / Periodicとして選ぶ |
+| `inspect-quality-gates` | 変更イベントごとにselected checkを確認しreview YAMLへ保存する |
+| `japanese-git-commit-gitmoji` | Change Manifestと要件・設計影響を代替する構造化Commit Commentを作る |
+| `adversarial-review` | critical、高影響、oracle不足、検証失敗時に独立して反証を探す |
 
-- 原子的要件: `maintain-canonical-requirements` + `calibrated-collaborative-listening`
-- フロントエンド要求獲得: `elicit-frontend-requirements` + `calibrated-collaborative-listening` + `maintain-canonical-requirements`
-- フロントエンド全工程: `elicit-frontend-requirements` → `design-frontend-experience` → `implement-frontend-experience` → `test-frontend-experience`
+## Frontend Skills
+
+| Skill | 目的・起動条件 |
+|---|---|
+| `elicit-frontend-requirements` | 利用者、task、context、失敗影響からtest可能なUI要求を獲得する |
+| `design-frontend-experience` | 実装前に必要なinteraction decisionとconstraintを定義する。生成可能なas-built情報を手書きで複製しない |
+| `implement-frontend-experience` | 要件とdecisionを実装し、complete state、semantics、responsive behaviorを保持する |
+| `test-frontend-experience` | task、state、accessibility、responsive、performanceを変更riskに応じて検証する |
+
+Frontend Skillsも通常は恒久work itemや変更ごとの工程文書を要求しない。長期判断はADR、実装構造は生成設計、review判断はreview YAMLへ集約する。
+
+## Regulated専用Skills
+
+次は`regulated` profileでのみ使用する。
+
+| Skill | 目的 |
+|---|---|
+| `govern-development-request` | full work-item、承認、phase gate、release、auditを進める |
+| `author-lifecycle-docs` | 法令・契約・安全・監査上必要なregulated文書だけを作る |
+| `authorize-autonomous-execution` | authority、external effect、不可逆操作へ明示承認を結び付ける |
+| `retrospect-and-improve` | regulated、重大失敗、反復欠陥時に改善候補を作る |
+
+これらをdirectまたは通常assuredへ自動適用しない。
+
+## 成果物
+
+すべてのrepository変更:
+
+- 実際の成果物
+- 構造化Commit Comment
+- `governance/reviews/<change-id>.yaml`
+- external CI result
+
+条件付き:
+
+- 永続要件正本
+- 人向け生成要件
+- 実装由来as-built設計
+- ADR
+- 恒久的運用文書
+- Issue
+
+詳細は[成果物とチェックのライフサイクル](ARTIFACTS-AND-CHECKS.md)と[Commit Comment契約](COMMIT-COMMENT.md)を参照する。
+
+## 推奨組合せ
+
+- 通常開発: `chat-first-development`
+- 要件変更: `maintain-canonical-requirements` + `calibrated-collaborative-listening`
 - 実装由来設計: `generate-implementation-design`
-- 標準検証: `verify-against-engineering-standards` + `adversarial-review`
-- 適正規模実行: `right-size-execution`（Skillフォルダ内にpolicy、schema、CLI、benchmarkを同梱）
-- 3本柱のフレームワーク: 上記を支える6つのSkills（`development-framework`）
-- 会話だけで進む開発: 3本柱 + `chat-first-development`（`chat-first`）
-- 統制ライフサイクル一式: 全Skills + [導入ガイド](INSTALLATION.md)の実行基盤
-
-フロントエンド全工程では、要求者へ色・余白・コンポーネント名などの設計判断を直接委ねない。要求獲得で利用状況、作業、失敗影響、制約、価値の優先順位を明らかにし、設計以降で専門的判断へ変換する。
-
-Codexのカスタムレビューagentsは`.codex/agents`に分離している。Skillsはこれらのagentsがなくても移植・実行できる。
+- 標準review: `verify-against-engineering-standards` + 必要時`adversarial-review`
+- Commit Comment: `japanese-git-commit-gitmoji`
+- regulated: `govern-development-request` + regulated専用Skills
