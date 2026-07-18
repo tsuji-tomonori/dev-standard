@@ -10,8 +10,8 @@ Turn observed friction into evidence-backed candidates for a future governed wor
 ## Workflow
 
 1. Let the Stop hook create the session report, or run `scripts/retrospect.py --session-id <ID>`.
-2. Read the newest report, affected work item events, inspection reports, user corrections, and test outcomes.
-3. Separate one-off noise from recurring process failures. Read `references/improvement-policy.md`.
+2. Read the newest report, affected work item events, `reports/execution-efficiency.json`, inspection reports, user corrections, and test outcomes.
+3. Separate one-off noise from recurring process failures. Read `references/improvement-policy.md`. Aggregate scope under/over-estimation, assurance-floor misses, Estimate overhead, unnecessary metadata probes, repeated reads and searches, ineffective compute escalation, unnecessary subagents, Expand recovery rate, selector false negatives, post-success activity, and unexecuted Skill behavior constraints.
 4. Use the automatically generated proposal when the same blocker recurs across sessions. Add a manual proposal only with concrete evidence.
 5. Ask `improvement-coach` to challenge the root cause when subagents are available and permitted.
 6. Do not auto-apply the proposal. If it is outside the current authorized execution plan, leave it pending.

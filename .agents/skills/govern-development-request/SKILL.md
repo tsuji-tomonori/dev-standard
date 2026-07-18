@@ -11,13 +11,14 @@ This skill is an internal lifecycle component. The user speaks naturally; the ag
 
 ## Workflow
 
-1. Read `references/work-item-contract.md` and current state. Select only scope-relevant profiles: `CORE`, a cloud delta when used, and `AI-CONDITIONAL` for model or agent work.
-2. Create or resume the work item. Preserve the request verbatim. Use `$calibrated-collaborative-listening` only when one missing fact materially changes outcome, risk, or authority.
-3. Define requirements, traceability, and an outcome-first execution plan containing success criteria, external effects, defaults, validation, rollback, authority boundary, and stop rules. Leave reversible implementation choices open.
-4. Inspect the requirements gate. Load only relevant checklist rows and use a read-only reviewer only when its independent judgment materially improves the result.
-5. Present one compact authorization package, then record the requester's explicit decision with `$authorize-autonomous-execution`.
-6. After authorization, choose and execute the efficient path through design, implementation, verification, publication, and closure. Fix in-scope findings without another approval; recheck preceding gates before advancement.
-7. Stop only when completion needs unavailable capability or materially new authority. Record the exact blocker and exhausted alternatives.
+1. Read `references/work-item-contract.md` and current state. Invoke `$right-size-execution` before work-item initialization; record independent scope, assurance, compute, and mode evidence, policy revision, soft budgets, required verification, evidence-backed Expand conditions, stopping conditions, and authority boundary in `execution-profile.json`. Do not impose a global Expand count cap.
+2. Select only scope-relevant profiles: `CORE`, a cloud delta when used, and `AI-CONDITIONAL` for model or agent work. Use the scope selector instead of registering every profile row as automatic N/A.
+3. Create or resume the work item. Preserve the request verbatim. Use `$calibrated-collaborative-listening` only when one missing fact materially changes outcome, risk, or authority.
+4. Define requirements, traceability, and an outcome-first execution plan containing success criteria, external effects, defaults, validation, rollback, authority boundary, and stop rules. Generate its execution summary from the structured scope; leave reversible implementation choices open.
+5. Inspect the requirements gate. Load only selected checklist rows and use a read-only reviewer only when its independent judgment materially improves the result.
+6. Present one compact authorization package, then record the requester's explicit decision with `$authorize-autonomous-execution`.
+7. After authorization, Execute within the soft budget. Expand only one axis after a recorded trigger; context and dependency expansion precede capability escalation. Fix in-scope findings without another approval and recheck preceding gates before advancement.
+8. Stop after decisive success and mandatory final gates. Finalize execution-efficiency evidence. Stop early only when completion needs unavailable capability or materially new authority; record the exact blocker and exhausted alternatives.
 
 ## Hard boundaries
 

@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 2,
+  "catalog_revision": 4,
   "product": "dev-standard",
   "requirements": [
     {
@@ -474,6 +474,435 @@
     {
       "acceptance_criteria": [
         {
+          "given": "repository変更依頼と決定的metadataがある",
+          "id": "AC-EXEC-001-1",
+          "then": "scope、assurance、compute、modeを直接根拠とともに独立記録し、同一入力とpolicyから同一profileを生成する",
+          "when": "実装前profileを生成する"
+        }
+      ],
+      "action": "estimate",
+      "id": "REQ-EXEC-001",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "相互に独立した変更範囲、保証水準、計算資源および実行方式",
+      "rationale": "局所的だが重大な変更と、広範囲だが機械的な変更を単一レベルで混同しないため。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034",
+        "arXiv:2407.01489"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "多軸execution profileの推定",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/execution-dimensions.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py",
+          ".agents/skills/right-size-execution/assets/execution-policy.json",
+          ".agents/skills/right-size-execution/assets/execution-profile.schema.json"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "多軸独立性、schema適合性および再現性の回帰テスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "変更特徴とrisk tagがある",
+          "id": "AC-EXEC-002-1",
+          "then": "criticalまたはelevatedの下限を決定し、高リスクだけを理由にscopeをrepositoryへ広げない",
+          "when": "assuranceを推定または監査する"
+        }
+      ],
+      "action": "enforce",
+      "id": "REQ-EXEC-002",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "risk tag、成果物、外部副作用および不可逆性から導出したassurance下限",
+      "rationale": "重大性は探索範囲ではなく必要な保証の深さへ反映すべきである。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-18",
+        "SWEBOK-V4A"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "保証水準の下限制御",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/execution-dimensions.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py",
+          ".agents/skills/right-size-execution/assets/execution-policy.json"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "local-criticalとrepository-standardの交差ケース",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "依頼文、path、manifestまたは依存metadataがある",
+          "id": "AC-EXEC-003-1",
+          "then": "Estimate専用LLMを呼ばず、結果を変える不明点だけmetadata probeを最大一回実行して費用を記録する",
+          "when": "初期profileを推定する"
+        }
+      ],
+      "action": "route",
+      "id": "REQ-EXEC-003",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "通常のルート判断と決定的metadataによる初期Estimate",
+      "rationale": "Estimate自体が余分なLLMコストになり、単純な作業の利点を失うことを防ぐため。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-18",
+        "ACL:2024.naacl-long.389"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "追加LLM呼出しを伴わない初期推定",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/SKILL.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "probe上限、再利用可能なprobe証拠およびEstimate overheadの検査",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "校正済みrouterが未導入である",
+          "id": "AC-EXEC-004-1",
+          "then": "deterministic feature evidenceとbandを記録しscoreをnullにする",
+          "when": "confidenceを記録する"
+        }
+      ],
+      "action": "constrain",
+      "id": "REQ-EXEC-004",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "実行制御へ入力するconfidenceの根拠とscore",
+      "rationale": "未校正のLLM自己申告値を閾値判定に使わず、観測特徴または実績で校正したrouterだけを使うため。",
+      "revision": 2,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2406.18665"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "校正可能な確信度",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/execution-dimensions.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/assets/execution-profile.schema.json",
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "任意の自己申告scoreを拒否するschema・回帰テスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "schema適合profileと受入条件がある",
+          "id": "AC-EXEC-005-1",
+          "then": "scopeの機能検証、assurance追加検証、受入条件およびrepository必須gateの和集合を生成する",
+          "when": "検証集合を導出する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-EXEC-005",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "scope、assurance、成果物、risk、受入条件および必須gateから成るrequired verification",
+      "rationale": "機能影響の広さと必要保証の深さを分離しながら、重大な検証漏れを防ぐため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "SWEBOK-V4A"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "最小十分な検証の導出",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/execution-dimensions.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "四つのscope-assurance交差ケースと不足検証の成功拒否",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "許可理由と直接証拠がある",
+          "id": "AC-EXEC-006-1",
+          "then": "scope、assurance、verification、review、computeのうち一軸だけを変更し、回数上限ではなくstagnationを検出する",
+          "when": "profileを拡張する"
+        }
+      ],
+      "action": "expand",
+      "id": "REQ-EXEC-006",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "初期profileを覆す新証拠に対応する一つの実行軸",
+      "rationale": "推定誤りを回復しながら、無関係な軸の同時拡張と一律回数上限による回復阻害を防ぐため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "根拠付きの単軸Expand",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/expansion-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "三回を超え得る異軸Expandと重複証拠拒否の回帰テスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "すべてのrequired verificationが成功した",
+          "id": "AC-EXEC-007-1",
+          "then": "停止digestを作成し、確定処理以外の探索を拒否またはpost-success活動として監査する",
+          "when": "decisive successを記録する"
+        }
+      ],
+      "action": "stop",
+      "id": "REQ-EXEC-007",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "成功条件、required verificationおよびassurance floor充足後の正のコスト活動",
+      "rationale": "成功後の念のための探索や能力引上げを防ぎ、必須確定処理だけを許可するため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "成功後の停止",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/stopping-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "検証不足の成功拒否と成功後Expand拒否",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "repository作業を実行している",
+          "id": "AC-EXEC-008-1",
+          "then": "tokenまたはproxy、時間、tool、read、probe、Expand、model、成功、escaped defectおよび停止後活動を保存し、oracleなしでACRRを表明しない",
+          "when": "効率reportを確定する"
+        }
+      ],
+      "action": "measure",
+      "id": "REQ-EXEC-008",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "推定、Estimate overhead、実績、Expand、品質および停止後活動の生指標",
+      "rationale": "成功率と重大欠陥を制約にし、oracleなしの単一効率指標へ過適合しないため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2607.13034"
+      ],
+      "status": "active",
+      "subject": "開発実行基盤",
+      "title": "実行効率の計測",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/measurement-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "生指標、overrun、proxyおよびACRR境界の検査",
+        "method": "自動テストとbenchmark"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "execution profileとversion固定catalogがある",
+          "id": "AC-EXEC-009-1",
+          "then": "assurance、artifact、risk、phase、changed path、always-onから選び、入力、選択digest、除外数、決定的監査sampleおよびmandatory missを保存する",
+          "when": "チェック候補を選択する"
+        }
+      ],
+      "action": "select",
+      "id": "REQ-EXEC-009",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "version固定selectorによるチェック候補と選択漏れ監査sample",
+      "rationale": "未選択とN/Aを分離し、削減件数だけでなく重大controlの偽陰性を監査するため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "SWEBOK-V4A"
+      ],
+      "status": "active",
+      "subject": "標準検証基盤",
+      "title": "監査可能なチェック選択",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/SKILL.md"
+        ],
+        "implementation": [
+          "tools/devflow.py",
+          "governance/checklist/catalog.json",
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py",
+          "tests/test_devflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "curated mandatory controlの選択漏れゼロと除外監査sample",
+        "method": "自動テストとbenchmark"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "実運用の校正データが十分でない",
+          "id": "AC-EXEC-010-1",
+          "then": "shadow modeで効率違反を警告にし、schema破損とassurance不足だけをblockingにする",
+          "when": "効率profileを監査する"
+        }
+      ],
+      "action": "stage",
+      "id": "REQ-EXEC-010",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "telemetry、shadow、soft routing、assurance enforcement、calibrationおよび限定blockingの導入順序",
+      "rationale": "未校正な効率規則が品質を損なうblocking gateになることを防ぐため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2406.18665"
+      ],
+      "status": "active",
+      "subject": "実行効率制御",
+      "title": "段階的な適用",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/references/measurement-contract.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/assets/execution-policy.json",
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "shadow enforcementとassurance floor blockingの回帰テスト",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
           "given": "統制対象の要求が存在する",
           "id": "AC-FRAME-001-1",
           "then": "workには要求断片、判断、計画、証跡だけが残り、永続要件は正本へ保存される",
@@ -719,6 +1148,91 @@
       "verification": {
         "evidence": "原子性回帰テストとチェック項目カタログ",
         "method": "自動テストと批判的レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "Skillを配布する",
+          "id": "AC-SKILL-001-1",
+          "then": "単一Skillが入力、出力、境界、判断規則、参照先、完了条件を持ち、要件管理、承認、標準合否、Git操作を複製しない",
+          "when": "Skill構造を検査する"
+        }
+      ],
+      "action": "provide",
+      "id": "REQ-SKILL-001",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約",
+      "rationale": "Skill分割と既存工程責務の複製による選択・同期・contextコストを増やさないため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2602.12670",
+        "OpenAI:skills"
+      ],
+      "status": "active",
+      "subject": "right-size-execution",
+      "title": "right-size-executionのSkill境界",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/SKILL.md"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/agents/openai.yaml"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_skills.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "Skill構造と責務境界の契約テスト",
+        "method": "自動検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "機械可読なbehavior constraintがある",
+          "id": "AC-SKILL-002-1",
+          "then": "各constraintのconditionを発火させ、expected behaviorと実行証拠のcoverageを報告する",
+          "when": "repository benchmarkを実行する"
+        }
+      ],
+      "action": "verify",
+      "id": "REQ-SKILL-002",
+      "last_changed_by": "WI-20260718-right-size-execution-v2",
+      "object": "SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠",
+      "rationale": "テスト成功だけではSkill内の重要規則が実際に使われたことを保証できないため。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-18",
+        "arXiv:2606.20659"
+      ],
+      "status": "active",
+      "subject": "Skill検証基盤",
+      "title": "Skill制約のtrajectory検証",
+      "traces": {
+        "design": [
+          ".agents/skills/right-size-execution/assets/behavior-constraints.json"
+        ],
+        "implementation": [
+          ".agents/skills/right-size-execution/scripts/executionflow.py"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_executionflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "behavior constraint coverageと未実行constraint一覧",
+        "method": "自動benchmark"
       }
     },
     {

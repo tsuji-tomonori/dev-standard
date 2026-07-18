@@ -15,6 +15,7 @@
 | `japanese-git-commit-gitmoji` | リポジトリ規約に従う日本語gitmojiコミットを作る | 単体利用可 | `.agents/skills/japanese-git-commit-gitmoji` |
 | `maintain-canonical-requirements` | 意図を探り、原子的なadd/update/retire要件をwork item外へ永続化する | 傾聴Skillを推奨。schemaとscriptを同梱 | `.agents/skills/maintain-canonical-requirements` |
 | `retrospect-and-improve` | 振り返りと、承認対象にできる改善提案を生成する | 統制実行基盤一式 | `.agents/skills/retrospect-and-improve` |
+| `right-size-execution` | scope、assurance、compute、modeを独立に推定し、新証拠に基づく単軸Expand、成功後停止、選択漏れと効率を監査する | 単体利用可。work item・標準選択には統制実行基盤を推奨 | `.agents/skills/right-size-execution` |
 | `verify-against-engineering-standards` | 版管理されたSWEBOK・クラウド公式資料と証拠ベースのチェックリストで成果物を検証する | 出典台帳。批判的レビューSkillを推奨 | `.agents/skills/verify-against-engineering-standards` |
 
 ## 組合せ
@@ -22,6 +23,7 @@
 - 原子的要件: `maintain-canonical-requirements` + `calibrated-collaborative-listening`
 - 実装由来設計: `generate-implementation-design`
 - 標準検証: `verify-against-engineering-standards` + `adversarial-review`
+- 適正規模実行: `right-size-execution`（Skillフォルダ内にpolicy、schema、CLI、benchmarkを同梱）
 - 3本柱のフレームワーク: 上記を支える6つのSkills（`development-framework`）
 - 会話だけで進む開発: 3本柱 + `chat-first-development`（`chat-first`）
 - 統制ライフサイクル一式: 全Skills + [導入ガイド](INSTALLATION.md)の実行基盤

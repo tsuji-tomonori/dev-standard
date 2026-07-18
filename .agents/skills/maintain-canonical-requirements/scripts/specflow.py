@@ -126,6 +126,15 @@ def render(catalog: dict[str, Any]) -> str:
         "verify": "検証する",
         "enable": "実現する",
         "provide": "提供する",
+        "estimate": "推定する",
+        "enforce": "強制する",
+        "route": "経路選択する",
+        "constrain": "制約する",
+        "expand": "拡張する",
+        "stop": "停止する",
+        "measure": "計測する",
+        "select": "選択する",
+        "stage": "段階適用する",
     }
     status_labels = {"active": "有効", "retired": "廃止"}
     type_labels = {

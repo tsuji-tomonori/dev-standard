@@ -1,7 +1,7 @@
 <!-- specflow.pyによる自動生成。spec/requirements/requirements.jsonを編集すること。 -->
 # dev-standard 要件一覧
 
-- カタログ版: 2
+- カタログ版: 4
 - 更新日: 2026-07-18
 - 正本: `spec/requirements/requirements.json`
 
@@ -18,11 +18,23 @@
 | `REQ-DISC-003` | 2 | 有効 | 機能 | 仕様管理フローは、版競合を検査した追加、更新、廃止操作を**適用する** | 自動テスト |
 | `REQ-DISC-004` | 2 | 有効 | 機能 | 仕様管理フローは、正本カタログからの日本語の人間向け要件文書を**生成する** | 自動テスト |
 | `REQ-DOCS-001` | 1 | 有効 | 品質 | 文書生成フローは、識別子と固有名詞を除いて日本語で統一された利用者向け文書を**提供する** | 自動検査 |
+| `REQ-EXEC-001` | 2 | 有効 | 運用 | 開発実行基盤は、相互に独立した変更範囲、保証水準、計算資源および実行方式を**推定する** | 自動テスト |
+| `REQ-EXEC-002` | 2 | 有効 | 品質 | 開発実行基盤は、risk tag、成果物、外部副作用および不可逆性から導出したassurance下限を**強制する** | 自動テスト |
+| `REQ-EXEC-003` | 2 | 有効 | 品質 | 開発実行基盤は、通常のルート判断と決定的metadataによる初期Estimateを**経路選択する** | 自動テスト |
+| `REQ-EXEC-004` | 2 | 有効 | 品質 | 開発実行基盤は、実行制御へ入力するconfidenceの根拠とscoreを**制約する** | 自動テスト |
+| `REQ-EXEC-005` | 1 | 有効 | 品質 | 開発実行基盤は、scope、assurance、成果物、risk、受入条件および必須gateから成るrequired verificationを**導出する** | 自動テスト |
+| `REQ-EXEC-006` | 1 | 有効 | 品質 | 開発実行基盤は、初期profileを覆す新証拠に対応する一つの実行軸を**拡張する** | 自動テスト |
+| `REQ-EXEC-007` | 1 | 有効 | 品質 | 開発実行基盤は、成功条件、required verificationおよびassurance floor充足後の正のコスト活動を**停止する** | 自動テスト |
+| `REQ-EXEC-008` | 1 | 有効 | 品質 | 開発実行基盤は、推定、Estimate overhead、実績、Expand、品質および停止後活動の生指標を**計測する** | 自動テストとbenchmark |
+| `REQ-EXEC-009` | 1 | 有効 | 品質 | 標準検証基盤は、version固定selectorによるチェック候補と選択漏れ監査sampleを**選択する** | 自動テストとbenchmark |
+| `REQ-EXEC-010` | 1 | 有効 | 制約 | 実行効率制御は、telemetry、shadow、soft routing、assurance enforcement、calibrationおよび限定blockingの導入順序を**段階適用する** | 自動テスト |
 | `REQ-FRAME-001` | 2 | 有効 | 制約 | リポジトリは、一時的な作業記録と永続的な製品要件を**分離する** | 自動検査 |
 | `REQ-PORTABLE-001` | 2 | 有効 | 運用 | 移植可能なSkills集は、別リポジトリへのcopy-and-chat方式の導入を**実現する** | 自動テスト |
 | `REQ-QUALITY-001` | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する** | 自動検査 |
 | `REQ-QUALITY-002` | 2 | 有効 | 品質 | 品質フローは、適用可能な証拠ベースのチェックリストによる成果物検証を**検証する** | 自動監査 |
 | `REQ-QUALITY-003` | 1 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する** | 自動テストと批判的レビュー |
+| `REQ-SKILL-001` | 1 | 有効 | 制約 | right-size-executionは、Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約を**提供する** | 自動検査 |
+| `REQ-SKILL-002` | 1 | 有効 | 品質 | Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠を**検証する** | 自動benchmark |
 | `REQ-WORKBOOK-001` | 1 | 有効 | 運用 | チェックリスト生成フローは、実データ範囲だけを集計し決定的に再現できるレビュー用ワークブックを**生成する** | 自動検査と描画確認 |
 
 ## REQ-DESIGN-001: FastAPI operation構成
@@ -169,6 +181,136 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 検証証跡: 日本語文書検査と生成差分テスト
 トレース: 設計=docs/README.md; 実装=.agents/skills/maintain-canonical-requirements/scripts/specflow.py,.agents/skills/verify-against-engineering-standards/scripts/standardsflow.py; テスト=tests/test_validate_repo.py,tests/test_specflow.py,tests/test_standardsflow.py; 参照資料=SWEBOK-V4A
 
+## REQ-EXEC-001: 多軸execution profileの推定
+
+開発実行基盤は、相互に独立した変更範囲、保証水準、計算資源および実行方式を**推定する**。
+
+根拠: 局所的だが重大な変更と、広範囲だが機械的な変更を単一レベルで混同しないため。
+
+受入条件:
+- `AC-EXEC-001-1` 前提: repository変更依頼と決定的metadataがある。条件: 実装前profileを生成する。期待結果: scope、assurance、compute、modeを直接根拠とともに独立記録し、同一入力とpolicyから同一profileを生成する。
+
+要求源: user:2026-07-18, arXiv:2607.13034, arXiv:2407.01489
+検証証跡: 多軸独立性、schema適合性および再現性の回帰テスト
+トレース: 設計=.agents/skills/right-size-execution/references/execution-dimensions.md; 実装=.agents/skills/right-size-execution/scripts/executionflow.py,.agents/skills/right-size-execution/assets/execution-policy.json,.agents/skills/right-size-execution/assets/execution-profile.schema.json; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-002: 保証水準の下限制御
+
+開発実行基盤は、risk tag、成果物、外部副作用および不可逆性から導出したassurance下限を**強制する**。
+
+根拠: 重大性は探索範囲ではなく必要な保証の深さへ反映すべきである。
+
+受入条件:
+- `AC-EXEC-002-1` 前提: 変更特徴とrisk tagがある。条件: assuranceを推定または監査する。期待結果: criticalまたはelevatedの下限を決定し、高リスクだけを理由にscopeをrepositoryへ広げない。
+
+要求源: user:2026-07-18, SWEBOK-V4A
+検証証跡: local-criticalとrepository-standardの交差ケース
+トレース: 設計=.agents/skills/right-size-execution/references/execution-dimensions.md; 実装=.agents/skills/right-size-execution/scripts/executionflow.py,.agents/skills/right-size-execution/assets/execution-policy.json; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-003: 追加LLM呼出しを伴わない初期推定
+
+開発実行基盤は、通常のルート判断と決定的metadataによる初期Estimateを**経路選択する**。
+
+根拠: Estimate自体が余分なLLMコストになり、単純な作業の利点を失うことを防ぐため。
+
+受入条件:
+- `AC-EXEC-003-1` 前提: 依頼文、path、manifestまたは依存metadataがある。条件: 初期profileを推定する。期待結果: Estimate専用LLMを呼ばず、結果を変える不明点だけmetadata probeを最大一回実行して費用を記録する。
+
+要求源: user:2026-07-18, ACL:2024.naacl-long.389
+検証証跡: probe上限、再利用可能なprobe証拠およびEstimate overheadの検査
+トレース: 設計=.agents/skills/right-size-execution/SKILL.md; 実装=.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-004: 校正可能な確信度
+
+開発実行基盤は、実行制御へ入力するconfidenceの根拠とscoreを**制約する**。
+
+根拠: 未校正のLLM自己申告値を閾値判定に使わず、観測特徴または実績で校正したrouterだけを使うため。
+
+受入条件:
+- `AC-EXEC-004-1` 前提: 校正済みrouterが未導入である。条件: confidenceを記録する。期待結果: deterministic feature evidenceとbandを記録しscoreをnullにする。
+
+要求源: user:2026-07-18, arXiv:2406.18665
+検証証跡: 任意の自己申告scoreを拒否するschema・回帰テスト
+トレース: 設計=.agents/skills/right-size-execution/references/execution-dimensions.md; 実装=.agents/skills/right-size-execution/assets/execution-profile.schema.json,.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-005: 最小十分な検証の導出
+
+開発実行基盤は、scope、assurance、成果物、risk、受入条件および必須gateから成るrequired verificationを**導出する**。
+
+根拠: 機能影響の広さと必要保証の深さを分離しながら、重大な検証漏れを防ぐため。
+
+受入条件:
+- `AC-EXEC-005-1` 前提: schema適合profileと受入条件がある。条件: 検証集合を導出する。期待結果: scopeの機能検証、assurance追加検証、受入条件およびrepository必須gateの和集合を生成する。
+
+要求源: user:2026-07-18, SWEBOK-V4A
+検証証跡: 四つのscope-assurance交差ケースと不足検証の成功拒否
+トレース: 設計=.agents/skills/right-size-execution/references/execution-dimensions.md; 実装=.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-006: 根拠付きの単軸Expand
+
+開発実行基盤は、初期profileを覆す新証拠に対応する一つの実行軸を**拡張する**。
+
+根拠: 推定誤りを回復しながら、無関係な軸の同時拡張と一律回数上限による回復阻害を防ぐため。
+
+受入条件:
+- `AC-EXEC-006-1` 前提: 許可理由と直接証拠がある。条件: profileを拡張する。期待結果: scope、assurance、verification、review、computeのうち一軸だけを変更し、回数上限ではなくstagnationを検出する。
+
+要求源: user:2026-07-18, arXiv:2607.13034
+検証証跡: 三回を超え得る異軸Expandと重複証拠拒否の回帰テスト
+トレース: 設計=.agents/skills/right-size-execution/references/expansion-contract.md; 実装=.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-007: 成功後の停止
+
+開発実行基盤は、成功条件、required verificationおよびassurance floor充足後の正のコスト活動を**停止する**。
+
+根拠: 成功後の念のための探索や能力引上げを防ぎ、必須確定処理だけを許可するため。
+
+受入条件:
+- `AC-EXEC-007-1` 前提: すべてのrequired verificationが成功した。条件: decisive successを記録する。期待結果: 停止digestを作成し、確定処理以外の探索を拒否またはpost-success活動として監査する。
+
+要求源: user:2026-07-18, arXiv:2607.13034
+検証証跡: 検証不足の成功拒否と成功後Expand拒否
+トレース: 設計=.agents/skills/right-size-execution/references/stopping-contract.md; 実装=.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-008: 実行効率の計測
+
+開発実行基盤は、推定、Estimate overhead、実績、Expand、品質および停止後活動の生指標を**計測する**。
+
+根拠: 成功率と重大欠陥を制約にし、oracleなしの単一効率指標へ過適合しないため。
+
+受入条件:
+- `AC-EXEC-008-1` 前提: repository作業を実行している。条件: 効率reportを確定する。期待結果: tokenまたはproxy、時間、tool、read、probe、Expand、model、成功、escaped defectおよび停止後活動を保存し、oracleなしでACRRを表明しない。
+
+要求源: user:2026-07-18, arXiv:2607.13034
+検証証跡: 生指標、overrun、proxyおよびACRR境界の検査
+トレース: 設計=.agents/skills/right-size-execution/references/measurement-contract.md; 実装=.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-009: 監査可能なチェック選択
+
+標準検証基盤は、version固定selectorによるチェック候補と選択漏れ監査sampleを**選択する**。
+
+根拠: 未選択とN/Aを分離し、削減件数だけでなく重大controlの偽陰性を監査するため。
+
+受入条件:
+- `AC-EXEC-009-1` 前提: execution profileとversion固定catalogがある。条件: チェック候補を選択する。期待結果: assurance、artifact、risk、phase、changed path、always-onから選び、入力、選択digest、除外数、決定的監査sampleおよびmandatory missを保存する。
+
+要求源: user:2026-07-18, SWEBOK-V4A
+検証証跡: curated mandatory controlの選択漏れゼロと除外監査sample
+トレース: 設計=.agents/skills/right-size-execution/SKILL.md; 実装=tools/devflow.py,governance/checklist/catalog.json,.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py,tests/test_devflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-EXEC-010: 段階的な適用
+
+実行効率制御は、telemetry、shadow、soft routing、assurance enforcement、calibrationおよび限定blockingの導入順序を**段階適用する**。
+
+根拠: 未校正な効率規則が品質を損なうblocking gateになることを防ぐため。
+
+受入条件:
+- `AC-EXEC-010-1` 前提: 実運用の校正データが十分でない。条件: 効率profileを監査する。期待結果: shadow modeで効率違反を警告にし、schema破損とassurance不足だけをblockingにする。
+
+要求源: user:2026-07-18, arXiv:2406.18665
+検証証跡: shadow enforcementとassurance floor blockingの回帰テスト
+トレース: 設計=.agents/skills/right-size-execution/references/measurement-contract.md; 実装=.agents/skills/right-size-execution/assets/execution-policy.json,.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
+
 ## REQ-FRAME-001: workと正本の境界
 
 リポジトリは、一時的な作業記録と永続的な製品要件を**分離する**。
@@ -235,6 +377,32 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 要求源: user:2026-07-18, SWEBOK Software Quality
 検証証跡: 原子性回帰テストとチェック項目カタログ
 トレース: 設計=docs/GOVERNANCE.md; 実装=update_checklist.py,.agents/skills/verify-against-engineering-standards/SKILL.md; テスト=tests/test_checklist.py; 参照資料=SWEBOK-V4A
+
+## REQ-SKILL-001: right-size-executionのSkill境界
+
+right-size-executionは、Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約を**提供する**。
+
+根拠: Skill分割と既存工程責務の複製による選択・同期・contextコストを増やさないため。
+
+受入条件:
+- `AC-SKILL-001-1` 前提: Skillを配布する。条件: Skill構造を検査する。期待結果: 単一Skillが入力、出力、境界、判断規則、参照先、完了条件を持ち、要件管理、承認、標準合否、Git操作を複製しない。
+
+要求源: user:2026-07-18, arXiv:2602.12670, OpenAI:skills
+検証証跡: Skill構造と責務境界の契約テスト
+トレース: 設計=.agents/skills/right-size-execution/SKILL.md; 実装=.agents/skills/right-size-execution/agents/openai.yaml; テスト=tests/test_skills.py; 参照資料=SWEBOK-V4A
+
+## REQ-SKILL-002: Skill制約のtrajectory検証
+
+Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠を**検証する**。
+
+根拠: テスト成功だけではSkill内の重要規則が実際に使われたことを保証できないため。
+
+受入条件:
+- `AC-SKILL-002-1` 前提: 機械可読なbehavior constraintがある。条件: repository benchmarkを実行する。期待結果: 各constraintのconditionを発火させ、expected behaviorと実行証拠のcoverageを報告する。
+
+要求源: user:2026-07-18, arXiv:2606.20659
+検証証跡: behavior constraint coverageと未実行constraint一覧
+トレース: 設計=.agents/skills/right-size-execution/assets/behavior-constraints.json; 実装=.agents/skills/right-size-execution/scripts/executionflow.py; テスト=tests/test_executionflow.py; 参照資料=SWEBOK-V4A
 
 ## REQ-WORKBOOK-001: 再現可能で有界なワークブック
 

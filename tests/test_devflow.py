@@ -59,6 +59,11 @@ class DevflowTest(unittest.TestCase):
                     "sheet": "01_要件定義",
                     "phase": "requirements",
                     "base_severity": "High",
+                    "profile": "CORE",
+                    "always_on": True,
+                    "artifact_tags": ["requirements"],
+                    "risk_tags": [],
+                    "assurance_levels": ["standard", "elevated", "critical"],
                 }
             ],
         }
@@ -92,6 +97,37 @@ class DevflowTest(unittest.TestCase):
         args = argparse.Namespace(id=work_id, title="Test", request="Build safely", profile=["CORE"], actor="tester")
         self.assertEqual(devflow.cmd_init(args), 0)
         return self.work_root / work_id
+
+    def test_init_uses_execution_selector_and_preserves_audit_input(self) -> None:
+        executionflow = devflow.load_executionflow()
+        state = executionflow.estimate_profile(
+            "要件を更新する", expected_files=1, domains=["requirements"],
+            artifact_tags=["requirements"], risk_tags=[], changed_paths=["spec/requirements/requirements.json"],
+            acceptance_criteria=["正本が更新される"],
+        )
+        profile_path = self.root / "execution-profile.json"
+        devflow.atomic_write_json(profile_path, state)
+        args = argparse.Namespace(
+            id="WI-scoped", title="Scoped", request="要件を更新する",
+            profile=["CORE"], actor="tester", execution_profile_file=str(profile_path), scope_file=None,
+        )
+        self.assertEqual(devflow.cmd_init(args), 0)
+        work = self.work_root / "WI-scoped"
+        saved = devflow.read_json(work / "execution-profile.json")
+        self.assertEqual(saved["selection"]["selector_version"], "execution-selector-v2")
+        self.assertEqual(saved["selection"]["selected_ids"], ["REQ-001"])
+        self.assertTrue(devflow.read_json(work / "state.json")["execution_profile_sha256"])
+
+    def test_invalid_scope_does_not_leave_partial_work_item(self) -> None:
+        profile_path = self.root / "invalid-profile.json"
+        profile_path.write_text("{}", encoding="utf-8")
+        args = argparse.Namespace(
+            id="WI-invalid", title="Invalid", request="要件を更新する",
+            profile=["CORE"], actor="tester", execution_profile_file=str(profile_path), scope_file=None,
+        )
+        with self.assertRaises(devflow.GovernanceError):
+            devflow.cmd_init(args)
+        self.assertFalse((self.work_root / "WI-invalid").exists())
 
     def approve_requirements(self, work_id: str = "WI-test") -> None:
         work = self.work_root / work_id

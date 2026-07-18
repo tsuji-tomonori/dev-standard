@@ -27,7 +27,7 @@ class SpecflowTest(unittest.TestCase):
         catalog = specflow.validate_catalog(specflow.read_json(ROOT / "spec/requirements/requirements.json"))
         generated = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")
         self.assertEqual(generated, specflow.render(catalog))
-        self.assertEqual(len(catalog["requirements"]), 17)
+        self.assertEqual(len(catalog["requirements"]), 29)
         self.assertIn("# dev-standard 要件一覧", generated)
 
     def test_composite_action_and_clause_are_rejected(self) -> None:
@@ -61,7 +61,7 @@ class SpecflowTest(unittest.TestCase):
         updated = specflow.apply_change(catalog, change)
         item = next(value for value in updated["requirements"] if value["id"] == "REQ-FRAME-001")
         self.assertEqual(item["revision"], 3)
-        self.assertEqual(updated["catalog_revision"], 3)
+        self.assertEqual(updated["catalog_revision"], catalog["catalog_revision"] + 1)
         self.assertEqual(catalog, original)
         stale = copy.deepcopy(change)
         stale["base_catalog_revision"] = 0

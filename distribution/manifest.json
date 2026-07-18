@@ -22,6 +22,7 @@
       "japanese-git-commit-gitmoji",
       "maintain-canonical-requirements",
       "retrospect-and-improve",
+      "right-size-execution",
       "verify-against-engineering-standards"
     ],
     "agents": [
@@ -40,6 +41,7 @@
     ],
     "chat-first": [
       {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
+      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"},
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
       {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"},
       {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
@@ -53,16 +55,21 @@
     "implementation-design": [
       {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"}
     ],
+    "right-size-execution": [
+      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"}
+    ],
     "standards-verification": [
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
-      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
+      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"},
+      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"}
     ],
     "development-framework": [
       {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
       {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
-      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
+      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"},
+      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"}
     ],
     "communication": [
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
