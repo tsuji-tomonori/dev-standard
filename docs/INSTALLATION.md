@@ -1,6 +1,6 @@
 # Skills・agents導入ガイド
 
-## 1. 推奨導入
+## 1. 推奨手順: コピーして開き、相談する
 
 通常のrepositoryでは、次をコピーして自然言語で相談する。
 
@@ -14,7 +14,7 @@
 - `.agents/skills/japanese-git-commit-gitmoji`
 - 必要時だけfrontendまたはadversarial-review Skills
 
-利用者にPython、installer、test、Git、governance commandを実行させない。AIがrepository内で必要な準備を行う。
+利用者がインストーラーを実行する必要はない。利用者にPython、installer、test、Git、governance commandを実行させず、AIがrepository内で必要な準備を行う。
 
 ## 2. 既定成果物
 
@@ -38,7 +38,7 @@ governance/standards/registry.json        # versioned sources
 
 再開用状態が必要な場合だけ`.devflow/run/`を使用し、変更完了後に削除する。
 
-## 4. Regulated runtime
+## 4. 規制・高保証実行基盤
 
 次の場合だけfull runtimeを追加する。
 
@@ -64,7 +64,7 @@ governance/standards/registry.json        # versioned sources
 
 既存の`AGENTS.md`と`.codex/config.toml`を上書きせず、互換性を確認した区切り付き節だけを追加する。
 
-## 5. Profile
+## 5. 実行プロファイル
 
 | profile | 用途 | 追加内容 |
 |---|---|---|
@@ -83,7 +83,7 @@ governance/standards/registry.json        # versioned sources
 | review result schema | `governance/reviews/` | 同じ相対path |
 | standards registry | owning Skill assets | 対象固有台帳へ初期化 |
 
-## 7. Commit Comment
+## 7. コミットコメント
 
 対象repositoryのcommit規約を優先しつつ、本文へ次を追加する。
 
