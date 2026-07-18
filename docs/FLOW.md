@@ -38,17 +38,17 @@ PR・GitHub Actions・必要時のDeploy
 
 この判定からprofileとselected checkを選ぶ。全checkを評価したり、未選択をN/Aへ変換したりしない。
 
-## 3. Profile
+## 3. 実行プロファイル
 
-### direct
+### 直接実行（direct）
 
 局所的、可逆、外部副作用なし。対象範囲のtest、build、lint、type、生成物driftだけを実行する。
 
-### assured
+### 保証付き実行（assured）
 
 複数module、公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governance。関連するRisk-selected checkを追加する。
 
-### regulated
+### 規制・高保証実行（regulated）
 
 authentication、authorization、PII、data loss、不可逆production操作、法令・契約統制、高額操作、高保証要求。work item、明示承認、phase gate、hash chainを追加する。
 
@@ -82,7 +82,7 @@ CI結果の正本はGitHub Actions等とし、repositoryへ実行ログを保存
 
 結果を`governance/reviews/<change-id>.yaml`へ保存する。
 
-## 6. Commit Comment
+## 6. コミットコメント
 
 `docs/COMMIT-COMMENT.md`に従い、次をコミット本文へ記録する。
 
