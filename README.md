@@ -69,17 +69,17 @@ Commit CommentはChange Manifest、Requirement Impact Result、Design Impact Res
 
 既存のwork item、初回承認、hash chain、phase gateは`regulated`専用です。
 
-## 実行profile
+## 実行プロファイル
 
-### direct
+### 直接実行（direct）
 
 局所的、可逆、外部副作用なし。targeted test、build、lint、type check、生成物driftを実行します。
 
-### assured
+### 保証付き実行（assured）
 
 複数module、公開API、DB、IaC、dependency、共有UI、generator、永続要件、governance。変更固有のRisk-selected checkを追加します。
 
-### regulated
+### 規制・高保証実行（regulated）
 
 authentication、authorization、PII、confidential、data loss、不可逆なproduction操作、法令・契約上の統制、高額操作、または明示的な高保証要求。
 
@@ -116,6 +116,6 @@ authentication、authorization、PII、confidential、data loss、不可逆なpr
 
 対象固有の`AGENTS.md`と`.codex/config.toml`は上書きしません。既存規則を維持し、必要部分だけを統合します。
 
-## Skills
+## Skills一覧
 
 用途、起動条件、依存関係は[Skills一覧](docs/SKILLS.md)を参照してください。
