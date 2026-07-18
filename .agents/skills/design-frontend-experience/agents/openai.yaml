@@ -1,0 +1,4 @@
+interface:
+  display_name: "フロントエンド体験設計"
+  short_description: "承認済み要件から情報設計・操作・状態・視覚の詳細設計を作る"
+  default_prompt: "Use $design-frontend-experience to turn approved frontend requirements into a traceable implementation-ready design covering task flow, information hierarchy, interaction states, responsive behavior, accessibility, visual direction, design tokens, components, and planned verification."

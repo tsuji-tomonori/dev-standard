@@ -1,0 +1,4 @@
+interface:
+  display_name: "フロントエンド要求獲得"
+  short_description: "初心者から利用状況と作業を聞き、検証可能なUI要件へ変換する"
+  default_prompt: "Use $elicit-frontend-requirements to discover the users, tasks, context, risks, constraints, and desired outcomes, reuse the existing listening and canonical-requirement skills, and produce traceable frontend requirements without asking me to make expert design decisions."

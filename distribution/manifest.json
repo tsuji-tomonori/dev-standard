@@ -16,13 +16,17 @@
       "authorize-autonomous-execution",
       "calibrated-collaborative-listening",
       "chat-first-development",
+      "design-frontend-experience",
+      "elicit-frontend-requirements",
       "generate-implementation-design",
       "govern-development-request",
+      "implement-frontend-experience",
       "inspect-quality-gates",
       "japanese-git-commit-gitmoji",
       "maintain-canonical-requirements",
       "retrospect-and-improve",
       "right-size-execution",
+      "test-frontend-experience",
       "verify-against-engineering-standards"
     ],
     "agents": [
@@ -46,7 +50,11 @@
       {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"},
       {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
       {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
-      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"}
+      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
+      {"source": ".agents/skills/elicit-frontend-requirements", "destination": ".agents/skills/elicit-frontend-requirements"},
+      {"source": ".agents/skills/design-frontend-experience", "destination": ".agents/skills/design-frontend-experience"},
+      {"source": ".agents/skills/implement-frontend-experience", "destination": ".agents/skills/implement-frontend-experience"},
+      {"source": ".agents/skills/test-frontend-experience", "destination": ".agents/skills/test-frontend-experience"}
     ],
     "requirements": [
       {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
@@ -57,6 +65,18 @@
     ],
     "right-size-execution": [
       {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"}
+    ],
+    "frontend-development": [
+      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"},
+      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
+      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
+      {"source": ".agents/skills/author-lifecycle-docs", "destination": ".agents/skills/author-lifecycle-docs"},
+      {"source": ".agents/skills/elicit-frontend-requirements", "destination": ".agents/skills/elicit-frontend-requirements"},
+      {"source": ".agents/skills/design-frontend-experience", "destination": ".agents/skills/design-frontend-experience"},
+      {"source": ".agents/skills/implement-frontend-experience", "destination": ".agents/skills/implement-frontend-experience"},
+      {"source": ".agents/skills/test-frontend-experience", "destination": ".agents/skills/test-frontend-experience"},
+      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
+      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
     ],
     "standards-verification": [
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
