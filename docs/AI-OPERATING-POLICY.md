@@ -1,68 +1,138 @@
 # AI運用方針
 
-## 目的
+## 1. 目的
 
-AIには、達成結果、絶対条件、必要な証跡、権限境界、停止条件を渡す。可逆な実装判断はAIに委ね、人の介在は初回承認と新たな権限が本当に必要な場合に限定する。
+AIには、達成結果、絶対条件、必要な証拠、authority boundary、停止条件を渡す。可逆な実装判断はAIへ委ね、人の介在は永続要件の意味変更、外部副作用、不可逆操作、regulated案件に限定する。
 
-## 指示の構成
+## 2. 指示の構成
 
-同じ指示を繰り返さない。利用者が得る結果、成功条件、絶対条件、証跡、権限境界、必要な出力、停止規則だけを残す。一般論の例、広すぎる絶対規則、コードですでに強制する手順説明は削る。逐次手順より判断規則を優先し、AIの実装上の独創性を不必要に狭めない。
+- 同じ指示をAGENTS、hook、Skill、policyへ重複させない。
+- 作業手順より、結果、禁止事項、選択規則、証拠契約を優先する。
+- 全checklistや全標準をpromptへ複製しない。
+- 例は製品要件または計測済み失敗に必要なものだけにする。
+- repository固有の既存指示を維持する。
 
-## 自律実行の境界
+## 3. 必須成果物
 
-- 回答、レビュー、診断、計画の依頼では、調査して報告し、依頼されていない実装を行わない。
-- 変更、構築、修正の依頼では、初回計画内の可逆な変更と検証を追加承認なしで完了する。
-- 初回計画に含まれない外部書込み、破壊的・高額な操作、重大なスコープ拡張だけで停止する。
-- 必要な結論を裏付ける証跡が揃ったらツールの反復を止める。必須事実が欠け、意味のある代替手段がある場合だけ再試行する。
+repository変更では次を必須とする。
 
-## モデル選択
+1. 実際の成果物
+2. 構造化Commit Comment
+3. selected check result YAML
+4. external CI result
 
-ルートエージェントは固定せず、Codexが作業に合う能力を選べるようにする。独立した読取専用レビューには、Codexで文書化された低コスト側の`gpt-5.6-terra`を使う。
+恒久的なwork item、変更ごとの計画・設計・実装・test・release reportは通常作らない。
 
-| 作業の性質 | モデル | 推論量 | 引き上げ条件 |
-|---|---|---|---|
-| 棚卸し、文書走査、定型的な運用レビュー | `gpt-5.6-terra` | `low` | 証跡が矛盾する、または結果を変える曖昧さがある |
-| 要件、アーキテクチャ、テスト、プロセスのレビュー | `gpt-5.6-terra` | `medium` | 代表検査で品質上の欠落が見つかる |
-| セキュリティと工程横断監査 | `gpt-5.6-terra` | `high` | 測定品質が不足する場合に限り、固定していないルート判断へ戻す |
+## 4. Commit Comment
 
-`max`、`xhigh`、pro mode、追加エージェントを既定にしない。名前付きの検査が失敗した場合だけ、能力または推論量を一段ずつ上げる。Codex以外のAPIで大量処理を行う場合は`gpt-5.6-luna`が軽量候補だが、このリポジトリではCodexの軽量サブエージェントとして文書化された`gpt-5.6-terra`だけを設定する。
+Commit Commentは次を代替する。
 
-実行台帳では具体的モデル名ではなく`economy`、`standard`、`capable`の能力帯を使う。context・dependency・verification不足を先に解消し、能力不足が具体的に確認された場合だけ`compute`を一段上げる。
+- Change Manifest
+- Requirement Impact Result
+- Design Impact Result
+- implementation summary
 
-## 適正規模の実行
+必須節:
 
-- scope、assurance、compute、modeを独立に選び、単一の難易度段階へ結合しない。
-- security、認証・認可、データ損失、機密情報、不可逆操作はcritical、DB、公開契約、IaC、dependency、永続要件、governance、生成器はelevatedのassurance下限とする。高リスクだけを理由にscopeを広げない。
-- confidenceは観測特徴のbandと根拠を記録し、校正済みrouterがない限り数値scoreを使わない。Estimate専用LLMは既定で呼ばない。
-- context、tool、model、verificationの予算はsoft limitとし、超過理由を記録する。impact、dependency、verificationなどprofileを覆す新証拠がある場合だけ対応軸をExpandする。
-- 検証失敗または新証拠があるときだけ一軸を広げる。一律のExpand回数上限は設けず、無根拠な反復を検出する。決定的成功後は必須final gate以外の探索を止める。
-- 成功ログはexit code・要約・digest、失敗ログは最初の因果的error周辺だけを文脈へ残す。
+- 目的
+- 変更内容
+- 要件影響
+- 設計影響
+- チェックリスト
+- 検証契約
+- 互換性・残存リスク
 
-## チェックリストの利用
+まだ完了していないCIをPassと記載しない。
 
-1,740項目のカタログは、決定的な検証契約と統制の参照元として維持し、システムプロンプトへ全量を複製しない。
+## 5. CI結果
 
-1. 実際のスコープからプロファイルを選ぶ。
-2. `always_on`、assurance、成果物tag、risk tag、changed path、現在工程から項目を選ぶ。
-3. 適用判定、案件重要度と根拠、判定、レビュー担当、日時、直接証跡を記録する。
-4. N/Aには具体的な範囲理由、FailにはIssue、対応方針、期限を必須とする。
-5. Fail是正後は旧判定を履歴に残し、証跡付きで再確認する。
-6. リリース前に先行ゲートと全体監査を再実行する。
+単体test、build、lint、type、security scan、coverage、deploymentの結果はGitHub Actions等の外部サービスを正本とする。
 
-selector版、入力特徴、選択ID、除外数、選択digest、除外監査sample、mandatory missを保存し、未選択項目を大量N/Aとして登録しない。shadow期間はselectorの偽陰性を計測し、校正前に効率違反をblockingにしない。
+repositoryへ生ログやreport全文を保存しない。Commit Commentとreview YAMLにはworkflow、required check、test code、生成物への参照だけを書く。
 
-## 最小指示の回帰チェック
+## 6. Profile
 
-- [ ] 達成結果、成功条件、権限境界、証跡、停止規則が明示されている。
-- [ ] 異なる目的のない重複指示がない。
-- [ ] 例は製品要件または計測済み失敗に必要なものだけである。
-- [ ] 関連するツールとチェック項目だけを文脈へ入れている。
-- [ ] ルート推論や創造的な実装選択を過剰に指定していない。
-- [ ] レビュー用モデルと推論量が、検査に合格する最小コスト設定である。
-- [ ] 振る舞い、指示契約、モデル選択、リポジトリ規則、監査完全性を検証している。
+### direct
 
-## 参照資料
+局所的、可逆、外部副作用なし。targeted verificationを行う。
 
-- [GPT-5.6の利用方法](https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.6)
-- [GPT-5.6のプロンプト指針](https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6)
-- [Codexサブエージェント](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+### assured
+
+公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governance。変更固有のRisk-selected checkを追加する。
+
+### regulated
+
+authentication、authorization、PII、confidential、data loss、不可逆production操作、法令・契約統制、高額操作。work item、明示承認、hash chain、phase gateを追加する。
+
+## 7. Check selection
+
+- `Invariant`: trigger該当時はPass必須
+- `Risk-selected`: 変更固有に選択された場合だけblocking
+- `Advisory`: 修正、Issue、residual risk
+- `Periodic`: 定期監査
+
+未選択をN/Aへ変換しない。
+
+## 8. 実行規模
+
+- profile、scope、verification、review、computeを必要に応じて選ぶ。
+- riskだけを理由に無関係な全repository scanを行わない。
+- context、tool、reviewer、computeの予算はsoft limitにする。
+- fixed file countやtool countをhard gateにしない。
+- 検証失敗、新依存、契約影響、証拠不足に基づいて拡張する。
+- 同じ新証拠から複数軸が直接必要なら、理由付きで同時拡張できる。
+- 成功後はCommit Comment、review result、PR/CI確認以外の探索を止める。
+
+## 9. Reviewerとsubagent
+
+独立reviewerは次の場合だけ使用する。
+
+- critical risk
+- 高影響な公開契約
+- oracleが不足する
+- representative checkが失敗した
+- 要求と実装の証拠が矛盾する
+
+単純な棚卸しや局所修正へ常に複数agentを使用しない。
+
+## 10. 承認
+
+通常のdirect / assuredへ一律の初回承認を要求しない。
+
+明示承認が必要:
+
+- 永続要件の意味変更で利用者判断が必要
+- external write
+- production
+- deletion、publication、merge
+- irreversible operation
+- cost boundary
+- regulated
+
+内部設計、tool、trace path、test方法の変更だけでは再承認しない。
+
+## 11. Hooks
+
+SessionStartはfull governanceを毎回再注入しない。active regulated workがある場合だけ、その状態とauthority boundaryを通知する。
+
+Stop retrospectiveは次の場合だけ実行する。
+
+- active regulated work
+- escaped defect
+- repeated user correction
+- critical control miss
+- rollback
+- repeated CI repair
+
+通常セッションの終了だけを理由にreportを増やさない。
+
+## 12. 最小指示の回帰check
+
+- [ ] 結果、成功条件、authority、証拠、停止条件がある。
+- [ ] 同じ指示を複数層で重複していない。
+- [ ] repository変更の必須成果物が4種類に限定されている。
+- [ ] work itemとfull lifecycleがregulated限定である。
+- [ ] related checkだけをcontextへ入れている。
+- [ ] CI結果をrepositoryへ複製していない。
+- [ ] 可逆な実装方法を過剰指定していない。
+- [ ] 人が確認する情報がCommit Comment、review YAML、生成設計へ集約されている。
