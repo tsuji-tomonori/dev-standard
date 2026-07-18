@@ -16,7 +16,7 @@
 | `japanese-git-commit-gitmoji` | Change Manifestと要件・設計影響を代替する構造化Commit Commentを作る |
 | `adversarial-review` | critical、高影響、oracle不足、検証失敗時に独立して反証を探す |
 
-## Frontend Skills
+## フロントエンドSkills
 
 | Skill | 目的・起動条件 |
 |---|---|
