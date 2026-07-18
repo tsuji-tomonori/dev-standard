@@ -115,7 +115,7 @@ production、migration、外部サービス、data変更がある場合だけ実
 - deploy status
 - smoke test
 - migration result
--主要metric
+- 主要metric
 - rollback / roll-forward
 
 結果はdeployment service、monitoring、GitHub Actions等へ保持する。
