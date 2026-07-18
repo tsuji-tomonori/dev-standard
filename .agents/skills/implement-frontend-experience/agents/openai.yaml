@@ -1,0 +1,4 @@
+interface:
+  display_name: "フロントエンド体験実装"
+  short_description: "要件と詳細設計を既存デザインシステムに沿って本番実装する"
+  default_prompt: "Use $implement-frontend-experience to implement the approved frontend requirements and detailed design in production code, reuse the repository's semantic HTML, tokens, components, and conventions, cover complete states and accessibility behavior, and record every justified divergence."
