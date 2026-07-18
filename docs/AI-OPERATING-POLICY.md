@@ -2,7 +2,7 @@
 
 ## 1. 目的
 
-AIには、達成結果、絶対条件、必要な証拠、authority boundary、停止条件を渡す。可逆な実装判断はAIへ委ね、人の介在は永続要件の意味変更、外部副作用、不可逆操作、regulated案件に限定する。
+AIには、達成結果、成功条件、絶対条件、必要な証拠、権限境界、停止条件を渡す。可逆な実装判断はAIへ委ね、人の介在は永続要件の意味変更、外部副作用、不可逆操作、regulated案件に限定する。
 
 ## 2. 指示の構成
 
@@ -23,7 +23,7 @@ repository変更では次を必須とする。
 
 恒久的なwork item、変更ごとの計画・設計・実装・test・release reportは通常作らない。
 
-## 4. Commit Comment
+## 4. コミットコメント
 
 Commit Commentは次を代替する。
 
@@ -50,28 +50,28 @@ Commit Commentは次を代替する。
 
 repositoryへ生ログやreport全文を保存しない。Commit Commentとreview YAMLにはworkflow、required check、test code、生成物への参照だけを書く。
 
-## 6. Profile
+## 6. 実行プロファイル
 
-### direct
+### 直接実行
 
-局所的、可逆、外部副作用なし。targeted verificationを行う。
+`direct`は局所的、可逆、外部副作用なしの変更に使用し、targeted verificationを行う。
 
-### assured
+### 保証付き実行
 
-公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governance。変更固有のRisk-selected checkを追加する。
+`assured`は公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governanceへ使用し、変更固有のRisk-selected checkを追加する。
 
-### regulated
+### 規制・高保証実行
 
-authentication、authorization、PII、confidential、data loss、不可逆production操作、法令・契約統制、高額操作。work item、明示承認、hash chain、phase gateを追加する。
+`regulated`はauthentication、authorization、PII、confidential、data loss、不可逆production操作、法令・契約統制、高額操作へ使用し、work item、明示承認、hash chain、phase gateを追加する。
 
-## 7. Check selection
+## 7. チェック選択
 
 - `Invariant`: trigger該当時はPass必須
 - `Risk-selected`: 変更固有に選択された場合だけblocking
 - `Advisory`: 修正、Issue、residual risk
 - `Periodic`: 定期監査
 
-未選択をN/Aへ変換しない。
+未選択をN/Aへ変換しない。これらを決定的な検証契約として、可能な範囲でtest、schema、CI、policy engineへ実装する。
 
 ## 8. 実行規模
 
@@ -83,7 +83,13 @@ authentication、authorization、PII、confidential、data loss、不可逆produ
 - 同じ新証拠から複数軸が直接必要なら、理由付きで同時拡張できる。
 - 成功後はCommit Comment、review result、PR/CI確認以外の探索を止める。
 
-## 9. Reviewerとsubagent
+## 9. モデル選択
+
+ルートagentのmodelを固定せず、taskに必要な最小能力を選ぶ。独立したread-only reviewerでは、現在のagent設定と同じ`gpt-5.6-terra`を既定候補とし、定型走査はlow、設計・test reviewはmedium、security・工程横断reviewはhighを上限目安とする。
+
+Codex以外のAPIで大量の軽量処理を行う場合は`gpt-5.6-luna`を候補にできる。model名を実行台帳へ直接固定せず、economy、standard、capable等の能力帯で判断し、情報不足をmodel能力だけで補わない。
+
+## 10. レビュー担当とサブエージェント
 
 独立reviewerは次の場合だけ使用する。
 
@@ -95,7 +101,7 @@ authentication、authorization、PII、confidential、data loss、不可逆produ
 
 単純な棚卸しや局所修正へ常に複数agentを使用しない。
 
-## 10. 承認
+## 11. 承認
 
 通常のdirect / assuredへ一律の初回承認を要求しない。
 
@@ -111,9 +117,9 @@ authentication、authorization、PII、confidential、data loss、不可逆produ
 
 内部設計、tool、trace path、test方法の変更だけでは再承認しない。
 
-## 11. Hooks
+## 12. フック
 
-SessionStartはfull governanceを毎回再注入しない。active regulated workがある場合だけ、その状態とauthority boundaryを通知する。
+SessionStartはfull governanceを毎回再注入しない。active regulated workがある場合だけ、その状態と権限境界を通知する。
 
 Stop retrospectiveは次の場合だけ実行する。
 
@@ -126,9 +132,9 @@ Stop retrospectiveは次の場合だけ実行する。
 
 通常セッションの終了だけを理由にreportを増やさない。
 
-## 12. 最小指示の回帰check
+## 13. 最小指示の回帰チェック
 
-- [ ] 結果、成功条件、authority、証拠、停止条件がある。
+- [ ] 達成結果、成功条件、権限境界、証拠、停止条件がある。
 - [ ] 同じ指示を複数層で重複していない。
 - [ ] repository変更の必須成果物が4種類に限定されている。
 - [ ] work itemとfull lifecycleがregulated限定である。
