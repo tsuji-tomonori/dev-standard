@@ -11,7 +11,7 @@ This skill is an internal lifecycle component. The user speaks naturally; the ag
 
 ## Workflow
 
-1. Read `references/work-item-contract.md` and current state. Invoke `$right-size-execution` before work-item initialization; fix the initial level, risk floor, context/tool/model budget, minimum verification, Expand conditions, maximum expansions, and authority boundary in `execution-scope.json`.
+1. Read `references/work-item-contract.md` and current state. Invoke `$right-size-execution` before work-item initialization; record independent scope, assurance, compute, and mode evidence, policy revision, soft budgets, required verification, evidence-backed Expand conditions, stopping conditions, and authority boundary in `execution-profile.json`. Do not impose a global Expand count cap.
 2. Select only scope-relevant profiles: `CORE`, a cloud delta when used, and `AI-CONDITIONAL` for model or agent work. Use the scope selector instead of registering every profile row as automatic N/A.
 3. Create or resume the work item. Preserve the request verbatim. Use `$calibrated-collaborative-listening` only when one missing fact materially changes outcome, risk, or authority.
 4. Define requirements, traceability, and an outcome-first execution plan containing success criteria, external effects, defaults, validation, rollback, authority boundary, and stop rules. Generate its execution summary from the structured scope; leave reversible implementation choices open.

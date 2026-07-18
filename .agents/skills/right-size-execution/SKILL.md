@@ -1,43 +1,44 @@
 ---
 name: right-size-execution
-description: Estimate and enforce the smallest sufficient execution scope for repository work, then expand one justified axis only after verification failure, new dependency evidence, or a measured budget overrun. Use before governed implementation, when selecting context, tools, model tier, validation, reviewers, or standards checks, and when auditing execution efficiency. Treat Estimate, Execute, and Expand as one state machine; do not split them into separate skills.
+description: Choose and audit the smallest sufficient execution profile for repository work by estimating scope, assurance, compute, and execution mode independently; execute within soft budgets; expand one evidence-backed axis at a time; and stop after decisive success. Use before governed implementation, checklist selection, model or reviewer escalation, and execution-efficiency audits. Keep Estimate, Execute, and Expand in one state machine.
 ---
 
 # Right-size Execution
 
-最小コストではなく、成功条件と重大リスクを満たす最小十分な実行経路を選ぶ。Estimate／Execute／Expandを一つの状態機械として扱い、判断・計測・監査は`scripts/scopeflow.py`の決定的な出力へ委ねる。
+成功条件と重大リスクを満たす最小十分な経路を選びます。要件管理、初回承認、個別チェックの合否、Git／PR／CI操作、技術規約は既存Skillへ委ねます。
+
+## 入出力
+
+- 入力: 開発要求、明示path、成果物・risk tag、依存metadata、受入条件
+- 正本出力: `work/<id>/execution-profile.json`
+- 派生出力: 実行計画要約、selector manifest、`reports/execution-efficiency.json`
+- Policy／Schema: `assets/execution-policy.json`、`assets/execution-profile.schema.json`
 
 ## Workflow
 
-1. `references/scope-levels.md`と`assets/execution-policy.json`を読む。自然言語依頼、明示された成果物、契約変更、risk tagから初期operating pointを一度だけ推定する。曖昧なときのmetadata-only probeは最大1回とし、結果を再利用する。
-2. repository変更なら、初回承認パッケージを作る前に`execution-scope.json`を生成する。回答・調査だけなら永続台帳は作らず、同じ停止規則だけを適用する。
-3. 初期コンテキスト、tool/model budget、最小の決定的検証内でExecuteする。検索はpath・line・短い断片から始め、必要範囲だけを読む。同一digestの同一rangeを再読しない。
-4. 検証失敗、新しい依存・契約影響、予算超過、高リスクかつ低confidence、具体的な能力不足のいずれかが観測されたときだけExpandする。`references/expansion-rules.md`に従い、一回につき一軸を一段だけ広げ、evidenceと理由を記録する。
-5. 最小の決定的検証がPassしたら成功を記録し、必須最終ゲートだけを実行して停止する。成功後の「念のため」の検索、全量ログ読取、追加reviewをしない。
-6. `finalize`で`reports/execution-efficiency.json`を生成し、`audit --mode soft`で過小分類、未説明overrun、無根拠な能力引上げ、成功後探索を報告する。blocking化はrepository benchmarkと実績に基づく別の承認済み変更まで行わない。
+1. `references/execution-dimensions.md`を必要なときだけ読み、通常のルート判断と決定的metadataから`scope`、`assurance`、`compute`、`mode`を独立に推定します。Estimate専用LLM呼出しは行いません。結果が変わる不明点だけmetadata probeを最大1回行い、結果を再利用します。
+2. repository変更なら初回承認前に`execution-profile.json`を生成します。調査・回答だけなら永続profileは作りません。
+3. required verificationとsoft budget内で実行します。検索はpath・line・短い断片から始め、同一digest・rangeを再読しません。
+4. 新証拠が初期profileを覆した場合だけ`references/expansion-contract.md`に従い、一回につき一軸を拡張します。一律のExpand回数上限は設けません。
+5. `references/stopping-contract.md`の成功条件を満たしたら確定処理以外を停止します。
+6. 実績を確定し、selectorの選択漏れ監査とprofile auditを実行します。rolloutがshadowの間、効率判断は警告、assurance floor違反と不正schemaはblockingです。
 
-## State contract
+## 効率規則
 
-- 正本: `work/<id>/execution-scope.json`
-- 派生要約: `docs/01-execution-plan.md`
-- 実績: `work/<id>/reports/execution-efficiency.json`
-- Schema: `assets/execution-scope.schema.json`
-- Policy: `assets/execution-policy.json`
-- 計測定義: `references/measurement-contract.md`
+- チェックリスト全量をpromptへ入れず、selector版、入力特徴、選択・除外ID数、digest、除外監査sampleを保存します。
+- `not-selected`と、実際に評価した`not-applicable`を混同しません。
+- 成功ログは機械判定と要約だけ、失敗ログは因果的箇所だけを保持します。
+- token telemetryがなければbyte、range、tool callを必須proxyにします。
+- 強いmodelは情報不足を解決しません。`compute-insufficient`の証拠がある場合だけcomputeを引き上げます。
 
-予算はsoft limitである。超過は作業を停止させず、対応するExpand eventまたは「追加範囲が不要」という決定的証拠を要求する。policyのモデルtierは能力帯であり、具体的モデル名をSkillへ固定しない。
+## 完了検査
 
-## Efficiency rules
+- profile schemaとpolicy revisionが一致する
+- 高リスクがscopeではなくassurance floorへ反映される
+- confidence scoreは校正済みrouterがない限りnullである
+- required verificationとassurance floorを満たす
+- Expandが新証拠に基づく単軸変更である
+- selector manifestと選択漏れ監査がある
+- 成功後の正のコスト活動がない
 
-- 成功した決定的コマンドはexit code、要約、digestだけを保持する。
-- 失敗ログは最初の因果的エラーと周辺行だけを取り込む。
-- 生成物は本文全量ではなくdigestと差分で検査する。
-- checklist全量をpromptへ入れず、selectorの版、入力特徴、選択ID、digestを保存する。
-- subagentへ親contextを全量転送しない。独立判断が必要な範囲だけを渡す。
-- token telemetryが取れない環境ではread bytes、read ranges、tool callsを必須proxyとする。
-
-## Correctness boundary
-
-高リスク変更をファイル数だけでL1/L2へ落とさない。security、data loss、DB schema、migration、public API/event、IaC、network、permission、dependency/lock、durable requirement、governance、generator、PII、external side effect、rollback困難な変更はL3を下限とする。
-
-ACRRは正確な`C_min` oracleを持つbenchmarkでのみ使える。実案件ではExecution Overrun Ratioと各生指標、成功率、重大欠陥を併記し、論文の削減率を目標値として転用しない。
+詳細な計測は`references/measurement-contract.md`を参照します。ACRRは`C_min` oracleを持つbenchmark限定とし、論文の削減率を実運用目標へ転用しません。

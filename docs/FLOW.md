@@ -4,9 +4,9 @@
 
 ```text
 自然言語の相談
-   │  意図探索・発散/収束、Estimate（L1/L2/L3）
+   │  意図探索・発散/収束、多軸Estimate
    ▼
-work/<id>  ── execution-scope.json・要求断片・正本差分・初回承認・計画・証跡（非正本）
+work/<id>  ── execution-profile.json・要求断片・正本差分・初回承認・計画・証跡（非正本）
    │  版付き add / update / retire
    ▼
 spec/requirements/requirements.json          ← 永続要件の唯一の正本
@@ -32,7 +32,7 @@ docs/requirements/REQUIREMENTS.md      実装・テスト
 
 ## 初回承認まで
 
-1. ユーザー原文、最大1回のmetadata-only probe、risk floorから`right-size-execution`がL1〜L3、confidence、soft budget、最小検証を`execution-scope.json`へ記録する。
+1. ユーザー原文、決定的metadata、最大1回の再利用可能なprobeから、`right-size-execution`がscope、assurance、compute、modeを独立に推定し、根拠、soft budget、required verificationを`execution-profile.json`へ記録する。Estimate専用LLMは呼ばない。
 2. ユーザー原文と解釈を`work/<id>/docs/00-request.md`へ保存する。
 3. 現在の正本を読み、対話で目的・制約・例外・代替案を探索する。
 4. 義務を原子化し、正本の基準版に対する`add`、`update`、`retire`差分を`docs/01-requirements.md`へ記録する。
@@ -47,8 +47,8 @@ docs/requirements/REQUIREMENTS.md      実装・テスト
 2. 要件文書を生成し、バイト単位の一致を検査する。
 3. アーキテクチャ、詳細設計、実装、テスト設計を正本IDへtraceする。
 4. FastAPI/CDKでは実装成果物から詳細設計を生成し、ソースdigestと乖離を検査する。
-5. profile内から`always_on + 成果物tag + risk tag + 現在工程`に合う項目を選び、selector版、入力、選択ID、digestを保存する。
-6. 最小検証が失敗するか新証拠・予算超過がある場合だけ、scope→dependency→verification→review→capabilityの一軸を一段拡張する。
+5. profile内から`always_on + assurance + 成果物tag + risk tag + 現在工程 + changed path`に合う項目を選び、selector版、入力、選択ID、除外監査sample、mandatory miss、digestを保存する。
+6. required verificationが失敗するか初期profileを覆す新証拠がある場合だけ、scope、assurance、verification、review、computeの一軸を拡張する。一律の回数上限は設けず、無根拠な反復をstagnationとして検出する。
 7. 欠陥を独立したoracle、反例、境界値、mutationで探し、承認範囲内の失敗を自動修正する。
 8. 決定的成功後は追加探索を止め、効率reportを生成する。PRを作りCIを確認し、全工程が通れば`closed`にする。
 

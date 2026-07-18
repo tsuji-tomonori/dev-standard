@@ -5,7 +5,7 @@
 - 自然言語による機能追加、修正、リファクタリング、設計の依頼を`chat-first-development`の起動条件として扱い、Skill名やコマンドを要求しない。
 - リポジトリ内の初期設定、依存準備、ライフサイクルコマンド、テスト、Git公開、CI確認はAIが行い、利用者へ実行を依頼しない。
 - 新しい開発要求では、実装前に`govern-development-request`でwork item、要件、トレーサビリティ、自律実行計画を作る。
-- work item作成前に`right-size-execution`でL1〜L3、risk floor、confidence、soft budget、最小検証を記録し、task固有のcheck項目だけを選ぶ。
+- work item作成前に`right-size-execution`でscope、assurance、compute、modeを独立に推定し、観測特徴、soft budget、required verification、task固有checkと選択漏れ監査を記録する。
 - 意図探索と版競合を検査したadd/update/retire操作には`maintain-canonical-requirements`を使う。永続要件の唯一の正本は`spec/requirements/requirements.json`とし、`work/<id>`は要求ごとの文脈と証跡だけに使う。
 - 要件、実行計画、権限境界、完了条件をまとめた初回承認を要求者へ一度だけ求める。
 - 初回承認後は承認範囲内で自律実行する。重大なスコープ変更、権限不足、破壊的操作、外部調整、未解決の安全リスク、完了ゲート失敗だけで停止する。

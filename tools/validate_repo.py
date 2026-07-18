@@ -129,6 +129,14 @@ def validate_repo(failures: list[str]) -> None:
     for item in catalog["items"]:
         if item["phase"] not in phases:
             fail(f"catalog item {item['id']} has unknown phase", failures)
+        if item.get("assurance_levels") not in [
+            ["critical"],
+            ["elevated", "critical"],
+            ["standard", "elevated", "critical"],
+        ]:
+            fail(f"catalog item {item['id']} has invalid assurance levels", failures)
+        if "scope_levels" in item:
+            fail(f"catalog item {item['id']} still couples selection to scope levels", failures)
     ids = [item["id"] for item in catalog["items"]]
     if len(ids) != len(set(ids)) or len(ids) != catalog["item_count"]:
         fail("catalog item count or ID uniqueness mismatch", failures)
@@ -193,7 +201,11 @@ def validate_repo(failures: list[str]) -> None:
             if manifest["standard_paths"].get(key) != expected:
                 fail(f"distribution standard path is invalid: {key}", failures)
         scope_skill = ROOT / ".agents" / "skills" / "right-size-execution"
-        for path in ["assets/execution-policy.json", "assets/execution-scope.schema.json", "assets/benchmark-cases.json", "scripts/scopeflow.py"]:
+        for path in [
+            "assets/execution-policy.json", "assets/execution-policy.schema.json",
+            "assets/execution-profile.schema.json", "assets/benchmark-cases.json",
+            "assets/behavior-constraints.json", "scripts/executionflow.py",
+        ]:
             if not (scope_skill / path).is_file():
                 fail(f"right-size-execution asset missing: {path}", failures)
     except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError) as exc:
@@ -234,7 +246,7 @@ def validate_repo(failures: list[str]) -> None:
     for label, command in [
         ("canonical requirements", [sys.executable, str(ROOT / ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"), "check", "--spec", str(ROOT / "spec/requirements/requirements.json"), "--out", str(ROOT / "docs/requirements/REQUIREMENTS.md")]),
         ("standards registry", [sys.executable, str(ROOT / ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py"), "check", "--registry", str(ROOT / "governance/standards/registry.json"), "--out", str(ROOT / "docs/standards/SOURCES.md")]),
-        ("execution benchmark", [sys.executable, str(ROOT / ".agents/skills/right-size-execution/scripts/scopeflow.py"), "benchmark"]),
+        ("execution benchmark", [sys.executable, str(ROOT / ".agents/skills/right-size-execution/scripts/executionflow.py"), "benchmark"]),
     ]:
         result = subprocess.run(command, text=True, capture_output=True, check=False)
         if result.returncode:

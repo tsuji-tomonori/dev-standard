@@ -19,7 +19,7 @@ Apply standards as an independent quality lens without silently overriding the u
 2. Check requirement quality and lifecycle practices against SWEBOK.
 3. Check generated detailed design against canonical requirement IDs and source manifests.
 4. Check implementation and tests against both requirements and generated design; identify missing, wrong, and extra behavior.
-5. Select `CORE`, then cloud-common, the actual vendor delta, and conditional AI profiles. Within those profiles, use `$right-size-execution` attributes `always_on`, `artifact_tags`, `risk_tags`, `scope_levels`, and `phase`; preserve selector version, input features, selected IDs, and digest. Reuse prior evidence for duplicate control groups and add only vendor-specific differences; do not count the same root risk more than once or run every profile row mechanically.
+5. Select `CORE`, then cloud-common, the actual vendor delta, and conditional AI profiles. Within those profiles, use `$right-size-execution` attributes `always_on`, `assurance_levels`, `artifact_tags`, `risk_tags`, changed paths, and `phase`; preserve selector version, input features, selected IDs, excluded count, selected digest, deterministic exclusion sample, and mandatory misses. Treat unselected controls as `not-selected`, not automatic N/A. Reuse prior evidence for duplicate control groups and add only vendor-specific differences.
 6. Evaluate each applicable checklist item with reachable evidence. Use `$adversarial-review` to seek counterexamples for consequential claims.
 7. Enforce one check, one control, and one evidence decision. Split independent acceptance conditions before reviewing; do not mark a composite item Pass when only part is satisfied.
 

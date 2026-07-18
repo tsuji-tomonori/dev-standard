@@ -14,7 +14,7 @@ Use the deterministic harness as the source of gate truth and explain every bloc
 1. Read `references/gate-rules.md` and any approved `references/learned-rules.md`.
 2. Before initial authorization, run `scripts/inspect.py --work-item <ID> --phase requirements --ignore-approvals`. Never use `--ignore-approvals` for advancement, publication, or completion.
 3. After authorization, run normal inspection and verify that requirements, execution plan, and requirements checklist still match the authorized digest.
-4. When `execution-scope.json` exists, validate its schema and audit high-risk underclassification, unexplained budget overrun, evidence-free Expand, post-success exploration, and capability escalation without demonstrated insufficiency. Keep efficiency policy findings advisory until the repository explicitly promotes them to blocking; malformed or tampered ledgers remain blocking.
+4. When `execution-profile.json` exists, validate its schema and policy revision; enforce the assurance floor; and audit unexplained budget overrun, evidence-free or stagnant single-axis Expand, post-success activity, compute escalation without demonstrated insufficiency, selector manifest, and mandatory-control misses. In shadow mode keep efficiency and selector findings advisory; malformed ledgers and assurance-floor violations remain blocking.
 5. Group blockers by documents, applicability, verdict/evidence, reviewer, authorization, execution scope, and preceding phase.
 6. Delegate only bounded independent judgment when it materially improves quality; use `gate-auditor` for the final cross-phase check.
 7. Resolve the cause without asking for another phase approval. Never edit policy, remove profiles, delete items, or create empty evidence merely to obtain PASS.

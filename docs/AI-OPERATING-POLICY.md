@@ -27,14 +27,15 @@ AIには、達成結果、絶対条件、必要な証跡、権限境界、停止
 
 `max`、`xhigh`、pro mode、追加エージェントを既定にしない。名前付きの検査が失敗した場合だけ、能力または推論量を一段ずつ上げる。Codex以外のAPIで大量処理を行う場合は`gpt-5.6-luna`が軽量候補だが、このリポジトリではCodexの軽量サブエージェントとして文書化された`gpt-5.6-terra`だけを設定する。
 
-実行台帳では具体的モデル名ではなく`light`、`standard`、`capable`の能力帯を使う。context・dependency・verification不足を先に解消し、同じ失敗により能力不足が具体的に確認された場合だけ`capability`を一段上げる。
+実行台帳では具体的モデル名ではなく`economy`、`standard`、`capable`の能力帯を使う。context・dependency・verification不足を先に解消し、能力不足が具体的に確認された場合だけ`compute`を一段上げる。
 
 ## 適正規模の実行
 
-- L1 Local、L2 Bounded、L3 Systemicをfile数だけでなく契約・副作用・riskから選ぶ。
-- security、DB、公開契約、IaC、dependency、永続要件、governance、生成器、機密情報、不可逆変更はL3を下限とする。
-- context、tool、model、verificationの予算はsoft limitとし、超過時は根拠付きExpandを記録する。
-- 検証失敗または新証拠があるときだけ一軸を広げ、決定的成功後は必須final gate以外の探索を止める。
+- scope、assurance、compute、modeを独立に選び、単一の難易度段階へ結合しない。
+- security、認証・認可、データ損失、機密情報、不可逆操作はcritical、DB、公開契約、IaC、dependency、永続要件、governance、生成器はelevatedのassurance下限とする。高リスクだけを理由にscopeを広げない。
+- confidenceは観測特徴のbandと根拠を記録し、校正済みrouterがない限り数値scoreを使わない。Estimate専用LLMは既定で呼ばない。
+- context、tool、model、verificationの予算はsoft limitとし、超過理由を記録する。impact、dependency、verificationなどprofileを覆す新証拠がある場合だけ対応軸をExpandする。
+- 検証失敗または新証拠があるときだけ一軸を広げる。一律のExpand回数上限は設けず、無根拠な反復を検出する。決定的成功後は必須final gate以外の探索を止める。
 - 成功ログはexit code・要約・digest、失敗ログは最初の因果的error周辺だけを文脈へ残す。
 
 ## チェックリストの利用
@@ -42,13 +43,13 @@ AIには、達成結果、絶対条件、必要な証跡、権限境界、停止
 1,740項目のカタログは、決定的な検証契約と統制の参照元として維持し、システムプロンプトへ全量を複製しない。
 
 1. 実際のスコープからプロファイルを選ぶ。
-2. `always_on`、成果物tag、risk tag、scope level、現在工程から項目を選ぶ。
+2. `always_on`、assurance、成果物tag、risk tag、changed path、現在工程から項目を選ぶ。
 3. 適用判定、案件重要度と根拠、判定、レビュー担当、日時、直接証跡を記録する。
 4. N/Aには具体的な範囲理由、FailにはIssue、対応方針、期限を必須とする。
 5. Fail是正後は旧判定を履歴に残し、証跡付きで再確認する。
 6. リリース前に先行ゲートと全体監査を再実行する。
 
-selector版、入力特徴、選択ID、digestを保存し、未選択項目を大量N/Aとして登録しない。
+selector版、入力特徴、選択ID、除外数、選択digest、除外監査sample、mandatory missを保存し、未選択項目を大量N/Aとして登録しない。shadow期間はselectorの偽陰性を計測し、校正前に効率違反をblockingにしない。
 
 ## 最小指示の回帰チェック
 

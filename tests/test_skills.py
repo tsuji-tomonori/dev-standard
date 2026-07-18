@@ -62,13 +62,15 @@ class SkillContractTest(unittest.TestCase):
         text = (skill / "SKILL.md").read_text(encoding="utf-8")
         policy = json.loads((skill / "assets" / "execution-policy.json").read_text(encoding="utf-8"))
         for required in [
-            "Estimate／Execute／Expand", "一つの状態機械", "soft limit", "metadata-only probe",
-            "最小の決定的検証", "ACRR", "read bytes", "成功後",
+            "一回につき一軸", "soft budget", "metadata probe",
+            "scope", "assurance", "compute", "mode", "ACRR", "成功後",
         ]:
             self.assertIn(required, text)
         self.assertEqual(policy["max_metadata_probes"], 1)
-        self.assertEqual(policy["expansion_order"], ["scope", "dependencies", "verification", "review", "capability"])
-        self.assertIn("governance", policy["risk_floor_l3"])
+        self.assertEqual(policy["expansion_axes"], ["scope", "assurance", "verification", "review", "compute"])
+        self.assertNotIn("max_expansions", policy)
+        self.assertIn("governance", policy["assurance_floors"]["elevated"])
+        self.assertEqual(policy["rollout_phase"], "shadow")
 
     def test_root_instructions_make_commands_ai_owned(self) -> None:
         text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")

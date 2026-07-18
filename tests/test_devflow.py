@@ -63,7 +63,7 @@ class DevflowTest(unittest.TestCase):
                     "always_on": True,
                     "artifact_tags": ["requirements"],
                     "risk_tags": [],
-                    "scope_levels": [1, 2, 3],
+                    "assurance_levels": ["standard", "elevated", "critical"],
                 }
             ],
         }
@@ -98,31 +98,32 @@ class DevflowTest(unittest.TestCase):
         self.assertEqual(devflow.cmd_init(args), 0)
         return self.work_root / work_id
 
-    def test_init_uses_scope_selector_and_preserves_audit_input(self) -> None:
-        scopeflow = devflow.load_scopeflow()
-        state = scopeflow.estimate_scope(
+    def test_init_uses_execution_selector_and_preserves_audit_input(self) -> None:
+        executionflow = devflow.load_executionflow()
+        state = executionflow.estimate_profile(
             "要件を更新する", expected_files=1, domains=["requirements"],
-            artifact_tags=["requirements"], risk_tags=[],
+            artifact_tags=["requirements"], risk_tags=[], changed_paths=["spec/requirements/requirements.json"],
+            acceptance_criteria=["正本が更新される"],
         )
-        scope_path = self.root / "estimate.json"
-        devflow.atomic_write_json(scope_path, state)
+        profile_path = self.root / "execution-profile.json"
+        devflow.atomic_write_json(profile_path, state)
         args = argparse.Namespace(
             id="WI-scoped", title="Scoped", request="要件を更新する",
-            profile=["CORE"], actor="tester", scope_file=str(scope_path),
+            profile=["CORE"], actor="tester", execution_profile_file=str(profile_path), scope_file=None,
         )
         self.assertEqual(devflow.cmd_init(args), 0)
         work = self.work_root / "WI-scoped"
-        saved = devflow.read_json(work / "execution-scope.json")
-        self.assertEqual(saved["selection"]["selector_version"], "scope-selector-v1")
-        self.assertEqual(saved["selection"]["selected_item_ids"], ["REQ-001"])
-        self.assertTrue(devflow.read_json(work / "state.json")["execution_scope_sha256"])
+        saved = devflow.read_json(work / "execution-profile.json")
+        self.assertEqual(saved["selection"]["selector_version"], "execution-selector-v2")
+        self.assertEqual(saved["selection"]["selected_ids"], ["REQ-001"])
+        self.assertTrue(devflow.read_json(work / "state.json")["execution_profile_sha256"])
 
     def test_invalid_scope_does_not_leave_partial_work_item(self) -> None:
-        scope_path = self.root / "invalid-scope.json"
-        scope_path.write_text("{}", encoding="utf-8")
+        profile_path = self.root / "invalid-profile.json"
+        profile_path.write_text("{}", encoding="utf-8")
         args = argparse.Namespace(
             id="WI-invalid", title="Invalid", request="要件を更新する",
-            profile=["CORE"], actor="tester", scope_file=str(scope_path),
+            profile=["CORE"], actor="tester", execution_profile_file=str(profile_path), scope_file=None,
         )
         with self.assertRaises(devflow.GovernanceError):
             devflow.cmd_init(args)

@@ -2,7 +2,7 @@
 
 他のリポジトリへコピーし、自然言語で相談するだけで使えるAI開発Skills、Codex agents、統制実行基盤の参照コレクションです。このリポジトリ自身にも同じ仕組みを適用しています。
 
-`$right-size-execution`が依頼をL1 Local／L2 Bounded／L3 Systemicへ分類し、最小十分なcontext・tool・model能力帯・検証から開始します。検証失敗または新証拠があるときだけ一軸を段階拡張し、成功後は探索を止めます。実行予算、実績、拡張理由、task固有のcheck選択はwork itemへ監査可能に保存します。
+`$right-size-execution`が変更範囲、保証水準、計算資源、実行方式を独立に推定し、最小十分なcontext・tool・検証から開始します。高リスクは探索範囲ではなく保証水準へ反映し、新証拠があるときだけ一軸を拡張します。実行予算、実績、拡張理由、選択漏れ監査をwork itemへ保存し、成功後は探索を止めます。
 
 ## このリポジトリが担保する3本柱
 
@@ -58,7 +58,7 @@ Skill名、Python、インストーラー、work item、テストコマンドを
 | Codex agents | [`.codex/agents`](.codex/agents) | `<target>/.codex/agents` | 任意の読取専用レビュー担当 |
 | Codex hooks | [`.codex/hooks`](.codex/hooks) | 同じ相対パス | 任意のライフサイクル連携 |
 | 統制実行基盤 | [`governance`](governance)、[`tools/devflow.py`](tools/devflow.py)、[`docs/templates`](docs/templates) | 同じ相対パス | 決定的ゲート、承認、監査 |
-| 適正規模実行 | [`.agents/skills/right-size-execution`](.agents/skills/right-size-execution) | 同じ相対パス | L1〜L3推定、soft budget、Expand、効率計測、benchmark |
+| 適正規模実行 | [`.agents/skills/right-size-execution`](.agents/skills/right-size-execution) | 同じ相対パス | 多軸profile、soft budget、単軸Expand、選択漏れ監査、benchmark |
 
 対象固有の`AGENTS.md`と`.codex/config.toml`は上書きしません。AIが既存内容を維持し、必要部分だけをレビュー対象の変更として統合します。
 

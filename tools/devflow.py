@@ -25,7 +25,7 @@ TEMPLATE_ROOT = ROOT / "docs" / "templates"
 IMPROVEMENTS_PATH = ROOT / "governance" / "improvements" / "proposals.json"
 REPORT_ROOT = ROOT / "reports"
 RESULTS_SCHEMA_VERSION = 2
-SCOPEFLOW_PATH = ROOT / ".agents" / "skills" / "right-size-execution" / "scripts" / "scopeflow.py"
+EXECUTIONFLOW_PATH = ROOT / ".agents" / "skills" / "right-size-execution" / "scripts" / "executionflow.py"
 
 
 class GovernanceError(RuntimeError):
@@ -173,29 +173,36 @@ def checklist_scope_attributes(sheet: str, category: str, check: str, phase: str
     risks = sorted({tag for words, tag in risk_rules if any(word in text for word in words)})
     always_terms = ["受入基準", "トレーサビリティ", "完了条件", "変更管理", "証跡", "再現可能"]
     always_on = any(term in text for term in always_terms)
-    if risks:
-        scope_levels = [3]
-    elif always_on or phase in {"implementation", "verification"}:
-        scope_levels = [1, 2, 3]
+    critical_risks = {"security", "authentication", "authorization", "data-loss", "pii"}
+    elevated_risks = {"database-schema", "public-api", "iac", "dependency", "governance"}
+    if set(risks).intersection(critical_risks):
+        assurance_levels = ["critical"]
+    elif set(risks).intersection(elevated_risks):
+        assurance_levels = ["elevated", "critical"]
     else:
-        scope_levels = [2, 3]
+        assurance_levels = ["standard", "elevated", "critical"]
     return {
         "always_on": always_on,
         "artifact_tags": artifacts,
         "risk_tags": risks,
-        "scope_levels": scope_levels,
+        "assurance_levels": assurance_levels,
     }
 
 
-def load_scopeflow() -> Any:
-    if not SCOPEFLOW_PATH.is_file():
-        raise GovernanceError(f"scopeflow not found: {SCOPEFLOW_PATH.relative_to(ROOT)}")
-    spec = importlib.util.spec_from_file_location("dev_standard_scopeflow", SCOPEFLOW_PATH)
+def load_executionflow() -> Any:
+    if not EXECUTIONFLOW_PATH.is_file():
+        raise GovernanceError(f"executionflow not found: {EXECUTIONFLOW_PATH.relative_to(ROOT)}")
+    spec = importlib.util.spec_from_file_location("dev_standard_executionflow", EXECUTIONFLOW_PATH)
     if spec is None or spec.loader is None:
-        raise GovernanceError("scopeflow module cannot be loaded")
+        raise GovernanceError("executionflow module cannot be loaded")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def load_scopeflow() -> Any:
+    """Compatibility alias for callers migrating to executionflow."""
+    return load_executionflow()
 
 
 def workbook_catalog() -> dict[str, Any]:
@@ -416,28 +423,33 @@ def cmd_init(args: argparse.Namespace) -> int:
     work = WORK_ROOT / work_id
     if work.exists():
         raise GovernanceError(f"work item already exists: {work_id}")
-    scope_state = None
+    execution_state = None
     selected_ids = None
-    if getattr(args, "scope_file", None):
-        scope_path = Path(args.scope_file)
-        if not scope_path.is_file():
-            raise GovernanceError(f"execution scope not found: {scope_path}")
-        scopeflow = load_scopeflow()
-        scope_state = read_json(scope_path)
-        scope_errors = scopeflow.validate_scope(scope_state)
-        if scope_errors:
-            raise GovernanceError("invalid execution scope: " + "; ".join(scope_errors))
-        selection = scopeflow.select_catalog_items(
+    execution_file = getattr(args, "execution_profile_file", None) or getattr(args, "scope_file", None)
+    if execution_file:
+        profile_path = Path(execution_file)
+        if not profile_path.is_file():
+            raise GovernanceError(f"execution profile not found: {profile_path}")
+        executionflow = load_executionflow()
+        execution_state = read_json(profile_path)
+        if execution_state.get("schema_version") != 2:
+            raise GovernanceError("execution profile must use schema_version 2")
+        profile_errors = executionflow.validate_profile(execution_state, allow_legacy=False)
+        if profile_errors:
+            raise GovernanceError("invalid execution profile: " + "; ".join(profile_errors))
+        selection = executionflow.select_catalog_items(
             catalog,
-            scope_state,
+            execution_state,
             profiles=profiles,
             phases=list(policy["phases"]),
         )
-        if not selection["selected_item_ids"]:
-            raise GovernanceError("execution scope selected no checklist items")
-        scope_state["selection"] = selection
-        scope_state["updated_at"] = utcnow()
-        selected_ids = set(selection["selected_item_ids"])
+        if not selection["selected_ids"]:
+            raise GovernanceError("execution profile selected no checklist items")
+        if selection["mandatory_missed_ids"]:
+            raise GovernanceError("execution selector missed mandatory controls")
+        execution_state["selection"] = selection
+        execution_state["updated_at"] = utcnow()
+        selected_ids = set(selection["selected_ids"])
     selected = []
     for item in catalog["items"]:
         if item["sheet"] not in sheets:
@@ -479,8 +491,8 @@ def cmd_init(args: argparse.Namespace) -> int:
         for old, new in replacements.items():
             content = content.replace(old, new)
         (work / "docs" / template.name).write_text(content, encoding="utf-8")
-    if scope_state:
-        atomic_write_json(work / "execution-scope.json", scope_state)
+    if execution_state:
+        atomic_write_json(work / "execution-profile.json", execution_state)
     state = {
         "schema_version": 1,
         "workflow_schema_version": policy["schema_version"],
@@ -492,7 +504,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         "status": "active",
         "profiles": profiles,
         "catalog_sha256": sha256_bytes(canonical_bytes(stable_catalog(catalog))),
-        "execution_scope_sha256": sha256_bytes(canonical_bytes(scope_state)) if scope_state else "",
+        "execution_profile_sha256": sha256_bytes(canonical_bytes(execution_state)) if execution_state else "",
     }
     atomic_write_json(work / "state.json", state)
     atomic_write_json(
@@ -509,7 +521,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         "details": {
             "profiles": profiles,
             "catalog_items": len(selected),
-            "selector_version": scope_state.get("selection", {}).get("selector_version", "legacy-full-profile") if scope_state else "legacy-full-profile",
+            "selector_version": execution_state.get("selection", {}).get("selector_version", "legacy-full-profile") if execution_state else "legacy-full-profile",
         },
     })
     try:
@@ -1236,12 +1248,14 @@ def cmd_audit(args: argparse.Namespace) -> int:
                 ids = [item["id"] for item in results["items"]]
                 if len(ids) != len(set(ids)):
                     failures.append(f"{state['id']}: duplicate checklist results")
-                scope_path = work / "execution-scope.json"
-                if scope_path.is_file():
-                    scopeflow = load_scopeflow()
-                    scope_report = scopeflow.audit_scope(read_json(scope_path))
-                    failures.extend(f"{state['id']}: execution scope: {message}" for message in scope_report["errors"])
-                    warnings.extend(f"{state['id']}: execution scope: {message}" for message in scope_report["warnings"])
+                profile_path = work / "execution-profile.json"
+                legacy_scope_path = work / "execution-scope.json"
+                ledger_path = profile_path if profile_path.is_file() else legacy_scope_path
+                if ledger_path.is_file():
+                    executionflow = load_executionflow()
+                    profile_report = executionflow.audit_profile(read_json(ledger_path))
+                    failures.extend(f"{state['id']}: execution profile: {message}" for message in profile_report["errors"])
+                    warnings.extend(f"{state['id']}: execution profile: {message}" for message in profile_report["warnings"])
                     if state.get("status") == "closed" and not (work / "reports" / "execution-efficiency.json").is_file():
                         failures.append(f"{state['id']}: execution efficiency report missing")
                 if state["current_phase"] not in load_policy()["phase_order"]:
@@ -1291,7 +1305,8 @@ def build_parser() -> argparse.ArgumentParser:
     init.add_argument("--title", required=True)
     init.add_argument("--request", required=True)
     init.add_argument("--profile", action="append", default=["CORE"])
-    init.add_argument("--scope-file", help="scopeflow estimate used for task-specific checklist selection")
+    init.add_argument("--execution-profile-file", help="executionflow profile used for task-specific checklist selection")
+    init.add_argument("--scope-file", help=argparse.SUPPRESS)
     init.add_argument("--actor", required=True)
     init.set_defaults(func=cmd_init)
 

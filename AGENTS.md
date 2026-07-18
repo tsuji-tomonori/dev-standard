@@ -11,7 +11,7 @@ Durable product requirements live only in `spec/requirements/requirements.json`.
 ## Invariants
 
 - Govern substantive changes with `$govern-development-request`. Freeze the request, requirements, traceability, execution plan, authority boundary, success criteria, and stopping conditions before implementation.
-- Before work-item initialization, use `$right-size-execution` to record the L1/L2/L3 operating point, risk floor, confidence, soft budgets, minimum decisive verification, and task-specific checklist selection. Treat Estimate/Execute/Expand as one state machine.
+- Before work-item initialization, use `$right-size-execution` to record scope, assurance, compute, and mode independently, together with deterministic confidence evidence, soft budgets, required verification, and task-specific checklist selection. Treat Estimate/Execute/Expand as one state machine; risk raises assurance, not scope by itself.
 - Record one real requester decision with `$authorize-autonomous-execution`; never infer it. A changed authorized artifact requires a new authorization boundary.
 - Preserve the original request in `docs/00-request.md`. Use `$calibrated-collaborative-listening` only when consequential ambiguity changes that boundary, and ask only for the smallest blocking fact.
 - Include the proposed canonical requirement delta and base revision in the one initial authorization. Apply that delta after authorization and reject stale catalog or item revisions.

@@ -27,7 +27,7 @@ class SpecflowTest(unittest.TestCase):
         catalog = specflow.validate_catalog(specflow.read_json(ROOT / "spec/requirements/requirements.json"))
         generated = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")
         self.assertEqual(generated, specflow.render(catalog))
-        self.assertEqual(len(catalog["requirements"]), 21)
+        self.assertEqual(len(catalog["requirements"]), 29)
         self.assertIn("# dev-standard 要件一覧", generated)
 
     def test_composite_action_and_clause_are_rejected(self) -> None:
