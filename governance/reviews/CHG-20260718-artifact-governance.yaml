@@ -1,0 +1,51 @@
+schema_version: 1
+change_id: CHG-20260718-artifact-governance
+profile: assured
+source_ref: agent/simplify-artifacts-and-checks
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - docs/COMMIT-COMMENT.md
+    note: 要件影響をCommit Commentの必須節として定義
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - docs/COMMIT-COMMENT.md
+      - docs/ARTIFACTS-AND-CHECKS.md
+    note: 設計影響をCommit Commentの必須節として定義
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - docs/COMMIT-COMMENT.md
+      - .agents/skills/japanese-git-commit-gitmoji/SKILL.md
+    note: Commit Commentの構造を文書とSkillへ反映
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - governance/reviews/README.md
+      - governance/reviews/review-result.schema.json
+    note: 選択チェックだけをリポジトリへ保存する形式を追加
+
+  - id: REV-012
+    class: Risk-selected
+    result: na
+    evidence: []
+    note: 認証・認可、秘密情報、データ損失、不可逆なproduction操作を変更しない
+
+advisories:
+  - id: MIGRATION-LEGACY-WORK
+    disposition: residual-risk
+    note: 既存work itemの自動移行は今回の対象外
+
+residual_risks:
+  - 既存のregulated用devflow runtimeは互換性維持のため残し、既定フローからのみ外す
+  - 再編版checklist.xlsxは生成成果物として別途提供し、バイナリ更新経路の制約によりこのPRには未添付
