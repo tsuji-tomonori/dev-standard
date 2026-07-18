@@ -17,9 +17,15 @@ Make the chat the only user interface. Own setup and lifecycle mechanics interna
    - with `tools/devflow.py`, prepare a repository-local environment and use the full governed flow;
    - without it, create a lightweight `work/<id>/` record containing only request-local fragments, the proposed canonical delta, plan, design, test evidence, release result, and retrospective.
 4. Before governance initialization, use `$right-size-execution` to estimate scope, assurance, compute, and mode independently from deterministic features and at most one reusable metadata probe. Do not add an Estimate-only LLM call. Persist the execution profile for repository changes and let it select and omission-audit task-specific checklist rows.
-5. Summarize the intended outcome, atomic requirement add/update/retire delta, acceptance criteria, scope, external effects, defaults, stop conditions, and completion definition in one compact natural-language authorization package. Ask for one explicit approve/reject decision.
-6. After approval, apply the canonical delta and follow `$right-size-execution` Execute/Expand. Expand one axis only on verification failure, new evidence, or measured overrun; stop after decisive success. Continue through design, implementation, review, tests, PR creation, CI verification, and closure. For FastAPI/CDK, use `$generate-implementation-design`; use `$adversarial-review` when correctness needs an independent, defect-seeking challenge. Repair in-scope failures without routine questions or approvals.
-7. Finalize the efficiency report, then report only useful progress, results, or a genuine blocker. Never expose lifecycle commands as work for the user.
+5. Detect frontend experience scope when the request concerns a screen, flow, navigation, content hierarchy, interaction, component, design system, responsive behavior, accessibility, frontend visual quality, or phrases such as “使いやすくしたい” or “デザインを良くしたい”. For that scope, route the lifecycle through:
+   - `$elicit-frontend-requirements` during requirements, reusing `$calibrated-collaborative-listening` and `$maintain-canonical-requirements`;
+   - `$design-frontend-experience` during detailed design and test design;
+   - `$implement-frontend-experience` during implementation;
+   - `$test-frontend-experience` during verification.
+   Do not force these skills onto backend-only work, and do not skip requirements merely because a screenshot or Figma frame was supplied.
+6. Summarize the intended outcome, atomic requirement add/update/retire delta, acceptance criteria, scope, external effects, defaults, stop conditions, and completion definition in one compact natural-language authorization package. Ask for one explicit approve/reject decision.
+7. After approval, apply the canonical delta and follow `$right-size-execution` Execute/Expand. Expand one axis only on verification failure, new evidence, or measured overrun; stop after decisive success. Continue through design, implementation, review, tests, PR creation, CI verification, and closure. For FastAPI/CDK, use `$generate-implementation-design`; for frontend experience work, use the four phase-specific frontend skills above; use `$adversarial-review` when correctness needs an independent, defect-seeking challenge. Repair in-scope failures without routine questions or approvals.
+8. Finalize the efficiency report, then report only useful progress, results, or a genuine blocker. Never expose lifecycle commands as work for the user.
 
 ## Interaction contract
 
@@ -27,6 +33,7 @@ Make the chat the only user interface. Own setup and lifecycle mechanics interna
 - Never require the user to name a skill, work item, profile, phase, model, or checklist.
 - Ask at most the smallest conversational question needed to avoid a materially wrong result. Group closely related choices.
 - Do not turn ordinary implementation choices into questions. State reasonable reversible assumptions in the authorization package.
+- For frontend work, ask about users, tasks, context, consequences, and priorities rather than asking a design novice to choose tokens, component APIs, typography scales, or accessibility techniques.
 - Keep the initial authorization as the only human execution gate. Do not infer it or authorize on the user's behalf.
 - After authorization, continue until the requested result and relevant PR/CI evidence exist, unless new authority or unavailable capability is genuinely required.
 
