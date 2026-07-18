@@ -45,7 +45,7 @@
 
 AIの自己申告だけをPass、承認、CI結果にしない。
 
-## 3. Commit Comment
+## 3. コミットコメント
 
 Commit Commentを次の変更時点証跡として使用する。
 
@@ -58,29 +58,29 @@ Commit Commentを次の変更時点証跡として使用する。
 
 CIの実行結果は含めず、外部サービスのworkflowまたはrequired checkを参照する。
 
-## 4. Review result
+## 4. レビュー結果
 
 `governance/reviews/<change-id>.yaml`にはselected checkだけを保存する。
 
-### Invariant
+### 常時制約（Invariant）
 
 triggerに該当した場合はPass必須。
 
-### Risk-selected
+### リスク選択制約（Risk-selected）
 
 risk、artifact、path、profileから選択された場合だけblocking。
 
-### Advisory
+### 助言項目（Advisory）
 
 修正、Issue化、residual riskのいずれかへ収束できる。
 
-### Periodic
+### 定期確認項目（Periodic）
 
 個々のPRではなく定期監査で扱う。
 
 未選択項目をN/Aにしない。N/Aは選択後に具体的な適用外事実が判明した場合だけ使用する。
 
-## 5. Automated result
+## 5. 自動検証結果
 
 単体test、build、type、lint、coverage、security scan、deployment resultの正本はGitHub Actions、deployment service、monitoring service等とする。
 
@@ -112,7 +112,7 @@ repositoryへ残すのは、test code、workflow定義、required check名、rev
 
 `direct`と通常の`assured`では初回承認を要求しない。`regulated`または外部副作用時だけ明示承認を使用する。
 
-## 7. Regulated compatibility
+## 7. 規制・高保証実行との互換性
 
 既存の次の仕組みは`regulated`でのみ使用する。
 
@@ -126,7 +126,7 @@ repositoryへ残すのは、test code、workflow定義、required check名、rev
 
 このruntimeをdirectまたはassuredへ自動適用しない。
 
-## 8. Gate timing
+## 8. チェックの実行時点
 
 - 変更開始前: Impact Check
 - 実装中: Fast Feedback Check
