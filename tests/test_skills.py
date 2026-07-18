@@ -67,7 +67,7 @@ class SkillContractTest(unittest.TestCase):
             "direct",
             "assured",
             "regulated",
-            "soft budget",
+            "Soft budget",
             ".devflow/run/",
             "同時拡張",
             "scope",
