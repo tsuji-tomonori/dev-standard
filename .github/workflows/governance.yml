@@ -38,5 +38,23 @@ jobs:
           path: unit-test.log
           archive: false
           retention-days: 3
-      - run: python tools/validate_repo.py
-      - run: python tools/devflow.py audit
+      - name: Run repository validation
+        id: repository-validation
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          python tools/validate_repo.py > repository-validation.log 2>&1
+          status=$?
+          cat repository-validation.log
+          exit "$status"
+      - name: Upload repository validation log on failure
+        if: failure() && steps.repository-validation.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          path: repository-validation.log
+          archive: false
+          retention-days: 3
+      - name: Run regulated audit
+        if: success()
+        run: python tools/devflow.py audit
