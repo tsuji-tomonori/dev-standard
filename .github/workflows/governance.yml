@@ -22,6 +22,21 @@ jobs:
       - run: python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
       - run: python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
       - run: ruff check .
-      - run: python -m unittest discover -s tests
+      - name: Run unit tests
+        id: unit-tests
+        shell: bash
+        run: |
+          set +e
+          python -m unittest discover -s tests > unit-test.log 2>&1
+          status=$?
+          cat unit-test.log
+          exit "$status"
+      - name: Upload unit test log on failure
+        if: failure() && steps.unit-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          path: unit-test.log
+          archive: false
+          retention-days: 3
       - run: python tools/validate_repo.py
       - run: python tools/devflow.py audit
