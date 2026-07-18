@@ -163,6 +163,6 @@ Design-Impact: governance
 Review-Checklist: governance/reviews/CHG-20260718-artifact-governance.yaml
 ```
 
-## 5. Squash merge
+## 5. スカッシュマージ
 
 複数コミットをsquashする場合、最終コミット本文へPR全体の内容を統合する。中間コミットだけに要件・設計影響を残してはならない。
