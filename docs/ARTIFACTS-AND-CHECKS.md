@@ -16,7 +16,7 @@
 
 コード、設定、テスト、migration、要件正本、生成設計、運用文書など、依頼された変更そのもの。
 
-### 2.2 Commit Comment
+### 2.2 コミットコメント
 
 正式にはGitのcommit messageである。Change ManifestとRequirement / Design Impactの独立ファイルを作らず、コミット本文へ次を記録する。
 
@@ -86,15 +86,15 @@ Commit Commentは変更時点の証跡であり、コミット後にメンテナ
 
 ## 5. 実行プロファイル
 
-### direct
+### 直接実行（direct）
 
 局所的で可逆、外部副作用がない変更。対象テストと変更範囲の静的検査を行う。
 
-### assured
+### 保証付き実行（assured）
 
 複数モジュール、公開API、DB、IaC、依存、共有UIなど。変更固有のRisk-selected checkと、必要時だけ独立レビューを追加する。
 
-### regulated
+### 規制・高保証実行（regulated）
 
 認証・認可、個人情報、データ損失、productionの不可逆操作、法令・契約上の統制、高額操作など。既存のwork item、初回承認、hash chain、工程監査はこのprofileでのみ使用できる。
 
