@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tsuji-tomonori/dev-standard/governance/reviews/review-result.schema.json",
+  "title": "dev-standard review result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change_id",
+    "profile",
+    "source_ref",
+    "selected_checks",
+    "advisories",
+    "residual_risks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "change_id": {
+      "type": "string",
+      "pattern": "^CHG-[0-9]{8}-[a-z0-9][a-z0-9-]{1,80}$"
+    },
+    "profile": {
+      "enum": ["direct", "assured", "regulated"]
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selected_checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "class", "result", "evidence"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "class": {
+            "enum": ["Invariant", "Risk-selected", "Advisory"]
+          },
+          "result": {
+            "enum": ["pass", "fail", "na"]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "note": {
+            "type": "string"
+          },
+          "issue": {
+            "type": "string"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "result": {
+                  "const": "pass"
+                }
+              },
+              "required": ["result"]
+            },
+            "then": {
+              "properties": {
+                "evidence": {
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "result": {
+                  "const": "na"
+                }
+              },
+              "required": ["result"]
+            },
+            "then": {
+              "required": ["note"],
+              "properties": {
+                "note": {
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "advisories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "disposition", "note"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "disposition": {
+            "enum": ["fixed", "issue", "residual-risk"]
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issue": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
