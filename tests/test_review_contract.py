@@ -71,6 +71,21 @@ class ReviewContractTest(unittest.TestCase):
         with self.assertRaisesRegex(review_contract.ContractError, "missing required checks: IMP-001"):
             self.validate_copy(value)
 
+    def test_fix_commit_requires_bug_fix_flag(self) -> None:
+        self.assertEqual(
+            review_contract.conventional_commit_type("🛡️ fix(governance): 契約の選択漏れを防ぐ"),
+            "fix",
+        )
+        self.assertEqual(
+            review_contract.conventional_commit_type("✨ feat(governance): 契約を追加する"),
+            "feat",
+        )
+
+        value = yaml.safe_load(yaml.safe_dump(self.current))
+        value["impact_flags"]["bug_fix"] = False
+        with self.assertRaisesRegex(review_contract.ContractError, "fix commit requires"):
+            review_contract.validate_commit_type_flags("fix(governance): 回帰を修正する", value)
+
     def test_unknown_check_and_class_mismatch_are_rejected(self) -> None:
         unknown = yaml.safe_load(yaml.safe_dump(self.current))
         unknown["selected_checks"][0]["id"] = "REV-999"

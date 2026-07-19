@@ -19,7 +19,7 @@ impact_flags:
   code_change: true
   typed_code_change: false
   behavior_change: true
-  bug_fix: false
+  bug_fix: true
   generated_change: false
   sql_change: false
   migration: false
@@ -98,6 +98,14 @@ selected_checks:
       - test:tests/test_review_contract.py
       - workflow:Governance
     note: catalog照合、blocking fail、advisory、Commit Comment、配布除外を単体テストする
+
+  - id: FAST-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - test:tests/test_review_contract.py
+      - workflow:Governance
+    note: 前回レビューで判明したreview contractの選択漏れを、fix commitとbug_fixの整合を検査する回帰テストで固定する
 
   - id: FAST-007
     class: Invariant

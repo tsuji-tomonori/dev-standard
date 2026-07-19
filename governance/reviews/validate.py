@@ -26,6 +26,9 @@ REQUIRED_SECTIONS = [
 ]
 REQUIRED_TRAILERS = ["Requirements", "Design-Impact", "Review-Checklist"]
 EVIDENCE_PATTERN = re.compile(r"^(path|test|commit|workflow):(.+)$")
+CONVENTIONAL_SUBJECT_PATTERN = re.compile(
+    r"^(?:\S+\s+)?(?P<type>[a-z]+)(?:\([^)]+\))?!?:"
+)
 ALWAYS_TRIGGERS = {"常時", "全変更"}
 DERIVED_TRIGGERS = {
     "N/A使用時": "na_used",
@@ -241,6 +244,18 @@ def parse_trailers(message: str) -> dict[str, str]:
     return trailers
 
 
+def conventional_commit_type(subject: str) -> str | None:
+    """Return the Conventional Commit type, accepting the optional Gitmoji prefix."""
+    match = CONVENTIONAL_SUBJECT_PATTERN.match(subject)
+    return match.group("type") if match else None
+
+
+def validate_commit_type_flags(subject: str, review: dict[str, Any]) -> None:
+    """Prevent a Conventional Commit `fix` from bypassing the regression-test check."""
+    if conventional_commit_type(subject) == "fix" and not review["impact_flags"]["bug_fix"]:
+        raise ContractError("fix commit requires impact_flags.bug_fix: true")
+
+
 def validate_commit(root: Path, commit_ref: str) -> Path:
     message = git_text(root, "show", "-s", "--format=%B", commit_ref)
     for section in REQUIRED_SECTIONS:
@@ -268,7 +283,9 @@ def validate_repository(root: Path, commit_ref: str) -> None:
     source_commit = git_text(root, "log", "-1", "--format=%H", resolved_commit, "--", relative_review)
     if source_commit != resolved_commit:
         raise ContractError(f"{active_review}: active review must be updated by {commit_ref}")
-    validate_review(root, active_review, schema, catalog, checks, source_commit)
+    review = validate_review(root, active_review, schema, catalog, checks, source_commit)
+    subject = git_text(root, "show", "-s", "--format=%s", resolved_commit)
+    validate_commit_type_flags(subject, review)
 
 
 def main() -> int:
