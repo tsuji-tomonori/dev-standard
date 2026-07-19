@@ -7,6 +7,7 @@
     "canonical_requirements": "spec/requirements/requirements.json",
     "generated_requirements": "docs/requirements/REQUIREMENTS.md",
     "generated_design": "docs/design/generated/",
+    "review_catalog": "governance/checks/catalog.yaml",
     "review_results": "governance/reviews/",
     "temporary_execution": ".devflow/run/",
     "standards_registry": "governance/standards/registry.json"
@@ -51,6 +52,7 @@
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
       {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
+      {"source": "governance/checks", "destination": "governance/checks"},
       {"source": "governance/reviews", "destination": "governance/reviews"},
       {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"},
       {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"}
@@ -64,6 +66,7 @@
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
       {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
+      {"source": "governance/checks", "destination": "governance/checks"},
       {"source": "governance/reviews", "destination": "governance/reviews"},
       {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"},
       {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"}
@@ -76,6 +79,7 @@
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
       {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
+      {"source": "governance/checks", "destination": "governance/checks"},
       {"source": "governance/reviews", "destination": "governance/reviews"}
     ],
     "right-size-execution": [
@@ -99,6 +103,7 @@
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
       {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
+      {"source": "governance/checks", "destination": "governance/checks"},
       {"source": "governance/reviews", "destination": "governance/reviews"}
     ],
     "adversarial-review": [
@@ -114,6 +119,7 @@
     "standards-verification": [
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
+      {"source": "governance/checks", "destination": "governance/checks"},
       {"source": "governance/reviews", "destination": "governance/reviews"}
     ],
     "communication": [

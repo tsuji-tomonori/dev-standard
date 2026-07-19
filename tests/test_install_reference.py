@@ -60,6 +60,9 @@ class InstallReferenceTest(unittest.TestCase):
         ]:
             self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
         self.assertTrue((self.target / "governance" / "reviews" / "review-result.schema.json").is_file())
+        self.assertTrue((self.target / "governance" / "reviews" / "validate.py").is_file())
+        self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
+        self.assertFalse((self.target / "governance" / "reviews" / "CHG-20260718-artifact-governance.yaml").exists())
         self.assertTrue((self.target / "docs" / "COMMIT-COMMENT.md").is_file())
         self.assertTrue((self.target / "docs" / "ARTIFACTS-AND-CHECKS.md").is_file())
         self.assertFalse((self.target / "tools").exists())
@@ -78,6 +81,14 @@ class InstallReferenceTest(unittest.TestCase):
             self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
         self.assertTrue((self.target / ".agents/skills/generate-implementation-design/requirements.txt").is_file())
         self.assertTrue((self.target / "governance" / "reviews" / "review-result.schema.json").is_file())
+        self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
+
+    def test_repository_specific_review_evidence_is_never_distributed(self) -> None:
+        manifest = install_reference.load_manifest()
+        for profile in manifest["profiles"]:
+            planned = install_reference.plan(self.target, [profile], manifest)
+            copied = {item.source.name for item in planned if item.source.parent.name == "reviews"}
+            self.assertNotIn("CHG-20260718-artifact-governance.yaml", copied, profile)
 
     def test_full_profile_preserves_target_configuration_and_installs_merge_references(self) -> None:
         agents_file = self.target / "AGENTS.md"

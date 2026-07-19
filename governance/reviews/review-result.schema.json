@@ -6,6 +6,7 @@
   "additionalProperties": false,
   "required": [
     "schema_version",
+    "catalog_version",
     "change_id",
     "profile",
     "source_ref",
@@ -16,6 +17,10 @@
   "properties": {
     "schema_version": {
       "const": 1
+    },
+    "catalog_version": {
+      "type": "integer",
+      "minimum": 1
     },
     "change_id": {
       "type": "string",
@@ -41,7 +46,7 @@
             "minLength": 1
           },
           "class": {
-            "enum": ["Invariant", "Risk-selected", "Advisory"]
+            "enum": ["Invariant", "Risk-selected", "Advisory", "Periodic"]
           },
           "result": {
             "enum": ["pass", "fail", "na"]
@@ -50,7 +55,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "minLength": 1
+              "pattern": "^(path|test|commit|workflow):.+$"
             }
           },
           "note": {
@@ -119,8 +124,33 @@
           },
           "issue": {
             "type": "string"
+          },
+          "risk": {
+            "type": "string",
+            "minLength": 1
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {"disposition": {"const": "issue"}},
+              "required": ["disposition"]
+            },
+            "then": {
+              "required": ["issue"],
+              "properties": {"issue": {"minLength": 1}}
+            }
+          },
+          {
+            "if": {
+              "properties": {"disposition": {"const": "residual-risk"}},
+              "required": ["disposition"]
+            },
+            "then": {
+              "required": ["risk"]
+            }
+          }
+        ]
       }
     },
     "residual_risks": {

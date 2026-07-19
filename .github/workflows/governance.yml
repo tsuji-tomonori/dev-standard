@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -22,6 +24,8 @@ jobs:
       - run: python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
       - run: python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
       - run: ruff check .
+      - name: Validate adaptive review contract
+        run: python governance/reviews/validate.py --root . --commit HEAD
       - name: Run unit tests
         id: unit-tests
         shell: bash

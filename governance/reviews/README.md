@@ -2,6 +2,8 @@
 
 このディレクトリには、変更ごとに**選択されたチェック結果だけ**を保存する。
 
+check ID、class、timing、trigger、合格条件の正本は`governance/checks/catalog.yaml`である。Excelはこの正本から生成する人向け一覧とし、ID判定には使用しない。
+
 ## 目的
 
 - PRレビュー時に、何を確認し、何を確認しなかったかを短時間で把握できるようにする。
@@ -27,7 +29,7 @@ governance/reviews/CHG-20260718-artifact-governance.yaml
 - profile: `direct` / `assured` / `regulated`
 - review対象branchまたはPR
 - 選択されたcheck ID
-- check class: `Invariant` / `Risk-selected` / `Advisory`
+- check class: `Invariant` / `Risk-selected` / `Advisory` / `Periodic`
 - result: `pass` / `fail` / `na`
 - 到達可能な証拠参照
 - N/A・手動判断・advisoryの短い根拠
@@ -44,6 +46,10 @@ governance/reviews/CHG-20260718-artifact-governance.yaml
 - GitHub Actionsと同じ結果のコピー
 
 CI結果はGitHub Actionsなどの外部サービスを正本とする。レビュー結果にはworkflow名、required check名、テストコード、生成物、Issue等への参照だけを記載する。
+
+`python governance/reviews/validate.py --root . --commit HEAD`は、全`CHG-*.yaml`のschema/catalog照合、blocking fail、Advisory処理、直接証拠、現在HEADのCommit Comment、`Review-Checklist`参照先を検査する。
+
+`CHG-*.yaml`はこのリポジトリ固有の変更証跡であり、インストーラーは導入先へコピーしない。配布対象はcatalog、schema、validator、README、templateだけである。
 
 ## 結果の意味
 

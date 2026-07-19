@@ -1,0 +1,16 @@
+schema_version: 1
+catalog_version: 1
+change_id: CHG-YYYYMMDD-slug
+profile: direct
+source_ref: HEAD
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:HEAD
+    note: Commit Commentの要件影響節に判定、要件ID、理由がある
+
+advisories: []
+residual_risks: []

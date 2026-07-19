@@ -58,7 +58,7 @@ description: Select the smallest sufficient direct, assured, or regulated develo
 
 1. 要求、changed path、repository metadataからprofileを選ぶ。
 2. 要件影響、設計影響、authority impactを仮判定する。
-3. `docs/ARTIFACTS-AND-CHECKS.md`のタイミングと強制度からcheckを選ぶ。
+3. `governance/checks/catalog.yaml`のtrigger、timing、classからcheck IDを選ぶ。
 4. 最小のcontext、tool、verificationで開始する。
 5. 検証失敗、新しい依存、契約影響、証拠不足が判明した場合だけ拡張する。
 6. 複数軸が同じ新証拠から直接必要になった場合は、理由を一つ記録して同時拡張できる。
@@ -93,6 +93,7 @@ context、tool call、search、reviewer、computeの予算は観測用のsoft li
 
 ## Check selection
 
+- ID、class、timing、trigger、合格条件は`governance/checks/catalog.yaml`だけを正本とする。
 - 全checklistをpromptへ入れない。
 - `trigger`、changed path、risk、profileから選択する。
 - 未選択をN/Aへ変換しない。

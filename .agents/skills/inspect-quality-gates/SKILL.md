@@ -10,6 +10,7 @@ description: Inspect only the checks selected for the current change, at impact,
 ## 既定の証跡
 
 - review判断: `governance/reviews/<change-id>.yaml`
+- check定義の正本: `governance/checks/catalog.yaml`
 - automated result: GitHub Actions等の外部サービス
 - requirement / design impact: Commit Comment
 - implementation evidence: code、test、生成設計、ADR、Git diff
@@ -150,6 +151,7 @@ selectorで選ばれた後、具体的事実により適用外と判明した場
 
 ## Completion
 
+- `python governance/reviews/validate.py --root . --commit HEAD`が成功する。
 - review YAMLがschemaに適合する。
 - trigger該当のInvariantがすべてPass。
 - 選択したblocking Risk-selectedがすべてPass。

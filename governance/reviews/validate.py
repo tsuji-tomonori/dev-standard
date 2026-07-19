@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+"""Validate adaptive review results and the current Commit Comment contract."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+import yaml
+from jsonschema import Draft202012Validator
+
+REQUIRED_SECTIONS = [
+    "目的:",
+    "変更内容:",
+    "要件影響:",
+    "設計影響:",
+    "チェックリスト:",
+    "検証契約:",
+    "互換性・残存リスク:",
+]
+REQUIRED_TRAILERS = ["Requirements", "Design-Impact", "Review-Checklist"]
+EVIDENCE_PATTERN = re.compile(r"^(path|test|commit|workflow):(.+)$")
+
+
+class ContractError(RuntimeError):
+    pass
+
+
+def load_yaml(path: Path) -> dict[str, Any]:
+    value = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ContractError(f"{path}: root must be a mapping")
+    return value
+
+
+def load_catalog(path: Path) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    catalog = load_yaml(path)
+    items = catalog.get("items")
+    if not isinstance(items, list):
+        raise ContractError(f"{path}: items must be a list")
+    by_id: dict[str, dict[str, Any]] = {}
+    for item in items:
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+            raise ContractError(f"{path}: every item requires an id")
+        item_id = item["id"]
+        if item_id in by_id:
+            raise ContractError(f"{path}: duplicate check id {item_id}")
+        for field in ["class", "timing", "trigger", "check", "acceptance", "enforcement"]:
+            if not item.get(field):
+                raise ContractError(f"{path}: {item_id} missing {field}")
+        by_id[item_id] = item
+    if catalog.get("item_count") != len(items):
+        raise ContractError(f"{path}: item_count does not match items")
+    return catalog, by_id
+
+
+def git_text(root: Path, *args: str) -> str:
+    result = subprocess.run(["git", *args], cwd=root, text=True, capture_output=True, check=False)
+    if result.returncode:
+        raise ContractError((result.stdout + result.stderr).strip())
+    return result.stdout.strip()
+
+
+def safe_repo_path(root: Path, text: str) -> Path:
+    path = (root / text).resolve(strict=False)
+    if path != root and root not in path.parents:
+        raise ContractError(f"path escapes repository: {text}")
+    return path
+
+
+def validate_evidence(root: Path, evidence: str) -> None:
+    match = EVIDENCE_PATTERN.fullmatch(evidence)
+    if not match:
+        raise ContractError(f"invalid evidence reference: {evidence}")
+    kind, target = match.groups()
+    if kind in {"path", "test"}:
+        target_path = target.split("::", 1)[0]
+        if not safe_repo_path(root, target_path).is_file():
+            raise ContractError(f"evidence path does not exist: {evidence}")
+    elif kind == "commit":
+        git_text(root, "cat-file", "-e", f"{target}^{{commit}}")
+    elif kind == "workflow":
+        workflows = list((root / ".github" / "workflows").glob("*.yml"))
+        workflows.extend((root / ".github" / "workflows").glob("*.yaml"))
+        names = {str(load_yaml(path).get("name", "")) for path in workflows}
+        if target not in names:
+            raise ContractError(f"workflow evidence does not exist: {target}")
+
+
+def validate_review(
+    root: Path,
+    path: Path,
+    schema: dict[str, Any],
+    catalog: dict[str, Any],
+    checks: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    review = load_yaml(path)
+    schema_errors = sorted(Draft202012Validator(schema).iter_errors(review), key=lambda error: list(error.path))
+    if schema_errors:
+        messages = "; ".join(f"{'.'.join(map(str, error.path)) or '<root>'}: {error.message}" for error in schema_errors)
+        raise ContractError(f"{path}: schema validation failed: {messages}")
+    if review["catalog_version"] != catalog["catalog_version"]:
+        raise ContractError(f"{path}: catalog_version is stale")
+
+    selected = review["selected_checks"]
+    selected_by_id: dict[str, dict[str, Any]] = {}
+    for result in selected:
+        item_id = result["id"]
+        if item_id in selected_by_id:
+            raise ContractError(f"{path}: duplicate selected check {item_id}")
+        item = checks.get(item_id)
+        if item is None:
+            raise ContractError(f"{path}: unknown check id {item_id}")
+        if result["class"] != item["class"]:
+            raise ContractError(f"{path}: {item_id} class must be {item['class']}")
+        if result["result"] == "fail" and item["enforcement"] in {"blocking", "blocking-when-selected"}:
+            raise ContractError(f"{path}: blocking check {item_id} cannot remain fail")
+        if result["result"] == "pass":
+            for evidence in result["evidence"]:
+                validate_evidence(root, evidence)
+        selected_by_id[item_id] = result
+
+    advisory_by_id: dict[str, dict[str, Any]] = {}
+    for advisory in review["advisories"]:
+        item_id = advisory["id"]
+        if item_id in advisory_by_id:
+            raise ContractError(f"{path}: duplicate advisory disposition {item_id}")
+        selected_item = selected_by_id.get(item_id)
+        if selected_item is None or selected_item["class"] != "Advisory" or selected_item["result"] != "fail":
+            raise ContractError(f"{path}: advisory {item_id} must address a selected Advisory fail")
+        if advisory["disposition"] == "residual-risk" and advisory["risk"] not in review["residual_risks"]:
+            raise ContractError(f"{path}: advisory {item_id} risk is absent from residual_risks")
+        advisory_by_id[item_id] = advisory
+    for item_id, result in selected_by_id.items():
+        if result["class"] == "Advisory" and result["result"] == "fail" and item_id not in advisory_by_id:
+            raise ContractError(f"{path}: Advisory fail {item_id} has no disposition")
+    return review
+
+
+def parse_trailers(message: str) -> dict[str, str]:
+    trailers: dict[str, str] = {}
+    for line in message.splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        if key in REQUIRED_TRAILERS:
+            trailers[key] = value.strip()
+    return trailers
+
+
+def validate_commit(root: Path, commit_ref: str) -> Path:
+    message = git_text(root, "show", "-s", "--format=%B", commit_ref)
+    for section in REQUIRED_SECTIONS:
+        if not re.search(rf"(?m)^{re.escape(section)}$", message):
+            raise ContractError(f"{commit_ref}: Commit Comment missing section {section}")
+    trailers = parse_trailers(message)
+    for trailer in REQUIRED_TRAILERS:
+        if not trailers.get(trailer):
+            raise ContractError(f"{commit_ref}: Commit Comment missing trailer {trailer}")
+    review_path = safe_repo_path(root, trailers["Review-Checklist"])
+    if not review_path.is_file() or review_path.suffix not in {".yaml", ".yml"}:
+        raise ContractError(f"{commit_ref}: Review-Checklist does not reference an existing YAML file")
+    return review_path
+
+
+def validate_repository(root: Path, commit_ref: str) -> None:
+    catalog, checks = load_catalog(root / "governance" / "checks" / "catalog.yaml")
+    schema = json.loads((root / "governance" / "reviews" / "review-result.schema.json").read_text(encoding="utf-8"))
+    active_review = validate_commit(root, commit_ref)
+    review_files = sorted((root / "governance" / "reviews").glob("CHG-*.yaml"))
+    if active_review not in review_files:
+        raise ContractError(f"{commit_ref}: Review-Checklist must point under governance/reviews/CHG-*.yaml")
+    for path in review_files:
+        review = validate_review(root, path, schema, catalog, checks)
+        if path == active_review and review["source_ref"] != "HEAD":
+            raise ContractError(f"{path}: active review source_ref must be HEAD")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument("--commit", default="HEAD")
+    args = parser.parse_args()
+    try:
+        validate_repository(args.root.resolve(), args.commit)
+    except (ContractError, json.JSONDecodeError, yaml.YAMLError) as exc:
+        print(f"FAIL: {exc}", file=sys.stderr)
+        return 1
+    print("review contract validation OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

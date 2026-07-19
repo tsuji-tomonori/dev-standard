@@ -51,6 +51,8 @@ def expand_mapping(target: Path, source_text: str, destination_text: str) -> lis
     for path in sorted(source.rglob("*")):
         if not path.is_file() or path.is_symlink() or IGNORED_PARTS.intersection(path.parts) or path.suffix == ".pyc":
             continue
+        if path.parent.name == "reviews" and path.name.startswith("CHG-") and path.suffix in {".yaml", ".yml"}:
+            continue
         items.append(CopyItem(path, destination / path.relative_to(source)))
     return items
 

@@ -1,51 +1,138 @@
 schema_version: 1
+catalog_version: 1
 change_id: CHG-20260718-artifact-governance
 profile: assured
-source_ref: agent/simplify-artifacts-and-checks
+source_ref: HEAD
 
 selected_checks:
   - id: IMP-001
     class: Invariant
     result: pass
     evidence:
-      - docs/COMMIT-COMMENT.md
-    note: 要件影響をCommit Commentの必須節として定義
+      - commit:HEAD
+    note: Commit Commentの要件影響節に「なし」、要件ID、外部挙動を変えない理由がある
 
   - id: IMP-002
     class: Invariant
     result: pass
     evidence:
-      - docs/COMMIT-COMMENT.md
-      - docs/ARTIFACTS-AND-CHECKS.md
-    note: 設計影響をCommit Commentの必須節として定義
+      - commit:HEAD
+    note: Commit Commentの設計影響節に「あり」、対象、生成設計、ADR判断がある
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:HEAD
+    note: 複数module、CI、配布契約を変更するためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:HEAD
+    note: 利用者のPR更新依頼をGitHub branchへの外部書込み権限として扱う
+
+  - id: IMP-010
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+      - test:tests/test_review_contract.py
+    note: schema検証依存を固定版で追加し、validator testで利用を確認する
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - test:tests/test_review_contract.py
+    note: Python構文とrepository testをGovernance workflowで検査する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Governance workflowのruff checkを現在HEADへ実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_review_contract.py
+      - workflow:Governance
+    note: catalog照合、blocking fail、advisory、Commit Comment、配布除外を単体テストする
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:HEAD
+    note: 現在HEADの差分を対象に機密情報を含まないことを確認する
+
+  - id: FAST-008
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+      - workflow:Governance
+    note: このrepositoryは固定版requirements.txtを依存正本とし、CIで同じ依存を導入する
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:HEAD
+    note: 差分をadaptive governance契約の実装とレビュー指摘対応に限定した
 
   - id: REV-002
     class: Invariant
     result: pass
     evidence:
-      - docs/COMMIT-COMMENT.md
-      - .agents/skills/japanese-git-commit-gitmoji/SKILL.md
-    note: Commit Commentの構造を文書とSkillへ反映
+      - commit:HEAD
+      - test:tests/test_review_contract.py
+    note: validatorが現在HEADの必須節、trailers、Review-Checklistを検査する
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:HEAD
+    note: Commit Commentの要件影響判定とrequirements.json無変更が一致する
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:HEAD
+    note: 開発統制の設計影響をCommit Commentへ記載し、生成設計対象外とした
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_review_contract.py
+      - workflow:Governance
+    note: レビュー指摘の受入条件を単体テストとCIへ接続した
 
   - id: REV-007
     class: Invariant
     result: pass
     evidence:
-      - governance/reviews/README.md
-      - governance/reviews/review-result.schema.json
-    note: 選択チェックだけをリポジトリへ保存する形式を追加
+      - path:governance/reviews/CHG-20260718-artifact-governance.yaml
+      - test:tests/test_review_contract.py
+    note: 今回選択したcheckだけをschema/catalog適合YAMLへ保存した
 
-  - id: REV-012
-    class: Risk-selected
-    result: na
-    evidence: []
-    note: 認証・認可、秘密情報、データ損失、不可逆なproduction操作を変更しない
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260718-artifact-governance.yaml
+    note: 未選択checkを形式的なN/Aとして登録していない
 
-advisories:
-  - id: MIGRATION-LEGACY-WORK
-    disposition: residual-risk
-    note: 既存work itemの自動移行は今回の対象外
+advisories: []
 
 residual_risks:
   - 既存のregulated用devflow runtimeは互換性維持のため残し、既定フローからのみ外す
-  - 再編版checklist.xlsxは生成成果物として別途提供し、バイナリ更新経路の制約によりこのPRには未添付
+  - 既存work itemの自動移行は今回の対象外

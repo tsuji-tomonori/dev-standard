@@ -26,7 +26,7 @@ description: Start and complete repository development from ordinary natural-lan
 2. `$right-size-execution`で`direct`、`assured`、`regulated`を選ぶ。
 3. 要件影響と設計影響を仮判定する。
 4. 永続要件が変わる場合だけ`$maintain-canonical-requirements`を使う。
-5. 変更固有のcheckを選択し、未選択項目をN/Aにしない。
+5. `governance/checks/catalog.yaml`から変更固有のcheckを選択し、未選択項目をN/Aにしない。
 6. 実装し、対象範囲のfast feedbackを実行する。
 7. FastAPI、CDKその他の対応対象では`$generate-implementation-design`でas-built設計を生成する。
 8. PR前に`$inspect-quality-gates`で選択checkを確認し、review YAMLを保存する。
@@ -96,6 +96,7 @@ description: Start and complete repository development from ordinary natural-lan
 - `Invariant`: trigger該当時はPass必須
 - `Risk-selected`: 選択された場合だけblocking
 - `Advisory`: 修正、Issue化、残存リスクとして明示できる
+- `Periodic`: 個別PRではなく定期監査で扱う
 
 CI実行結果は外部サービスを正本とし、YAMLにはcheck名や証拠pathだけを書く。
 
