@@ -5,6 +5,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -31,7 +32,7 @@ class ReviewContractTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "CHG-20260718-test.yaml"
             path.write_text(yaml.safe_dump(value, allow_unicode=True, sort_keys=False), encoding="utf-8")
-            review_contract.validate_review(ROOT, path, self.schema, self.catalog, self.checks)
+            review_contract.validate_review(ROOT, path, self.schema, self.catalog, self.checks, "HEAD")
 
     def test_catalog_is_unique_and_contains_all_restructured_checks(self) -> None:
         self.assertEqual(self.catalog["item_count"], 59)
@@ -41,6 +42,34 @@ class ReviewContractTest(unittest.TestCase):
 
     def test_current_repository_contract_is_valid(self) -> None:
         review_contract.validate_repository(ROOT, "HEAD")
+
+    def test_only_active_review_is_revalidated(self) -> None:
+        with mock.patch.object(
+            review_contract, "validate_review", wraps=review_contract.validate_review
+        ) as validate_review:
+            review_contract.validate_repository(ROOT, "HEAD")
+        validate_review.assert_called_once()
+        self.assertEqual(
+            validate_review.call_args.args[1].name,
+            "CHG-20260718-artifact-governance.yaml",
+        )
+
+    def test_catalog_digest_and_self_bound_workflow_step_are_validated(self) -> None:
+        stale = yaml.safe_load(yaml.safe_dump(self.current))
+        stale["catalog_digest"] = "sha256:" + ("0" * 64)
+        with self.assertRaisesRegex(review_contract.ContractError, "catalog_digest"):
+            self.validate_copy(stale)
+
+        review_contract.validate_evidence(ROOT, "commit:self", "HEAD")
+        review_contract.validate_evidence(ROOT, "workflow:Governance#Secret scan", "HEAD")
+        with self.assertRaisesRegex(review_contract.ContractError, "workflow step"):
+            review_contract.validate_evidence(ROOT, "workflow:Governance#Missing", "HEAD")
+
+    def test_required_check_omission_is_rejected(self) -> None:
+        value = yaml.safe_load(yaml.safe_dump(self.current))
+        value["selected_checks"] = [item for item in value["selected_checks"] if item["id"] != "IMP-001"]
+        with self.assertRaisesRegex(review_contract.ContractError, "missing required checks: IMP-001"):
+            self.validate_copy(value)
 
     def test_unknown_check_and_class_mismatch_are_rejected(self) -> None:
         unknown = yaml.safe_load(yaml.safe_dump(self.current))
@@ -62,8 +91,16 @@ class ReviewContractTest(unittest.TestCase):
 
     def test_advisory_issue_and_residual_risk_require_linkage(self) -> None:
         value = yaml.safe_load(yaml.safe_dump(self.current))
+        advisory_check = next(item for item in value["selected_checks"] if item["id"] == "REV-015")
+        advisory_check.update({"result": "fail", "evidence": [], "note": "ADR判断を持越す"})
         value["selected_checks"].append(
-            {"id": "REV-015", "class": "Advisory", "result": "fail", "evidence": [], "note": "ADR判断を持越す"}
+            {
+                "id": "REV-010",
+                "class": "Invariant",
+                "result": "pass",
+                "evidence": ["test:tests/test_review_contract.py"],
+                "note": "Advisory failの処理をテストする",
+            }
         )
         value["advisories"] = [{"id": "REV-015", "disposition": "issue", "note": "Issueで追跡"}]
         with self.assertRaisesRegex(review_contract.ContractError, "schema validation failed"):

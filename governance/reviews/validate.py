@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -25,6 +26,44 @@ REQUIRED_SECTIONS = [
 ]
 REQUIRED_TRAILERS = ["Requirements", "Design-Impact", "Review-Checklist"]
 EVIDENCE_PATTERN = re.compile(r"^(path|test|commit|workflow):(.+)$")
+ALWAYS_TRIGGERS = {"常時", "全変更"}
+DERIVED_TRIGGERS = {
+    "N/A使用時": "na_used",
+    "Fail時": "fail_present",
+    "advisory存在時": "advisory_present",
+}
+TRIGGER_FLAGS = {
+    "外部書込み時": "external_write",
+    "不可逆操作時": "irreversible_operation",
+    "認証・認可変更時": "auth_change",
+    "DB・永続データ変更時": "data_change",
+    "公開API・イベント変更時": "public_api_change",
+    "IaC変更時": "iac_change",
+    "依存更新時": "dependency_change",
+    "コード変更時": "code_change",
+    "型付きコード変更時": "typed_code_change",
+    "振る舞い変更時": "behavior_change",
+    "不具合修正時": "bug_fix",
+    "生成対象変更時": "generated_change",
+    "公開API変更時": "public_api_change",
+    "SQL変更時": "sql_change",
+    "migration時": "migration",
+    "UI変更時": "ui_change",
+    "対話UI変更時": "interactive_ui_change",
+    "運用影響時": "operational_impact",
+    "要件影響あり": "requirements_impact",
+    "公開契約変更時": "public_contract_change",
+    "critical変更時": "critical_change",
+    "重要UI変更時": "important_ui_change",
+    "長期判断時": "long_term_decision",
+    "squash時": "squash",
+    "外部副作用時": "external_side_effect",
+    "production deploy時": "production_deploy",
+    "重大異常時": "major_incident",
+    "月次またはリリース単位": "periodic_cycle",
+    "月次": "monthly_cycle",
+    "再確認期限時": "recheck_due",
+}
 
 
 class ContractError(RuntimeError):
@@ -53,10 +92,16 @@ def load_catalog(path: Path) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]
         for field in ["class", "timing", "trigger", "check", "acceptance", "enforcement"]:
             if not item.get(field):
                 raise ContractError(f"{path}: {item_id} missing {field}")
+        if item["trigger"] not in ALWAYS_TRIGGERS | DERIVED_TRIGGERS.keys() | TRIGGER_FLAGS.keys():
+            raise ContractError(f"{path}: {item_id} has unsupported trigger {item['trigger']}")
         by_id[item_id] = item
     if catalog.get("item_count") != len(items):
         raise ContractError(f"{path}: item_count does not match items")
     return catalog, by_id
+
+
+def digest_file(path: Path) -> str:
+    return f"sha256:{hashlib.sha256(path.read_bytes()).hexdigest()}"
 
 
 def git_text(root: Path, *args: str) -> str:
@@ -73,7 +118,7 @@ def safe_repo_path(root: Path, text: str) -> Path:
     return path
 
 
-def validate_evidence(root: Path, evidence: str) -> None:
+def validate_evidence(root: Path, evidence: str, source_commit: str) -> None:
     match = EVIDENCE_PATTERN.fullmatch(evidence)
     if not match:
         raise ContractError(f"invalid evidence reference: {evidence}")
@@ -83,13 +128,48 @@ def validate_evidence(root: Path, evidence: str) -> None:
         if not safe_repo_path(root, target_path).is_file():
             raise ContractError(f"evidence path does not exist: {evidence}")
     elif kind == "commit":
-        git_text(root, "cat-file", "-e", f"{target}^{{commit}}")
+        commit = source_commit if target == "self" else target
+        git_text(root, "cat-file", "-e", f"{commit}^{{commit}}")
     elif kind == "workflow":
+        workflow_name, separator, step_name = target.partition("#")
         workflows = list((root / ".github" / "workflows").glob("*.yml"))
         workflows.extend((root / ".github" / "workflows").glob("*.yaml"))
-        names = {str(load_yaml(path).get("name", "")) for path in workflows}
-        if target not in names:
-            raise ContractError(f"workflow evidence does not exist: {target}")
+        workflow = next((load_yaml(path) for path in workflows if load_yaml(path).get("name") == workflow_name), None)
+        if workflow is None:
+            raise ContractError(f"workflow evidence does not exist: {workflow_name}")
+        if separator:
+            steps = {
+                str(step.get("name", ""))
+                for job in workflow.get("jobs", {}).values()
+                for step in job.get("steps", [])
+                if isinstance(step, dict)
+            }
+            if step_name not in steps:
+                raise ContractError(f"workflow step evidence does not exist: {target}")
+
+
+def required_check_ids(review: dict[str, Any], checks: dict[str, dict[str, Any]]) -> set[str]:
+    completed_timings = set(review["completed_timings"])
+    flags = review["impact_flags"]
+    selected = review["selected_checks"]
+    derived = {
+        "na_used": any(item["result"] == "na" for item in selected),
+        "fail_present": any(item["result"] == "fail" for item in selected),
+        "advisory_present": bool(review["advisories"]),
+    }
+    required: set[str] = set()
+    for item_id, item in checks.items():
+        if item["timing"] not in completed_timings:
+            continue
+        trigger = item["trigger"]
+        applies = trigger in ALWAYS_TRIGGERS
+        if trigger in DERIVED_TRIGGERS:
+            applies = derived[DERIVED_TRIGGERS[trigger]]
+        elif trigger in TRIGGER_FLAGS:
+            applies = flags[TRIGGER_FLAGS[trigger]]
+        if applies:
+            required.add(item_id)
+    return required
 
 
 def validate_review(
@@ -98,6 +178,7 @@ def validate_review(
     schema: dict[str, Any],
     catalog: dict[str, Any],
     checks: dict[str, dict[str, Any]],
+    source_commit: str,
 ) -> dict[str, Any]:
     review = load_yaml(path)
     schema_errors = sorted(Draft202012Validator(schema).iter_errors(review), key=lambda error: list(error.path))
@@ -106,6 +187,9 @@ def validate_review(
         raise ContractError(f"{path}: schema validation failed: {messages}")
     if review["catalog_version"] != catalog["catalog_version"]:
         raise ContractError(f"{path}: catalog_version is stale")
+    catalog_path = root / "governance" / "checks" / "catalog.yaml"
+    if review["catalog_digest"] != digest_file(catalog_path):
+        raise ContractError(f"{path}: catalog_digest does not match the active catalog")
 
     selected = review["selected_checks"]
     selected_by_id: dict[str, dict[str, Any]] = {}
@@ -122,8 +206,12 @@ def validate_review(
             raise ContractError(f"{path}: blocking check {item_id} cannot remain fail")
         if result["result"] == "pass":
             for evidence in result["evidence"]:
-                validate_evidence(root, evidence)
+                validate_evidence(root, evidence, source_commit)
         selected_by_id[item_id] = result
+
+    missing = sorted(required_check_ids(review, checks) - selected_by_id.keys())
+    if missing:
+        raise ContractError(f"{path}: missing required checks: {', '.join(missing)}")
 
     advisory_by_id: dict[str, dict[str, Any]] = {}
     for advisory in review["advisories"]:
@@ -172,13 +260,15 @@ def validate_repository(root: Path, commit_ref: str) -> None:
     catalog, checks = load_catalog(root / "governance" / "checks" / "catalog.yaml")
     schema = json.loads((root / "governance" / "reviews" / "review-result.schema.json").read_text(encoding="utf-8"))
     active_review = validate_commit(root, commit_ref)
-    review_files = sorted((root / "governance" / "reviews").glob("CHG-*.yaml"))
-    if active_review not in review_files:
+    reviews_root = (root / "governance" / "reviews").resolve()
+    if active_review.parent != reviews_root or not active_review.name.startswith("CHG-"):
         raise ContractError(f"{commit_ref}: Review-Checklist must point under governance/reviews/CHG-*.yaml")
-    for path in review_files:
-        review = validate_review(root, path, schema, catalog, checks)
-        if path == active_review and review["source_ref"] != "HEAD":
-            raise ContractError(f"{path}: active review source_ref must be HEAD")
+    resolved_commit = git_text(root, "rev-parse", f"{commit_ref}^{{commit}}")
+    relative_review = active_review.relative_to(root).as_posix()
+    source_commit = git_text(root, "log", "-1", "--format=%H", resolved_commit, "--", relative_review)
+    if source_commit != resolved_commit:
+        raise ContractError(f"{active_review}: active review must be updated by {commit_ref}")
+    validate_review(root, active_review, schema, catalog, checks, source_commit)
 
 
 def main() -> int:

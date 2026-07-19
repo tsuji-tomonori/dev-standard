@@ -7,9 +7,12 @@
   "required": [
     "schema_version",
     "catalog_version",
+    "catalog_digest",
     "change_id",
     "profile",
     "source_ref",
+    "completed_timings",
+    "impact_flags",
     "selected_checks",
     "advisories",
     "residual_risks"
@@ -22,6 +25,10 @@
       "type": "integer",
       "minimum": 1
     },
+    "catalog_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
     "change_id": {
       "type": "string",
       "pattern": "^CHG-[0-9]{8}-[a-z0-9][a-z0-9-]{1,80}$"
@@ -30,8 +37,81 @@
       "enum": ["direct", "assured", "regulated"]
     },
     "source_ref": {
-      "type": "string",
-      "minLength": 1
+      "const": "self"
+    },
+    "completed_timings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["impact", "implementation", "pre-pr", "pre-merge", "post-deploy", "periodic"]
+      }
+    },
+    "impact_flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_write",
+        "irreversible_operation",
+        "auth_change",
+        "data_change",
+        "public_api_change",
+        "iac_change",
+        "dependency_change",
+        "code_change",
+        "typed_code_change",
+        "behavior_change",
+        "bug_fix",
+        "generated_change",
+        "sql_change",
+        "migration",
+        "ui_change",
+        "interactive_ui_change",
+        "operational_impact",
+        "requirements_impact",
+        "public_contract_change",
+        "critical_change",
+        "important_ui_change",
+        "long_term_decision",
+        "squash",
+        "external_side_effect",
+        "production_deploy",
+        "major_incident",
+        "periodic_cycle",
+        "monthly_cycle",
+        "recheck_due"
+      ],
+      "properties": {
+        "external_write": {"type": "boolean"},
+        "irreversible_operation": {"type": "boolean"},
+        "auth_change": {"type": "boolean"},
+        "data_change": {"type": "boolean"},
+        "public_api_change": {"type": "boolean"},
+        "iac_change": {"type": "boolean"},
+        "dependency_change": {"type": "boolean"},
+        "code_change": {"type": "boolean"},
+        "typed_code_change": {"type": "boolean"},
+        "behavior_change": {"type": "boolean"},
+        "bug_fix": {"type": "boolean"},
+        "generated_change": {"type": "boolean"},
+        "sql_change": {"type": "boolean"},
+        "migration": {"type": "boolean"},
+        "ui_change": {"type": "boolean"},
+        "interactive_ui_change": {"type": "boolean"},
+        "operational_impact": {"type": "boolean"},
+        "requirements_impact": {"type": "boolean"},
+        "public_contract_change": {"type": "boolean"},
+        "critical_change": {"type": "boolean"},
+        "important_ui_change": {"type": "boolean"},
+        "long_term_decision": {"type": "boolean"},
+        "squash": {"type": "boolean"},
+        "external_side_effect": {"type": "boolean"},
+        "production_deploy": {"type": "boolean"},
+        "major_incident": {"type": "boolean"},
+        "periodic_cycle": {"type": "boolean"},
+        "monthly_cycle": {"type": "boolean"},
+        "recheck_due": {"type": "boolean"}
+      }
     },
     "selected_checks": {
       "type": "array",

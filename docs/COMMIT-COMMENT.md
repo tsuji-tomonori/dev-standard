@@ -165,4 +165,6 @@ Review-Checklist: governance/reviews/CHG-20260718-artifact-governance.yaml
 
 ## 5. スカッシュマージ
 
-複数コミットをsquashする場合、最終コミット本文へPR全体の内容を統合する。中間コミットだけに要件・設計影響を残してはならない。
+Commit CommentをChange Manifestの正本とするPRは**squash merge必須**とする。最終squash commitの本文へPR全体の内容を統合し、中間コミットやPR本文だけに要件・設計影響を残さない。
+
+merge commitまたはrebase mergeを使用するリポジトリでは、PR内の全commitを同じCommit Comment契約で検査する別workflowが必要である。

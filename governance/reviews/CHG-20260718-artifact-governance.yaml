@@ -1,36 +1,71 @@
 schema_version: 1
 catalog_version: 1
+catalog_digest: sha256:fe3483b332cc9fda65acc831f27b9e31ac383741916eea8a613929b802edaee3
 change_id: CHG-20260718-artifact-governance
 profile: assured
-source_ref: HEAD
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: true
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: true
+  requirements_impact: false
+  public_contract_change: false
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: true
+  external_side_effect: true
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
 
 selected_checks:
   - id: IMP-001
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
     note: Commit Commentの要件影響節に「なし」、要件ID、外部挙動を変えない理由がある
 
   - id: IMP-002
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
     note: Commit Commentの設計影響節に「あり」、対象、生成設計、ADR判断がある
 
   - id: IMP-003
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
     note: 複数module、CI、配布契約を変更するためassuredを選択した
 
   - id: IMP-004
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
     note: 利用者のPR更新依頼をGitHub branchへの外部書込み権限として扱う
 
   - id: IMP-010
@@ -68,8 +103,8 @@ selected_checks:
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
-    note: 現在HEADの差分を対象に機密情報を含まないことを確認する
+      - workflow:Governance#Secret scan
+    note: GitleaksをPR HEADに対し実行し、成功をblocking条件にする
 
   - id: FAST-008
     class: Risk-selected
@@ -83,14 +118,14 @@ selected_checks:
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
     note: 差分をadaptive governance契約の実装とレビュー指摘対応に限定した
 
   - id: REV-002
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
       - test:tests/test_review_contract.py
     note: validatorが現在HEADの必須節、trailers、Review-Checklistを検査する
 
@@ -98,14 +133,14 @@ selected_checks:
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
     note: Commit Commentの要件影響判定とrequirements.json無変更が一致する
 
   - id: REV-004
     class: Invariant
     result: pass
     evidence:
-      - commit:HEAD
+      - commit:self
     note: 開発統制の設計影響をCommit Commentへ記載し、生成設計対象外とした
 
   - id: REV-006
@@ -130,6 +165,30 @@ selected_checks:
     evidence:
       - path:governance/reviews/CHG-20260718-artifact-governance.yaml
     note: 未選択checkを形式的なN/Aとして登録していない
+
+  - id: FAST-015
+    class: Advisory
+    result: pass
+    evidence:
+      - workflow:Governance
+      - path:governance/reviews/README.md
+    note: validator失敗をGovernance workflowで検知し、証拠の保持境界を文書化した
+
+  - id: REV-014
+    class: Risk-selected
+    result: pass
+    evidence:
+      - workflow:Governance
+      - path:governance/reviews/README.md
+    note: review contractの運用方法、active検証、過去証拠の不変性を運用正本へ反映した
+
+  - id: REV-015
+    class: Advisory
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/README.md
+    note: active reviewだけを現行契約で検査し、selfとcatalog digestで変更時点を固定する判断理由を残した
 
 advisories: []
 
