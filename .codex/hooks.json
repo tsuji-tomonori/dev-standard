@@ -8,7 +8,7 @@
             "type": "command",
             "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/session_start.py\"",
             "timeout": 30,
-            "statusMessage": "Loading governed development state"
+            "statusMessage": "Loading adaptive development guidance"
           }
         ]
       }
@@ -20,7 +20,7 @@
             "type": "command",
             "command": "/usr/bin/python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/stop_retrospective.py\"",
             "timeout": 90,
-            "statusMessage": "Recording retrospective and pending improvement candidates"
+            "statusMessage": "Checking for active regulated work"
           }
         ]
       }

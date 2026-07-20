@@ -1,32 +1,160 @@
 ---
 name: inspect-quality-gates
-description: Strictly inspect lifecycle documents, checklist applicability, verdicts, evidence, exceptions, reviewers, the single initial authorization, every preceding gate, and record integrity. Use before initial authorization, phase advancement, completion claims, publication, or pull-request review.
+description: Inspect only the checks selected for the current change, at impact, implementation, pre-PR, pre-merge, post-deploy, or periodic-audit timing. Record concise results in governance/reviews/<change-id>.yaml, keep CI execution results in external services, and reserve the legacy phase-gate harness for regulated work only.
 ---
 
 # Inspect Quality Gates
 
-All inspection and verification commands are agent-owned implementation details. Never transfer them to the user.
+選択されたcheckだけを、変更イベントに応じた時点で確認する。
 
-Use the deterministic harness as the source of gate truth and explain every blocker.
+## 既定の証跡
 
-## Workflow
+- review判断: `governance/reviews/<change-id>.yaml`
+- check定義の正本: `governance/checks/catalog.yaml`
+- automated result: GitHub Actions等の外部サービス
+- requirement / design impact: Commit Comment
+- implementation evidence: code、test、生成設計、ADR、Git diff
 
-1. Read `references/gate-rules.md` and any approved `references/learned-rules.md`.
-2. Before initial authorization, run `scripts/inspect.py --work-item <ID> --phase requirements --ignore-approvals`. Never use `--ignore-approvals` for advancement, publication, or completion.
-3. After authorization, run normal inspection and verify that requirements, execution plan, and requirements checklist still match the authorized digest.
-4. When `execution-profile.json` exists, validate its schema and policy revision; enforce the assurance floor; and audit unexplained budget overrun, evidence-free or stagnant single-axis Expand, post-success activity, compute escalation without demonstrated insufficiency, selector manifest, and mandatory-control misses. In shadow mode keep efficiency and selector findings advisory; malformed ledgers and assurance-floor violations remain blocking.
-5. Group blockers by documents, applicability, verdict/evidence, reviewer, authorization, execution scope, and preceding phase.
-6. Delegate only bounded independent judgment when it materially improves quality; use `gate-auditor` for the final cross-phase check.
-7. Resolve the cause without asking for another phase approval. Never edit policy, remove profiles, delete items, or create empty evidence merely to obtain PASS.
-8. Re-run inspection after every material change. A requirements or plan digest change invalidates authorization; a derived-document change only requires its quality gate to pass again.
-9. Before release, run `make verify`, soft scope audit, and `python tools/devflow.py audit`.
+変更ごとのtest report、implementation log、release reportは作らない。
 
-## Evidence rules
+## Check class
 
-- Pass needs a reachable file or URL that directly proves the acceptance criterion.
-- N/A needs a scope, architecture, law, or risk rationale specific to the item.
-- Fail needs an Issue ID and remains blocking in the single-authorization workflow; fix the cause instead of seeking a later human exception.
-- Reviewer identity and timestamp are mandatory for applicable checks.
-- Duplicate controls may share evidence and Issue IDs, but each selected row still needs an explicit disposition.
+### Invariant
 
-Report consequential uncertainty as a blocker. Absence of a detected failure is not proof of completion.
+triggerに該当した場合はPass必須。Failを残したままmergeしない。
+
+例:
+
+- secretsや個人情報をGitへ入れない
+- 必要な対象test、build、type checkが実行される
+- 認可境界を迂回しない
+- 未承認の不可逆操作を行わない
+- 生成物と生成元が一致する
+- Commit Commentに要件・設計影響がある
+
+### Risk-selected
+
+変更のrisk、artifact、pathから選択された場合だけblocking。
+
+例:
+
+- API compatibility
+- migration / rollback
+- IaC replacement
+- dependency integrity
+- keyboard / focus
+- independent security review
+
+### Advisory
+
+その変更で確認する価値はあるが、単独ではmergeを停止しない。
+
+- 修正する
+- Issue化する
+- residual riskへ記載する
+
+のいずれかへ収束させる。
+
+## Timing
+
+### 変更開始前: Impact Check
+
+確認するもの:
+
+- profile
+- requirement impact
+- design impact
+- authority impact
+- public contract、DB、IaC、dependency、security trigger
+- selected check
+
+この時点で全checkのPass/N/Aを記録しない。
+
+### 実装中: Fast Feedback Check
+
+自動検査を小さい変更スライスごとに実行する。
+
+- targeted test
+- build / syntax
+- lint / type check
+- generated drift
+- secret scan
+- contract diff、SQL parse、synth等の選択check
+
+結果の正本は外部CIとし、repositoryへログを複製しない。
+
+### PR作成前: Affected-scope Check
+
+- requirement / design impactの判定と差分が一致する
+- 受入条件へ対応するtestがCIで実行される
+- selected checkのresultと証拠がある
+- blocking failがない
+- advisoryの扱いが決まっている
+- review YAMLがschemaに適合する
+- Commit Commentの必須節が埋まっている
+
+### Merge前: Revision Integrity Check
+
+- CIが現在HEADを対象としている
+- 生成物が最新
+- blocking failがない
+- advisoryとresidual riskの扱いが明示されている
+- squash後のCommit Commentに証跡が残る
+- merge、release、deployが権限境界内
+
+過去の全工程を最初から再検査しない。HEAD変更で無効化された証拠だけを再確認する。
+
+### Deploy後: Operational Check
+
+production deploy、migration、外部書込みがある場合だけ実施する。
+
+- deploy status
+- smoke test
+- migration status
+- monitoring
+- rollback / roll-forward判断
+
+結果はdeployment service、monitoring service、GitHub Actions等へ残す。
+
+### 定期: Governance Audit
+
+個別PRから分離して次を確認する。
+
+- false blocker
+- escaped defect
+- selector miss
+- Skill・hookの指示競合
+- 不要成果物
+- standard registryの鮮度
+- token / tool / reviewerコスト
+- advisory滞留
+
+## Review result rules
+
+### Pass
+
+直接証拠が必要。CIの場合はworkflow名またはrequired check名と、検証対象となるtest・設定への参照を記録する。生ログは保存しない。
+
+### N/A
+
+selectorで選ばれた後、具体的事実により適用外と判明した場合だけ使用する。noteを必須とする。
+
+### Fail
+
+- Invariantとblocking Risk-selectedは修正する。
+- Advisoryは修正、Issue、residual riskのいずれかを記録する。
+- その場で修正するFailへ一律にIssue、期限、責任者を要求しない。
+
+## Regulated compatibility
+
+`regulated` profileでは、既存の`tools/devflow.py`によるphase gate、承認、hash chain、監査を追加できる。このlegacy harnessを`direct`または`assured`へ強制しない。
+
+## Completion
+
+- `python governance/reviews/validate.py --root . --commit HEAD`が成功する。
+- review YAMLがschemaに適合する。
+- trigger該当のInvariantがすべてPass。
+- 選択したblocking Risk-selectedがすべてPass。
+- Advisoryの扱いが決まっている。
+- CI結果をrepositoryへ複製していない。
+- Commit Commentの要件影響、設計影響、review path、検証契約が完成している。

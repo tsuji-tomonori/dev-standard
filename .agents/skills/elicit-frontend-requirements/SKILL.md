@@ -1,80 +1,55 @@
 ---
 name: elicit-frontend-requirements
-description: Discover and specify human-centred frontend UI and UX requirements with people who may not know design terminology. Use when a frontend feature, screen, flow, redesign, design system, accessibility concern, or vague request such as "make it easier to use" needs requirements. Reuse calibrated listening and canonical-requirement skills, ask only consequential novice-friendly questions, separate needs from solution preferences, and produce testable requirements before visual design or implementation.
+description: Discover human-centred, testable frontend requirements from users who may not know design terminology. Persist only durable obligations in the canonical requirements, use temporary notes only in .devflow/run when necessary, and record requirement impact in the Commit Comment. Do not require a permanent work item or per-change lifecycle documents.
 ---
 
 # Elicit Frontend Requirements
 
-Turn an incomplete frontend request into human-centred, testable requirements without requiring the requester to act like a designer.
+利用者のtask、context、失敗影響、制約から、実装と検証に必要なfrontend要求を明らかにする。
 
-## Required composition
+## Composition
 
-- Use `$calibrated-collaborative-listening` for ambiguous, conflicting, emotionally charged, or incompletely expressed intent. Do not reproduce its general listening rules here.
-- Use `$maintain-canonical-requirements` to persist every durable obligation as an atomic add, update, or retire operation. This skill does not create a second requirements authority.
-- Use `$author-lifecycle-docs` to maintain `docs/01-requirements.md`, `docs/01-traceability.md`, and `docs/01-execution-plan.md` in a governed work item.
-- Use `$verify-against-engineering-standards` when accessibility, ergonomics, platform conventions, legal obligations, or other external guidance materially affects the requirements.
-- Use `$adversarial-review` before completion when a wrong requirement could exclude users, hide a critical state, or cause expensive redesign.
+- ambiguityが結果を変える場合だけ`$calibrated-collaborative-listening`を使う。
+- 永続的な義務だけを`$maintain-canonical-requirements`へ渡す。
+- accessibility、法令、platform conventionが実質的に関係する場合だけ`$verify-against-engineering-standards`を使う。
+- 高影響flow、排除risk、高額な作り直しriskでは必要時だけ`$adversarial-review`を使う。
 
-Read `references/evidence-map.md` when maintaining this skill, explaining its research basis, or selecting a human-factors method.
+`$author-lifecycle-docs`、恒久work item、変更ごとのrequirements documentを通常は使用しない。
 
 ## Workflow
 
-1. Inspect the product and repository before interviewing. Identify existing screens, navigation, terminology, design tokens, components, supported devices, accessibility conventions, analytics or research evidence, and related canonical requirement IDs. Do not ask the requester to restate facts already present.
-2. State the likely outcome as a correctable hypothesis in the requester's vocabulary. Separate the user problem from an assumed UI solution.
-3. Establish the context of use:
-   - people and roles, including differences in expertise, ability, language, and access needs;
-   - primary and secondary tasks, frequency, urgency, consequence of error, and recovery needs;
-   - device, viewport, input method, environment, network, interruption, and privacy constraints;
-   - information required to decide and act, including sensitive, missing, delayed, or uncertain data.
-4. Ask only questions whose answers change scope, interaction, priority, accessibility, risk, or acceptance criteria. Ask one bounded question at a time by default.
-5. Translate design jargon into concrete contrasts. For example, ask whether the priority is rapid comparison across many records or calm step-by-step completion; explain the trade-off and allow "either is acceptable". Do not ask the requester to choose typography scales, spacing tokens, component names, or ARIA techniques.
-6. Elicit observable work rather than opinions alone. Ask what the person is trying to complete, what they need to notice, what mistakes are costly, what currently causes hesitation, and what a successful outcome looks like.
-7. Use examples, sketches, existing screens, or two to three small alternative descriptions when words are insufficient. Treat reactions as evidence about goals and trade-offs, not as permission to copy an example blindly.
-8. Classify every finding as one of:
-   - verified fact;
-   - user decision;
-   - user need or task;
-   - constraint;
-   - preference;
-   - design hypothesis;
-   - unresolved consequential decision.
-9. Define the frontend requirement set. Cover only applicable dimensions:
-   - task and information hierarchy;
-   - navigation and wayfinding;
-   - data entry and validation;
-   - default, loading, empty, partial, error, success, disabled, permission-denied, and recovery states;
-   - responsiveness, input modalities, keyboard operation, zoom and reflow;
-   - content language, terminology, localization, and help;
-   - accessibility and assistive-technology expectations;
-   - trust, privacy, destructive actions, confirmation, and auditability;
-   - perceived and measured performance;
-   - brand or visual-character constraints without prematurely fixing styling details.
-10. Express usability as outcomes in a specified context, not as adjectives such as intuitive, modern, simple, or user-friendly. Define appropriate evidence such as task completion, error prevention or recovery, time or interaction limits when justified, comprehension, satisfaction, or an expert review criterion.
-11. Atomize durable obligations with `$maintain-canonical-requirements`. Trace each requirement to the original request or research evidence and forward to planned design, implementation, and tests.
-12. Record excluded scope, assumptions, unresolved items, and the smallest viable evaluation plan. Do not invent personas, disabilities, user counts, browser support, or business priorities as facts.
+1. 既存screen、navigation、terminology、component、token、supported environment、関連要件を調査する。
+2. user problemと想定solutionを分離する。
+3. people、role、task、frequency、urgency、error consequence、recoveryを確認する。
+4. device、viewport、input、network、privacy、interruption等のcontextを確認する。
+5. 回答がscope、interaction、priority、accessibility、risk、acceptanceを変える質問だけを行う。
+6. observable outcomeとして要求を定義する。
+7. applicableなloading、empty、partial、error、permission、success、recovery stateを確認する。
+8. keyboard、zoom、reflow、localization、assistive technology等の必要範囲を確認する。
+9. durable obligationを原子要件へ変換し、正本へadd / update / retireする。
+10. designで決める仮説と、product requirementを区別する。
+11. 要件影響、ID、理由をCommit Commentへ記録する。
 
-## Novice-friendly interview rules
+一時的なinterview noteが必要な場合だけ`.devflow/run/<change-id>/frontend-notes.md`を使用し、正本適用後に削除する。
 
-- Begin with work, users, and consequences; visual taste comes later.
-- Prefer recognition over recall: provide examples or bounded contrasts when the requester lacks vocabulary.
-- Explain why a consequential question matters in one sentence.
-- Accept uncertainty. Record a reversible default when the choice can safely be deferred.
-- Do not present a design recommendation as something the requester previously asked for.
-- Do not equate the requester's personal preference with the needs of all users.
-- Do not force consensus between conflicting user groups; record the conflict and the decision owner.
+## Requirement quality
 
-## Requirement quality gates
+frontend requirementは次の場合に未完成である。
 
-A frontend requirement is not ready when it:
+- user outcomeなしにsolutionだけを固定する
+- intuitive、modern、simple等の未検証形容詞だけである
+- applicableなfailure / empty / loading / permission / recoveryが欠ける
+- mouse、vision、color perception、memory、language、device能力を根拠なく仮定する
+- 独立義務を一つのIDに結合する
+- acceptanceまたはverification方法がない
+- user need、decision、sourceへのtraceがない
 
-- names a solution without the user outcome or constraint that justifies it;
-- uses untestable adjectives without a measurable or reviewable meaning;
-- omits an applicable failure, empty, loading, permission, or recovery state;
-- assumes mouse, vision, color perception, memory, language, or device capability without evidence;
-- combines independent obligations in one requirement ID;
-- has no trace to a user need, source, decision, or standard;
-- cannot be mapped to a design decision and a verification method.
+## Output
 
-## Completion
+- 永続要件のadd / update / retire
+- requirement IDとacceptance criteria
+- designへ渡すcontext、constraint、priority
+- requirement impactを含むCommit Comment
+- 必要なselected check
 
-Complete only when the requester can recognize or cheaply correct the formulation, consequential ambiguity is resolved or explicitly owned, durable obligations exist in the canonical requirement catalog, the work-item documents and trace are current, and the next design phase has a bounded problem rather than a collection of style requests.
+独立した変更ごとのrequirements reportは作らない。

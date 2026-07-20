@@ -13,6 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -22,6 +29,41 @@ jobs:
       - run: python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
       - run: python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
       - run: ruff check .
-      - run: python -m unittest discover -s tests -v
-      - run: python tools/validate_repo.py
-      - run: python tools/devflow.py audit
+      - name: Validate adaptive review contract
+        run: python governance/reviews/validate.py --root . --commit HEAD
+      - name: Run unit tests
+        id: unit-tests
+        shell: bash
+        run: |
+          set +e
+          python -m unittest discover -s tests > unit-test.log 2>&1
+          status=$?
+          cat unit-test.log
+          exit "$status"
+      - name: Upload unit test log on failure
+        if: failure() && steps.unit-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          path: unit-test.log
+          archive: false
+          retention-days: 3
+      - name: Run repository validation
+        id: repository-validation
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          python tools/validate_repo.py > repository-validation.log 2>&1
+          status=$?
+          cat repository-validation.log
+          exit "$status"
+      - name: Upload repository validation log on failure
+        if: failure() && steps.repository-validation.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          path: repository-validation.log
+          archive: false
+          retention-days: 3
+      - name: Run regulated audit
+        if: success()
+        run: python tools/devflow.py audit

@@ -1,66 +1,146 @@
 # AI駆動開発フロー
 
-## 正本と生成方向
+## 1. 生成方向
 
 ```text
 自然言語の相談
-   │  意図探索・発散/収束、多軸Estimate
-   ▼
-work/<id>  ── execution-profile.json・要求断片・正本差分・初回承認・計画・証跡（非正本）
-   │  版付き add / update / retire
-   ▼
-spec/requirements/requirements.json          ← 永続要件の唯一の正本
-   │                                │
-   │ 生成                           │ trace / 受入条件
-   ▼                                ▼
-docs/requirements/REQUIREMENTS.md      実装・テスト
-                                      │
-               ┌──────────────────────┼──────────────────────┐
-               ▼                      ▼                      ▼
-        router.py / OpenAPI          生SQL          CDK合成CFn
-               │ AST                  │ AST                  │ 解析
-               └──────────────────────┼──────────────────────┘
-                                      ▼
-                       docs/design/generated/*
-                    シーケンス / IF / CRUD / resource
-                                      │
-                                      ▼
-             SWEBOK・ベンダー公式資料の版管理されたチェックリスト
+    │
+    ├─ requirement impact
+    ├─ design impact
+    ├─ authority / risk
+    ▼
+direct / assured / regulated
+    │
+    ├─ 必要時だけrequirements.jsonを更新
+    ├─ 実装・test
+    ├─ 実装からas-built設計を生成
+    ├─ selected checkをreview YAMLへ保存
+    ├─ 構造化Commit Comment
+    ▼
+PR・GitHub Actions・必要時のDeploy
 ```
 
-生成文書は読みやすい表示であり正本ではありません。生成ソースのdigestと再生成結果が一致しなければ失敗です。実装由来の設計が実装と一致しても、正本要件を満たすとは限らないため、受入テストと批判的レビューを別に行います。
+通常変更では恒久的な`work/<id>/`を作らない。
 
-## 初回承認まで
+## 2. 変更開始前: Impact Check
 
-1. ユーザー原文、決定的metadata、最大1回の再利用可能なprobeから、`right-size-execution`がscope、assurance、compute、modeを独立に推定し、根拠、soft budget、required verificationを`execution-profile.json`へ記録する。Estimate専用LLMは呼ばない。
-2. ユーザー原文と解釈を`work/<id>/docs/00-request.md`へ保存する。
-3. 現在の正本を読み、対話で目的・制約・例外・代替案を探索する。
-4. 義務を原子化し、正本の基準版に対する`add`、`update`、`retire`差分を`docs/01-requirements.md`へ記録する。
-5. `docs/01-traceability.md`へ正本IDと予定設計・実装・テスト・参照資料の対応を記録する。
-6. `docs/01-execution-plan.md`へscopeの派生要約、全作業、権限境界、検証、rollback、停止条件、完了条件を記録する。
-7. 結果を変える曖昧さだけを、融和的な一問で確認する。低リスクで可逆な詳細は既定値を明記する。
-8. 差分と計画を一体として短く提示し、要求者の明示的な判断を一度だけ記録する。会話継続やAIの推測は承認にしない。
+次を判定する。
 
-## 初回承認後
+- 利用者が得る結果
+- requirement impact
+- design impact
+- public contract
+- DB / migration
+- IaC / network
+- dependency / lockfile
+- authentication / authorization / PII
+- external write / production / irreversible operation
 
-1. カタログ版と項目版を再確認し、正本差分を完全検証してから原子的に置換する。
-2. 要件文書を生成し、バイト単位の一致を検査する。
-3. アーキテクチャ、詳細設計、実装、テスト設計を正本IDへtraceする。
-4. FastAPI/CDKでは実装成果物から詳細設計を生成し、ソースdigestと乖離を検査する。
-5. profile内から`always_on + assurance + 成果物tag + risk tag + 現在工程 + changed path`に合う項目を選び、selector版、入力、選択ID、除外監査sample、mandatory miss、digestを保存する。
-6. required verificationが失敗するか初期profileを覆す新証拠がある場合だけ、scope、assurance、verification、review、computeの一軸を拡張する。一律の回数上限は設けず、無根拠な反復をstagnationとして検出する。
-7. 欠陥を独立したoracle、反例、境界値、mutationで探し、承認範囲内の失敗を自動修正する。
-8. 決定的成功後は追加探索を止め、効率reportを生成する。PRを作りCIを確認し、全工程が通れば`closed`にする。
+この判定からprofileとselected checkを選ぶ。全checkを評価したり、未選択をN/Aへ変換したりしない。
 
-定型的な設計選択、実装詳細、レビュー修正、テスト修正では追加承認を求めません。承認外の新要件、不可逆な外部操作、利用不能な権限だけを停止理由にします。
+## 3. 実行プロファイル
 
-## 品質プロファイル
+### 直接実行（direct）
 
-`CORE`はSWEBOKの主要ライフサイクルを扱います。クラウドベンダーを選ぶと`CLOUD-COMMON`に採用ベンダー固有の差分だけを加えます。
+局所的、可逆、外部副作用なし。対象範囲のtest、build、lint、type、生成物driftだけを実行する。
 
-- `CORE`: SWEBOK主要KA
-- `CLOUD-COMMON`: ベンダー共通のクラウド統制
-- `AWS-DELTA` / `GCP-DELTA` / `AZURE-DELTA` / `OCI-DELTA`: 採用ベンダー固有差分
-- `AI-CONDITIONAL`: ML・生成AI・エージェント固有観点
+### 保証付き実行（assured）
 
-版、公式URL、適用範囲、前版との差分、確認日、再確認期限は`governance/standards/registry.json`で管理します。同じリスクを複数項目で扱うときは証跡を再利用できますが、各項目の適用判定は省略しません。
+複数module、公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governance。関連するRisk-selected checkを追加する。
+
+### 規制・高保証実行（regulated）
+
+authentication、authorization、PII、data loss、不可逆production操作、法令・契約統制、高額操作、高保証要求。work item、明示承認、phase gate、hash chainを追加する。
+
+## 4. 実装中: Fast Feedback Check
+
+変更スライスごとに小さく検証する。
+
+- syntax / build
+- lint / type
+- targeted test
+- regression test
+- generated drift
+- secret scan
+- 選択時だけcontract diff、SQL parse、migration、synth、UI interaction等
+
+CI結果の正本はGitHub Actions等とし、repositoryへ実行ログを保存しない。
+
+## 5. PR作成前: Affected-scope Check
+
+確認するもの:
+
+- requirement impactと要件正本の差分
+- design impactと生成設計・ADR
+- 受入条件とtest
+- 不要な変更の混入
+- compatibility、migration、rollback
+- selected check result
+- blocking fail
+- advisoryの扱い
+- residual risk
+
+結果を`governance/reviews/<change-id>.yaml`へ保存する。
+
+## 6. コミットコメント
+
+`docs/COMMIT-COMMENT.md`に従い、次をコミット本文へ記録する。
+
+- 目的
+- 変更内容
+- 要件影響
+- 設計影響
+- review YAML path
+- 検証契約
+- 互換性・残存リスク
+
+Change Manifest、Requirement Impact Result、Design Impact Resultを別ファイルとして作らない。
+
+## 7. Merge前: Revision Integrity Check
+
+- CIが現在HEADを対象としている
+- required checkが成功している
+- generated artifactが最新
+- blocking failがない
+- advisoryとresidual riskの扱いが明示されている
+- squash後のCommit Commentに証跡が統合されている
+- merge、release、deployがauthority boundary内
+
+HEAD変更で無効化された証拠だけを再確認する。過去工程を全て再実行しない。
+
+## 8. Deploy後: Operational Check
+
+production、migration、外部サービス、data変更がある場合だけ実施する。
+
+- deploy status
+- smoke test
+- migration result
+- 主要metric
+- rollback / roll-forward
+
+結果はdeployment service、monitoring、GitHub Actions等へ保持する。
+
+## 9. 定期: Governance Audit
+
+月次またはrelease単位で確認する。
+
+- false blocker
+- escaped defect
+- selector miss
+- Skill・hook競合
+- 不要成果物
+- standard source freshness
+- advisory滞留
+- tool / context / reviewer cost
+
+個々の変更へ毎回retrospectiveを強制しない。
+
+## 10. 情報の保持
+
+| 種類 | 保存先 | 更新規則 |
+|---|---|---|
+| 現在状態の正本 | requirements、code、test、generated design、ADR、運用文書 | 今後も維持 |
+| 変更時点の証跡 | Commit Comment、review YAML、PR | 後から現在状態へ合わせて更新しない |
+| automated result | GitHub Actions等 | 外部retention policy |
+| 将来作業 | Issue | 完了まで維持 |
+| 一時実行状態 | `.devflow/run/` | 完了後削除 |

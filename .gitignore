@@ -6,6 +6,9 @@ __pycache__/
 .pytest_cache/
 .coverage
 
+# Temporary agent execution state
+.devflow/run/
+
 # Codex local runtime output
 .codex-log/
 .codex/runtime/
