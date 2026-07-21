@@ -34,6 +34,6 @@
 
 authentication、authorization、PII、data loss、不可逆なproduction操作、法令・契約統制、高額操作、または明示的な高保証要求に該当する場合だけ使用する。
 
-regulated runtimeのcode、schema、template、validatorはportable sampleとして変更できる。ただし、この参照repository自身のlive work itemはコミットしない。導入先での動作を検証する必要がある場合は、一時directoryまたは`tests/fixtures/`のsynthetic dataを使用し、実案件の承認や証跡を模倣しない。
+regulated runtimeのcode、schema、template、validatorはportable sampleとして変更できる。ただし、この参照repository自身のlive work itemはコミットしない。この場合に限り、導入先repositoryで`tools/devflow.py init`を実行して`work/<id>/`を生成する。導入先での動作を検証する必要がある場合は、一時directoryまたは`tests/fixtures/`のsynthetic dataを使用し、実案件の承認や証跡を模倣しない。
 
 承認や証跡を捏造しないでください。公開repositoryへ秘密情報、個人データ、会話transcript、production証跡、CI生ログを追加しないでください。外部書込み、公開、merge、削除、production操作、高額操作は、依頼または明示承認で与えられたauthority boundary内だけで行ってください。
