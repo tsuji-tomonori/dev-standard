@@ -16,10 +16,10 @@ impact_flags:
   public_api_change: false
   iac_change: false
   dependency_change: false
-  code_change: false
+  code_change: true
   typed_code_change: false
   behavior_change: true
-  bug_fix: false
+  bug_fix: true
   generated_change: false
   sql_change: false
   migration: false
@@ -52,14 +52,14 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: Commit Commentでgovernance文書と配布Skill referenceへの設計影響を記録する
+    note: Commit Commentでgovernance文書、配布Skill reference、回帰testへの設計影響を記録する
 
   - id: IMP-003
     class: Invariant
     result: pass
     evidence:
       - commit:self
-    note: governance、Skill reference、contribution contract、PR templateに跨るためassuredを選択した
+    note: governance、Skill reference、contribution contract、PR template、回帰testに跨るためassuredを選択した
 
   - id: IMP-004
     class: Invariant
@@ -68,14 +68,41 @@ selected_checks:
       - commit:self
     note: 利用者のPR作成依頼をbranch pushとPull Request作成の外部書込み権限として扱う
 
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - test:tests/test_review_contract.py
+      - test:tests/test_profile_boundaries.py
+    note: Python回帰testの構文とrepository test suiteをGovernance workflowで検査する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: 変更したPython testを含むrepository全体へGovernance workflowのruff checkを実行する
+
   - id: FAST-004
     class: Invariant
     result: pass
     evidence:
       - workflow:Governance
+      - test:tests/test_profile_boundaries.py
       - path:CONTRIBUTING.md
       - path:.github/PULL_REQUEST_TEMPLATE.md
-    note: profile別の貢献手順とPR入力契約を更新し、Governance workflowでrepository契約を検証する
+    note: profile別の貢献手順、PR入力契約、歴史的work、標準設計pathを回帰testで直接検証する
+
+  - id: FAST-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - workflow:Governance
+      - test:tests/test_review_contract.py
+      - test:tests/test_profile_boundaries.py
+      - test:tests/test_skills.py
+    note: 初回CIで再現したactive review名の固定とSkill reference安全句の欠落を回帰testへ固定した
 
   - id: FAST-007
     class: Invariant
@@ -98,7 +125,7 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: 差分を報告されたprofile境界のレガシー逸脱修正に限定した
+    note: 差分を報告されたprofile境界のレガシー逸脱修正と、その回帰検査に限定した
 
   - id: REV-002
     class: Invariant
@@ -112,7 +139,7 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: 開発手順の整合修正であり製品要件正本を変更しない
+    note: 開発手順と検証契約の整合修正であり製品要件正本を変更しない
 
   - id: REV-004
     class: Invariant
@@ -128,9 +155,10 @@ selected_checks:
     result: pass
     evidence:
       - workflow:Governance
-      - path:CONTRIBUTING.md
-      - path:.github/PULL_REQUEST_TEMPLATE.md
-    note: repository検証とreview contractをGovernance workflowで実行し、変更後の貢献手順とPR入力項目を直接確認できる
+      - test:tests/test_review_contract.py
+      - test:tests/test_profile_boundaries.py
+      - test:tests/test_skills.py
+    note: active review解決、profile境界、Skill delivery契約をunit testとGovernance workflowへ接続した
 
   - id: REV-007
     class: Invariant
