@@ -64,6 +64,7 @@
         "bug_fix",
         "generated_change",
         "sql_change",
+        "e2e_change",
         "migration",
         "ui_change",
         "interactive_ui_change",
@@ -79,7 +80,9 @@
         "major_incident",
         "periodic_cycle",
         "monthly_cycle",
-        "recheck_due"
+        "recheck_due",
+        "as_built_adoption",
+        "quality_threshold_change"
       ],
       "properties": {
         "external_write": {"type": "boolean"},
@@ -95,6 +98,7 @@
         "bug_fix": {"type": "boolean"},
         "generated_change": {"type": "boolean"},
         "sql_change": {"type": "boolean"},
+        "e2e_change": {"type": "boolean"},
         "migration": {"type": "boolean"},
         "ui_change": {"type": "boolean"},
         "interactive_ui_change": {"type": "boolean"},
@@ -110,7 +114,9 @@
         "major_incident": {"type": "boolean"},
         "periodic_cycle": {"type": "boolean"},
         "monthly_cycle": {"type": "boolean"},
-        "recheck_due": {"type": "boolean"}
+        "recheck_due": {"type": "boolean"},
+        "as_built_adoption": {"type": "boolean"},
+        "quality_threshold_change": {"type": "boolean"}
       }
     },
     "selected_checks": {

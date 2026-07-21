@@ -7,3 +7,7 @@
 - [AI運用方針](AI-OPERATING-POLICY.md): 最小指示、自律境界、モデル選択、検査規則
 - [要件一覧](requirements/REQUIREMENTS.md): 永続要件正本から生成した人向け文書
 - [参照資料一覧](standards/SOURCES.md): 公式資料台帳から生成した版・範囲・差分
+
+## 実装標準
+
+- [as-built設計標準](standards/AS-BUILT-DESIGN.md): 実装由来設計、解析可能な実装・test規約、check mapping

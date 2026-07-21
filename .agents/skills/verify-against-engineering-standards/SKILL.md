@@ -72,9 +72,11 @@ triggerに該当した場合、必ず満たす必要がある少数の境界。
 
 selectorの入力と選択IDはreview YAMLまたは外部CI metadataから追跡可能にする。全catalogの結果ファイルは作らない。
 
+as-built設計、API/OpenAPI/sample、SQL/CRUD/E2E、coverage、test構造、定量閾値、Rule ID抑制を変更する場合は`references/as-built-design-check-selection.md`を読み、artifactに対応するcheckだけを選ぶ。
+
 ## Source registry
 
-`governance/standards/registry.json`に、title、version、official URL、checked date、scope、prior-version差分、再確認期限を保持する。
+`governance/standards/registry.json`に、title、version、canonical URL、checked date、scope、prior-version差分、再確認期限を保持する。外部標準は発行元の公式URL、repository-owned標準はcanonical repository URLとlocal artifact SHA-256を使用する。
 
 鮮度確認を行う条件:
 

@@ -31,7 +31,17 @@ REQUIRED = {
     "change_summary",
     "artifact_sha256",
 }
-OFFICIAL_HOST_SUFFIXES = ("computer.org", "amazon.com", "amazonaws.com", "microsoft.com", "google.com", "googleapis.com", "oracle.com")
+OFFICIAL_HOST_SUFFIXES = (
+    "computer.org",
+    "amazon.com",
+    "amazonaws.com",
+    "microsoft.com",
+    "google.com",
+    "googleapis.com",
+    "oracle.com",
+)
+REPOSITORY_STANDARD_AUTHORITY = "dev-standard maintainers"
+REPOSITORY_STANDARD_URL_PREFIX = "https://github.com/tsuji-tomonori/dev-standard/blob/"
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -54,7 +64,19 @@ def load(path: Path) -> dict[str, Any]:
         ):
             raise StandardsError(f"{source['id']}: blank metadata")
         parsed = urlparse(source["url"])
-        if parsed.scheme != "https" or not any(parsed.hostname == suffix or str(parsed.hostname).endswith("." + suffix) for suffix in OFFICIAL_HOST_SUFFIXES):
+        repository_owned = source["id"].startswith("DEVSTD-")
+        official_host = parsed.scheme == "https" and any(
+            parsed.hostname == suffix or str(parsed.hostname).endswith("." + suffix)
+            for suffix in OFFICIAL_HOST_SUFFIXES
+        )
+        canonical_repository_url = (
+            parsed.scheme == "https"
+            and source["authority"] == REPOSITORY_STANDARD_AUTHORITY
+            and source["url"].startswith(REPOSITORY_STANDARD_URL_PREFIX)
+        )
+        if repository_owned and not canonical_repository_url:
+            raise StandardsError(f"{source['id']}: repository-owned source must use the canonical repository URL")
+        if not repository_owned and not official_host:
             raise StandardsError(f"{source['id']}: URL is not an allowed official HTTPS host")
         try:
             date.fromisoformat(source["checked_at"])
@@ -72,6 +94,8 @@ def load(path: Path) -> dict[str, Any]:
             or any(char not in "0123456789abcdef" for char in artifact_sha256)
         ):
             raise StandardsError(f"{source['id']}: artifact_sha256 must be null or a lowercase SHA-256")
+        if repository_owned and artifact_sha256 is None:
+            raise StandardsError(f"{source['id']}: repository-owned source requires artifact_sha256")
     return value
 
 

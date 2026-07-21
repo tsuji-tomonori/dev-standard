@@ -154,6 +154,20 @@
       "change_checked_at": "2026-07-18",
       "change_summary": "文書版F29550-09を維持し、Cloud Common評価後にOCI固有差分だけを追加する。",
       "artifact_sha256": null
+    },
+    {
+      "id": "DEVSTD-AS-BUILT",
+      "authority": "dev-standard maintainers",
+      "title": "as-built設計標準",
+      "version": "2026-07-21",
+      "url": "https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md",
+      "checked_at": "2026-07-21",
+      "refresh_days": 180,
+      "profiles": ["CORE"],
+      "scope": "実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約、profile連携。導入時はAdvisoryから評価する。",
+      "change_checked_at": "2026-07-21",
+      "change_summary": "利用者提供の汎用要件を要件正本、標準、check catalog、既存Skillへ分配し、3本柱モデルとauthority boundaryへ整合した初版。",
+      "artifact_sha256": "f35016e6dcfa0ea52225a68e2659f07f29c65333e5a5aa6778caee7a1533b05f"
     }
   ]
 }
