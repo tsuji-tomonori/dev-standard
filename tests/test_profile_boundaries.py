@@ -18,17 +18,24 @@ class ProfileBoundaryContractTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         for required in [
+            "# 開発開始と対話の契約",
             "`direct`と`assured`では、恒久的な`work/<id>/`を作成しない",
             "通常の初回承認を要求せず",
             "`.devflow/run/`",
             "## Regulatedの記録",
+            "AIが安全にsetupを修復できる場合",
+            "明示的な権限なしにmergeしない",
         ]:
             self.assertIn(required, reference)
 
         for legacy in [
+            "# Bootstrap and conversation contract",
             "Create `work/<id>/` with concise Markdown files",
             "If the runtime is absent, create a lightweight work record",
             "Produce one compact authorization package after the requirements are coherent.",
+            "Do not stop",
+            "Do not merge unless explicitly authorized.",
+            "Lightweight record",
         ]:
             self.assertNotIn(legacy, reference)
 
