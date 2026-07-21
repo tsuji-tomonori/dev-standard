@@ -114,6 +114,8 @@ authentication、authorization、PII、confidential、data loss、不可逆なpr
 | 一時実行状態 | `.devflow/run/` | Git管理外、完了後削除 |
 | regulated runtime | `governance/`, `tools/devflow.py`, `work/` | regulated profile限定 |
 
+`docs/design/generated/`と`docs/decisions/`は、導入先repositoryを含む標準配置の契約です。この参照repositoryでも、generator対応実装から設計を生成した場合、またはコードだけでは理由が分からない長期判断にADRが必要な場合にだけ作成します。directoryを存在させるための空file、手書きの生成設計、不要なADRは追加しません。
+
 対象固有の`AGENTS.md`と`.codex/config.toml`は上書きしません。既存規則を維持し、必要部分だけを統合します。
 
 ## Skills一覧

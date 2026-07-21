@@ -1,27 +1,37 @@
-## Work item
-
-- ID:
-- Current/final phase:
-
 ## 変更内容
 
+<!-- 何を変更したかを、意味単位で簡潔に記載してください。 -->
 
-## 理由・ユーザー影響
+## 理由・利用者影響
 
+<!-- なぜ必要か、利用者または開発者にどのような影響があるかを記載してください。 -->
 
-## ゲートと承認
+## 変更証跡
 
-- [ ] 必須文書を更新した
-- [ ] 当該工程の全チェック項目を評価した
-- [ ] N/A根拠、Pass証跡、Fail例外を記録した
-- [ ] 現行ダイジェストに対する必要承認を記録した
+- 実行profile: `direct` / `assured` / `regulated`
+- Review YAML: `governance/reviews/<change-id>.yaml`
+- Requirements: `REQ-...` / `none`
+- Design-Impact: `none` / `generated` / `adr` / `contract` / `governance` / `mixed`
+
+- [ ] Commit Commentに目的、変更内容、要件影響、設計影響、review YAML path、検証契約、残存riskを記載した
+- [ ] 選択したcheckだけをreview YAMLへ保存し、未選択checkをN/Aとして登録していない
+- [ ] CIの生ログやtest reportをrepositoryへ複製していない
 
 ## 検証
 
-```text
-make verify
-```
+- 変更範囲の検証:
+- repository検証: `make verify`
+- 外部CI: GitHub Actionsの現在HEAD結果を参照
 
-## 残余リスク・例外
+## 残存リスク・例外
 
+<!-- advisory、未検証環境、互換性、rollback、Issue化した事項を記載してください。 -->
 
+## Regulatedの場合のみ
+
+<!-- direct / assuredでは記入不要です。 -->
+
+- Work item:
+- Current/final phase:
+- 明示承認の記録:
+- [ ] 必要なlifecycle文書、hash chain、phase gate、regulated auditが現在の変更と整合している
