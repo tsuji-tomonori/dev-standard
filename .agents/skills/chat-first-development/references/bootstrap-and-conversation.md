@@ -1,4 +1,4 @@
-# Bootstrap and conversation contract
+# 開発開始と対話の契約
 
 ## AIが行う事前確認
 
@@ -11,7 +11,7 @@
 5. 必要になった時点でだけrepository-local環境を作り、固定された依存をlocalへ導入する。安全に修復できるsetup driftは利用者へ転送しない。
 6. 外部機能の不足は、成果達成に実際に必要となった時点でだけblockerとして扱う。
 
-Do not stop to ask the user to copy files or run installation commands when the AI can repair setup safely.
+AIが安全にsetupを修復できる場合、利用者へfileのコピーやinstallation commandの実行を求めて作業を停止しない。
 
 ## 通常変更の記録
 
@@ -24,7 +24,7 @@ Do not stop to ask the user to copy files or run installation commands when the 
 
 再開に必要な一時状態だけを、gitignoreされた`.devflow/run/`へ置き、変更完了後に削除する。
 
-`Lightweight record`は移行前の旧形式であり、通常変更へ作成しない。通常変更では、変更ごとのrequest、requirements写し、execution plan、architecture、implementation log、test report、security report、release report、retrospectiveを作成しない。永続要件は`spec/requirements/requirements.json`だけへ反映し、実装から生成できる設計は手書きで複製しない。
+通常変更では、変更ごとのrequest、requirements写し、execution plan、architecture、implementation log、test report、security report、release report、retrospectiveを作成しない。永続要件は`spec/requirements/requirements.json`だけへ反映し、実装から生成できる設計は手書きで複製しない。
 
 ## Regulatedの記録
 
@@ -48,6 +48,6 @@ Do not stop to ask the user to copy files or run installation commands when the 
 
 ## 完了の順序
 
-関連する設計、実装、test、静的検査、security確認、文書、Git commit、remote branch、PR、CIを完了する。CIの生ログをrepositoryへ複製しない。Do not merge unless explicitly authorized.
+関連する設計、実装、test、静的検査、security確認、文書、Git commit、remote branch、PR、CIを完了する。CIの生ログをrepositoryへ複製しない。明示的な権限なしにmergeしない。
 
 `direct`と`assured`では、成果物、Commit Comment、review YAML、外部CIが現在HEADと整合した時点で完了する。`regulated`では、それらに加えて必要なregulated evidenceを最新にした後だけwork recordを閉じる。
