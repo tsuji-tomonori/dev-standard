@@ -181,7 +181,7 @@
       "scope": "CDK synthを一次情報とするIaC設計生成、template差分・破壊的変更・policy gate、解析可能なCDK実装・test規約、authority boundary連携。",
       "change_checked_at": "2026-07-21",
       "change_summary": "アプリケーション層as-built標準の姉妹編として、AWS CDK固有の生成対象、整合性gate、実装・test規約、導入基準を追加。",
-      "artifact_sha256": "118bf785c6a9ef12721b4af3e6a4fa652d38b3ba3a49eed89a69618d83f9c8e1"
+      "artifact_sha256": "3580a335f99ff974e7a44c7f2c3bb76d3a24cf06734f23939d628e4230e059d5"
     }
   ]
 }
