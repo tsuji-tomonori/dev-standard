@@ -1,8 +1,8 @@
 schema_version: 1
-catalog_version: 2
+catalog_version: 3
 authority: governance/checks/catalog.yaml
 initial_import: dev-standard_checklist_restructured.xlsx の 01_必要チェック
-item_count: 68
+item_count: 69
 items:
 - id: IMP-001
   class: Invariant
@@ -334,6 +334,16 @@ items:
   required_evidence: external workflow / report view / artifact policy
   enforcement: advisory
   execution_point: as-built規約の導入・拡張後
+- id: FAST-024
+  class: Risk-selected
+  timing: implementation
+  area: As-built Contract
+  trigger: as-built標準変更時
+  check: as-built標準の正本・配布契約・traceを整合させる
+  acceptance: 要件正本、標準文書、check catalog、generator contract、配布定義、Rule・check・test traceの変更が相互整合し、第二正本を作らない。Fail条件「標準contract間の不一致または回帰test欠落」に該当しない
+  required_evidence: standard / catalog / contract test / distribution test
+  enforcement: blocking-when-selected
+  execution_point: as-built標準・catalog・generator契約変更後
 - id: REV-001
   class: Invariant
   timing: pre-pr
