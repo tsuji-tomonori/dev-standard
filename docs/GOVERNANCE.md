@@ -1,6 +1,26 @@
 # 統制・監査モデル
 
-## 1. 情報の3分類
+## 1. Repository境界
+
+このrepositoryは移植可能なSkills、agents、schema、generator、check、template、standardのsample / reference collectionである。導入先productの稼働中projectではない。
+
+- top-levelの`work/`を保持しない。
+- 実案件のrequest、approval、phase、implementation log、test reportをsampleとして保存しない。
+- regulated runtimeの実装はportable assetとして維持し、live work itemは導入先repositoryで生成する。
+- synthetic fixtureは`tests/fixtures/`等へ置き、実案件と区別する。
+
+## 2. 要件の分類
+
+SWEBOKを参考に、永続要件を二段階で分類する。
+
+1. `product` / `project`
+2. `functional` / `nonfunctional`
+
+文書の存在、内容、品質、更新、配布、廃止は原則`project / nonfunctional`である。詳細は[要件分類標準](standards/REQUIREMENT-CLASSIFICATION.md)を正とする。
+
+文書fileは要件ではない。要件正本へ義務と受入条件を置き、文書pathはtraceまたは生成先として接続する。
+
+## 3. 情報の3分類
 
 ### 現在状態の正本
 
@@ -10,7 +30,7 @@
 - code、config、test
 - `docs/design/generated/`
 - ADR
-- 恒久的な運用・保守文書
+- project NFRにより要求される恒久的な運用・保守・documentation
 
 ### 変更時点の証跡
 
@@ -19,7 +39,7 @@
 - Commit Comment
 - `governance/reviews/<change-id>.yaml`
 - PRとGit履歴
-- regulated案件のapproval / event chain
+- 導入先regulated案件のapproval / event chain
 
 ### 一時実行状態
 
@@ -27,15 +47,17 @@
 
 - `.devflow/run/`
 
-通常変更で恒久的な`work/<id>/`を作らない。
+この参照repositoryで恒久的な`work/<id>/`を作らない。
 
-## 2. 信頼境界
+## 4. 信頼境界
 
 自然言語Skillは判断と作業方法を案内する。次は可能な限り決定的な仕組みへ置く。
 
-- requirement schemaとrevision conflict
+- requirement schema、scope/category、revision conflict
 - generated artifact drift
 - review result schema
+- distribution manifestとcopy結果
+- top-level work directoryの非存在
 - build、type、lint、test
 - secret scan
 - API contract diff
@@ -45,7 +67,7 @@
 
 AIの自己申告だけをPass、承認、CI結果にしない。
 
-## 3. コミットコメント
+## 5. コミットコメント
 
 Commit Commentを次の変更時点証跡として使用する。
 
@@ -58,7 +80,7 @@ Commit Commentを次の変更時点証跡として使用する。
 
 CIの実行結果は含めず、外部サービスのworkflowまたはrequired checkを参照する。
 
-## 4. レビュー結果
+## 6. レビュー結果
 
 `governance/reviews/<change-id>.yaml`にはselected checkだけを保存する。
 
@@ -80,7 +102,7 @@ risk、artifact、path、profileから選択された場合だけblocking。
 
 未選択項目をN/Aにしない。N/Aは選択後に具体的な適用外事実が判明した場合だけ使用する。
 
-## 5. 自動検証結果
+## 7. 自動検証結果
 
 単体test、build、type、lint、coverage、security scan、deployment resultの正本はGitHub Actions、deployment service、monitoring service等とする。
 
@@ -91,10 +113,11 @@ repositoryへ次を保存しない。
 - scanner生出力
 - build log
 - external service resultの複製
+- live work itemの実行結果
 
 repositoryへ残すのは、test code、workflow定義、required check名、review resultからの参照である。
 
-## 6. 承認
+## 8. 承認
 
 人の承認はauthority boundaryへ結び付ける。
 
@@ -112,11 +135,11 @@ repositoryへ残すのは、test code、workflow定義、required check名、rev
 
 `direct`と通常の`assured`では初回承認を要求しない。`regulated`または外部副作用時だけ明示承認を使用する。
 
-## 7. 規制・高保証実行との互換性
+## 9. 規制・高保証実行との互換性
 
-既存の次の仕組みは`regulated`でのみ使用する。
+次の仕組みはportableなregulated runtimeとして維持できる。
 
-- `work/<id>/`
+- 導入先で生成する`work/<id>/`
 - `tools/devflow.py`
 - lifecycle phase
 - approval hash chain
@@ -124,9 +147,9 @@ repositoryへ残すのは、test code、workflow定義、required check名、rev
 - required lifecycle documents
 - regulated release / audit
 
-このruntimeをdirectまたはassuredへ自動適用しない。
+このruntimeをdirectまたはassuredへ自動適用しない。この参照repository自身の履歴としてliveな`work/<id>/`をコミットしない。
 
-## 8. チェックの実行時点
+## 10. チェックの実行時点
 
 - 変更開始前: Impact Check
 - 実装中: Fast Feedback Check
@@ -137,7 +160,7 @@ repositoryへ残すのは、test code、workflow定義、required check名、rev
 
 工程文書の存在ではなく、変更イベントとriskに応じた結果を確認する。
 
-## 9. Failの扱い
+## 11. Failの扱い
 
 - Invariant fail: 修正までblocking
 - blocking Risk-selected fail: 修正までblocking
@@ -146,13 +169,13 @@ repositoryへ残すのは、test code、workflow定義、required check名、rev
 
 その場で修正できる全Failへ一律にIssue、owner、due dateを要求しない。
 
-## 10. 改ざんと履歴
+## 12. 改ざんと履歴
 
 Commit Comment、review YAML、PR、Git commitはGit履歴で追跡する。
 
-regulated案件で強い改ざん検知が必要な場合だけhash chain、protected branch、signed commit、外部audit logを追加する。
+導入先regulated案件で強い改ざん検知が必要な場合だけhash chain、protected branch、signed commit、外部audit logを追加する。参照repositoryのhistory sampleとしてapproval chainを複製しない。
 
-## 11. 定期改善
+## 13. 定期改善
 
 改善はgate errorの回数だけから自動追加しない。次を確認する。
 

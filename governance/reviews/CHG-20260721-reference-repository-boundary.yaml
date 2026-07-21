@@ -1,0 +1,175 @@
+schema_version: 1
+catalog_version: 2
+catalog_digest: sha256:25f6d0445c983b08bc1499d70b55c30b45aa603e4ef839e28bfd852a214179b3
+change_id: CHG-20260721-reference-repository-boundary
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: false
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_adoption: false
+  quality_threshold_change: false
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/REQUIREMENT-CLASSIFICATION.md
+    note: 既存要件catalogの個別義務は変更せず、将来の追加・意味更新で使用するscope/category分類契約を拡張した
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:.agents/skills/maintain-reference-repository/SKILL.md
+    note: reference repositoryのauthority、work境界、distribution、documentation設計へ影響すると判定した
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-reference-repository-boundary.yaml
+    note: Skill、requirements validator、distribution、root guidance、repository treeに跨るためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者のPR作成依頼をbranch、commit、Pull Requestへの外部書込み権限として扱った
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - test:tests/test_reference_repository_contract.py
+    note: Python構文とrepository contractをGovernance workflowで検査する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Governance workflowのlintを現在HEADへ実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_reference_repository_contract.py
+      - test:tests/test_specflow.py
+      - test:tests/test_install_reference.py
+    note: scope/category互換性、work非存在、Skill inventory、portable profileをcontract testで検証する
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: GitleaksをPR HEADへ実行する
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: repository固有work削除、documentation NFR分類、meta Skill、必要なcontract更新にscopeを限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: 構造化Commit Commentとtrailersをvalidatorで検査する
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:.agents/skills/maintain-canonical-requirements/SKILL.md
+    note: canonical requirement itemsは変更せず、分類schemaを後方互換なoptional pairとして追加した理由を記録した
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/REQUIREMENT-CLASSIFICATION.md
+      - path:.agents/skills/maintain-reference-repository/SKILL.md
+    note: product/project、functional/nonfunctional、documentation、work、distributionの設計影響を標準とSkillへ反映した
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_reference_repository_contract.py
+      - test:tests/test_specflow.py
+      - test:tests/test_install_reference.py
+      - workflow:Governance
+    note: 受入条件をrepository contract、既存specflow回帰、installer回帰へ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-reference-repository-boundary.yaml
+    note: 今回選択したcheckだけをschemaとcatalogに適合するYAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-reference-repository-boundary.yaml
+    note: 未選択checkを形式的なN/Aとして登録していない
+
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:distribution/manifest.json
+      - test:tests/test_reference_repository_contract.py
+      - test:tests/test_install_reference.py
+    note: 新standardを既存profileへ追加し、meta Skillをportable default profileから除外してconsumer互換性を維持した
+
+advisories: []
+
+residual_risks:
+  - 既存要件itemのscope/categoryは後方互換のため遡及必須にせず、意味を更新する時点で段階的に分類する

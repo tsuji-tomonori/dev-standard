@@ -21,11 +21,26 @@ ID_RE = re.compile(r"^[A-Z][A-Z0-9]+(?:-[A-Z0-9]+)+$")
 ACTION_RE = re.compile(r"^[a-z][a-z0-9]*$")
 STATUSES = {"active", "retired"}
 TYPES = {"functional", "quality", "constraint", "interface", "data", "operational"}
+SCOPES = {"product", "project"}
+CATEGORIES = {"functional", "nonfunctional"}
 TRACE_KEYS = {"design", "implementation", "tests", "standards"}
 REQUIRED = {
-    "id", "revision", "status", "type", "title", "subject", "action", "object",
-    "rationale", "source_refs", "acceptance_criteria", "verification", "traces", "last_changed_by",
+    "id",
+    "revision",
+    "status",
+    "type",
+    "title",
+    "subject",
+    "action",
+    "object",
+    "rationale",
+    "source_refs",
+    "acceptance_criteria",
+    "verification",
+    "traces",
+    "last_changed_by",
 }
+OPTIONAL = {"retirement_reason", "superseded_by", "scope", "category"}
 
 
 def read_json(path: Path) -> Any:
@@ -41,11 +56,24 @@ def nonempty(value: Any, label: str) -> str:
     return value.strip()
 
 
+def validate_classification(item: dict[str, Any], rid: str) -> None:
+    has_scope = "scope" in item
+    has_category = "category" in item
+    if has_scope != has_category:
+        raise SpecError(f"{rid}: scope and category must be specified together")
+    if not has_scope:
+        return
+    if item["scope"] not in SCOPES:
+        raise SpecError(f"{rid}: invalid scope")
+    if item["category"] not in CATEGORIES:
+        raise SpecError(f"{rid}: invalid category")
+
+
 def validate_requirement(item: Any, seen_ac: set[str]) -> None:
     if not isinstance(item, dict):
         raise SpecError("each requirement must be an object")
     missing = REQUIRED - set(item)
-    extra = set(item) - REQUIRED - {"retirement_reason", "superseded_by"}
+    extra = set(item) - REQUIRED - OPTIONAL
     if missing or extra:
         raise SpecError(f"requirement fields invalid: missing={sorted(missing)} extra={sorted(extra)}")
     rid = nonempty(item["id"], "id")
@@ -55,6 +83,7 @@ def validate_requirement(item: Any, seen_ac: set[str]) -> None:
         raise SpecError(f"{rid}: revision must be a positive integer")
     if item["status"] not in STATUSES or item["type"] not in TYPES:
         raise SpecError(f"{rid}: invalid status or type")
+    validate_classification(item, rid)
     for key in ["title", "subject", "object", "rationale", "last_changed_by"]:
         value = nonempty(item[key], f"{rid}.{key}")
         if key in {"subject", "object"} and ("\n" in value or ";" in value or value.startswith(("-", "*"))):
@@ -86,14 +115,19 @@ def validate_requirement(item: Any, seen_ac: set[str]) -> None:
     traces = item["traces"]
     if not isinstance(traces, dict) or set(traces) != TRACE_KEYS:
         raise SpecError(f"{rid}: traces must contain {sorted(TRACE_KEYS)}")
-    if any(not isinstance(values, list) or any(not isinstance(v, str) or not v for v in values) for values in traces.values()):
+    if any(
+        not isinstance(values, list)
+        or any(not isinstance(value, str) or not value for value in values)
+        for values in traces.values()
+    ):
         raise SpecError(f"{rid}: trace values must be string lists")
     if item["status"] == "retired" and not str(item.get("retirement_reason") or "").strip():
         raise SpecError(f"{rid}: retired requirement needs retirement_reason")
 
 
 def validate_catalog(catalog: Any) -> dict[str, Any]:
-    if not isinstance(catalog, dict) or set(catalog) != {"schema_version", "catalog_revision", "product", "updated_at", "requirements"}:
+    expected = {"schema_version", "catalog_revision", "product", "updated_at", "requirements"}
+    if not isinstance(catalog, dict) or set(catalog) != expected:
         raise SpecError("catalog must contain schema_version/catalog_revision/product/updated_at/requirements only")
     if catalog["schema_version"] != 1 or not isinstance(catalog["catalog_revision"], int) or catalog["catalog_revision"] < 0:
         raise SpecError("invalid schema or catalog revision")
@@ -159,13 +193,33 @@ def render(catalog: dict[str, Any]) -> str:
     for item in catalog["requirements"]:
         action = action_labels.get(item["action"], item["action"])
         obligation = f"{item['subject']}は、{item['object']}を**{action}**"
-        lines.append(f"| `{item['id']}` | {item['revision']} | {status_labels[item['status']]} | {type_labels[item['type']]} | {obligation} | {item['verification']['method']} |")
+        lines.append(
+            f"| `{item['id']}` | {item['revision']} | {status_labels[item['status']]} | "
+            f"{type_labels[item['type']]} | {obligation} | {item['verification']['method']} |"
+        )
     for item in catalog["requirements"]:
         action = action_labels.get(item["action"], item["action"])
-        lines += ["", f"## {item['id']}: {item['title']}", "", f"{item['subject']}は、{item['object']}を**{action}**。", "", f"根拠: {item['rationale']}", "", "受入条件:"]
+        lines += [
+            "",
+            f"## {item['id']}: {item['title']}",
+            "",
+            f"{item['subject']}は、{item['object']}を**{action}**。",
+            "",
+            f"根拠: {item['rationale']}",
+        ]
+        if "scope" in item:
+            lines += ["", f"分類: `{item['scope']}` / `{item['category']}`"]
+        lines += ["", "受入条件:"]
         for criterion in item["acceptance_criteria"]:
-            lines.append(f"- `{criterion['id']}` 前提: {criterion['given']}。条件: {criterion['when']}。期待結果: {criterion['then']}。")
-        lines += ["", f"要求源: {', '.join(item['source_refs'])}", f"検証証跡: {item['verification']['evidence']}"]
+            lines.append(
+                f"- `{criterion['id']}` 前提: {criterion['given']}。条件: {criterion['when']}。"
+                f"期待結果: {criterion['then']}。"
+            )
+        lines += [
+            "",
+            f"要求源: {', '.join(item['source_refs'])}",
+            f"検証証跡: {item['verification']['evidence']}",
+        ]
         trace_labels = {"design": "設計", "implementation": "実装", "tests": "テスト", "standards": "参照資料"}
         trace_values = [
             f"{trace_labels[key]}={','.join(item['traces'][key]) or '—'}"
@@ -196,13 +250,14 @@ def canonical_json(value: Any) -> str:
 
 
 def apply_change(catalog: dict[str, Any], change: Any) -> dict[str, Any]:
-    if not isinstance(change, dict) or set(change) != {"base_catalog_revision", "changed_at", "work_item", "operations"}:
+    expected = {"base_catalog_revision", "changed_at", "work_item", "operations"}
+    if not isinstance(change, dict) or set(change) != expected:
         raise SpecError("change needs base_catalog_revision/changed_at/work_item/operations")
     if change["base_catalog_revision"] != catalog["catalog_revision"]:
         raise SpecError("stale catalog revision; no changes written")
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", nonempty(change["changed_at"], "changed_at")):
         raise SpecError("changed_at must be YYYY-MM-DD")
-    work_item = nonempty(change["work_item"], "work_item")
+    change_id = nonempty(change["work_item"], "work_item")
     if not isinstance(change["operations"], list) or not change["operations"]:
         raise SpecError("operations must be a non-empty list")
     candidate = copy.deepcopy(catalog)
@@ -215,7 +270,7 @@ def apply_change(catalog: dict[str, Any], change: Any) -> dict[str, Any]:
             item = copy.deepcopy(operation.get("requirement"))
             if not isinstance(item, dict) or item.get("id") in by_id:
                 raise SpecError("add requires a new requirement")
-            item["last_changed_by"] = work_item
+            item["last_changed_by"] = change_id
             by_id[item["id"]] = item
             candidate["requirements"].append(item)
         elif op == "update":
@@ -230,7 +285,7 @@ def apply_change(catalog: dict[str, Any], change: Any) -> dict[str, Any]:
                 raise SpecError(f"{rid}: invalid update fields")
             item.update(copy.deepcopy(changes))
             item["revision"] += 1
-            item["last_changed_by"] = work_item
+            item["last_changed_by"] = change_id
         elif op == "retire":
             if set(operation) != {"op", "id", "expected_revision", "reason"}:
                 raise SpecError("retire operation needs op/id/expected_revision/reason only")
@@ -238,7 +293,14 @@ def apply_change(catalog: dict[str, Any], change: Any) -> dict[str, Any]:
             item = by_id.get(rid)
             if item is None or operation.get("expected_revision") != item["revision"]:
                 raise SpecError(f"{rid}: stale or missing requirement")
-            item.update({"status": "retired", "retirement_reason": nonempty(operation.get("reason"), f"{rid}.reason"), "revision": item["revision"] + 1, "last_changed_by": work_item})
+            item.update(
+                {
+                    "status": "retired",
+                    "retirement_reason": nonempty(operation.get("reason"), f"{rid}.reason"),
+                    "revision": item["revision"] + 1,
+                    "last_changed_by": change_id,
+                }
+            )
         else:
             raise SpecError(f"unsupported operation: {op}")
     candidate["requirements"] = sorted(candidate["requirements"], key=lambda item: item["id"])

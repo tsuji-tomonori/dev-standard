@@ -6,6 +6,7 @@
     "codex_project_config": ".codex/config.toml",
     "canonical_requirements": "spec/requirements/requirements.json",
     "generated_requirements": "docs/requirements/REQUIREMENTS.md",
+    "requirement_classification_standard": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
     "generated_design": "docs/design/generated/",
     "as_built_standard": "docs/standards/AS-BUILT-DESIGN.md",
     "review_catalog": "governance/checks/catalog.yaml",
@@ -28,6 +29,7 @@
       "inspect-quality-gates",
       "japanese-git-commit-gitmoji",
       "maintain-canonical-requirements",
+      "maintain-reference-repository",
       "retrospect-and-improve",
       "right-size-execution",
       "test-frontend-experience",
@@ -45,145 +47,496 @@
   },
   "profiles": {
     "default": [
-      {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
-      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"},
-      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
-      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
-      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
-      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
-      {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
-      {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
-      {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"},
-      {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"},
-      {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"},
-      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
+      {
+        "source": ".agents/skills/chat-first-development",
+        "destination": ".agents/skills/chat-first-development"
+      },
+      {
+        "source": ".agents/skills/right-size-execution",
+        "destination": ".agents/skills/right-size-execution"
+      },
+      {
+        "source": ".agents/skills/calibrated-collaborative-listening",
+        "destination": ".agents/skills/calibrated-collaborative-listening"
+      },
+      {
+        "source": ".agents/skills/maintain-canonical-requirements",
+        "destination": ".agents/skills/maintain-canonical-requirements"
+      },
+      {
+        "source": ".agents/skills/generate-implementation-design",
+        "destination": ".agents/skills/generate-implementation-design"
+      },
+      {
+        "source": ".agents/skills/verify-against-engineering-standards",
+        "destination": ".agents/skills/verify-against-engineering-standards"
+      },
+      {
+        "source": ".agents/skills/inspect-quality-gates",
+        "destination": ".agents/skills/inspect-quality-gates"
+      },
+      {
+        "source": ".agents/skills/japanese-git-commit-gitmoji",
+        "destination": ".agents/skills/japanese-git-commit-gitmoji"
+      },
+      {
+        "source": "governance/checks",
+        "destination": "governance/checks"
+      },
+      {
+        "source": "governance/reviews",
+        "destination": "governance/reviews"
+      },
+      {
+        "source": "docs/COMMIT-COMMENT.md",
+        "destination": "docs/COMMIT-COMMENT.md"
+      },
+      {
+        "source": "docs/ARTIFACTS-AND-CHECKS.md",
+        "destination": "docs/ARTIFACTS-AND-CHECKS.md"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      },
+      {
+        "source": "docs/standards/AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      }
     ],
     "chat-first": [
-      {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
-      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"},
-      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
-      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
-      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
-      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
-      {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
-      {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
-      {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"},
-      {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"},
-      {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"},
-      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
+      {
+        "source": ".agents/skills/chat-first-development",
+        "destination": ".agents/skills/chat-first-development"
+      },
+      {
+        "source": ".agents/skills/right-size-execution",
+        "destination": ".agents/skills/right-size-execution"
+      },
+      {
+        "source": ".agents/skills/calibrated-collaborative-listening",
+        "destination": ".agents/skills/calibrated-collaborative-listening"
+      },
+      {
+        "source": ".agents/skills/maintain-canonical-requirements",
+        "destination": ".agents/skills/maintain-canonical-requirements"
+      },
+      {
+        "source": ".agents/skills/generate-implementation-design",
+        "destination": ".agents/skills/generate-implementation-design"
+      },
+      {
+        "source": ".agents/skills/verify-against-engineering-standards",
+        "destination": ".agents/skills/verify-against-engineering-standards"
+      },
+      {
+        "source": ".agents/skills/inspect-quality-gates",
+        "destination": ".agents/skills/inspect-quality-gates"
+      },
+      {
+        "source": ".agents/skills/japanese-git-commit-gitmoji",
+        "destination": ".agents/skills/japanese-git-commit-gitmoji"
+      },
+      {
+        "source": "governance/checks",
+        "destination": "governance/checks"
+      },
+      {
+        "source": "governance/reviews",
+        "destination": "governance/reviews"
+      },
+      {
+        "source": "docs/COMMIT-COMMENT.md",
+        "destination": "docs/COMMIT-COMMENT.md"
+      },
+      {
+        "source": "docs/ARTIFACTS-AND-CHECKS.md",
+        "destination": "docs/ARTIFACTS-AND-CHECKS.md"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      },
+      {
+        "source": "docs/standards/AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      }
     ],
     "development-framework": [
-      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"},
-      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
-      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
-      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
-      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
-      {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
-      {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
-      {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"},
-      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
+      {
+        "source": ".agents/skills/right-size-execution",
+        "destination": ".agents/skills/right-size-execution"
+      },
+      {
+        "source": ".agents/skills/calibrated-collaborative-listening",
+        "destination": ".agents/skills/calibrated-collaborative-listening"
+      },
+      {
+        "source": ".agents/skills/maintain-canonical-requirements",
+        "destination": ".agents/skills/maintain-canonical-requirements"
+      },
+      {
+        "source": ".agents/skills/generate-implementation-design",
+        "destination": ".agents/skills/generate-implementation-design"
+      },
+      {
+        "source": ".agents/skills/verify-against-engineering-standards",
+        "destination": ".agents/skills/verify-against-engineering-standards"
+      },
+      {
+        "source": ".agents/skills/inspect-quality-gates",
+        "destination": ".agents/skills/inspect-quality-gates"
+      },
+      {
+        "source": ".agents/skills/japanese-git-commit-gitmoji",
+        "destination": ".agents/skills/japanese-git-commit-gitmoji"
+      },
+      {
+        "source": "governance/checks",
+        "destination": "governance/checks"
+      },
+      {
+        "source": "governance/reviews",
+        "destination": "governance/reviews"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      },
+      {
+        "source": "docs/standards/AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      }
     ],
     "right-size-execution": [
-      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"}
+      {
+        "source": ".agents/skills/right-size-execution",
+        "destination": ".agents/skills/right-size-execution"
+      }
     ],
     "frontend": [
-      {"source": ".agents/skills/elicit-frontend-requirements", "destination": ".agents/skills/elicit-frontend-requirements"},
-      {"source": ".agents/skills/design-frontend-experience", "destination": ".agents/skills/design-frontend-experience"},
-      {"source": ".agents/skills/implement-frontend-experience", "destination": ".agents/skills/implement-frontend-experience"},
-      {"source": ".agents/skills/test-frontend-experience", "destination": ".agents/skills/test-frontend-experience"}
+      {
+        "source": ".agents/skills/elicit-frontend-requirements",
+        "destination": ".agents/skills/elicit-frontend-requirements"
+      },
+      {
+        "source": ".agents/skills/design-frontend-experience",
+        "destination": ".agents/skills/design-frontend-experience"
+      },
+      {
+        "source": ".agents/skills/implement-frontend-experience",
+        "destination": ".agents/skills/implement-frontend-experience"
+      },
+      {
+        "source": ".agents/skills/test-frontend-experience",
+        "destination": ".agents/skills/test-frontend-experience"
+      }
     ],
     "frontend-development": [
-      {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
-      {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"},
-      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"},
-      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
-      {"source": ".agents/skills/elicit-frontend-requirements", "destination": ".agents/skills/elicit-frontend-requirements"},
-      {"source": ".agents/skills/design-frontend-experience", "destination": ".agents/skills/design-frontend-experience"},
-      {"source": ".agents/skills/implement-frontend-experience", "destination": ".agents/skills/implement-frontend-experience"},
-      {"source": ".agents/skills/test-frontend-experience", "destination": ".agents/skills/test-frontend-experience"},
-      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
-      {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
-      {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
-      {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"},
-      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
+      {
+        "source": ".agents/skills/chat-first-development",
+        "destination": ".agents/skills/chat-first-development"
+      },
+      {
+        "source": ".agents/skills/right-size-execution",
+        "destination": ".agents/skills/right-size-execution"
+      },
+      {
+        "source": ".agents/skills/calibrated-collaborative-listening",
+        "destination": ".agents/skills/calibrated-collaborative-listening"
+      },
+      {
+        "source": ".agents/skills/maintain-canonical-requirements",
+        "destination": ".agents/skills/maintain-canonical-requirements"
+      },
+      {
+        "source": ".agents/skills/elicit-frontend-requirements",
+        "destination": ".agents/skills/elicit-frontend-requirements"
+      },
+      {
+        "source": ".agents/skills/design-frontend-experience",
+        "destination": ".agents/skills/design-frontend-experience"
+      },
+      {
+        "source": ".agents/skills/implement-frontend-experience",
+        "destination": ".agents/skills/implement-frontend-experience"
+      },
+      {
+        "source": ".agents/skills/test-frontend-experience",
+        "destination": ".agents/skills/test-frontend-experience"
+      },
+      {
+        "source": ".agents/skills/verify-against-engineering-standards",
+        "destination": ".agents/skills/verify-against-engineering-standards"
+      },
+      {
+        "source": ".agents/skills/inspect-quality-gates",
+        "destination": ".agents/skills/inspect-quality-gates"
+      },
+      {
+        "source": ".agents/skills/japanese-git-commit-gitmoji",
+        "destination": ".agents/skills/japanese-git-commit-gitmoji"
+      },
+      {
+        "source": "governance/checks",
+        "destination": "governance/checks"
+      },
+      {
+        "source": "governance/reviews",
+        "destination": "governance/reviews"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      },
+      {
+        "source": "docs/standards/AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      }
     ],
     "adversarial-review": [
-      {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
+      {
+        "source": ".agents/skills/adversarial-review",
+        "destination": ".agents/skills/adversarial-review"
+      }
     ],
     "requirements": [
-      {"source": ".agents/skills/maintain-canonical-requirements", "destination": ".agents/skills/maintain-canonical-requirements"},
-      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
+      {
+        "source": ".agents/skills/maintain-canonical-requirements",
+        "destination": ".agents/skills/maintain-canonical-requirements"
+      },
+      {
+        "source": ".agents/skills/calibrated-collaborative-listening",
+        "destination": ".agents/skills/calibrated-collaborative-listening"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      }
+    ],
+    "reference-repository-maintenance": [
+      {
+        "source": ".agents/skills/maintain-reference-repository",
+        "destination": ".agents/skills/maintain-reference-repository"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      }
     ],
     "implementation-design": [
-      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
-      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"},
-      {"source": "governance/checks", "destination": "governance/checks"}
+      {
+        "source": ".agents/skills/generate-implementation-design",
+        "destination": ".agents/skills/generate-implementation-design"
+      },
+      {
+        "source": "docs/standards/AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      },
+      {
+        "source": "governance/checks",
+        "destination": "governance/checks"
+      }
     ],
     "standards-verification": [
-      {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
-      {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
-      {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"},
-      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
+      {
+        "source": ".agents/skills/verify-against-engineering-standards",
+        "destination": ".agents/skills/verify-against-engineering-standards"
+      },
+      {
+        "source": ".agents/skills/inspect-quality-gates",
+        "destination": ".agents/skills/inspect-quality-gates"
+      },
+      {
+        "source": "governance/checks",
+        "destination": "governance/checks"
+      },
+      {
+        "source": "governance/reviews",
+        "destination": "governance/reviews"
+      },
+      {
+        "source": "docs/standards/AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      }
     ],
     "communication": [
-      {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
+      {
+        "source": ".agents/skills/calibrated-collaborative-listening",
+        "destination": ".agents/skills/calibrated-collaborative-listening"
+      }
     ],
     "commit-comment": [
-      {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
-      {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"}
+      {
+        "source": ".agents/skills/japanese-git-commit-gitmoji",
+        "destination": ".agents/skills/japanese-git-commit-gitmoji"
+      },
+      {
+        "source": "docs/COMMIT-COMMENT.md",
+        "destination": "docs/COMMIT-COMMENT.md"
+      }
     ],
     "commit-style": [
-      {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
-      {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"}
+      {
+        "source": ".agents/skills/japanese-git-commit-gitmoji",
+        "destination": ".agents/skills/japanese-git-commit-gitmoji"
+      },
+      {
+        "source": "docs/COMMIT-COMMENT.md",
+        "destination": "docs/COMMIT-COMMENT.md"
+      }
     ],
     "skills": [
-      {"source": ".agents/skills", "destination": ".agents/skills"}
+      {
+        "source": ".agents/skills",
+        "destination": ".agents/skills"
+      }
     ],
     "agents": [
-      {"source": ".codex/agents", "destination": ".codex/agents"}
+      {
+        "source": ".codex/agents",
+        "destination": ".codex/agents"
+      }
     ],
     "regulated": [
-      {"source": ".agents/skills", "destination": ".agents/skills"},
-      {"source": ".codex/agents", "destination": ".codex/agents"},
-      {"source": "governance", "destination": "governance"},
-      {"source": "docs/templates", "destination": "docs/templates"},
-      {"source": "tools/devflow.py", "destination": "tools/devflow.py"},
-      {"source": "checklist.xlsx", "destination": "checklist.xlsx"},
-      {"source": "requirements.txt", "destination": "requirements.txt"},
-      {"source": "distribution/snippets/AGENTS.governance.md", "destination": "AGENTS.governance.reference.md"}
+      {
+        "source": ".agents/skills",
+        "destination": ".agents/skills"
+      },
+      {
+        "source": ".codex/agents",
+        "destination": ".codex/agents"
+      },
+      {
+        "source": "governance",
+        "destination": "governance"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      },
+      {
+        "source": "docs/templates",
+        "destination": "docs/templates"
+      },
+      {
+        "source": "tools/devflow.py",
+        "destination": "tools/devflow.py"
+      },
+      {
+        "source": "checklist.xlsx",
+        "destination": "checklist.xlsx"
+      },
+      {
+        "source": "requirements.txt",
+        "destination": "requirements.txt"
+      },
+      {
+        "source": "distribution/snippets/AGENTS.governance.md",
+        "destination": "AGENTS.governance.reference.md"
+      }
     ],
     "governance": [
-      {"source": ".agents/skills", "destination": ".agents/skills"},
-      {"source": ".codex/agents", "destination": ".codex/agents"},
-      {"source": "governance", "destination": "governance"},
-      {"source": "docs/templates", "destination": "docs/templates"},
-      {"source": "tools/devflow.py", "destination": "tools/devflow.py"},
-      {"source": "checklist.xlsx", "destination": "checklist.xlsx"},
-      {"source": "requirements.txt", "destination": "requirements.txt"},
-      {"source": "distribution/snippets/AGENTS.governance.md", "destination": "AGENTS.governance.reference.md"}
+      {
+        "source": ".agents/skills",
+        "destination": ".agents/skills"
+      },
+      {
+        "source": ".codex/agents",
+        "destination": ".codex/agents"
+      },
+      {
+        "source": "governance",
+        "destination": "governance"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      },
+      {
+        "source": "docs/templates",
+        "destination": "docs/templates"
+      },
+      {
+        "source": "tools/devflow.py",
+        "destination": "tools/devflow.py"
+      },
+      {
+        "source": "checklist.xlsx",
+        "destination": "checklist.xlsx"
+      },
+      {
+        "source": "requirements.txt",
+        "destination": "requirements.txt"
+      },
+      {
+        "source": "distribution/snippets/AGENTS.governance.md",
+        "destination": "AGENTS.governance.reference.md"
+      }
     ],
     "codex-hooks": [
-      {"source": ".codex/hooks", "destination": ".codex/hooks"},
-      {"source": ".codex/hooks.json", "destination": ".codex/hooks.json"},
-      {"source": "distribution/snippets/codex-config.toml", "destination": ".codex/config.reference.toml"}
+      {
+        "source": ".codex/hooks",
+        "destination": ".codex/hooks"
+      },
+      {
+        "source": ".codex/hooks.json",
+        "destination": ".codex/hooks.json"
+      },
+      {
+        "source": "distribution/snippets/codex-config.toml",
+        "destination": ".codex/config.reference.toml"
+      }
     ],
     "full": [
-      {"source": ".agents/skills", "destination": ".agents/skills"},
-      {"source": ".codex/agents", "destination": ".codex/agents"},
-      {"source": ".codex/hooks", "destination": ".codex/hooks"},
-      {"source": ".codex/hooks.json", "destination": ".codex/hooks.json"},
-      {"source": "governance", "destination": "governance"},
-      {"source": "docs/templates", "destination": "docs/templates"},
-      {"source": "tools/devflow.py", "destination": "tools/devflow.py"},
-      {"source": "checklist.xlsx", "destination": "checklist.xlsx"},
-      {"source": "requirements.txt", "destination": "requirements.txt"},
-      {"source": "distribution/snippets/AGENTS.governance.md", "destination": "AGENTS.governance.reference.md"},
-      {"source": "distribution/snippets/codex-config.toml", "destination": ".codex/config.reference.toml"}
+      {
+        "source": ".agents/skills",
+        "destination": ".agents/skills"
+      },
+      {
+        "source": ".codex/agents",
+        "destination": ".codex/agents"
+      },
+      {
+        "source": ".codex/hooks",
+        "destination": ".codex/hooks"
+      },
+      {
+        "source": ".codex/hooks.json",
+        "destination": ".codex/hooks.json"
+      },
+      {
+        "source": "governance",
+        "destination": "governance"
+      },
+      {
+        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
+      },
+      {
+        "source": "docs/templates",
+        "destination": "docs/templates"
+      },
+      {
+        "source": "tools/devflow.py",
+        "destination": "tools/devflow.py"
+      },
+      {
+        "source": "checklist.xlsx",
+        "destination": "checklist.xlsx"
+      },
+      {
+        "source": "requirements.txt",
+        "destination": "requirements.txt"
+      },
+      {
+        "source": "distribution/snippets/AGENTS.governance.md",
+        "destination": "AGENTS.governance.reference.md"
+      },
+      {
+        "source": "distribution/snippets/codex-config.toml",
+        "destination": ".codex/config.reference.toml"
+      }
     ]
   }
 }

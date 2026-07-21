@@ -1,17 +1,22 @@
-# 移植可能なAI開発Skills・agents集
+# 移植可能なAI開発Skills・agents参照集
 
-他のrepositoryへコピーし、自然言語で相談するだけで使えるAI開発Skills、Codex agents、条件付き統制基盤の参照コレクションです。
+他のrepositoryへコピーし、自然言語で相談するだけで使えるAI開発Skills、Codex agents、要件・設計・統制部品のsample / reference collectionです。
+
+このrepository自身は導入先productの稼働中projectではありません。portableな定義、実装、template、synthetic fixtureだけを維持し、repository固有のlive work recordは保存しません。
 
 ## このrepositoryが担保する3本柱
 
 ### 1. 対話から原子的な永続要件を維持する
 
-`$maintain-canonical-requirements`が、会話から今後も維持すべき製品要求だけを抽出し、`add`、`update`、`retire`として正本へ適用します。
+`$maintain-canonical-requirements`が、会話から今後も維持すべきsoftware product requirementとsoftware project requirementだけを抽出し、`add`、`update`、`retire`として正本へ適用します。
 
 - 正本: [`spec/requirements/requirements.json`](spec/requirements/requirements.json)
 - 人向け生成表示: [`docs/requirements/REQUIREMENTS.md`](docs/requirements/REQUIREMENTS.md)
+- 分類標準: [`docs/standards/REQUIREMENT-CLASSIFICATION.md`](docs/standards/REQUIREMENT-CLASSIFICATION.md)
 
-外部挙動、業務ルール、受入条件、非機能閾値、権限要求が変わらない場合、要件正本を更新しません。ただし要件影響の判定と理由はCommit Commentへ残します。
+SWEBOKを参考に、まず`product` / `project`を分け、次に`functional` / `nonfunctional`を分けます。文書の存在、内容、鮮度、更新、配布、廃止に関する義務は、原則として`project / nonfunctional`として管理します。Markdown file自体を要件正本にせず、文書pathは要件からtraceされる実現手段にします。
+
+外部挙動、業務ルール、受入条件、非機能閾値、権限要求、恒久的なproject constraintが変わらない場合、要件正本を更新しません。ただし要件影響の判定と理由はCommit Commentへ残します。
 
 ### 2. 実装と1対1のas-built設計を生成する
 
@@ -44,6 +49,21 @@ check timing:
 5. Deploy後: Operational Check
 6. 定期: Governance Audit
 
+## この参照repositoryを更新する視線
+
+このrepository自身のSkill、agent、標準、配布profile、governance、documentationを変更するときは`$maintain-reference-repository`を使用します。
+
+確認する主な境界:
+
+- portable assetとrepository固有の一時事情
+- product requirementとproject requirement
+- functional behaviorとnonfunctional constraint
+- 要件正本、生成表示、ADR、変更証跡、一時状態のauthority
+- default profileへ含める資産とrepository-maintenance専用資産
+- consumer compatibilityとmigration
+
+詳細は[参照repository保守Skill](.agents/skills/maintain-reference-repository/SKILL.md)を参照します。
+
 ## 必ず残すもの
 
 すべてのrepository変更で次を残します。
@@ -61,13 +81,13 @@ Commit CommentはChange Manifest、Requirement Impact Result、Design Impact Res
 - [Commit Comment契約](docs/COMMIT-COMMENT.md)
 - [レビュー結果](governance/reviews/README.md)
 
-## `work/`の扱い
+## `work/`を置かない
 
-通常の`direct`と`assured`では恒久的な`work/<id>/`を作りません。
+このsample / reference repositoryにはtop-levelの`work/`を置きません。過去案件のrequest、approval、phase、implementation log、test reportを履歴sampleとして残さず、必要な履歴はGit commit、PR、review YAMLへ集約します。
+
+regulated runtimeのcode、template、schema、validatorはportable assetとして維持できます。実行中の`work/<id>/`は、`regulated`を選択した導入先repositoryで生成します。このrepositoryで回帰用データが必要な場合は、`tests/fixtures/`等へsyntheticであることを明示して置きます。
 
 再開用の一時状態が必要な場合だけ、gitignoreされた`.devflow/run/`を使用し、変更完了後に削除します。
-
-既存のwork item、初回承認、hash chain、phase gateは`regulated`専用です。
 
 ## 実行プロファイル
 
@@ -83,7 +103,7 @@ Commit CommentはChange Manifest、Requirement Impact Result、Design Impact Res
 
 authentication、authorization、PII、confidential、data loss、不可逆なproduction操作、法令・契約上の統制、高額操作、または明示的な高保証要求。
 
-この場合だけ、次を追加します。
+導入先repositoryでは、必要に応じて次を追加します。
 
 - work item
 - 一度だけの明示承認
@@ -91,6 +111,8 @@ authentication、authorization、PII、confidential、data loss、不可逆なpr
 - hash chain
 - phase gate
 - regulated audit
+
+この参照repository自身の変更では、liveなwork itemをコミットしません。
 
 ## 使い方
 
@@ -105,15 +127,16 @@ authentication、authorization、PII、confidential、data loss、不可逆なpr
 | 成果物 | 配置 | 役割 |
 |---|---|---|
 | Skills | `.agents/skills/<name>/` | 会話、要件、設計生成、review、commit |
-| 永続要件 | `spec/requirements/requirements.json` | 現在状態の正本 |
+| 永続要件 | `spec/requirements/requirements.json` | product / project requirementの現在状態の正本 |
 | 人向け要件 | `docs/requirements/REQUIREMENTS.md` | 正本から生成 |
+| 要件分類標準 | `docs/standards/REQUIREMENT-CLASSIFICATION.md` | SWEBOKを参考にscope、category、documentation NFRを判定 |
 | as-built設計 | `docs/design/generated/` | 実装から生成 |
 | as-built設計標準 | `docs/standards/AS-BUILT-DESIGN.md` | 実装・test規約とcheck mapping |
 | ADR | `docs/decisions/` | 条件付きの長期判断 |
 | review result | `governance/reviews/` | 変更時点のselected check証跡 |
 | standards registry | `governance/standards/registry.json` | 公式資料の版と再確認期限 |
 | 一時実行状態 | `.devflow/run/` | Git管理外、完了後削除 |
-| regulated runtime | `governance/`, `tools/devflow.py`, `work/` | regulated profile限定 |
+| regulated runtime sample | `governance/`, `tools/devflow.py`, `docs/templates/` | 導入先でregulated workを生成・検証するportable asset |
 
 `docs/design/generated/`と`docs/decisions/`は、導入先repositoryを含む標準配置の契約です。この参照repositoryでも、generator対応実装から設計を生成した場合、またはコードだけでは理由が分からない長期判断にADRが必要な場合にだけ作成します。directoryを存在させるための空file、手書きの生成設計、不要なADRは追加しません。
 
