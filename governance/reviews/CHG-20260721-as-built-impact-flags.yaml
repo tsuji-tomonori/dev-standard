@@ -1,0 +1,207 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260721-as-built-impact-flags
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: false
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: true
+  as_built_adoption: false
+  quality_threshold_change: false
+
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: review contractの選択意味を分離する内部governance変更で、利用者向け機能要件と受入条件は変更しない
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AS-BUILT-DESIGN.md
+    note: impact flag、selector、schema version、規範強度とenforcementの関係を変更する設計影響を判定した
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-impact-flags.yaml
+    note: schema、validator、catalog、標準、配布用registryに跨るためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者の依頼をIssueコメント、branch、commit、draft PRへの外部書込み権限として扱った
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/validate.py
+      - test:tests/test_review_contract.py
+      - workflow:Governance
+    note: validatorのPython構文とreview contract testをGovernance workflowで検査する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Governance workflowのruff checkを現在HEADへ実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_review_contract.py
+      - test:tests/test_standardsflow.py
+      - workflow:Governance
+    note: flag分離、scope必須化、schema v1互換、registry生成の回帰を単体テストする
+
+  - id: FAST-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/standards/SOURCES.md
+      - test:tests/test_standardsflow.py
+      - workflow:Governance
+    note: as-built標準digestをregistryと配布copyへ反映し、SOURCES.mdを同一generator契約で更新した
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: GitleaksをPR HEADへ実行する
+
+  - id: FAST-024
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:docs/standards/AS-BUILT-DESIGN.md
+      - path:governance/checks/catalog.yaml
+      - path:governance/reviews/review-result.schema.json
+      - path:.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md
+      - test:tests/test_review_contract.py
+      - test:tests/test_standardsflow.py
+    note: 標準、catalog、schema、selector reference、registry、回帰testをas_built_standard_change契約へ整合させた
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: Issue #11のimpact flag意味分離、互換移行、規範説明にscopeを限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: 最終Commit Commentの必須節とtrailersをvalidatorで検査する
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 外部機能要件を変えず、既存要件IDの意味も変更しないため要件正本は更新しない
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AS-BUILT-DESIGN.md
+    note: flag二軸、schema v2移行、norm・scope・enforcement三軸を標準とCommit Commentへ記録した
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_review_contract.py
+      - test:tests/test_standardsflow.py
+      - workflow:Governance
+    note: Issueの受入条件をselector、schema、legacy、parity、registryの回帰testへ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-impact-flags.yaml
+      - test:tests/test_review_contract.py
+    note: 今回選択したcheckだけをschema v2とcatalog v3に適合するYAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-impact-flags.yaml
+    note: as-built adoption checkを標準変更の形式的なN/Aとして登録していない
+
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:governance/reviews/review-result.schema.json
+      - path:governance/reviews/review-result.template.yaml
+      - path:governance/reviews/README.md
+      - test:tests/test_review_contract.py
+    note: 新規reviewをschema v2へ移行しつつschema v1とPR #10のreview YAMLを読み取り可能なまま保持した
+
+  - id: REV-015
+    class: Advisory
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AS-BUILT-DESIGN.md
+    note: Issue #11の方針と標準本文で判断理由が追跡でき、独立ADRを追加するほど別のarchitecture decisionではないと判定した
+
+advisories: []
+residual_risks: []
