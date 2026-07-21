@@ -59,7 +59,7 @@ class ProfileBoundaryContractTest(unittest.TestCase):
         work_readme = (ROOT / "work" / "README.md").read_text(encoding="utf-8")
         root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
-        self.assertIn("移行前に作成された履歴証跡", work_readme)
+        self.assertIn("分離する前に作成された履歴証跡", work_readme)
         self.assertIn("現行の通常変更で複製するtemplateまたは実装例ではありません", work_readme)
         self.assertIn("導入先repositoryを含む標準配置の契約", root_readme)
         self.assertIn("directoryを存在させるための空file", root_readme)
