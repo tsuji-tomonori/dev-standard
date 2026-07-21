@@ -43,6 +43,38 @@ class StandardsflowTest(unittest.TestCase):
         standard = ROOT / "docs" / "standards" / "AS-BUILT-DESIGN.md"
         self.assertEqual(by_id["DEVSTD-AS-BUILT"]["artifact_sha256"], hashlib.sha256(standard.read_bytes()).hexdigest())
 
+    def test_aws_cdk_as_built_standard_is_registered_and_mapped(self) -> None:
+        registry = standardsflow.load(ROOT / "governance/standards/registry.json")
+        by_id = {source["id"]: source for source in registry["sources"]}
+        standard = ROOT / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md"
+        self.assertEqual(
+            by_id["DEVSTD-AWS-CDK-AS-BUILT"]["artifact_sha256"],
+            hashlib.sha256(standard.read_bytes()).hexdigest(),
+        )
+        content = standard.read_text(encoding="utf-8")
+        selection = (
+            ROOT
+            / ".agents"
+            / "skills"
+            / "verify-against-engineering-standards"
+            / "references"
+            / "as-built-design-check-selection.md"
+        ).read_text(encoding="utf-8")
+        for required in [
+            "docs/design/generated/cdk/",
+            "synthesized template",
+            "CDK-DO-020",
+            "CDK-DO-033",
+            "CDK-DO-047",
+            "IMP-009",
+            "FAST-006",
+            "FAST-012",
+            "AUD-008",
+        ]:
+            self.assertIn(required, content)
+        for required in ["AWS-CDK-AS-BUILT-DESIGN.md", "IMP-009", "FAST-012", "FAST-023"]:
+            self.assertIn(required, selection)
+
     def test_expired_source_blocks_current_best_practice_claim(self) -> None:
         registry = standardsflow.load(ROOT / "governance/standards/registry.json")
         with self.assertRaises(standardsflow.StandardsError):
