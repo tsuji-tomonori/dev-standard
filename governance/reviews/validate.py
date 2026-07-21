@@ -67,6 +67,7 @@ TRIGGER_FLAGS = {
     "月次またはリリース単位": "periodic_cycle",
     "月次": "monthly_cycle",
     "再確認期限時": "recheck_due",
+    "as-built標準変更時": "as_built_standard_change",
     "as-built規約適用時": "as_built_adoption",
     "定量閾値変更時": "quality_threshold_change",
 }
@@ -175,10 +176,24 @@ def required_check_ids(review: dict[str, Any], checks: dict[str, dict[str, Any]]
             flag_names = TRIGGER_FLAGS[trigger]
             if isinstance(flag_names, str):
                 flag_names = (flag_names,)
-            applies = any(flags[name] for name in flag_names)
+            applies = any(bool(flags.get(name, False)) for name in flag_names)
         if applies:
             required.add(item_id)
     return required
+
+
+def validate_impact_details(path: Path, review: dict[str, Any]) -> None:
+    """Keep schema-v1 evidence readable while enforcing structured adoption scope in v2."""
+    if review["schema_version"] < 2:
+        return
+    adoption = review["impact_flags"]["as_built_adoption"]
+    details = review["impact_details"]["as_built_adoption"]
+    scope = details["scope"]
+    exclusions = details["exclusions"]
+    if adoption and not scope:
+        raise ContractError(f"{path}: as_built_adoption requires a non-empty scope")
+    if not adoption and (scope or exclusions):
+        raise ContractError(f"{path}: adoption scope and exclusions require as_built_adoption: true")
 
 
 def validate_review(
@@ -194,6 +209,7 @@ def validate_review(
     if schema_errors:
         messages = "; ".join(f"{'.'.join(map(str, error.path)) or '<root>'}: {error.message}" for error in schema_errors)
         raise ContractError(f"{path}: schema validation failed: {messages}")
+    validate_impact_details(path, review)
     if review["catalog_version"] != catalog["catalog_version"]:
         raise ContractError(f"{path}: catalog_version is stale")
     catalog_path = root / "governance" / "checks" / "catalog.yaml"
