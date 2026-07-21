@@ -1,8 +1,8 @@
 schema_version: 1
-catalog_version: 1
+catalog_version: 2
 authority: governance/checks/catalog.yaml
 initial_import: dev-standard_checklist_restructured.xlsx の 01_必要チェック
-item_count: 59
+item_count: 68
 items:
 - id: IMP-001
   class: Invariant
@@ -160,7 +160,7 @@ items:
   area: Generated
   trigger: 生成対象変更時
   check: 生成物driftを検査する
-  acceptance: 要件文書、OpenAPI、設計、schema、resource一覧を再生成し差分を検査する。Fail条件「生成元との不一致」に該当しない
+  acceptance: 宣言済み生成対象を同一logicのgenerate/check modeで決定論的に再生成し、差分pathを列挙する。Fail条件「生成元との不一致または非決定出力」に該当しない
   required_evidence: 生成物とCI
   enforcement: blocking
   execution_point: 生成元変更後
@@ -254,6 +254,86 @@ items:
   required_evidence: テストまたは設計差分
   enforcement: advisory
   execution_point: 関連実装後
+- id: FAST-016
+  class: Risk-selected
+  timing: implementation
+  area: As-built API
+  trigger: 公開API変更時
+  check: 実装・仕様・sampleの三点整合を検査する
+  acceptance: handler登録、設計metadata、error分岐、error sampleを静的解析する。Fail条件「登録漏れ、metadata欠落、sample不足」に該当しない
+  required_evidence: static check / CI外部サービス
+  enforcement: blocking-when-selected
+  execution_point: API・OpenAPI・sample変更後
+- id: FAST-017
+  class: Risk-selected
+  timing: implementation
+  area: As-built Sample
+  trigger: 公開API変更時
+  check: sampleとtestの整合を検査する
+  acceptance: 設計掲載sampleが対応testから参照され、実responseとのassertに使われることをASTで確認する。Fail条件「未testのsample」に該当しない
+  required_evidence: static check / test code / CI外部サービス
+  enforcement: blocking-when-selected
+  execution_point: API sample変更後
+- id: FAST-018
+  class: Risk-selected
+  timing: implementation
+  area: As-built E2E
+  trigger: SQLまたはE2E変更時
+  check: CRUDとE2E状態検証の整合を検査する
+  acceptance: C/U/D APIの正常系E2EがDBまたは外部状態を検証し、異常系が状態不変または理由付き許可変化を検証する。Fail条件「状態assert欠落」に該当しない
+  required_evidence: static check / E2E test / CI外部サービス
+  enforcement: blocking-when-selected
+  execution_point: SQL・CRUD・E2E変更後
+- id: FAST-019
+  class: Advisory
+  timing: implementation
+  area: As-built Coverage
+  trigger: as-built規約適用時
+  check: C0・C1 coverage目標を測定する
+  acceptance: C0命令網羅95%以上、C1分岐網羅90%以上を測定し、未達を導入時のAdvisoryとして報告する。Fail条件「測定不能または目標未達」に該当しない
+  required_evidence: coverage result / CI外部サービス
+  enforcement: advisory
+  execution_point: as-built規約の導入・拡張後
+- id: FAST-020
+  class: Advisory
+  timing: implementation
+  area: As-built Test Structure
+  trigger: as-built規約適用時
+  check: AAA・GWTとtest記述規約を評価する
+  acceptance: unit testのAAA、E2EのGWT、docstring、1 case 1関数をASTで評価する。Fail条件「生成可能なtest構造を満たさない」に該当しない
+  required_evidence: static check / test code
+  enforcement: advisory
+  execution_point: as-built規約の導入・拡張後
+- id: FAST-021
+  class: Advisory
+  timing: implementation
+  area: As-built Implementation
+  trigger: as-built規約適用時
+  check: 解析可能な実装規約を評価する
+  acceptance: endpoint layout、layer分離、生SQL、運用log、generator tool構造を評価する。Fail条件「静的解析でflowまたは一次情報を追跡できない」に該当しない
+  required_evidence: static check / design review
+  enforcement: advisory
+  execution_point: as-built規約の導入・拡張後
+- id: FAST-022
+  class: Risk-selected
+  timing: implementation
+  area: As-built Thresholds
+  trigger: 定量閾値変更時
+  check: 規約・設定・委譲先の定量値を一致させる
+  acceptance: 標準Rule ID、machine-readable設定、linter delegationの閾値を比較する。Fail条件「値または委譲mappingの不一致」に該当しない
+  required_evidence: standard / config / static check
+  enforcement: blocking-when-selected
+  execution_point: 閾値またはlinter設定変更後
+- id: FAST-023
+  class: Advisory
+  timing: implementation
+  area: As-built Evidence
+  trigger: as-built規約適用時
+  check: 品質結果を外部report基盤へ集約する
+  acceptance: 選択したtest、static analysis、規約check、coverageの結果を単一の外部workflowまたはreport viewから確認でき、repositoryへ実行結果本文を保存しない。Fail条件「結果が分散し確認不能またはrepositoryへ複製」に該当しない
+  required_evidence: external workflow / report view / artifact policy
+  enforcement: advisory
+  execution_point: as-built規約の導入・拡張後
 - id: REV-001
   class: Invariant
   timing: pre-pr
@@ -592,5 +672,15 @@ items:
   check: advisory滞留を確認する
   acceptance: 同一advisoryの反復、期限超過、Issue未作成を確認する。Fail条件「既知債務の放置」に該当しない
   required_evidence: review YAML / Issues
+  enforcement: periodic
+  execution_point: 月次
+- id: AUD-008
+  class: Periodic
+  timing: periodic
+  area: Suppressions
+  trigger: 月次
+  check: Rule ID抑制一覧を監査する
+  acceptance: ignore[Rule ID]のpath、理由、重複、失効、孤児を確認する。Fail条件「理由なし抑制または恒久化した不要抑制」に該当しない
+  required_evidence: suppression inventory / audit report
   enforcement: periodic
   execution_point: 月次

@@ -50,6 +50,7 @@ TRIGGER_FLAGS = {
     "生成対象変更時": "generated_change",
     "公開API変更時": "public_api_change",
     "SQL変更時": "sql_change",
+    "SQLまたはE2E変更時": ("sql_change", "e2e_change"),
     "migration時": "migration",
     "UI変更時": "ui_change",
     "対話UI変更時": "interactive_ui_change",
@@ -66,6 +67,8 @@ TRIGGER_FLAGS = {
     "月次またはリリース単位": "periodic_cycle",
     "月次": "monthly_cycle",
     "再確認期限時": "recheck_due",
+    "as-built規約適用時": "as_built_adoption",
+    "定量閾値変更時": "quality_threshold_change",
 }
 
 
@@ -169,7 +172,10 @@ def required_check_ids(review: dict[str, Any], checks: dict[str, dict[str, Any]]
         if trigger in DERIVED_TRIGGERS:
             applies = derived[DERIVED_TRIGGERS[trigger]]
         elif trigger in TRIGGER_FLAGS:
-            applies = flags[TRIGGER_FLAGS[trigger]]
+            flag_names = TRIGGER_FLAGS[trigger]
+            if isinstance(flag_names, str):
+                flag_names = (flag_names,)
+            applies = any(flags[name] for name in flag_names)
         if applies:
             required.add(item_id)
     return required

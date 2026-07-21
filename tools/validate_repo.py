@@ -196,6 +196,7 @@ def validate_repo(failures: list[str]) -> None:
             "canonical_requirements": "spec/requirements/requirements.json",
             "generated_requirements": "docs/requirements/REQUIREMENTS.md",
             "generated_design": "docs/design/generated/",
+            "as_built_standard": "docs/standards/AS-BUILT-DESIGN.md",
             "standards_registry": "governance/standards/registry.json",
         }.items():
             if manifest["standard_paths"].get(key) != expected:

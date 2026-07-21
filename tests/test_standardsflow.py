@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import tempfile
@@ -25,7 +26,7 @@ standardsflow = load_module()
 class StandardsflowTest(unittest.TestCase):
     def test_self_hosted_registry_is_valid_fresh_and_generated(self) -> None:
         registry = standardsflow.load(ROOT / "governance/standards/registry.json")
-        standardsflow.freshness(registry, date(2026, 7, 18))
+        standardsflow.freshness(registry, date(2026, 7, 21))
         generated = (ROOT / "docs/standards/SOURCES.md").read_text(encoding="utf-8")
         self.assertEqual(generated, standardsflow.render(registry))
         asset = (ROOT / ".agents/skills/verify-against-engineering-standards/assets/standards.registry.json").read_bytes()
@@ -38,6 +39,9 @@ class StandardsflowTest(unittest.TestCase):
             "b3cb8028fecb9607f757504c861947fa3bf423087ea8bf08c58020f0ba3596dc",
         )
         self.assertTrue({"AWS-GENAI-LENS", "AWS-RAI-LENS", "AWS-ML-LENS", "AWS-AGENTIC-LENS"} <= set(by_id))
+        self.assertEqual(by_id["DEVSTD-AS-BUILT"]["authority"], "dev-standard maintainers")
+        standard = ROOT / "docs" / "standards" / "AS-BUILT-DESIGN.md"
+        self.assertEqual(by_id["DEVSTD-AS-BUILT"]["artifact_sha256"], hashlib.sha256(standard.read_bytes()).hexdigest())
 
     def test_expired_source_blocks_current_best_practice_claim(self) -> None:
         registry = standardsflow.load(ROOT / "governance/standards/registry.json")
@@ -47,6 +51,25 @@ class StandardsflowTest(unittest.TestCase):
     def test_nonofficial_source_is_rejected(self) -> None:
         value = json.loads((ROOT / "governance/standards/registry.json").read_text(encoding="utf-8"))
         value["sources"][0]["url"] = "https://example.com/swebok"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "registry.json"
+            path.write_text(json.dumps(value), encoding="utf-8")
+            with self.assertRaises(standardsflow.StandardsError):
+                standardsflow.load(path)
+
+    def test_repository_owned_source_requires_canonical_url_and_hash(self) -> None:
+        value = json.loads((ROOT / "governance/standards/registry.json").read_text(encoding="utf-8"))
+        owned = next(source for source in value["sources"] if source["id"] == "DEVSTD-AS-BUILT")
+        owned["url"] = "https://github.com/another-owner/another-repo/blob/main/standard.md"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "registry.json"
+            path.write_text(json.dumps(value), encoding="utf-8")
+            with self.assertRaises(standardsflow.StandardsError):
+                standardsflow.load(path)
+
+        value = json.loads((ROOT / "governance/standards/registry.json").read_text(encoding="utf-8"))
+        owned = next(source for source in value["sources"] if source["id"] == "DEVSTD-AS-BUILT")
+        owned["artifact_sha256"] = None
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "registry.json"
             path.write_text(json.dumps(value), encoding="utf-8")

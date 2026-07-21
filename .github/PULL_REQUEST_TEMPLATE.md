@@ -9,19 +9,30 @@
 ## 変更証跡
 
 - 実行profile: `direct` / `assured` / `regulated`
+- 選択理由:
 - Review YAML: `governance/reviews/<change-id>.yaml`
 - Requirements: `REQ-...` / `none`
 - Design-Impact: `none` / `generated` / `adr` / `contract` / `governance` / `mixed`
+- 生成設計 / ADR:
 
 - [ ] Commit Commentに目的、変更内容、要件影響、設計影響、review YAML path、検証契約、残存riskを記載した
 - [ ] 選択したcheckだけをreview YAMLへ保存し、未選択checkをN/Aとして登録していない
 - [ ] CIの生ログやtest reportをrepositoryへ複製していない
 
-## 検証
+## 選択checkと検証
 
-- 変更範囲の検証:
+- 変更範囲のtargeted check:
 - repository検証: `make verify`
 - 外部CI: GitHub Actionsの現在HEAD結果を参照
+
+未選択checkをN/Aとして列挙しない。CI logとtest report本文を貼り付けない。
+
+## Authority boundary
+
+- 外部書込み・production・削除・公開・merge・高額操作: あり / なし
+- 必要な承認と記録:
+
+公開API変更だけでは承認を必須にしない。
 
 ## 残存リスク・例外
 

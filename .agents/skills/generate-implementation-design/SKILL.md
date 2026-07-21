@@ -13,6 +13,7 @@ Generate detailed design from implementation contracts while keeping canonical r
 2. Implementation artifacts define implemented structure and interfaces.
 3. Generated detailed design describes those artifacts and includes their digests.
 4. A mismatch is a defect; never edit generated docs to hide it.
+5. Markdown outputs use `.gen.md` under `docs/design/generated/` and begin with a direct-edit prohibition plus generate/check command templates.
 
 ## FastAPI contract
 

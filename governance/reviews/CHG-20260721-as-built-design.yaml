@@ -1,0 +1,289 @@
+schema_version: 1
+catalog_version: 2
+catalog_digest: sha256:25f6d0445c983b08bc1499d70b55c30b45aa603e4ef839e28bfd852a214179b3
+change_id: CHG-20260721-as-built-design
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: true
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: false
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_adoption: true
+  quality_threshold_change: true
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+    note: 永続義務を19件追加し、既存drift要件を1件更新した
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/decisions/ADR-0001-as-built-design-authority-and-scope.md
+    note: 標準、catalog、Skill、配布profileへの設計影響を判定した
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-design.yaml
+    note: 要件正本、generator標準、governance、複数Skillに跨るためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者のPR作成依頼をGitHub branchとPRへの外部書込み権限として扱った
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - test:tests/test_review_contract.py
+      - test:tests/test_standardsflow.py
+    note: Python構文とrepository testをGovernance workflowで検査する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Governance workflowのruff checkを現在HEADへ実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_specflow.py
+      - test:tests/test_review_contract.py
+      - test:tests/test_skills.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_standardsflow.py
+      - workflow:Governance
+    note: 要件生成、catalog、Skill、配布、standards registryの契約を単体テストする
+
+  - id: FAST-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/requirements/REQUIREMENTS.md
+      - path:docs/standards/SOURCES.md
+      - test:tests/test_specflow.py
+      - test:tests/test_standardsflow.py
+      - test:tests/test_designflow.py
+      - workflow:Governance
+    note: 要件表示、standards一覧、as-built設計を正本から決定論的に再生成しcheck modeでdriftを検査する
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: GitleaksをPR HEADへ実行する
+
+  - id: FAST-019
+    class: Advisory
+    result: fail
+    evidence: []
+    note: C0 95%とC1 90%は導入先向けAdvisoryとして登録し、dev-standard自身では測定・強制していない
+
+  - id: FAST-020
+    class: Advisory
+    result: fail
+    evidence: []
+    note: AAA/GWT、docstring、1 case 1関数は導入先向けAdvisoryとして登録し、dev-standard自身へ遡及強制していない
+
+  - id: FAST-021
+    class: Advisory
+    result: fail
+    evidence: []
+    note: endpoint layout、layer、SQL、log、tool規約は導入先向けAdvisoryとして登録し、dev-standard自身へ遡及強制していない
+
+  - id: FAST-022
+    class: Risk-selected
+    result: na
+    evidence: []
+    note: 標準値は追加したがD-3によりdev-standard自身の実装設定へ適用しないため、比較対象のmachine-readable閾値設定が存在しない
+
+  - id: FAST-023
+    class: Advisory
+    result: pass
+    evidence:
+      - workflow:Governance
+      - path:docs/ARTIFACTS-AND-CHECKS.md
+      - path:docs/standards/AS-BUILT-DESIGN.md
+    note: 選択したlint、test、contract checkをGovernance workflowへ集約し、repositoryへ生logやtest reportを複製しない
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者が提示したas-built要件の分配と同型の既存profile矛盾修正にscopeを限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: 最終Commit Commentの必須節とtrailersをvalidatorで検査する
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+      - path:docs/requirements/REQUIREMENTS.md
+    note: 要件影響ありの判定と正本追加・生成表示が一致する
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AS-BUILT-DESIGN.md
+      - path:docs/decisions/ADR-0001-as-built-design-authority-and-scope.md
+    note: 正本分配、配置、適用範囲、Advisory開始の設計判断を標準とADRへ反映した
+
+  - id: REV-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - path:docs/standards/AS-BUILT-DESIGN.md
+      - path:governance/checks/catalog.yaml
+      - test:tests/test_specflow.py
+      - test:tests/test_review_contract.py
+    note: 各要件を標準Rule、check ID、生成表示、contract testへ接続した
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_specflow.py
+      - test:tests/test_review_contract.py
+      - test:tests/test_skills.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_standardsflow.py
+      - test:tests/test_designflow.py
+      - workflow:Governance
+    note: 受入条件に対応する要件生成、as-built生成、catalog、Skill、distribution、registry testをCIへ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-design.yaml
+      - test:tests/test_review_contract.py
+    note: 今回選択したcheckだけをschemaとcatalogに適合するYAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-design.yaml
+    note: 未選択のAPI・SQL・E2E checkを形式的なN/Aとして登録していない
+
+  - id: REV-009
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-design.yaml
+      - path:docs/decisions/ADR-0001-as-built-design-authority-and-scope.md
+    note: FAST-022はD-3の非適用判断により比較対象設定がない具体的事実をN/A根拠にした
+
+  - id: REV-010
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-as-built-design.yaml
+      - path:docs/decisions/ADR-0001-as-built-design-authority-and-scope.md
+    note: FAST-019からFAST-021のAdvisory failを適用範囲の残存リスクとして明示した
+
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:CONTRIBUTING.md
+      - path:.github/PULL_REQUEST_TEMPLATE.md
+      - path:distribution/manifest.json
+      - test:tests/test_install_reference.py
+      - test:tests/test_skills.py
+    note: profile、authority boundary、配布profileを旧契約と互換性のある移行説明へ更新した
+
+  - id: REV-014
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:CONTRIBUTING.md
+      - path:.github/PULL_REQUEST_TEMPLATE.md
+      - path:.agents/skills/chat-first-development/references/bootstrap-and-conversation.md
+    note: 通常開発の運用正本をdirect・assured・regulatedと一時計画モデルへ揃えた
+
+  - id: REV-015
+    class: Advisory
+    result: pass
+    evidence:
+      - path:docs/decisions/ADR-0001-as-built-design-authority-and-scope.md
+      - commit:self
+    note: 正本分配、D-3、coverage昇格方針を長期判断としてADRへ保存した
+
+advisories:
+  - id: FAST-019
+    disposition: residual-risk
+    note: current repositoryへのcoverage導入は別変更で実測する
+    risk: C0/C1 coverageをdev-standard自身で測定・blocking化せず、導入先のAdvisory評価と実測昇格に委ねる
+  - id: FAST-020
+    disposition: residual-risk
+    note: current repositoryのtest移行は別変更でscopeとcostを評価する
+    risk: AAA/GWTとtest記述規約をdev-standard自身へ遡及強制せず、導入先のAdvisory評価に委ねる
+  - id: FAST-021
+    disposition: residual-risk
+    note: current repositoryの実装layout移行は別変更で互換性を評価する
+    risk: endpoint layoutとlayer規約をdev-standard自身へ遡及強制せず、導入先のAdvisory評価に委ねる
+
+residual_risks:
+  - C0/C1 coverageをdev-standard自身で測定・blocking化せず、導入先のAdvisory評価と実測昇格に委ねる
+  - AAA/GWTとtest記述規約をdev-standard自身へ遡及強制せず、導入先のAdvisory評価に委ねる
+  - endpoint layoutとlayer規約をdev-standard自身へ遡及強制せず、導入先のAdvisory評価に委ねる

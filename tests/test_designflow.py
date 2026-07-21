@@ -70,17 +70,28 @@ class DesignflowTest(unittest.TestCase):
         source, openapi, sql, output = self.fastapi_fixture()
         args = ["fastapi", "--source-root", str(source), "--openapi", str(openapi), "--sql-root", str(sql), "--out", str(output)]
         self.assertEqual(designflow.main(args), 0)
-        sequence = (output / "SEQUENCES.md").read_text(encoding="utf-8")
+        sequence = (output / "SEQUENCES.gen.md").read_text(encoding="utf-8")
+        self.assertTrue(sequence.startswith("<!-- AUTO-GENERATED. DO NOT EDIT DIRECTLY."))
+        self.assertIn("Generate: `python .agents/skills/generate-implementation-design/scripts/designflow.py fastapi", sequence)
+        self.assertIn("Check: `python .agents/skills/generate-implementation-design/scripts/designflow.py fastapi", sequence)
         self.assertIn("functions.load_item", sequence)
         self.assertIn("functions.present_item", sequence)
         self.assertNotIn("router.get", sequence)
-        self.assertIn("getItem", (output / "API_CATALOG.md").read_text(encoding="utf-8"))
-        self.assertIn("Item", (output / "INTERFACES.md").read_text(encoding="utf-8"))
-        crud = (output / "CRUD.md").read_text(encoding="utf-8")
+        self.assertIn("getItem", (output / "API_CATALOG.gen.md").read_text(encoding="utf-8"))
+        self.assertIn("Item", (output / "INTERFACES.gen.md").read_text(encoding="utf-8"))
+        crud = (output / "CRUD.gen.md").read_text(encoding="utf-8")
         self.assertRegex(crud, r"\| items \| C \| R \| U \| D \|")
-        self.assertIn("create-1", (output / "QUERY_OBJECTS.md").read_text(encoding="utf-8"))
+        self.assertIn("create-1", (output / "QUERY_OBJECTS.gen.md").read_text(encoding="utf-8"))
         manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
         self.assertTrue(all(len(value["sha256"]) == 64 for value in manifest["sources"]))
+        self.assertTrue(all(not value["path"].startswith("/") for value in manifest["sources"]))
+        self.assertNotIn(str(self.root), (output / "QUERY_OBJECTS.gen.md").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["notice"], "AUTO-GENERATED. DO NOT EDIT DIRECTLY.")
+        self.assertTrue(all(name.endswith(".gen.md") for name in manifest["generated"]))
+        first = {path.name: path.read_bytes() for path in output.iterdir() if path.is_file()}
+        self.assertEqual(designflow.main(args), 0)
+        second = {path.name: path.read_bytes() for path in output.iterdir() if path.is_file()}
+        self.assertEqual(first, second)
         self.assertEqual(designflow.main(args + ["--check"]), 0)
         functions = source / "items/functions.py"
         functions.write_text(functions.read_text(encoding="utf-8") + "\n", encoding="utf-8")
@@ -127,8 +138,8 @@ class DesignflowTest(unittest.TestCase):
         )
         args = ["cdk", "--template", str(template), "--out", str(output)]
         self.assertEqual(designflow.main(args), 0)
-        self.assertIn("AWS::S3::Bucket", (output / "RESOURCES.md").read_text(encoding="utf-8"))
-        self.assertIn("Stage", (output / "PARAMETERS.md").read_text(encoding="utf-8"))
+        self.assertIn("AWS::S3::Bucket", (output / "RESOURCES.gen.md").read_text(encoding="utf-8"))
+        self.assertIn("Stage", (output / "PARAMETERS.gen.md").read_text(encoding="utf-8"))
         self.assertEqual(designflow.main(args + ["--check"]), 0)
 
 

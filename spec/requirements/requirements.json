@@ -1,7 +1,829 @@
 {
-  "catalog_revision": 4,
+  "catalog_revision": 5,
   "product": "dev-standard",
   "requirements": [
+    {
+      "acceptance_criteria": [
+        {
+          "given": "同一revisionの宣言済み一次情報がある",
+          "id": "AC-ASBUILT-001-1",
+          "then": "列挙順が固定され、時刻・乱数・環境依存pathを含まないバイト一致出力になる",
+          "when": "generatorを複数回実行する"
+        }
+      ],
+      "action": "generate",
+      "id": "REQ-ASBUILT-001",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "同一入力からバイト一致する設計出力",
+      "rationale": "差分によるdrift検知には非決定要素を除いた再現可能な出力が必要である。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "as-built生成の決定論性",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "同一fixtureを複数回生成したbyte比較",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "宣言済み生成対象と既存生成物がある",
+          "id": "AC-ASBUILT-002-1",
+          "then": "生成logicを再利用して既存生成物と比較し、差分pathを列挙して非0終了する",
+          "when": "check modeを実行する"
+        }
+      ],
+      "action": "provide",
+      "id": "REQ-ASBUILT-002",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "一つの生成logicを共有するgenerate modeとcheck mode",
+      "rationale": "生成と検査を別実装にすると両者の意味が乖離する。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "generateとcheckの二相契約",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "write modeとcheck modeの同一出力およびdrift終了code",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "Markdown形式のas-built設計を生成する",
+          "id": "AC-ASBUILT-003-1",
+          "then": "docs/design/generated/配下の.gen.mdでありgenerate/check commandを含む直接編集禁止bannerがあり、同じ現在状態の手書き設計が存在しない",
+          "when": "生成物の配置と先頭行を検査する"
+        }
+      ],
+      "action": "separate",
+      "id": "REQ-ASBUILT-003",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "docs/design/generated/配下の直接編集禁止banner付き.gen.md設計",
+      "rationale": "専用path、命名、更新commandにより手書き設計との混在と直接編集を防げる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built生成物",
+      "title": "生成設計の隔離と識別",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/SKILL.md",
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "生成path、file名、banner、重複設計scan",
+        "method": "repository検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "handler、framework OpenAPI、sample定数、生SQLがある",
+          "id": "AC-ASBUILT-004-1",
+          "then": "interface、sequence、処理step、error分岐、message、unit-test観点をhandler起点で生成する",
+          "when": "API設計を生成する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-ASBUILT-004",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "handler ASTとOpenAPIとsampleとSQLから得たAPI詳細設計",
+      "rationale": "APIのinterfaceと実行flowを同じ一次情報から導出すると実装との1対1対応を維持できる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "API詳細設計の導出",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/SKILL.md",
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "API fixtureからの生成内容assert",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "handler decoratorに設計metadataがある",
+          "id": "AC-ASBUILT-005-1",
+          "then": "operation、API番号、権限、業務概要を重複なく列挙する",
+          "when": "API一覧を生成する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-ASBUILT-005",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "handler metadataから得た重複のないAPI一覧",
+      "rationale": "route metadataを正本にすると別管理のAPI台帳を不要にできる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "API一覧の導出",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/SKILL.md",
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "metadata fixtureからのAPI一覧assert",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "endpoint別SQLと外部client呼出がある",
+          "id": "AC-ASBUILT-006-1",
+          "then": "SELECTをR、INSERTをC、UPDATEをU、DELETEをDとしてtable×APIと外部連携先×APIを生成する",
+          "when": "CRUD設計を生成する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-ASBUILT-006",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "SQLと外部client呼出から得たtableおよび外部連携先のCRUD関係",
+      "rationale": "静的解析されたデータ操作をAPIへ接続するとCRUD図を手書きせず維持できる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "CRUD関係の導出",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/SKILL.md",
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
+        ]
+      },
+      "type": "data",
+      "verification": {
+        "evidence": "SQLおよびclient fixtureからのCRUD matrix assert",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "repository内に正本DDLとendpoint別SQLがある",
+          "id": "AC-ASBUILT-007-1",
+          "then": "table、column、constraint、ER関係をDDLから生成し、columnへの書込みAPIをSQL解析から導出する",
+          "when": "DB設計を生成する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-ASBUILT-007",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "正本DDLとSQLから得たtable定義とER関係と書込みAPI",
+      "rationale": "DDLとSQLを一次情報にするとDB設計の二重管理を避けられる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "DB設計の導出",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "data",
+      "verification": {
+        "evidence": "DDLおよびSQL fixtureからのDB設計assert",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "E2E testにGiven、When、Then sectionがある",
+          "id": "AC-ASBUILT-008-1",
+          "then": "前提、操作、期待状態をtest codeから順序どおり生成する",
+          "when": "scenario設計を生成する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-ASBUILT-008",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "E2E testのGiven When Then構造から得たscenario設計",
+      "rationale": "test codeをscenarioの正本にすると実行可能な仕様と設計表示を一致させられる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "E2E scenario設計の導出",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "E2E fixtureからのscenario出力assert",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "外部report基盤にtest結果JSONがある",
+          "id": "AC-ASBUILT-009-1",
+          "then": "status、API response、DB結果、mock受信結果への参照を整形し、実行結果本文をrepositoryへ保存しない",
+          "when": "test evidence viewを生成する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-ASBUILT-009",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "外部report基盤の結果JSONから得たtest evidence view",
+      "rationale": "実行結果を外部正本から整形すればrepositoryへtest reportを複製せず追跡できる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "test evidence viewの外部集約",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "docs/ARTIFACTS-AND-CHECKS.md",
+          "governance/checks/catalog.yaml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "report fixtureとrepository非保存規則のassert",
+        "method": "契約テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "tool entrypointと呼出先関数にdocstringがある",
+          "id": "AC-ASBUILT-010-1",
+          "then": "CLI argument、制御flow、関数責務をASTとdocstring先頭1行から生成する",
+          "when": "tool設計を生成する"
+        }
+      ],
+      "action": "derive",
+      "id": "REQ-ASBUILT-010",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "tool entrypoint ASTとdocstringから得たCLI仕様とflow",
+      "rationale": "generator自身を同じ方式で可視化すると抽出可能性をdogfoodingできる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "generator tool設計の導出",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "tool fixtureからのCLIおよびflow assert",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "API handlerに正規化されたerror分岐がある",
+          "id": "AC-ASBUILT-011-1",
+          "then": "各error分岐へ安定IDを付けたmachine-readable定義を出力する",
+          "when": "API設計を生成する"
+        }
+      ],
+      "action": "generate",
+      "id": "REQ-ASBUILT-011",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "API error分岐から得た一意ID付きmachine-readable error case",
+      "rationale": "error分岐を機械可読にするとE2Eとの1対1 coverageを検査できる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計generator",
+      "title": "error case定義の生成",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "data",
+      "verification": {
+        "evidence": "error branch fixtureからのcase ID出力assert",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "API handler、OpenAPI metadata、error sampleがある",
+          "id": "AC-ASBUILT-012-1",
+          "then": "handler登録漏れ、metadata欠落、error分岐に対応するsample不足を検出する",
+          "when": "公開API変更の整合checkを実行する"
+        }
+      ],
+      "action": "verify",
+      "id": "REQ-ASBUILT-012",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "handler登録と設計metadataとerror sampleの三点整合",
+      "rationale": "実装、interface情報、設計掲載sampleの片落ちを静的に検出する必要がある。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built整合check",
+      "title": "実装仕様sample三点整合",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "不整合fixtureを拒否するcheck結果",
+        "method": "静的解析"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "正常または異常response sampleがある",
+          "id": "AC-ASBUILT-013-1",
+          "then": "各sampleが対応testから参照され、実responseとのassertに使用されていることを検出する",
+          "when": "sample整合checkを実行する"
+        }
+      ],
+      "action": "verify",
+      "id": "REQ-ASBUILT-013",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "設計掲載sampleと実response assertionの対応",
+      "rationale": "設計書に掲載する例をtest済みに限定すると表示と振る舞いの乖離を防げる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built整合check",
+      "title": "sampleとtestの整合",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "未参照sampleと未assert sampleを拒否するcheck結果",
+        "method": "AST静的解析"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "CRUD図でC、U、Dを持つAPIがある",
+          "id": "AC-ASBUILT-014-1",
+          "then": "正常系E2EがDBまたは外部連携先の変更状態をassertし、異常系が状態不変または理由付き許可変化をassertする",
+          "when": "CRUD E2E整合checkを実行する"
+        }
+      ],
+      "action": "verify",
+      "id": "REQ-ASBUILT-014",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "CUD操作を持つAPIとE2E状態assertの対応",
+      "rationale": "API responseだけでなく永続状態と外部状態を検証してデータ更新の回帰を検出する必要がある。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built整合check",
+      "title": "CRUDとE2E状態検証の整合",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "状態assert欠落fixtureを拒否するcheck結果",
+        "method": "静的解析とE2E契約テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "as-built標準を採用したtest codeがある",
+          "id": "AC-ASBUILT-015-1",
+          "then": "unit testのAAA、E2EのGWT、docstring、1 case 1関数を評価し、導入時はAdvisoryとして報告する",
+          "when": "test構造checkを実行する"
+        }
+      ],
+      "action": "structure",
+      "id": "REQ-ASBUILT-015",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "AAAまたはGWTとdocstringと1 case 1関数を持つtest",
+      "rationale": "構造化されたtest codeをscenario設計とレビュー観点の一次情報にできる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "導入先repositoryのtest",
+      "title": "解析可能なtest構造",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "test構造fixtureとAdvisory結果",
+        "method": "AST静的解析"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "as-built標準を採用したunit test suiteがある",
+          "id": "AC-ASBUILT-016-1",
+          "then": "C0 95%以上とC1 90%以上をAdvisoryとして評価し、実測に基づく昇格判断まで無条件blockingにしない",
+          "when": "coverageを測定する"
+        }
+      ],
+      "action": "measure",
+      "id": "REQ-ASBUILT-016",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "C0命令網羅95%以上とC1分岐網羅90%以上のcoverage",
+      "rationale": "高い命令・分岐網羅を測定目標にしつつ、導入直後のfalse blockerを避けて効果を実測する。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "導入先repositoryのunit test",
+      "title": "unit test coverage目標",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          ".agents/skills/retrospect-and-improve/SKILL.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "C0 C1測定結果への外部CI参照とAdvisory分類",
+        "method": "coverage toolとreview contract"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "as-built標準に規範Rule IDがある",
+          "id": "AC-ASBUILT-017-1",
+          "then": "check ID、class、timing、trigger、acceptance、enforcementがcatalogだけで定義され、標準が対応check IDを参照する",
+          "when": "check mappingを検査する"
+        }
+      ],
+      "action": "maintain",
+      "id": "REQ-ASBUILT-017",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "Rule IDからcatalog check IDへ接続された機械可読check定義",
+      "rationale": "Markdown tagとcatalogの二重定義を避けるとclass、trigger、enforcementを一か所で変更できる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built規約",
+      "title": "as-built check定義の単一正本",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml",
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "標準Rule IDとcatalog IDの対応assert",
+        "method": "repository契約テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "コードにignore Rule ID commentがある",
+          "id": "AC-ASBUILT-018-1",
+          "then": "全抑制path、Rule ID、理由を列挙し、理由欠落、孤児、反復を検出する",
+          "when": "抑制一覧を生成してGovernance Auditを実行する"
+        }
+      ],
+      "action": "generate",
+      "id": "REQ-ASBUILT-018",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "理由付きRule ID抑制箇所の監査一覧",
+      "rationale": "例外を一覧化するとsilent suppressionと恒久化した例外を定期監査できる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "as-built規約check",
+      "title": "抑制例外の可視化",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "governance/checks/catalog.yaml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "抑制inventoryとAUD-008結果",
+        "method": "定期repository audit"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "複数の品質checkをCIで実行する",
+          "id": "AC-ASBUILT-019-1",
+          "then": "外部report基盤へ結果を集約し、repositoryにはworkflow名、check ID、証拠pathだけを記録する",
+          "when": "品質結果を報告する"
+        }
+      ],
+      "action": "provide",
+      "id": "REQ-ASBUILT-019",
+      "last_changed_by": "CHG-20260721-as-built-design",
+      "object": "testとstatic analysisと規約checkとcoverageを表示する外部report view",
+      "rationale": "品質結果を一画面で追跡しつつ生logとtest reportのrepository複製を避けられる。",
+      "revision": 1,
+      "source_refs": [
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
+      ],
+      "status": "active",
+      "subject": "導入先repositoryの品質検証",
+      "title": "品質結果の外部集約",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md"
+        ],
+        "implementation": [
+          "docs/ARTIFACTS-AND-CHECKS.md",
+          "governance/reviews/README.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_review_contract.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "workflow参照とrepository非複製確認",
+        "method": "CI契約レビュー"
+      }
+    },
     {
       "acceptance_criteria": [
         {
@@ -215,41 +1037,47 @@
     {
       "acceptance_criteria": [
         {
-          "given": "自動生成された詳細設計がある",
+          "given": "宣言済みの自動生成設計がある",
           "id": "AC-DESIGN-006-1",
-          "then": "ソースSHA-256 manifestが存在し、クリーンな再生成結果がバイト単位で一致する",
-          "when": "設計差分検査を実行する"
+          "then": "source SHA-256 manifestとクリーンな再生成結果がバイト単位で一致し、差分時は対象pathを列挙して非0終了する",
+          "when": "設計check modeを実行する"
         }
       ],
       "action": "detect",
       "id": "REQ-DESIGN-006",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "last_changed_by": "CHG-20260721-as-built-design",
       "object": "実装成果物と自動生成された詳細設計の差分",
-      "rationale": "digestとバイト比較により実装と設計の1対1再現性を強制する。",
-      "revision": 2,
+      "rationale": "digestと決定論的なバイト比較により実装と設計の1対1再現性を強制し、更新漏れの対象pathを特定する。",
+      "revision": 3,
       "source_refs": [
-        "user:2026-07-17"
+        "user:2026-07-17",
+        "user:2026-07-21",
+        "docs/standards/AS-BUILT-DESIGN.md"
       ],
       "status": "active",
       "subject": "設計フロー",
       "title": "実装と設計の差分検出",
       "traces": {
         "design": [
-          ".agents/skills/generate-implementation-design/SKILL.md"
+          ".agents/skills/generate-implementation-design/SKILL.md",
+          "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+          ".agents/skills/generate-implementation-design/scripts/designflow.py",
+          "governance/checks/catalog.yaml"
         ],
         "standards": [
-          "SWEBOK-V4A"
+          "SWEBOK-V4A",
+          "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_designflow.py"
+          "tests/test_designflow.py",
+          "tests/test_review_contract.py"
         ]
       },
       "type": "quality",
       "verification": {
-        "evidence": "変更済みソースを用いた差分検出テスト",
+        "evidence": "変更済みsourceを用いたdriftと差分pathの検出テスト",
         "method": "自動テスト"
       }
     },
@@ -1278,5 +2106,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-07-18"
+  "updated_at": "2026-07-21"
 }

@@ -25,7 +25,7 @@ class ReviewContractTest(unittest.TestCase):
             (ROOT / "governance" / "reviews" / "review-result.schema.json").read_text(encoding="utf-8")
         )
         cls.current = review_contract.load_yaml(
-            ROOT / "governance" / "reviews" / "CHG-20260718-artifact-governance.yaml"
+            ROOT / "governance" / "reviews" / "CHG-20260721-as-built-design.yaml"
         )
 
     def validate_copy(self, value: dict[str, object]) -> None:
@@ -35,10 +35,34 @@ class ReviewContractTest(unittest.TestCase):
             review_contract.validate_review(ROOT, path, self.schema, self.catalog, self.checks, "HEAD")
 
     def test_catalog_is_unique_and_contains_all_restructured_checks(self) -> None:
-        self.assertEqual(self.catalog["item_count"], 59)
-        self.assertEqual(len(self.checks), 59)
+        self.assertEqual(self.catalog["item_count"], 68)
+        self.assertEqual(len(self.checks), 68)
         self.assertEqual(self.checks["REV-007"]["class"], "Invariant")
         self.assertEqual(self.checks["AUD-007"]["class"], "Periodic")
+        self.assertEqual(self.checks["FAST-016"]["class"], "Risk-selected")
+        self.assertEqual(self.checks["FAST-019"]["class"], "Advisory")
+        self.assertEqual(self.checks["FAST-022"]["trigger"], "定量閾値変更時")
+        self.assertEqual(self.checks["FAST-023"]["class"], "Advisory")
+        self.assertEqual(self.checks["AUD-008"]["class"], "Periodic")
+
+    def test_as_built_trigger_flags_select_only_the_declared_controls(self) -> None:
+        value = yaml.safe_load(yaml.safe_dump(self.current))
+        value["completed_timings"] = ["implementation"]
+        value["impact_flags"] = {key: False for key in value["impact_flags"]}
+        value["impact_flags"]["as_built_adoption"] = True
+        required = review_contract.required_check_ids(value, self.checks)
+        self.assertEqual({"FAST-007", "FAST-019", "FAST-020", "FAST-021", "FAST-023"}, required)
+
+        value["impact_flags"]["quality_threshold_change"] = True
+        required = review_contract.required_check_ids(value, self.checks)
+        self.assertIn("FAST-022", required)
+        self.assertNotIn("FAST-016", required)
+        self.assertNotIn("FAST-018", required)
+
+        value["impact_flags"] = {key: False for key in value["impact_flags"]}
+        value["impact_flags"]["e2e_change"] = True
+        required = review_contract.required_check_ids(value, self.checks)
+        self.assertEqual({"FAST-007", "FAST-018"}, required)
 
     def test_current_repository_contract_is_valid(self) -> None:
         review_contract.validate_repository(ROOT, "HEAD")
@@ -104,28 +128,22 @@ class ReviewContractTest(unittest.TestCase):
 
     def test_advisory_issue_and_residual_risk_require_linkage(self) -> None:
         value = yaml.safe_load(yaml.safe_dump(self.current))
-        advisory_check = next(item for item in value["selected_checks"] if item["id"] == "REV-015")
-        advisory_check.update({"result": "fail", "evidence": [], "note": "ADR判断を持越す"})
-        value["selected_checks"].append(
-            {
-                "id": "REV-010",
-                "class": "Invariant",
-                "result": "pass",
-                "evidence": ["test:tests/test_review_contract.py"],
-                "note": "Advisory failの処理をテストする",
-            }
-        )
-        value["advisories"] = [{"id": "REV-015", "disposition": "issue", "note": "Issueで追跡"}]
+        value["advisories"] = [
+            {"id": "FAST-019", "disposition": "issue", "note": "Issueで追跡"},
+            *[item for item in value["advisories"] if item["id"] != "FAST-019"],
+        ]
         with self.assertRaisesRegex(review_contract.ContractError, "schema validation failed"):
             self.validate_copy(value)
 
+        value = yaml.safe_load(yaml.safe_dump(self.current))
         value["advisories"] = [
             {
-                "id": "REV-015",
+                "id": "FAST-019",
                 "disposition": "residual-risk",
                 "note": "残存リスクとして受容",
-                "risk": "ADR判断が未完了",
-            }
+                "risk": "未登録のcoverage risk",
+            },
+            *[item for item in value["advisories"] if item["id"] != "FAST-019"],
         ]
         with self.assertRaisesRegex(review_contract.ContractError, "absent from residual_risks"):
             self.validate_copy(value)

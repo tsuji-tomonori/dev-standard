@@ -7,6 +7,7 @@
     "canonical_requirements": "spec/requirements/requirements.json",
     "generated_requirements": "docs/requirements/REQUIREMENTS.md",
     "generated_design": "docs/design/generated/",
+    "as_built_standard": "docs/standards/AS-BUILT-DESIGN.md",
     "review_catalog": "governance/checks/catalog.yaml",
     "review_results": "governance/reviews/",
     "temporary_execution": ".devflow/run/",
@@ -55,7 +56,8 @@
       {"source": "governance/checks", "destination": "governance/checks"},
       {"source": "governance/reviews", "destination": "governance/reviews"},
       {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"},
-      {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"}
+      {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"},
+      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
     ],
     "chat-first": [
       {"source": ".agents/skills/chat-first-development", "destination": ".agents/skills/chat-first-development"},
@@ -69,7 +71,8 @@
       {"source": "governance/checks", "destination": "governance/checks"},
       {"source": "governance/reviews", "destination": "governance/reviews"},
       {"source": "docs/COMMIT-COMMENT.md", "destination": "docs/COMMIT-COMMENT.md"},
-      {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"}
+      {"source": "docs/ARTIFACTS-AND-CHECKS.md", "destination": "docs/ARTIFACTS-AND-CHECKS.md"},
+      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
     ],
     "development-framework": [
       {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"},
@@ -80,7 +83,8 @@
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
       {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
       {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"}
+      {"source": "governance/reviews", "destination": "governance/reviews"},
+      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
     ],
     "right-size-execution": [
       {"source": ".agents/skills/right-size-execution", "destination": ".agents/skills/right-size-execution"}
@@ -104,7 +108,8 @@
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
       {"source": ".agents/skills/japanese-git-commit-gitmoji", "destination": ".agents/skills/japanese-git-commit-gitmoji"},
       {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"}
+      {"source": "governance/reviews", "destination": "governance/reviews"},
+      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
     ],
     "adversarial-review": [
       {"source": ".agents/skills/adversarial-review", "destination": ".agents/skills/adversarial-review"}
@@ -114,13 +119,16 @@
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
     ],
     "implementation-design": [
-      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"}
+      {"source": ".agents/skills/generate-implementation-design", "destination": ".agents/skills/generate-implementation-design"},
+      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"},
+      {"source": "governance/checks", "destination": "governance/checks"}
     ],
     "standards-verification": [
       {"source": ".agents/skills/verify-against-engineering-standards", "destination": ".agents/skills/verify-against-engineering-standards"},
       {"source": ".agents/skills/inspect-quality-gates", "destination": ".agents/skills/inspect-quality-gates"},
       {"source": "governance/checks", "destination": "governance/checks"},
-      {"source": "governance/reviews", "destination": "governance/reviews"}
+      {"source": "governance/reviews", "destination": "governance/reviews"},
+      {"source": "docs/standards/AS-BUILT-DESIGN.md", "destination": "docs/standards/AS-BUILT-DESIGN.md"}
     ],
     "communication": [
       {"source": ".agents/skills/calibrated-collaborative-listening", "destination": ".agents/skills/calibrated-collaborative-listening"}
