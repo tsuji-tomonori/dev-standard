@@ -93,9 +93,10 @@ selected_checks:
     result: pass
     evidence:
       - test:tests/test_reference_repository_contract.py
+      - test:tests/test_profile_boundaries.py
       - test:tests/test_specflow.py
       - test:tests/test_install_reference.py
-    note: scope/category互換性、work非存在、Skill inventory、portable profileをcontract testで検証する
+    note: scope/category互換性、work非存在、regulated導入先境界、Skill inventory、portable profileをcontract testで検証する
 
   - id: FAST-007
     class: Invariant
@@ -141,10 +142,11 @@ selected_checks:
     result: pass
     evidence:
       - test:tests/test_reference_repository_contract.py
+      - test:tests/test_profile_boundaries.py
       - test:tests/test_specflow.py
       - test:tests/test_install_reference.py
       - workflow:Governance
-    note: 受入条件をrepository contract、既存specflow回帰、installer回帰へ接続した
+    note: 受入条件をrepository contract、profile boundary、既存specflow回帰、installer回帰へ接続した
 
   - id: REV-007
     class: Invariant
