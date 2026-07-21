@@ -1,0 +1,171 @@
+schema_version: 1
+catalog_version: 1
+catalog_digest: sha256:fe3483b332cc9fda65acc831f27b9e31ac383741916eea8a613929b802edaee3
+change_id: CHG-20260721-profile-boundaries
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: false
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: true
+  requirements_impact: false
+  public_contract_change: false
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: true
+  external_side_effect: true
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: Commit Commentで外部挙動、業務ルール、受入条件、非機能閾値、権限要求に要件影響がない理由を記録する
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: Commit Commentでgovernance文書と配布Skill referenceへの設計影響を記録する
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: governance、Skill reference、contribution contract、PR templateに跨るためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者のPR作成依頼をbranch pushとPull Request作成の外部書込み権限として扱う
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - path:CONTRIBUTING.md
+      - path:.github/PULL_REQUEST_TEMPLATE.md
+    note: profile別の貢献手順とPR入力契約を更新し、Governance workflowでrepository契約を検証する
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: 現在HEADを対象とするGovernance workflowのsecret scanをblocking条件にする
+
+  - id: FAST-015
+    class: Advisory
+    result: pass
+    evidence:
+      - path:CONTRIBUTING.md
+      - path:.github/PULL_REQUEST_TEMPLATE.md
+      - path:work/README.md
+    note: 現行profile境界、証跡保持、一時状態、外部CI参照を利用者向け運用文書へ反映した
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 差分を報告されたprofile境界のレガシー逸脱修正に限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: Commit Commentへ必須節とtrailersを記載する
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 開発手順の整合修正であり製品要件正本を変更しない
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:README.md
+      - path:.agents/skills/chat-first-development/references/bootstrap-and-conversation.md
+    note: governance運用契約の影響を記録し、実装由来生成設計とADRは対象外とした
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - path:CONTRIBUTING.md
+      - path:.github/PULL_REQUEST_TEMPLATE.md
+    note: repository検証とreview contractをGovernance workflowで実行し、変更後の貢献手順とPR入力項目を直接確認できる
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-profile-boundaries.yaml
+    note: 今回選択したcheckだけをschemaとcatalogに適合するreview YAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-profile-boundaries.yaml
+    note: 未選択checkを形式的なN/Aとして登録していない
+
+  - id: REV-014
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:CONTRIBUTING.md
+      - path:.github/PULL_REQUEST_TEMPLATE.md
+      - path:work/README.md
+    note: profile別の運用正本と歴史的work itemの保持境界を更新した
+
+  - id: REV-015
+    class: Advisory
+    result: pass
+    evidence:
+      - commit:self
+      - path:README.md
+      - path:work/README.md
+    note: 歴史的work itemを削除せず注記する判断と、生成設計・ADRの標準pathを必要時だけ作成する判断をCommit Commentと運用文書へ残した
+
+advisories: []
+
+residual_risks:
+  - 既存work item 8件は履歴証跡として残るため、内容を現行directまたはassuredの実装例として参照しない
+  - docs/design/generated/はgenerator対象実装がなく、docs/decisions/はADR対象判断がない限り、この参照repositoryでは実体が存在しない
