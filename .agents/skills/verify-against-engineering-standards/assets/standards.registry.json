@@ -168,6 +168,20 @@
       "change_checked_at": "2026-07-21",
       "change_summary": "利用者提供の汎用要件を要件正本、標準、check catalog、既存Skillへ分配し、3本柱モデルとauthority boundaryへ整合した初版。",
       "artifact_sha256": "f35016e6dcfa0ea52225a68e2659f07f29c65333e5a5aa6778caee7a1533b05f"
+    },
+    {
+      "id": "DEVSTD-AWS-CDK-AS-BUILT",
+      "authority": "dev-standard maintainers",
+      "title": "AWS CDK実装・as-built設計標準",
+      "version": "2026-07-21",
+      "url": "https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
+      "checked_at": "2026-07-21",
+      "refresh_days": 180,
+      "profiles": ["CORE", "AWS-DELTA"],
+      "scope": "CDK synthを一次情報とするIaC設計生成、template差分・破壊的変更・policy gate、解析可能なCDK実装・test規約、authority boundary連携。",
+      "change_checked_at": "2026-07-21",
+      "change_summary": "アプリケーション層as-built標準の姉妹編として、AWS CDK固有の生成対象、整合性gate、実装・test規約、導入基準を追加。",
+      "artifact_sha256": "3580a335f99ff974e7a44c7f2c3bb76d3a24cf06734f23939d628e4230e059d5"
     }
   ]
 }

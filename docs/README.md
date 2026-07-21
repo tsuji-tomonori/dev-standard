@@ -11,3 +11,4 @@
 ## 実装標準
 
 - [as-built設計標準](standards/AS-BUILT-DESIGN.md): 実装由来設計、解析可能な実装・test規約、check mapping
+- [AWS CDK実装・as-built設計標準](standards/AWS-CDK-AS-BUILT-DESIGN.md): synthesized templateを一次情報とするIaC設計生成、安全な変更、実装・test規約

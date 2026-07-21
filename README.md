@@ -22,9 +22,9 @@
 | FastAPI `router.py` AST | operation flow・Mermaid sequence |
 | application OpenAPI | API・request / response・schema |
 | raw SQL AST | query object・table CRUD |
-| CDK synthesized CloudFormation | resource・parameter |
+| CDK synthesized CloudFormation | resource・parameter・dependency・IAM・network・stateful resource・external reference |
 
-コードから生成できる情報を手書き設計として二重管理しません。コードだけでは理由が分からず、将来を制約する判断だけADRにします。実装・テスト規約とcheck mappingは[as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)を参照します。
+コードから生成できる情報を手書き設計として二重管理しません。コードだけでは理由が分からず、将来を制約する判断だけADRにします。共通の実装・test規約とcheck mappingは[as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)、AWS CDK固有要件は[AWS CDK実装・as-built設計標準](docs/standards/AWS-CDK-AS-BUILT-DESIGN.md)を参照します。
 
 ### 3. 必要なチェックだけを、適切な時点で行う
 
@@ -108,7 +108,8 @@ authentication、authorization、PII、confidential、data loss、不可逆なpr
 | 永続要件 | `spec/requirements/requirements.json` | 現在状態の正本 |
 | 人向け要件 | `docs/requirements/REQUIREMENTS.md` | 正本から生成 |
 | as-built設計 | `docs/design/generated/` | 実装から生成 |
-| as-built設計標準 | `docs/standards/AS-BUILT-DESIGN.md` | 実装・test規約とcheck mapping |
+| as-built設計標準 | `docs/standards/AS-BUILT-DESIGN.md` | 共通の実装・test規約とcheck mapping |
+| AWS CDK as-built設計標準 | `docs/standards/AWS-CDK-AS-BUILT-DESIGN.md` | synthesized template由来の設計生成とIaC安全規約 |
 | ADR | `docs/decisions/` | 条件付きの長期判断 |
 | review result | `governance/reviews/` | 変更時点のselected check証跡 |
 | standards registry | `governance/standards/registry.json` | 公式資料の版と再確認期限 |

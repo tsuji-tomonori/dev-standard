@@ -1,0 +1,251 @@
+schema_version: 1
+catalog_version: 2
+catalog_digest: sha256:25f6d0445c983b08bc1499d70b55c30b45aa603e4ef839e28bfd852a214179b3
+change_id: CHG-20260721-aws-cdk-as-built-design
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: false
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_adoption: true
+  quality_threshold_change: true
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+    note: dev-standard runtimeまたはCDK generator実装の永続要件は変更せず、portable standard contractを追加した
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+      - path:distribution/manifest.json
+    note: 標準、台帳、配布profile、check選択referenceへのcontract設計影響を判定した
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-aws-cdk-as-built-design.yaml
+    note: as-built標準、generator契約、配布profile、testに跨るためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者のPR作成依頼をGitHub branchとPRへの外部書込み権限として扱った
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - test:tests/test_standardsflow.py
+      - test:tests/test_install_reference.py
+    note: Python testの構文とrepository testをGovernance workflowで検査する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Governance workflowのRuffを現在HEADへ実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_standardsflow.py
+      - test:tests/test_install_reference.py
+      - workflow:Governance
+    note: standard hash、Rule/check mapping、installer配布契約を対象testで検証する
+
+  - id: FAST-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/standards/registry.json
+      - path:.agents/skills/verify-against-engineering-standards/assets/standards.registry.json
+      - path:docs/standards/SOURCES.md
+      - test:tests/test_standardsflow.py
+      - workflow:Governance
+    note: standards registryと配布assetを一致させ、SOURCESを同じrender logicの生成結果として検査する
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: Gitleaksを現在HEADへ実行する
+
+  - id: FAST-019
+    class: Advisory
+    result: fail
+    evidence: []
+    note: C0 95%とC1 90%は導入先向けAdvisoryであり、文書・配布契約中心の本変更では測定していない
+
+  - id: FAST-020
+    class: Advisory
+    result: fail
+    evidence: []
+    note: AAA、GWT、全test docstring、1 case 1関数は導入先向けAdvisoryであり、既存test全体へ遡及適用していない
+
+  - id: FAST-021
+    class: Advisory
+    result: fail
+    evidence: []
+    note: CDK app、stack、construct、config layoutを定義したが、このrepositoryに評価対象のCDK実装はない
+
+  - id: FAST-022
+    class: Risk-selected
+    result: na
+    evidence: []
+    note: 標準閾値は定義したが、dev-standard自身にCDK checker設定または導入対象stackがなく、比較対象のmachine-readable CDK閾値設定が存在しない
+
+  - id: FAST-023
+    class: Advisory
+    result: pass
+    evidence:
+      - workflow:Governance
+      - path:docs/ARTIFACTS-AND-CHECKS.md
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+    note: lint、test、review contractの結果をGitHub Actionsへ集約し、repositoryへ生logやtest reportを複製しない
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: AWS CDK as-built標準、その配布、台帳、check mapping、直接回帰testにscopeを限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: 最終Commit Commentへ必須節、trailers、review YAML参照を記録した
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+    note: runtimeまたはgenerator実装の要件変更ではなく、選択適用するstandard contract追加であるためrequirements正本を変更しない
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+      - path:governance/standards/registry.json
+    note: CDK固有の設計契約とregistry生成影響を標準、台帳、SOURCESへ反映した
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_standardsflow.py
+      - test:tests/test_install_reference.py
+      - workflow:Governance
+    note: hash、生成一覧、Rule/check mapping、配布profileの受入条件をCIへ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-aws-cdk-as-built-design.yaml
+      - test:tests/test_review_contract.py
+    note: 今回選択したcheckだけをschemaとcatalogに適合するYAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-aws-cdk-as-built-design.yaml
+    note: IaC変更check等、triggerされていない項目を形式的なN/Aとして登録していない
+
+  - id: REV-009
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-aws-cdk-as-built-design.yaml
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+    note: FAST-022は導入対象CDK実装とmachine-readable checker設定が存在しない具体的事実をN/A根拠にした
+
+  - id: REV-010
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260721-aws-cdk-as-built-design.yaml
+    note: FAST-019からFAST-021のAdvisory failを残存riskとして明示し、blocking failを残していない
+
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:distribution/manifest.json
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+      - test:tests/test_install_reference.py
+    note: 新規標準をadditiveに配布し、既存generic標準とprofileを削除・renameせずconsumer互換性を維持した
+
+advisories:
+  - id: FAST-019
+    disposition: residual-risk
+    note: coverage閾値はCDK実装を持つ導入先で測定し、導入時はblockingにしない
+    risk: dev-standard自身ではCDK標準のC0 95%・C1 90% coverage目標を測定していない
+  - id: FAST-020
+    disposition: residual-risk
+    note: test構造規約はCDK導入先で段階適用し、既存repository全体へ遡及強制しない
+    risk: AAA・GWT・全test docstring・1 case 1関数をdev-standard既存test全体へ適用していない
+  - id: FAST-021
+    disposition: residual-risk
+    note: CDK実装を持つ導入先でlayout checkerと合成時検査を実装して評価する
+    risk: このrepositoryにCDK実装がないためapp・stack・construct・config規約とgenerator toolingを実動検証していない
+
+residual_risks:
+  - dev-standard自身ではCDK標準のC0 95%・C1 90% coverage目標を測定していない
+  - AAA・GWT・全test docstring・1 case 1関数をdev-standard既存test全体へ適用していない
+  - このrepositoryにCDK実装がないためapp・stack・construct・config規約とgenerator toolingを実動検証していない
+  - PR #10の汎用as-built標準を基底とするstacked PRであり、基底PRより先にはmergeできない
