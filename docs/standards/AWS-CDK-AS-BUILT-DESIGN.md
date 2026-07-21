@@ -185,7 +185,7 @@ format / lint / type / convention
 
 ## 6. テスト規約
 
-### 6.1 snapshot test
+### 6.1 スナップショットtest
 
 | Rule ID | Norm | 規則 | Check ID |
 |---|---|---|---|
@@ -193,7 +193,7 @@ format / lint / type / convention
 | `CDK-DO-048` | MUST | snapshot更新時にlogical ID、resource、replacement、permission、network差分の説明をCommit Commentへ記録する。 | `FAST-012`, `REV-002` |
 | `CDK-DONT-018` | MUST NOT | snapshot一致だけを品質passにしない。 | `FAST-012` |
 
-### 6.2 fine-grained assertion
+### 6.2 個別property assertion
 
 最低限、次をsnapshotと独立にassertする。
 
