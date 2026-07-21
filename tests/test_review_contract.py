@@ -44,15 +44,13 @@ class ReviewContractTest(unittest.TestCase):
         review_contract.validate_repository(ROOT, "HEAD")
 
     def test_only_active_review_is_revalidated(self) -> None:
+        active_review = review_contract.validate_commit(ROOT, "HEAD")
         with mock.patch.object(
             review_contract, "validate_review", wraps=review_contract.validate_review
         ) as validate_review:
             review_contract.validate_repository(ROOT, "HEAD")
         validate_review.assert_called_once()
-        self.assertEqual(
-            validate_review.call_args.args[1].name,
-            "CHG-20260718-artifact-governance.yaml",
-        )
+        self.assertEqual(validate_review.call_args.args[1], active_review)
 
     def test_catalog_digest_and_self_bound_workflow_step_are_validated(self) -> None:
         stale = yaml.safe_load(yaml.safe_dump(self.current))
