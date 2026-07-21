@@ -1,0 +1,4 @@
+interface:
+  display_name: "参照repositoryの保守"
+  short_description: "portable asset、project NFR、documentation、work境界、distributionを整合させる"
+  default_prompt: "Use $maintain-reference-repository to preserve this repository as a portable reference collection, classify product and project requirements, manage documentation as project nonfunctional requirements, and prevent repository-specific work records from being committed."

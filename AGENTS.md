@@ -1,15 +1,26 @@
 # Repository instructions
 
+## Repository identity
+
+このrepositoryは、他repositoryへ移植するSkills、agents、要件・設計・統制部品のsample / reference collectionである。導入先productの稼働中projectではない。
+
+このrepository自身を変更するときは、`$maintain-reference-repository`を最初に適用し、portable assetとrepository固有の一時事情を分離する。
+
+- top-levelの`work/`を作成または復元しない。
+- liveなrequest、approval、phase、implementation log、test reportをsampleとして保存しない。
+- 文書の恒久義務は`docs/standards/REQUIREMENT-CLASSIFICATION.md`に従い、原則`project / nonfunctional`として扱う。
+- regulated runtimeの実装はportable sampleであり、実行中のwork itemは導入先repositoryで生成する。
+
 ## Outcome
 
 自然言語の依頼から、必要な要件、実装、test、as-built設計、レビュー、PR、CI確認までを完了する。結果と安全境界は明確にし、可逆な実装方法はAIに委ねる。
 
 ## Default workflow
 
-feature、fix、refactor、design concern、incomplete ideaでは`$chat-first-development`を入口にする。
+feature、fix、refactor、design concern、incomplete ideaでは`$chat-first-development`を入口にする。このrepository自身の変更では、その前提として`$maintain-reference-repository`の境界を適用する。
 
 1. `$right-size-execution`で`direct`、`assured`、`regulated`を選ぶ。
-2. 要件影響と設計影響を判定する。
+2. product / project requirement、設計、配布、互換性への影響を判定する。
 3. 永続要件が変わる場合だけ`$maintain-canonical-requirements`を使う。
 4. 変更固有のcheckだけを選択する。
 5. 実装し、targeted verificationから開始する。
@@ -19,7 +30,7 @@ feature、fix、refactor、design concern、incomplete ideaでは`$chat-first-de
 9. `$japanese-git-commit-gitmoji`で構造化Commit Commentを作る。
 10. PRを作成し、現在HEADのGitHub Actionsを確認する。
 
-通常変更で恒久的な`work/<id>/`、変更ごとの実行計画、architecture文書、implementation log、test report、release report、retrospectiveを作らない。
+通常変更で恒久的な`work/<id>/`、変更ごとの実行計画、architecture文書、implementation log、test report、release report、retrospectiveを作らない。この参照repositoryではregulatedを選択した場合もliveな`work/`をコミットしない。
 
 ## Required outputs
 
@@ -34,6 +45,7 @@ feature、fix、refactor、design concern、incomplete ideaでは`$chat-first-de
 
 - `spec/requirements/requirements.json`
 - `docs/requirements/REQUIREMENTS.md`
+- project NFRにより必要な恒久文書
 - `docs/design/generated/`
 - `docs/decisions/ADR-*.md`
 - 恒久的な運用文書
@@ -49,29 +61,31 @@ feature、fix、refactor、design concern、incomplete ideaでは`$chat-first-de
 
 ### assured
 
-複数module、公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governance。変更固有のRisk-selected checkとrelated verificationを追加する。
+複数module、公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governance、distribution。変更固有のRisk-selected checkとrelated verificationを追加する。
 
 ### regulated
 
 authentication、authorization、PII、confidential、data loss、irreversible production operation、法令・契約上の統制、高額操作、または明示的な高保証要求。
 
-このprofileだけで次を使用する。
+portable runtimeとして次を維持できる。
 
 - `$govern-development-request`
 - `$author-lifecycle-docs`
 - `$authorize-autonomous-execution`
-- work item
+- work item schema / template / validator
 - hash chain
 - phase gate
 - regulated audit
+
+liveなwork itemは導入先repositoryで使用する。この参照repositoryではsynthetic fixture以外を保存しない。
 
 ## Requirements
 
 永続要件の唯一の正本は`spec/requirements/requirements.json`である。
 
-外部挙動、業務ルール、受入条件、非機能閾値、権限要求が変わる場合だけadd / update / retireを適用する。人向け要件は正本から生成し、直接編集しない。
+SWEBOKを参考に、まずsoftware product requirementとsoftware project requirementを分け、次にfunctionalとnonfunctionalを分ける。外部挙動、業務ルール、受入条件、非機能閾値、権限要求、恒久的なproject constraintが変わる場合だけadd / update / retireを適用する。
 
-要件影響はCommit Commentへ必ず`あり`または`なし`と理由を記録する。
+文書の存在、内容、鮮度、更新、配布、廃止は原則`project / nonfunctional`として管理する。人向け要件は正本から生成し、直接編集しない。要件影響はCommit Commentへ必ず`あり`または`なし`と分類理由を記録する。
 
 ## Design
 
@@ -122,10 +136,14 @@ CI結果は外部サービスを正本とし、まだ完了していないCIをP
 - 対象repository固有のbuild、test、ownership、commit規約を維持する。
 - test、型、lint、security controlを弱めてgateを通さない。
 - 必要な結論を裏付ける証拠が揃ったら探索を止める。
+- repository固有のlive work recordを別pathへ移して削除を偽装しない。
 
 ## Definition of done
 
 - 要求された成果が実装されている。
+- top-levelの`work/`が存在しない。
+- product / projectとfunctional / nonfunctionalの影響が判定されている。
+- documentation requirementのauthorityとlifecycleが明確である。
 - 要件影響と設計影響がCommit Commentに記録されている。
 - 必要な正本と生成物が更新されている。
 - selected check resultがreview YAMLにある。

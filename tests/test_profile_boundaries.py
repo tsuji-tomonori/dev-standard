@@ -47,7 +47,7 @@ class ProfileBoundaryContractTest(unittest.TestCase):
             "### 保証付き実行",
             "### 規制・高保証実行",
             "governance/reviews/<change-id>.yaml",
-            "この場合に限り、`tools/devflow.py init`",
+            "この場合に限り、導入先repositoryで`tools/devflow.py init`",
         ]:
             self.assertIn(required, text)
 
@@ -62,12 +62,13 @@ class ProfileBoundaryContractTest(unittest.TestCase):
         self.assertFalse(text.lstrip().startswith("## Work item"))
         self.assertLess(text.index("## 変更証跡"), text.index("## Regulatedの場合のみ"))
 
-    def test_historical_work_and_standard_design_paths_are_explained(self) -> None:
-        work_readme = (ROOT / "work" / "README.md").read_text(encoding="utf-8")
+    def test_reference_repository_removes_historical_work_and_explains_standard_design_paths(self) -> None:
         root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        governance = (ROOT / "docs" / "GOVERNANCE.md").read_text(encoding="utf-8")
 
-        self.assertIn("分離する前に作成された履歴証跡", work_readme)
-        self.assertIn("現行の通常変更で複製するtemplateまたは実装例ではありません", work_readme)
+        self.assertFalse((ROOT / "work").exists())
+        self.assertIn("top-levelの`work/`を置きません", root_readme)
+        self.assertIn("top-levelの`work/`を保持しない", governance)
         self.assertIn("導入先repositoryを含む標準配置の契約", root_readme)
         self.assertIn("directoryを存在させるための空file", root_readme)
 
