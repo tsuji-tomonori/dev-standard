@@ -19,7 +19,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": 1
+      "enum": [1, 2]
     },
     "catalog_version": {
       "type": "integer",
@@ -115,8 +115,33 @@
         "periodic_cycle": {"type": "boolean"},
         "monthly_cycle": {"type": "boolean"},
         "recheck_due": {"type": "boolean"},
+        "as_built_standard_change": {"type": "boolean"},
         "as_built_adoption": {"type": "boolean"},
         "quality_threshold_change": {"type": "boolean"}
+      }
+    },
+    "impact_details": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["as_built_adoption"],
+      "properties": {
+        "as_built_adoption": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "exclusions"],
+          "properties": {
+            "scope": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            },
+            "exclusions": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"type": "string", "minLength": 1}
+            }
+          }
+        }
       }
     },
     "selected_checks": {
@@ -246,5 +271,86 @@
         "minLength": 1
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"schema_version": {"const": 2}},
+        "required": ["schema_version"]
+      },
+      "then": {
+        "required": ["impact_details"],
+        "properties": {
+          "impact_flags": {
+            "required": ["as_built_standard_change"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "allOf": [
+          {
+            "properties": {"schema_version": {"const": 2}},
+            "required": ["schema_version"]
+          },
+          {
+            "properties": {
+              "impact_flags": {
+                "properties": {"as_built_adoption": {"const": true}},
+                "required": ["as_built_adoption"]
+              }
+            },
+            "required": ["impact_flags"]
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "impact_details": {
+            "properties": {
+              "as_built_adoption": {
+                "properties": {
+                  "scope": {"minItems": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "allOf": [
+          {
+            "properties": {"schema_version": {"const": 2}},
+            "required": ["schema_version"]
+          },
+          {
+            "properties": {
+              "impact_flags": {
+                "properties": {"as_built_adoption": {"const": false}},
+                "required": ["as_built_adoption"]
+              }
+            },
+            "required": ["impact_flags"]
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "impact_details": {
+            "properties": {
+              "as_built_adoption": {
+                "properties": {
+                  "scope": {"maxItems": 0},
+                  "exclusions": {"maxItems": 0}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }
