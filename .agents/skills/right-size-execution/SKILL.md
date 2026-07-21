@@ -18,7 +18,7 @@ description: Select the smallest sufficient direct, assured, or regulated develo
 - authority boundary
 - expansion理由
 
-`direct`と`assured`では恒久的なexecution profileファイルを作らない。再開用状態が必要な場合だけ`.devflow/run/`へ保存し、完了後に削除する。
+`direct`と`assured`では恒久的なexecution profileファイル、日付+slug計画書、固定template、段階status logを作らない。再開用状態が必要な場合だけ`.devflow/run/`へ保存し、完了後に削除する。
 
 `regulated`では既存の`work/<id>/execution-profile.json`を使用できる。
 
@@ -35,7 +35,7 @@ description: Select the smallest sufficient direct, assured, or regulated develo
 ### assured
 
 - 複数module
-- 公開API・event
+- 公開API・event。公開契約であることだけでは承認を要求しない
 - DB・migration
 - IaC・network
 - dependency・lockfile
@@ -57,13 +57,21 @@ description: Select the smallest sufficient direct, assured, or regulated develo
 ## Workflow
 
 1. 要求、changed path、repository metadataからprofileを選ぶ。
-2. 要件影響、設計影響、authority impactを仮判定する。
-3. `governance/checks/catalog.yaml`のtrigger、timing、classからcheck IDを選ぶ。
+2. 要件影響、設計影響、authority impactを仮判定する。public API変更は`assured`、external write・不可逆操作・production・公開・merge・高額操作・regulated条件は承認対象として区別する。
+3. `governance/checks/catalog.yaml`のtrigger、timing、classからcheck IDを選ぶ。as-built標準を導入・拡張する場合は専用のcheck選択referenceを使う。
 4. 最小のcontext、tool、verificationで開始する。
 5. 検証失敗、新しい依存、契約影響、証拠不足が判明した場合だけ拡張する。
 6. 複数軸が同じ新証拠から直接必要になった場合は、理由を一つ記録して同時拡張できる。
 7. 成功条件を満たしたら、Commit Comment、review YAML、PR/CI確認以外の探索を停止する。
 8. PR前に実際のprofile、selected check、残存リスクをreview YAMLへ確定する。
+
+## Planning depth
+
+- `direct`: 依頼が具体的で局所的なら別計画を作らず、変更・検証・Commit Commentへ進む。
+- `assured`: 複数artifactの順序とrollbackを内部で段階化する。再開が必要な場合だけ`.devflow/run/`へ一時保存する。
+- `regulated`: 規制・監査・不可逆性の根拠があるlifecycle文書と承認記録を使用できる。
+
+計画の有無を承認の代用にしない。承認はauthority boundaryへ結び付ける。
 
 ## Soft budget
 

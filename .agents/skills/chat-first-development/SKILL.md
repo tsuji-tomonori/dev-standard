@@ -18,7 +18,7 @@ description: Start and complete repository development from ordinary natural-lan
 
 恒久的な`work/<id>/`、変更ごとの実行計画、implementation log、test reportは既定では作らない。
 
-一時実行状態が必要な場合だけ`.devflow/run/`へ置き、Git管理しない。
+一時実行状態が必要な場合だけ`.devflow/run/`へ置き、Git管理せず、変更完了後に削除する。directとassuredで日付+slug計画書、固定template、段階status更新を必須にしない。
 
 ## Workflow
 
@@ -26,9 +26,9 @@ description: Start and complete repository development from ordinary natural-lan
 2. `$right-size-execution`で`direct`、`assured`、`regulated`を選ぶ。
 3. 要件影響と設計影響を仮判定する。
 4. 永続要件が変わる場合だけ`$maintain-canonical-requirements`を使う。
-5. `governance/checks/catalog.yaml`から変更固有のcheckを選択し、未選択項目をN/Aにしない。
-6. 実装し、対象範囲のfast feedbackを実行する。
-7. FastAPI、CDKその他の対応対象では`$generate-implementation-design`でas-built設計を生成する。
+5. `governance/checks/catalog.yaml`から変更固有のcheckを選択し、未選択項目をN/Aにしない。as-built設計、API、SQL、sample、E2E、coverage、定量閾値に触れる場合は`verify-against-engineering-standards/references/as-built-design-check-selection.md`を参照する。
+6. 実装し、repositoryのtask runnerから対象範囲のformat、lint、type、test、生成物checkと選択された整合checkを実行する。全gateを無条件に実行しない。
+7. FastAPI、CDKその他の宣言済み対象では`$generate-implementation-design`で`docs/design/generated/`のas-built設計を生成し、check modeでdriftを検査する。
 8. PR前に`$inspect-quality-gates`で選択checkを確認し、review YAMLを保存する。
 9. `$japanese-git-commit-gitmoji`で構造化Commit Commentを作成する。
 10. PRを作成し、現在HEADのGitHub Actionsを確認する。CIログをrepositoryへ複製しない。
@@ -104,8 +104,8 @@ CI実行結果は外部サービスを正本とし、YAMLにはcheck名や証拠
 
 - 利用者へSkill名、work item、command、test実行を要求しない。
 - 可逆な実装判断を質問へ変えない。
-- 通常変更へ一律の初回承認を要求しない。
-- 外部書込み、不可逆操作、production、重大な権限境界だけで明示承認を求める。
+- 通常変更へ一律の初回承認を要求しない。公開API変更は`assured`としてRisk-selected checkを追加し、公開APIであることだけを承認理由にしない。
+- 外部書込み、不可逆操作、production、公開、merge、高額操作、regulated条件など実在するauthority boundaryで明示承認を求める。
 - 未確実性だけを理由に作業を停止しない。
 
 ## Safety boundaries

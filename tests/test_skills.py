@@ -60,9 +60,81 @@ class SkillContractTest(unittest.TestCase):
             "repository-local",
             "利用者へfileのコピーやinstallation commandの実行を求めて作業を停止しない",
             "`direct`と`assured`では、恒久的な`work/<id>/`を作成しない",
+            "direct",
+            "assured",
+            "regulated",
+            ".devflow/run/",
+            "公開API",
+            "authority boundary",
             "明示的な権限なしにmergeしない",
         ]:
             self.assertIn(required, reference)
+        for forbidden in [
+            "Lightweight record",
+            "Create `work/<id>/`",
+            "初回承認を一度だけ記録する",
+            "日付+slug計画書を作成する",
+        ]:
+            self.assertNotIn(forbidden, reference)
+
+    def test_as_built_standard_is_connected_without_a_second_orchestrator(self) -> None:
+        standard = (ROOT / "docs" / "standards" / "AS-BUILT-DESIGN.md").read_text(encoding="utf-8")
+        selection = (
+            SKILLS
+            / "verify-against-engineering-standards"
+            / "references"
+            / "as-built-design-check-selection.md"
+        ).read_text(encoding="utf-8")
+        chat = (SKILLS / "chat-first-development" / "SKILL.md").read_text(encoding="utf-8")
+        sizing = (SKILLS / "right-size-execution" / "SKILL.md").read_text(encoding="utf-8")
+        for required in [
+            "docs/design/generated/",
+            ".gen.md",
+            "FAST-006",
+            "FAST-016",
+            "FAST-019",
+            "C0命令網羅95%以上",
+            "C1分岐網羅90%以上",
+            "repositoryへ実行結果を保存しない",
+            "公開API変更だけを理由にユーザー承認を要求しない",
+        ]:
+            self.assertIn(required, standard)
+        for check_id in [
+            "FAST-016",
+            "FAST-017",
+            "FAST-018",
+            "FAST-019",
+            "FAST-020",
+            "FAST-021",
+            "FAST-022",
+            "FAST-023",
+            "AUD-008",
+        ]:
+            self.assertIn(check_id, selection)
+        self.assertIn("as-built-design-check-selection.md", chat)
+        self.assertIn("日付+slug計画書", sizing)
+        self.assertNotIn("計画書を軸に段階的スキル", standard)
+
+    def test_contribution_surfaces_follow_profile_and_authority_boundaries(self) -> None:
+        contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        pull_request = (ROOT / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
+        combined = contributing + "\n" + pull_request
+        for required in [
+            "direct",
+            "assured",
+            "regulated",
+            "governance/reviews",
+            "公開API",
+            "authority boundary",
+        ]:
+            self.assertIn(required, combined)
+        for forbidden in [
+            "1. `tools/devflow.py init`でwork itemを作成する。",
+            "work item ID",
+            "当該工程の全チェック項目",
+            "現行ダイジェストに対する必要承認",
+        ]:
+            self.assertNotIn(forbidden, combined)
 
     def test_right_size_execution_selects_an_auditable_adaptive_profile(self) -> None:
         skill = SKILLS / "right-size-execution"
