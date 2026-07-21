@@ -17,6 +17,7 @@
 | `GCP-AIML-WAF` | Google Cloud | [Google Cloud Well-Architected Framework: AI and ML perspective](https://cloud.google.com/architecture/framework/perspectives/ai-ml) | 継続更新 | Google Cloud上のAI/MLデータ、モデル、運用、責任あるAIの設計観点。 | 2026-07-18 | 2026-07-18 | 90日 | AI-CONDITIONAL, GCP-DELTA | — |
 | `OCI-WAF` | Oracle | [Best practices framework for Oracle Cloud Infrastructure](https://docs.oracle.com/en/solutions/oci-best-practices/) | F29550-09 / 2025-05 | OCIおよびクラウド共通の設計原則とベンダー固有差分。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, OCI-DELTA | — |
 | `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-07-21 | 実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約、profile連携。導入時はAdvisoryから評価する。 | 2026-07-21 | 2026-07-21 | 180日 | CORE | `f35016e6dcfa0ea52225a68e2659f07f29c65333e5a5aa6778caee7a1533b05f` |
+| `DEVSTD-AWS-CDK-AS-BUILT` | dev-standard maintainers | [AWS CDK実装・as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md) | 2026-07-21 | CDK synthを一次情報とするIaC設計生成、template差分・破壊的変更・policy gate、解析可能なCDK実装・test規約、authority boundary連携。 | 2026-07-21 | 2026-07-21 | 180日 | CORE, AWS-DELTA | `118bf785c6a9ef12721b4af3e6a4fa652d38b3ba3a49eed89a69618d83f9c8e1` |
 
 ## 前版との差分・変更確認
 
@@ -32,3 +33,4 @@
 - `GCP-AIML-WAF`: AI/ML perspectiveを一般WAFから分離し、AI-CONDITIONALとGCP差分に対応付け。
 - `OCI-WAF`: 文書版F29550-09を維持し、Cloud Common評価後にOCI固有差分だけを追加する。
 - `DEVSTD-AS-BUILT`: 利用者提供の汎用要件を要件正本、標準、check catalog、既存Skillへ分配し、3本柱モデルとauthority boundaryへ整合した初版。
+- `DEVSTD-AWS-CDK-AS-BUILT`: アプリケーション層as-built標準の姉妹編として、AWS CDK固有の生成対象、整合性gate、実装・test規約、導入基準を追加。
