@@ -56,7 +56,12 @@ class SkillContractTest(unittest.TestCase):
             ".devflow/run/",
         ]:
             self.assertIn(required, text)
-        for required in ["repository-local", "Do not stop", "Lightweight record", "Do not merge"]:
+        for required in [
+            "repository-local",
+            "利用者へfileのコピーやinstallation commandの実行を求めて作業を停止しない",
+            "`direct`と`assured`では、恒久的な`work/<id>/`を作成しない",
+            "明示的な権限なしにmergeしない",
+        ]:
             self.assertIn(required, reference)
 
     def test_right_size_execution_selects_an_auditable_adaptive_profile(self) -> None:
