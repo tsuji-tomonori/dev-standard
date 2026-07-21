@@ -66,6 +66,7 @@ class InstallReferenceTest(unittest.TestCase):
         self.assertTrue((self.target / "docs" / "COMMIT-COMMENT.md").is_file())
         self.assertTrue((self.target / "docs" / "ARTIFACTS-AND-CHECKS.md").is_file())
         self.assertTrue((self.target / "docs" / "standards" / "AS-BUILT-DESIGN.md").is_file())
+        self.assertTrue((self.target / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md").is_file())
         self.assertFalse((self.target / "tools").exists())
         self.assertFalse((self.target / ".agents" / "skills" / "adversarial-review").exists())
 
@@ -84,12 +85,18 @@ class InstallReferenceTest(unittest.TestCase):
         self.assertTrue((self.target / "governance" / "reviews" / "review-result.schema.json").is_file())
         self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
         self.assertTrue((self.target / "docs" / "standards" / "AS-BUILT-DESIGN.md").is_file())
-
+        self.assertTrue((self.target / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md").is_file())
 
     def test_implementation_design_profile_includes_as_built_standard(self) -> None:
         install_reference.install(self.target, ["implementation-design"], apply=True, force=False)
+        manifest = install_reference.load_manifest()
+        self.assertEqual(
+            manifest["standard_paths"]["aws_cdk_as_built_standard"],
+            "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
+        )
         self.assertTrue((self.target / ".agents" / "skills" / "generate-implementation-design" / "SKILL.md").is_file())
         self.assertTrue((self.target / "docs" / "standards" / "AS-BUILT-DESIGN.md").is_file())
+        self.assertTrue((self.target / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md").is_file())
         self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
 
     def test_repository_specific_review_evidence_is_never_distributed(self) -> None:
