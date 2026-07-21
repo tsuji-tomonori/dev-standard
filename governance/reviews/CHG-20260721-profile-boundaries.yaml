@@ -66,7 +66,7 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: 利用者のPR作成依頼をbranch pushとPull Request作成の外部書込み権限として扱う
+    note: 利用者のPR作成とsquash merge依頼をGitHubへの外部書込み権限として扱う
 
   - id: FAST-001
     class: Invariant
@@ -75,6 +75,7 @@ selected_checks:
       - workflow:Governance
       - test:tests/test_review_contract.py
       - test:tests/test_profile_boundaries.py
+      - test:tests/test_skills.py
     note: Python回帰testの構文とrepository test suiteをGovernance workflowで検査する
 
   - id: FAST-003
@@ -90,9 +91,10 @@ selected_checks:
     evidence:
       - workflow:Governance
       - test:tests/test_profile_boundaries.py
+      - test:tests/test_skills.py
       - path:CONTRIBUTING.md
       - path:.github/PULL_REQUEST_TEMPLATE.md
-    note: profile別の貢献手順、PR入力契約、歴史的work、標準設計pathを回帰testで直接検証する
+    note: profile境界、PR入力契約、歴史的work、標準設計path、Skill参照の日本語契約を回帰testで直接検証する
 
   - id: FAST-005
     class: Risk-selected
@@ -102,7 +104,7 @@ selected_checks:
       - test:tests/test_review_contract.py
       - test:tests/test_profile_boundaries.py
       - test:tests/test_skills.py
-    note: 初回CIで再現したactive review名の固定とSkill reference安全句の欠落を回帰testへ固定した
+    note: 初回CIのactive review固定と、レビューで判明した英文残置・旧用語を回帰testへ固定した
 
   - id: FAST-007
     class: Invariant
@@ -118,14 +120,15 @@ selected_checks:
       - path:CONTRIBUTING.md
       - path:.github/PULL_REQUEST_TEMPLATE.md
       - path:work/README.md
-    note: 現行profile境界、証跡保持、一時状態、外部CI参照を利用者向け運用文書へ反映した
+      - path:.agents/skills/chat-first-development/references/bootstrap-and-conversation.md
+    note: 現行profile境界、証跡保持、一時状態、外部CI参照、対話契約を利用者向け運用文書へ反映した
 
   - id: REV-001
     class: Invariant
     result: pass
     evidence:
       - commit:self
-    note: 差分を報告されたprofile境界のレガシー逸脱修正と、その回帰検査に限定した
+    note: 差分をprofile境界のレガシー逸脱、レビュー指摘の表記修正、その回帰検査に限定した
 
   - id: REV-002
     class: Invariant
@@ -158,7 +161,7 @@ selected_checks:
       - test:tests/test_review_contract.py
       - test:tests/test_profile_boundaries.py
       - test:tests/test_skills.py
-    note: active review解決、profile境界、Skill delivery契約をunit testとGovernance workflowへ接続した
+    note: active review解決、profile境界、日本語化したSkill delivery契約をunit testとGovernance workflowへ接続した
 
   - id: REV-007
     class: Invariant
