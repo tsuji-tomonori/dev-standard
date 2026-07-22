@@ -50,7 +50,11 @@ def validate_skills(failures: list[str]) -> None:
         "maintain-canonical-requirements",
         "verify-against-engineering-standards",
     }
-    actual = {path.name for path in skills_root.iterdir() if path.is_dir() and (path / "SKILL.md").is_file()}
+    actual = {
+        path.name
+        for path in skills_root.iterdir()
+        if path.is_dir() and (path / "SKILL.md").is_file()
+    }
     for name in sorted(expected - actual):
         fail(f"missing skill: {name}", failures)
     for name in sorted(actual):
@@ -111,7 +115,9 @@ def validate_agents(failures: list[str]) -> None:
 
 def validate_repo(failures: list[str]) -> None:
     policy = json.loads((ROOT / "governance" / "policy.json").read_text(encoding="utf-8"))
-    catalog = json.loads((ROOT / "governance" / "checklist" / "catalog.json").read_text(encoding="utf-8"))
+    catalog = json.loads(
+        (ROOT / "governance" / "checklist" / "catalog.json").read_text(encoding="utf-8")
+    )
     phases = set(policy["phase_order"])
     if policy["phase_order"][-1] != "closed":
         fail("phase_order must end with closed", failures)
@@ -140,7 +146,11 @@ def validate_repo(failures: list[str]) -> None:
     ids = [item["id"] for item in catalog["items"]]
     if len(ids) != len(set(ids)) or len(ids) != catalog["item_count"]:
         fail("catalog item count or ID uniqueness mismatch", failures)
-    required_templates = {Path(path).name for phase in policy["phases"].values() for path in phase["required_docs"]}
+    required_templates = {
+        Path(path).name
+        for phase in policy["phases"].values()
+        for path in phase["required_docs"]
+    }
     actual_templates = {path.name for path in (ROOT / "docs" / "templates").glob("*.md")}
     for name in sorted(required_templates - actual_templates):
         fail(f"missing lifecycle template: {name}", failures)
@@ -153,17 +163,30 @@ def validate_repo(failures: list[str]) -> None:
         fail(".codex/hooks.json missing", failures)
     except json.JSONDecodeError as exc:
         fail(f".codex/hooks.json invalid: {exc}", failures)
+
     for path in ["AGENTS.md", "README.md", ".github/workflows/governance.yml"]:
         if not (ROOT / path).is_file():
             fail(f"required repository file missing: {path}", failures)
-    operating_policy = ROOT / "docs" / "AI-OPERATING-POLICY.md"
-    if not operating_policy.is_file():
-        fail("docs/AI-OPERATING-POLICY.md missing", failures)
+
+    root_markdown = {path.name for path in ROOT.glob("*.md")}
+    if root_markdown != {"README.md", "AGENTS.md"}:
+        fail(f"root Markdown layout is invalid: {sorted(root_markdown)}", failures)
+    flat_docs = {path.name for path in (ROOT / "docs").glob("*.md")}
+    if flat_docs != {"README.md"}:
+        fail(f"docs root Markdown layout is invalid: {sorted(flat_docs)}", failures)
+
+    development_reference = ROOT / "docs" / "reference" / "development.md"
+    if not development_reference.is_file():
+        fail("docs/reference/development.md missing", failures)
     else:
-        text = operating_policy.read_text(encoding="utf-8")
-        for term in ["gpt-5.6-terra", "gpt-5.6-luna", "決定的な検証契約", "最小指示の回帰チェック"]:
+        text = development_reference.read_text(encoding="utf-8")
+        for term in ["利用者が得る結果", "権限境界", "決定的な検証", "必要な能力"]:
             if term not in text:
-                fail(f"AI operating policy missing: {term}", failures)
+                fail(f"development reference missing: {term}", failures)
+        for stale_model in ["gpt-5.6-terra", "gpt-5.6-luna"]:
+            if stale_model in text:
+                fail(f"development reference fixes a model name: {stale_model}", failures)
+
     try:
         codex_config = tomllib.loads((ROOT / ".codex" / "config.toml").read_text(encoding="utf-8"))
         agents_config = codex_config.get("agents", {})
@@ -173,19 +196,43 @@ def validate_repo(failures: list[str]) -> None:
             fail("agents.max_depth must remain 1", failures)
         unexpected = sorted(key for key, value in agents_config.items() if isinstance(value, dict))
         if unexpected:
-            fail(f"custom agents must be standalone .codex/agents files, not config mappings: {unexpected}", failures)
+            fail(
+                "custom agents must be standalone .codex/agents files, "
+                f"not config mappings: {unexpected}",
+                failures,
+            )
     except (FileNotFoundError, tomllib.TOMLDecodeError) as exc:
         fail(f".codex/config.toml invalid: {exc}", failures)
+
     try:
         manifest = json.loads((ROOT / "distribution" / "manifest.json").read_text(encoding="utf-8"))
         inventory = manifest["inventory"]
-        skill_names = sorted(path.name for path in (ROOT / ".agents" / "skills").iterdir() if (path / "SKILL.md").is_file())
+        skill_names = sorted(
+            path.name
+            for path in (ROOT / ".agents" / "skills").iterdir()
+            if (path / "SKILL.md").is_file()
+        )
         agent_names = sorted(path.stem for path in (ROOT / ".codex" / "agents").glob("*.toml"))
         if sorted(inventory["skills"]) != skill_names:
             fail("distribution manifest skill inventory is stale", failures)
         if sorted(inventory["agents"]) != agent_names:
             fail("distribution manifest agent inventory is stale", failures)
-        for required in ["adversarial-review", "chat-first", "requirements", "implementation-design", "right-size-execution", "standards-verification", "development-framework", "communication", "commit-style", "skills", "agents", "governance", "codex-hooks", "full"]:
+        for required in [
+            "adversarial-review",
+            "chat-first",
+            "requirements",
+            "implementation-design",
+            "right-size-execution",
+            "standards-verification",
+            "development-framework",
+            "communication",
+            "commit-style",
+            "skills",
+            "agents",
+            "governance",
+            "codex-hooks",
+            "full",
+        ]:
             if required not in manifest["profiles"]:
                 fail(f"distribution manifest profile missing: {required}", failures)
         if manifest["standard_paths"].get("portable_skills") != ".agents/skills/<skill-name>/SKILL.md":
@@ -201,33 +248,58 @@ def validate_repo(failures: list[str]) -> None:
         }.items():
             if manifest["standard_paths"].get(key) != expected:
                 fail(f"distribution standard path is invalid: {key}", failures)
+        for profile in ["default", "chat-first"]:
+            sources = {entry["source"] for entry in manifest["profiles"][profile]}
+            for required in [
+                "docs/reference/development.md",
+                "docs/reference/commit-message.md",
+            ]:
+                if required not in sources:
+                    fail(f"{profile} profile missing current documentation: {required}", failures)
+            for removed in ["docs/ARTIFACTS-AND-CHECKS.md", "docs/COMMIT-COMMENT.md"]:
+                if removed in sources:
+                    fail(f"{profile} profile contains removed documentation: {removed}", failures)
         scope_skill = ROOT / ".agents" / "skills" / "right-size-execution"
         for path in [
-            "assets/execution-policy.json", "assets/execution-policy.schema.json",
-            "assets/execution-profile.schema.json", "assets/benchmark-cases.json",
-            "assets/behavior-constraints.json", "scripts/executionflow.py",
+            "assets/execution-policy.json",
+            "assets/execution-policy.schema.json",
+            "assets/execution-profile.schema.json",
+            "assets/benchmark-cases.json",
+            "assets/behavior-constraints.json",
+            "scripts/executionflow.py",
         ]:
             if not (scope_skill / path).is_file():
                 fail(f"right-size-execution asset missing: {path}", failures)
     except (FileNotFoundError, json.JSONDecodeError, KeyError, TypeError) as exc:
         fail(f"distribution/manifest.json invalid: {exc}", failures)
-    if not (ROOT / "docs" / "INSTALLATION.md").is_file():
-        fail("docs/INSTALLATION.md missing", failures)
+
+    getting_started = ROOT / "docs" / "guides" / "getting-started.md"
+    if not getting_started.is_file():
+        fail("docs/guides/getting-started.md missing", failures)
     else:
-        installation = (ROOT / "docs" / "INSTALLATION.md").read_text(encoding="utf-8")
-        for term in ["コピーして開き、相談する", "インストーラーを実行する必要はない", "利用者にPython"]:
-            if term not in installation:
-                fail(f"chat-first installation guidance missing: {term}", failures)
-    skills_catalog = ROOT / "docs" / "SKILLS.md"
-    if not skills_catalog.is_file():
-        fail("docs/SKILLS.md missing", failures)
-    else:
-        listed = set(re.findall(r"^\| `([a-z0-9-]+)` \|", skills_catalog.read_text(encoding="utf-8"), re.MULTILINE))
-        actual = {path.name for path in (ROOT / ".agents" / "skills").iterdir() if (path / "SKILL.md").is_file()}
+        text = getting_started.read_text(encoding="utf-8")
+        for term in ["導入方法", "dry-run", "distribution/manifest.json", "Skills一覧"]:
+            if term not in text:
+                fail(f"getting-started guidance missing: {term}", failures)
+        listed = set(re.findall(r"^\| `([a-z0-9-]+)` \|", text, re.MULTILINE))
+        actual = {
+            path.name
+            for path in (ROOT / ".agents" / "skills").iterdir()
+            if (path / "SKILL.md").is_file()
+        }
         if listed != actual:
-            fail(f"docs/SKILLS.md inventory mismatch: missing={sorted(actual - listed)} extra={sorted(listed - actual)}", failures)
+            fail(
+                "getting-started skill inventory mismatch: "
+                f"missing={sorted(actual - listed)} extra={sorted(listed - actual)}",
+                failures,
+            )
+
     japanese = re.compile(r"[ぁ-んァ-ヶ一-龠々]")
-    user_docs = [ROOT / "README.md", ROOT / "CONTRIBUTING.md", ROOT / "SECURITY.md"]
+    user_docs = [
+        ROOT / "README.md",
+        ROOT / ".github" / "CONTRIBUTING.md",
+        ROOT / ".github" / "SECURITY.md",
+    ]
     user_docs.extend(sorted((ROOT / "docs").rglob("*.md")))
     user_docs.append(ROOT / "distribution" / "snippets" / "AGENTS.governance.md")
     for path in user_docs:
@@ -244,10 +316,40 @@ def validate_repo(failures: list[str]) -> None:
         ]:
             if phrase in content:
                 fail(f"{path.relative_to(ROOT)}: untranslated document label: {phrase}", failures)
+
     for label, command in [
-        ("canonical requirements", [sys.executable, str(ROOT / ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"), "check", "--spec", str(ROOT / "spec/requirements/requirements.json"), "--out", str(ROOT / "docs/requirements/REQUIREMENTS.md")]),
-        ("standards registry", [sys.executable, str(ROOT / ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py"), "check", "--registry", str(ROOT / "governance/standards/registry.json"), "--out", str(ROOT / "docs/standards/SOURCES.md")]),
-        ("execution benchmark", [sys.executable, str(ROOT / ".agents/skills/right-size-execution/scripts/executionflow.py"), "benchmark"]),
+        (
+            "canonical requirements",
+            [
+                sys.executable,
+                str(ROOT / ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"),
+                "check",
+                "--spec",
+                str(ROOT / "spec/requirements/requirements.json"),
+                "--out",
+                str(ROOT / "docs/requirements/REQUIREMENTS.md"),
+            ],
+        ),
+        (
+            "standards registry",
+            [
+                sys.executable,
+                str(ROOT / ".agents/skills/verify-against-engineering-standards/scripts/standardsflow.py"),
+                "check",
+                "--registry",
+                str(ROOT / "governance/standards/registry.json"),
+                "--out",
+                str(ROOT / "docs/standards/SOURCES.md"),
+            ],
+        ),
+        (
+            "execution benchmark",
+            [
+                sys.executable,
+                str(ROOT / ".agents/skills/right-size-execution/scripts/executionflow.py"),
+                "benchmark",
+            ],
+        ),
     ]:
         result = subprocess.run(command, text=True, capture_output=True, check=False)
         if result.returncode:

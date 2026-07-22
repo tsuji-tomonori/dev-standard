@@ -146,4 +146,4 @@ Commit Commentへ残すのは次だけである。
 - 互換性と残存リスクが隠されていない。
 - squash後も証跡が最終コミットに残る。
 
-詳細は`docs/COMMIT-COMMENT.md`を参照する。
+詳細は`docs/reference/commit-message.md`を参照する。

@@ -35,7 +35,7 @@ class SkillContractTest(unittest.TestCase):
             self.assertNotIn(security_specific, text.lower())
 
     def test_skills_catalog_matches_skill_directories(self) -> None:
-        text = (ROOT / "docs" / "SKILLS.md").read_text(encoding="utf-8")
+        text = (ROOT / "docs" / "guides" / "getting-started.md").read_text(encoding="utf-8")
         listed = set(__import__("re").findall(r"^\| `([a-z0-9-]+)` \|", text, __import__("re").MULTILINE))
         actual = {path.name for path in SKILLS.iterdir() if (path / "SKILL.md").is_file()}
         self.assertEqual(listed, actual)
@@ -116,7 +116,7 @@ class SkillContractTest(unittest.TestCase):
         self.assertNotIn("計画書を軸に段階的スキル", standard)
 
     def test_contribution_surfaces_follow_profile_and_authority_boundaries(self) -> None:
-        contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        contributing = (ROOT / ".github" / "CONTRIBUTING.md").read_text(encoding="utf-8")
         pull_request = (ROOT / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
         combined = contributing + "\n" + pull_request
         for required in [
@@ -273,7 +273,11 @@ class SkillContractTest(unittest.TestCase):
             self.assertIn(required, text)
 
     def test_governance_instructions_do_not_reference_removed_workflows(self) -> None:
-        paths = [ROOT / "AGENTS.md", ROOT / "README.md", ROOT / "docs" / "FLOW.md"]
+        paths = [
+            ROOT / "AGENTS.md",
+            ROOT / "README.md",
+            ROOT / "docs" / "reference" / "development.md",
+        ]
         paths.extend(path for path in SKILLS.glob("*/SKILL.md"))
         combined = "\n".join(path.read_text(encoding="utf-8") for path in paths)
         for removed in [
@@ -292,18 +296,20 @@ class SkillContractTest(unittest.TestCase):
             self.assertEqual(value["model_verbosity"], "low", path.name)
             self.assertLessEqual(len(value["developer_instructions"]), 900, path.name)
 
-    def test_ai_operating_policy_preserves_outcome_and_checks(self) -> None:
-        text = (ROOT / "docs" / "AI-OPERATING-POLICY.md").read_text(encoding="utf-8")
+    def test_development_reference_preserves_stable_outcome_and_checks(self) -> None:
+        text = (ROOT / "docs" / "reference" / "development.md").read_text(encoding="utf-8")
         for required in [
-            "達成結果",
-            "成功条件",
+            "利用者が得る結果",
             "権限境界",
-            "gpt-5.6-terra",
-            "gpt-5.6-luna",
-            "決定的な検証契約",
-            "最小指示の回帰チェック",
+            "決定的な検証",
+            "必要な能力",
+            "selected check",
         ]:
             self.assertIn(required, text)
+        user_docs = [ROOT / "README.md", *(ROOT / "docs").rglob("*.md")]
+        combined = "\n".join(path.read_text(encoding="utf-8") for path in user_docs)
+        self.assertNotIn("gpt-5.6-terra", combined)
+        self.assertNotIn("gpt-5.6-luna", combined)
 
 
 if __name__ == "__main__":

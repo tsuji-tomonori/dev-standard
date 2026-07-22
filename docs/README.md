@@ -1,13 +1,16 @@
-# 文書一覧
+# 文書索引
 
-- [開発フロー](FLOW.md): 会話から要件、設計、実装、検証、公開までの流れ
-- [統制・監査モデル](GOVERNANCE.md): 正本、承認、品質ゲート、改ざん検知
-- [導入ガイド](INSTALLATION.md): コピー先、プロファイル、自動初期化
-- [Skills一覧](SKILLS.md): 各Skillの目的、起動条件、依存関係、コピー元
-- [AI運用方針](AI-OPERATING-POLICY.md): 最小指示、自律境界、モデル選択、検査規則
-- [要件一覧](requirements/REQUIREMENTS.md): 永続要件正本から生成した人向け文書
-- [参照資料一覧](standards/SOURCES.md): 公式資料台帳から生成した版・範囲・差分
+## 利用者向け
 
-## 実装標準
+- [導入とSkills一覧](guides/getting-started.md)
+- [開発契約](reference/development.md)
+- [コミットメッセージ契約](reference/commit-message.md)
 
-- [as-built設計標準](standards/AS-BUILT-DESIGN.md): 実装由来設計、解析可能な実装・test規約、check mapping
+## 正本と生成物
+
+- [要件分類標準](standards/REQUIREMENT-CLASSIFICATION.md)
+- [as-built設計標準](standards/AS-BUILT-DESIGN.md)
+- [参照資料一覧](standards/SOURCES.md)
+- [生成要件一覧](requirements/REQUIREMENTS.md)
+
+`templates/`はregulated profileで必要な場合だけ使用します。ADRは長期判断が必要な場合だけ`decisions/`へ追加します。

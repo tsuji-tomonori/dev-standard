@@ -42,6 +42,12 @@ class ReviewContractTest(unittest.TestCase):
         value = yaml.safe_load(yaml.safe_dump(self.legacy))
         value["catalog_version"] = self.catalog["catalog_version"]
         value["catalog_digest"] = review_contract.digest_file(ROOT / "governance" / "checks" / "catalog.yaml")
+        replacements = {
+            "path:CONTRIBUTING.md": "path:.github/CONTRIBUTING.md",
+            "path:docs/ARTIFACTS-AND-CHECKS.md": "path:docs/reference/development.md",
+        }
+        for item in value["selected_checks"]:
+            item["evidence"] = [replacements.get(entry, entry) for entry in item["evidence"]]
         return value
 
     def test_catalog_is_unique_and_contains_all_restructured_checks(self) -> None:

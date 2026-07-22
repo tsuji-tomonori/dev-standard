@@ -1,147 +1,47 @@
-# 移植可能なAI開発Skills・agents参照集
+# dev-standard開発参照集
 
-他のrepositoryへコピーし、自然言語で相談するだけで使えるAI開発Skills、Codex agents、要件・設計・統制部品のsample / reference collectionです。
+他のリポジトリへ移植して使う、AI開発用のSkills・agents・標準・検証部品の参照集です。
 
-このrepository自身は導入先productの稼働中projectではありません。portableな定義、実装、template、synthetic fixtureだけを維持し、repository固有のlive work recordは保存しません。
+## 提供するもの
 
-## このrepositoryが担保する3本柱
+- **要件管理**: 会話から永続要件だけを`spec/requirements/requirements.json`へ反映する
+- **as-built設計**: 実装から詳細設計を生成し、生成元とのdriftを検査する
+- **変更検証**: 変更リスクに応じたcheckだけを選び、PRとCIまで進める
 
-### 1. 対話から原子的な永続要件を維持する
+通常の依頼は`chat-first-development`が`direct`、`assured`、`regulated`へ振り分けます。利用者がSkill名や内部コマンドを指定する必要はありません。
 
-`$maintain-canonical-requirements`が、会話から今後も維持すべきsoftware product requirementとsoftware project requirementだけを抽出し、`add`、`update`、`retire`として正本へ適用します。
+## 導入
 
-- 正本: [`spec/requirements/requirements.json`](spec/requirements/requirements.json)
-- 人向け生成表示: [`docs/requirements/REQUIREMENTS.md`](docs/requirements/REQUIREMENTS.md)
-- 分類標準: [`docs/standards/REQUIREMENT-CLASSIFICATION.md`](docs/standards/REQUIREMENT-CLASSIFICATION.md)
+対象リポジトリをAI開発agentで開き、次のように依頼します。
 
-SWEBOKを参考に、まず`product` / `project`を分け、次に`functional` / `nonfunctional`を分けます。文書の存在、内容、鮮度、更新、配布、廃止に関する義務は、原則として`project / nonfunctional`として管理します。Markdown file自体を要件正本にせず、文書pathは要件からtraceされる実現手段にします。
+> dev-standardのdefault profileをこのリポジトリへ導入して、既存ルールと競合しないように統合して。
 
-外部挙動、業務ルール、受入条件、非機能閾値、権限要求、恒久的なproject constraintが変わらない場合、要件正本を更新しません。ただし要件影響の判定と理由はCommit Commentへ残します。
+手動で確認する場合は、まずdry-runを実行します。
 
-### 2. 実装と1対1のas-built設計を生成する
+```bash
+python tools/install_reference.py --target ../target-repository --profile default
+python tools/install_reference.py --target ../target-repository --profile default --apply
+```
 
-`$generate-implementation-design`が実装成果物から詳細設計を生成し、source digestとdriftを検査します。
+既存の`AGENTS.md`や`.codex/config.toml`は自動上書きせず、必要な規則だけを統合します。
 
-| 実装ソース | 生成する設計 |
+## 主な配置
+
+| 配置 | 内容 |
 |---|---|
-| FastAPI `router.py` AST | operation flow・Mermaid sequence |
-| application OpenAPI | API・request / response・schema |
-| raw SQL AST | query object・table CRUD |
-| CDK synthesized CloudFormation | resource・parameter |
+| `.agents/skills/` | 移植可能なSkills |
+| `.codex/agents/` | read-only reviewer等のCodex agents |
+| `spec/requirements/` | 永続要件の正本 |
+| `docs/standards/` | 人向け標準 |
+| `governance/checks/` | check定義の正本 |
+| `governance/reviews/` | 変更ごとのselected check結果 |
+| `distribution/manifest.json` | 配布profile |
 
-コードから生成できる情報を手書き設計として二重管理しません。コードだけでは理由が分からず、将来を制約する判断だけADRにします。実装・テスト規約とcheck mappingは[as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)を参照します。
+## 文書
 
-### 3. 必要なチェックだけを、適切な時点で行う
-
-`$verify-against-engineering-standards`と`$inspect-quality-gates`が、変更riskとartifactに応じたcheckだけを選択します。
-
-- `Invariant`: trigger該当時はPass必須
-- `Risk-selected`: 選択された場合だけblocking
-- `Advisory`: 修正、Issue、残存リスクへ収束
-- `Periodic`: 個々のPRではなく定期監査
-
-check timing:
-
-1. 変更開始前: Impact Check
-2. 実装中: Fast Feedback Check
-3. PR前: Affected-scope Check
-4. Merge前: Revision Integrity Check
-5. Deploy後: Operational Check
-6. 定期: Governance Audit
-
-## この参照repositoryを更新する視線
-
-このrepository自身のSkill、agent、標準、配布profile、governance、documentationを変更するときは`$maintain-reference-repository`を使用します。
-
-確認する主な境界:
-
-- portable assetとrepository固有の一時事情
-- product requirementとproject requirement
-- functional behaviorとnonfunctional constraint
-- 要件正本、生成表示、ADR、変更証跡、一時状態のauthority
-- default profileへ含める資産とrepository-maintenance専用資産
-- consumer compatibilityとmigration
-
-詳細は[参照repository保守Skill](.agents/skills/maintain-reference-repository/SKILL.md)を参照します。
-
-## 必ず残すもの
-
-すべてのrepository変更で次を残します。
-
-1. 実際の成果物
-2. 構造化Commit Comment
-3. `governance/reviews/<change-id>.yaml`のselected check result
-4. GitHub Actions等の外部CI結果
-
-Commit CommentはChange Manifest、Requirement Impact Result、Design Impact Resultを代替します。CIの生ログやtest reportはrepositoryへ複製しません。
-
-詳細:
-
-- [成果物とチェックのライフサイクル](docs/ARTIFACTS-AND-CHECKS.md)
-- [Commit Comment契約](docs/COMMIT-COMMENT.md)
-- [レビュー結果](governance/reviews/README.md)
-
-## `work/`を置かない
-
-このsample / reference repositoryにはtop-levelの`work/`を置きません。過去案件のrequest、approval、phase、implementation log、test reportを履歴sampleとして残さず、必要な履歴はGit commit、PR、review YAMLへ集約します。
-
-regulated runtimeのcode、template、schema、validatorはportable assetとして維持できます。実行中の`work/<id>/`は、`regulated`を選択した導入先repositoryで生成します。このrepositoryで回帰用データが必要な場合は、`tests/fixtures/`等へsyntheticであることを明示して置きます。
-
-再開用の一時状態が必要な場合だけ、gitignoreされた`.devflow/run/`を使用し、変更完了後に削除します。
-
-## 実行プロファイル
-
-### 直接実行（direct）
-
-局所的、可逆、外部副作用なし。targeted test、build、lint、type check、生成物driftを実行します。
-
-### 保証付き実行（assured）
-
-複数module、公開API、DB、IaC、dependency、共有UI、generator、永続要件、governance。変更固有のRisk-selected checkを追加します。
-
-### 規制・高保証実行（regulated）
-
-authentication、authorization、PII、confidential、data loss、不可逆なproduction操作、法令・契約上の統制、高額操作、または明示的な高保証要求。
-
-導入先repositoryでは、必要に応じて次を追加します。
-
-- work item
-- 一度だけの明示承認
-- lifecycle document
-- hash chain
-- phase gate
-- regulated audit
-
-この参照repository自身の変更では、liveなwork itemをコミットしません。
-
-## 使い方
-
-1. 必要なSkillsを対象repositoryの`.agents/skills`へコピーします。
-2. repositoryをAI開発agentで開きます。
-3. 実現したい結果を普段の言葉で相談します。
-
-利用者がSkill名、work item、Python、test commandを指定する必要はありません。AIがprofileと必要checkを選び、実装、test、Commit Comment、PR、CI確認を行います。
-
-## 標準配置
-
-| 成果物 | 配置 | 役割 |
-|---|---|---|
-| Skills | `.agents/skills/<name>/` | 会話、要件、設計生成、review、commit |
-| 永続要件 | `spec/requirements/requirements.json` | product / project requirementの現在状態の正本 |
-| 人向け要件 | `docs/requirements/REQUIREMENTS.md` | 正本から生成 |
-| 要件分類標準 | `docs/standards/REQUIREMENT-CLASSIFICATION.md` | SWEBOKを参考にscope、category、documentation NFRを判定 |
-| as-built設計 | `docs/design/generated/` | 実装から生成 |
-| as-built設計標準 | `docs/standards/AS-BUILT-DESIGN.md` | 実装・test規約とcheck mapping |
-| ADR | `docs/decisions/` | 条件付きの長期判断 |
-| review result | `governance/reviews/` | 変更時点のselected check証跡 |
-| standards registry | `governance/standards/registry.json` | 公式資料の版と再確認期限 |
-| 一時実行状態 | `.devflow/run/` | Git管理外、完了後削除 |
-| regulated runtime sample | `governance/`, `tools/devflow.py`, `docs/templates/` | 導入先でregulated workを生成・検証するportable asset |
-
-`docs/design/generated/`と`docs/decisions/`は、導入先repositoryを含む標準配置の契約です。この参照repositoryでも、generator対応実装から設計を生成した場合、またはコードだけでは理由が分からない長期判断にADRが必要な場合にだけ作成します。directoryを存在させるための空file、手書きの生成設計、不要なADRは追加しません。
-
-対象固有の`AGENTS.md`と`.codex/config.toml`は上書きしません。既存規則を維持し、必要部分だけを統合します。
-
-## Skills一覧
-
-用途、起動条件、依存関係は[Skills一覧](docs/SKILLS.md)を参照してください。
+- [導入とSkills一覧](docs/guides/getting-started.md)
+- [開発契約](docs/reference/development.md)
+- [コミットメッセージ契約](docs/reference/commit-message.md)
+- [要件分類標準](docs/standards/REQUIREMENT-CLASSIFICATION.md)
+- [as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)
+- [文書索引](docs/README.md)

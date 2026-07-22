@@ -29,7 +29,7 @@ regulated runtimeのcode、template、schema、validatorはsampleとして維持
 - `distribution/manifest.json`またはinstaller
 - `governance/`、check catalog、review contract
 - `spec/requirements/`または要件生成logic
-- `docs/`、README、CONTRIBUTING、AGENTS
+- `docs/`、README、`.github/CONTRIBUTING.md`、AGENTS
 - sample、fixture、template、profile、repository layout
 
 導入先productの通常実装では起動しない。portableな`default`、`chat-first`、`development-framework` profileへこのSkillを自動追加しない。
@@ -117,7 +117,7 @@ regulated runtimeのcode、template、schema、validatorはsampleとして維持
 - top-levelの`work/`が存在しない。
 - liveなrepository固有work recordが他pathへ移動していない。
 - documentation requirementの分類とauthorityが明示されている。
-- `docs/SKILLS.md`と`distribution/manifest.json`がSkill treeと整合する。
+- `docs/guides/getting-started.md`と`distribution/manifest.json`がSkill treeと整合する。
 - portable profileにこのrepository専用Skillが暗黙追加されていない。
 - contract testがwork境界、分類、distributionを検証する。
 - Commit Commentとreview YAMLが現在の差分を説明する。

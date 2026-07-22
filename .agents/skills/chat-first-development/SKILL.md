@@ -12,7 +12,7 @@ description: Start and complete repository development from ordinary natural-lan
 すべてのrepository変更で次を残す。
 
 1. 実際のコード、設定、テスト、要件、設計等の成果物
-2. `docs/COMMIT-COMMENT.md`に従うCommit Comment
+2. `docs/reference/commit-message.md`に従うCommit Comment
 3. 選択チェック結果`governance/reviews/<change-id>.yaml`
 4. GitHub Actions等の外部サービスにあるCI結果
 
