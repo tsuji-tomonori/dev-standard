@@ -40,14 +40,13 @@ class ProfileBoundaryContractTest(unittest.TestCase):
             self.assertNotIn(legacy, reference)
 
     def test_contributing_uses_profile_specific_flow(self) -> None:
-        text = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        text = (ROOT / ".github" / "CONTRIBUTING.md").read_text(encoding="utf-8")
 
         for required in [
-            "### 直接実行",
-            "### 保証付き実行",
-            "### 規制・高保証実行",
+            "`direct`、`assured`、`regulated`",
             "governance/reviews/<change-id>.yaml",
-            "この場合に限り、導入先repositoryで`tools/devflow.py init`",
+            "公開API",
+            "authority boundary",
         ]:
             self.assertIn(required, text)
 
@@ -62,15 +61,15 @@ class ProfileBoundaryContractTest(unittest.TestCase):
         self.assertFalse(text.lstrip().startswith("## Work item"))
         self.assertLess(text.index("## 変更証跡"), text.index("## Regulatedの場合のみ"))
 
-    def test_reference_repository_removes_historical_work_and_explains_standard_design_paths(self) -> None:
+    def test_reference_repository_explains_current_state_without_history(self) -> None:
         root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        governance = (ROOT / "docs" / "GOVERNANCE.md").read_text(encoding="utf-8")
+        development = (ROOT / "docs" / "reference" / "development.md").read_text(encoding="utf-8")
 
         self.assertFalse((ROOT / "work").exists())
-        self.assertIn("top-levelの`work/`を置きません", root_readme)
-        self.assertIn("top-levelの`work/`を保持しない", governance)
-        self.assertIn("導入先repositoryを含む標準配置の契約", root_readme)
-        self.assertIn("directoryを存在させるための空file", root_readme)
+        self.assertIn("docs/design/generated/", development)
+        self.assertIn("同じ現在状態", (ROOT / "AGENTS.md").read_text(encoding="utf-8"))
+        self.assertNotIn("過去案件", root_readme)
+        self.assertNotIn("旧work", root_readme + development)
 
 
 if __name__ == "__main__":

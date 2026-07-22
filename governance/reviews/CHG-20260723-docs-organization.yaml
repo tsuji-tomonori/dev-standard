@@ -1,0 +1,198 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260723-docs-organization
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: false
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者向け文書の配置と内容を簡素化する変更で、永続的なproduct要件の意味は変更しない
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/README.md
+      - path:docs/reference/development.md
+    note: 文書のauthority、配布path、repository layoutを変更するgovernance設計影響を判定した
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260723-docs-organization.yaml
+    note: 文書、Skill、manifest、validator、複数contract testに跨るためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者のPR作成依頼をbranch、commit、draft PRへの外部書込み権限として扱った
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - path:tools/validate_repo.py
+      - test:tests/test_reference_repository_contract.py
+      - test:tests/test_profile_boundaries.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_skills.py
+      - workflow:Governance
+    note: 変更したPythonとrepository contractをGovernance workflowで検査する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Governance workflowのruff checkを現在HEADへ実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_reference_repository_contract.py
+      - test:tests/test_profile_boundaries.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_skills.py
+      - test:tests/test_validate_repo.py
+    note: rootとdocsの配置、現行リンク、配布path、Skill inventory、model非固定化を回帰testで検証する
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: GitleaksをPR HEADへ実行する
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 文書の再配置、重複削減、旧path参照の更新、対応するcontract testにscopeを限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: 最終Commit Commentの必須節とtrailersをvalidatorで検査する
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 要件正本の外部挙動や恒久義務を変えず、文書という実現手段だけを整理するため要件影響なしとした
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/README.md
+      - path:docs/reference/development.md
+    note: 文書authorityと配布契約の変更をgovernance設計影響として記録し、実装由来生成設計とADRは対象外とした
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_reference_repository_contract.py
+      - test:tests/test_profile_boundaries.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_skills.py
+      - test:tests/test_validate_repo.py
+      - workflow:Governance
+    note: 利用者要求を配置contract、リンク、配布結果、文書鮮度、repository validatorへ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260723-docs-organization.yaml
+    note: 今回選択したcheckだけをschema v2とcatalog v3に適合するYAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260723-docs-organization.yaml
+    note: 適用されないcheckを形式的なN/Aとして登録していない
+
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:distribution/manifest.json
+      - path:docs/guides/getting-started.md
+      - test:tests/test_install_reference.py
+      - test:tests/test_reference_repository_contract.py
+    note: 配布先の文書pathを新構成へ更新し、default、chat-first、commit profileのcopy結果をcontract testで固定した
+
+  - id: REV-015
+    class: Advisory
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/README.md
+      - test:tests/test_reference_repository_contract.py
+    note: 文書分類はrepository treeとcontract testから追跡でき、別ADRを追加するほど独立したarchitecture decisionではないと判定した
+
+advisories: []
+
+residual_risks:
+  - 既存の導入先ではinstallerが旧文書を削除しないため、更新時に参照を新pathへ切り替えた後で不要な旧文書を手動削除する必要がある

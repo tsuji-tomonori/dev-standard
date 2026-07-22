@@ -1,153 +1,51 @@
-# Repository instructions
+# リポジトリ指示
 
-## Repository identity
+## 目的
 
-このrepositoryは、他repositoryへ移植するSkills、agents、要件・設計・統制部品のsample / reference collectionである。導入先productの稼働中projectではない。
+このリポジトリは、他のリポジトリへ移植するSkills、agents、標準、schema、generator、check、templateの参照集である。このリポジトリ自身を変更するときは、最初に`$maintain-reference-repository`を適用する。
 
-このrepository自身を変更するときは、`$maintain-reference-repository`を最初に適用し、portable assetとrepository固有の一時事情を分離する。
+## 既定フロー
 
-- top-levelの`work/`を作成または復元しない。
-- liveなrequest、approval、phase、implementation log、test reportをsampleとして保存しない。
-- 文書の恒久義務は`docs/standards/REQUIREMENT-CLASSIFICATION.md`に従い、原則`project / nonfunctional`として扱う。
-- regulated runtimeの実装はportable sampleであり、実行中のwork itemは導入先repositoryで生成する。
-
-## Outcome
-
-自然言語の依頼から、必要な要件、実装、test、as-built設計、レビュー、PR、CI確認までを完了する。結果と安全境界は明確にし、可逆な実装方法はAIに委ねる。
-
-## Default workflow
-
-feature、fix、refactor、design concern、incomplete ideaでは`$chat-first-development`を入口にする。このrepository自身の変更では、その前提として`$maintain-reference-repository`の境界を適用する。
+feature、fix、refactor、設計相談は`$chat-first-development`を入口にする。
 
 1. `$right-size-execution`で`direct`、`assured`、`regulated`を選ぶ。
-2. product / project requirement、設計、配布、互換性への影響を判定する。
+2. 要件、設計、配布、互換性、権限への影響を判定する。
 3. 永続要件が変わる場合だけ`$maintain-canonical-requirements`を使う。
-4. 変更固有のcheckだけを選択する。
-5. 実装し、targeted verificationから開始する。
-6. 対応対象では`$generate-implementation-design`でas-built設計を生成する。
-7. `$inspect-quality-gates`でselected checkを確認する。
-8. `governance/reviews/<change-id>.yaml`へreview結果を保存する。
-9. `$japanese-git-commit-gitmoji`で構造化Commit Commentを作る。
-10. PRを作成し、現在HEADのGitHub Actionsを確認する。
+4. 変更に必要なcheckだけを選び、実装と対象検証を行う。
+5. 対応実装では`$generate-implementation-design`でas-built設計を生成する。
+6. `governance/reviews/<change-id>.yaml`へselected check結果を保存する。
+7. `$japanese-git-commit-gitmoji`でCommit Commentを作り、PRと現在HEADのCI結果を確認する。
 
-通常変更で恒久的な`work/<id>/`、変更ごとの実行計画、architecture文書、implementation log、test report、release report、retrospectiveを作らない。この参照repositoryではregulatedを選択した場合もliveな`work/`をコミットしない。
+詳細は`docs/reference/development.md`を参照する。
 
-## Required outputs
+## 正本
 
-すべてのrepository変更で必須:
+- 永続要件: `spec/requirements/requirements.json`
+- 人向け要件: `docs/requirements/REQUIREMENTS.md`（生成物）
+- 要件分類: `docs/standards/REQUIREMENT-CLASSIFICATION.md`
+- as-built設計標準: `docs/standards/AS-BUILT-DESIGN.md`
+- 生成設計: `docs/design/generated/`
+- 長期判断: `docs/decisions/`
+- check定義: `governance/checks/catalog.yaml`
+- review結果: `governance/reviews/<change-id>.yaml`
+- Commit Comment形式: `docs/reference/commit-message.md`
 
-- 実際の成果物
-- `docs/COMMIT-COMMENT.md`に従うCommit Comment
-- selected check result: `governance/reviews/<change-id>.yaml`
-- GitHub Actions等の外部CI結果
+同じ現在状態を複数の手書き文書へ複製しない。
 
-条件付きで維持:
+## 実行プロファイル
 
-- `spec/requirements/requirements.json`
-- `docs/requirements/REQUIREMENTS.md`
-- project NFRにより必要な恒久文書
-- `docs/design/generated/`
-- `docs/decisions/ADR-*.md`
-- 恒久的な運用文書
-- Issue
+- `direct`: 局所的、可逆、外部副作用なし。対象test、build、lint、type、driftを実行する。
+- `assured`: 公開契約、DB、IaC、dependency、共有UI、generator、要件、governance、distributionに影響する。関連するRisk-selected checkを追加する。
+- `regulated`: 認証・認可、PII、データ損失、不可逆production操作、法令・契約統制、高額操作、明示的な高保証要求に使用する。
 
-一時実行状態が必要な場合だけ`.devflow/run/`を使い、Git管理しない。
+## 記録と境界
 
-## Profile
+すべての変更で、実際の成果物、Commit Comment、review YAML、外部CI結果を残す。CIの生ログやreport全文をGitへ複製しない。
 
-### direct
+通常変更で恒久的な`work/<id>/`、実行計画、implementation log、test reportを作らない。一時状態が必要な場合だけgitignoreされた`.devflow/run/`を使い、完了後に削除する。
 
-局所的、可逆、外部副作用なし、critical riskなし。targeted test、build、lint、type、生成物driftを実行する。
-
-### assured
-
-複数module、公開契約、DB、IaC、dependency、共有UI、generator、永続要件、governance、distribution。変更固有のRisk-selected checkとrelated verificationを追加する。
-
-### regulated
-
-authentication、authorization、PII、confidential、data loss、irreversible production operation、法令・契約上の統制、高額操作、または明示的な高保証要求。
-
-portable runtimeとして次を維持できる。
-
-- `$govern-development-request`
-- `$author-lifecycle-docs`
-- `$authorize-autonomous-execution`
-- work item schema / template / validator
-- hash chain
-- phase gate
-- regulated audit
-
-liveなwork itemは導入先repositoryで使用する。この参照repositoryではsynthetic fixture以外を保存しない。
-
-## Requirements
-
-永続要件の唯一の正本は`spec/requirements/requirements.json`である。
-
-SWEBOKを参考に、まずsoftware product requirementとsoftware project requirementを分け、次にfunctionalとnonfunctionalを分ける。外部挙動、業務ルール、受入条件、非機能閾値、権限要求、恒久的なproject constraintが変わる場合だけadd / update / retireを適用する。
-
-文書の存在、内容、鮮度、更新、配布、廃止は原則`project / nonfunctional`として管理する。人向け要件は正本から生成し、直接編集しない。要件影響はCommit Commentへ必ず`あり`または`なし`と分類理由を記録する。
-
-## Design
-
-FastAPI router、OpenAPI、SQL、CloudFormationその他の対応実装からas-built設計を生成し、source digestとdriftを検査する。
-
-コードから生成可能な情報を手書き詳細設計として二重管理しない。将来の実装を制約し、コードだけでは理由が分からない判断だけADRにする。
-
-設計影響はCommit Commentへ必ず`あり`または`なし`と理由を記録する。
-
-## Checks
-
-- `Invariant`: triggerに該当した場合はPass必須。
-- `Risk-selected`: 変更riskから選択された場合だけblocking。
-- `Advisory`: 修正、Issue化、residual riskのいずれかへ収束。
-- `Periodic`: 個別PRではなく定期監査で扱う。
-
-未選択項目をN/Aとして保存しない。CI結果、生ログ、coverage全文はGitへ複製しない。
-
-check timing:
-
-- 変更開始前: Impact Check
-- 実装中: Fast Feedback Check
-- PR前: Affected-scope Check
-- Merge前: Revision Integrity Check
-- Deploy後: Operational Check
-- 定期: Governance Audit
-
-## Commit Comment
-
-形式は`docs/COMMIT-COMMENT.md`を正とする。
-
-Commit CommentはChange Manifest、Requirement Impact Result、Design Impact Resultを代替し、次を必須とする。
-
-- 目的
-- 変更内容
-- 要件影響
-- 設計影響
-- review result path
-- 検証契約
-- 互換性・残存リスク
-
-CI結果は外部サービスを正本とし、まだ完了していないCIをPassと書かない。
-
-## Safety boundaries
-
-- secrets、PII、production dump、生CIログをGitへ含めない。
-- 明示権限なしにproduction deploy、削除、公開、高額操作、mergeを行わない。
-- 対象repository固有のbuild、test、ownership、commit規約を維持する。
-- test、型、lint、security controlを弱めてgateを通さない。
-- 必要な結論を裏付ける証拠が揃ったら探索を止める。
-- repository固有のlive work recordを別pathへ移して削除を偽装しない。
-
-## Definition of done
-
-- 要求された成果が実装されている。
-- top-levelの`work/`が存在しない。
-- product / projectとfunctional / nonfunctionalの影響が判定されている。
-- documentation requirementのauthorityとlifecycleが明確である。
-- 要件影響と設計影響がCommit Commentに記録されている。
-- 必要な正本と生成物が更新されている。
-- selected check resultがreview YAMLにある。
-- blocking checkがPassしている。
-- advisoryの扱いが決まっている。
-- 現在HEADの外部CIが成功している。
-- CI結果や一時状態をrepositoryへ複製していない。
+- secrets、PII、production dump、会話transcriptをコミットしない。
+- 明示権限なしにproduction deploy、削除、公開、merge、高額操作を行わない。
+- 対象リポジトリ固有のbuild、test、ownership、security、commit規約を維持する。
+- gateを通すためにtest、型、lint、security controlを弱めない。
+- モデル名を文書へ固定せず、必要能力、コスト、read-only境界から選ぶ。

@@ -88,12 +88,12 @@
         "destination": "governance/reviews"
       },
       {
-        "source": "docs/COMMIT-COMMENT.md",
-        "destination": "docs/COMMIT-COMMENT.md"
+        "source": "docs/reference/development.md",
+        "destination": "docs/reference/development.md"
       },
       {
-        "source": "docs/ARTIFACTS-AND-CHECKS.md",
-        "destination": "docs/ARTIFACTS-AND-CHECKS.md"
+        "source": "docs/reference/commit-message.md",
+        "destination": "docs/reference/commit-message.md"
       },
       {
         "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
@@ -146,12 +146,12 @@
         "destination": "governance/reviews"
       },
       {
-        "source": "docs/COMMIT-COMMENT.md",
-        "destination": "docs/COMMIT-COMMENT.md"
+        "source": "docs/reference/development.md",
+        "destination": "docs/reference/development.md"
       },
       {
-        "source": "docs/ARTIFACTS-AND-CHECKS.md",
-        "destination": "docs/ARTIFACTS-AND-CHECKS.md"
+        "source": "docs/reference/commit-message.md",
+        "destination": "docs/reference/commit-message.md"
       },
       {
         "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
@@ -372,8 +372,8 @@
         "destination": ".agents/skills/japanese-git-commit-gitmoji"
       },
       {
-        "source": "docs/COMMIT-COMMENT.md",
-        "destination": "docs/COMMIT-COMMENT.md"
+        "source": "docs/reference/commit-message.md",
+        "destination": "docs/reference/commit-message.md"
       }
     ],
     "commit-style": [
@@ -382,8 +382,8 @@
         "destination": ".agents/skills/japanese-git-commit-gitmoji"
       },
       {
-        "source": "docs/COMMIT-COMMENT.md",
-        "destination": "docs/COMMIT-COMMENT.md"
+        "source": "docs/reference/commit-message.md",
+        "destination": "docs/reference/commit-message.md"
       }
     ],
     "skills": [

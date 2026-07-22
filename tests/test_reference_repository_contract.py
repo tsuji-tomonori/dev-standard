@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / ".agents" / "skills"
 CLASSIFICATION_STANDARD = ROOT / "docs" / "standards" / "REQUIREMENT-CLASSIFICATION.md"
+DEVELOPMENT_REFERENCE = ROOT / "docs" / "reference" / "development.md"
 
 
 def load_specflow():
@@ -25,10 +26,28 @@ specflow = load_specflow()
 class ReferenceRepositoryContractTest(unittest.TestCase):
     def test_repository_does_not_store_live_work_items(self) -> None:
         self.assertFalse((ROOT / "work").exists())
-        for path in [ROOT / "README.md", ROOT / "AGENTS.md", ROOT / "docs" / "GOVERNANCE.md"]:
+        for path in [ROOT / "AGENTS.md", DEVELOPMENT_REFERENCE]:
             text = path.read_text(encoding="utf-8")
-            self.assertIn("top-level", text)
-            self.assertIn("work/", text)
+            self.assertIn("work", text)
+            self.assertIn(".devflow/run/", text)
+
+    def test_markdown_is_grouped_by_audience(self) -> None:
+        self.assertEqual(
+            {"README.md", "AGENTS.md"},
+            {path.name for path in ROOT.glob("*.md")},
+        )
+        self.assertEqual(
+            {"README.md"},
+            {path.name for path in (ROOT / "docs").glob("*.md")},
+        )
+        for path in [
+            ROOT / ".github" / "CONTRIBUTING.md",
+            ROOT / ".github" / "SECURITY.md",
+            ROOT / "docs" / "guides" / "getting-started.md",
+            DEVELOPMENT_REFERENCE,
+            ROOT / "docs" / "reference" / "commit-message.md",
+        ]:
+            self.assertTrue(path.is_file(), path)
 
     def test_meta_skill_defines_portability_and_documentation_lenses(self) -> None:
         skill = (SKILLS / "maintain-reference-repository" / "SKILL.md").read_text(encoding="utf-8")
@@ -111,12 +130,14 @@ class ReferenceRepositoryContractTest(unittest.TestCase):
         for profile, entries in manifest["profiles"].items():
             self.assertNotIn("work", {entry["source"] for entry in entries}, profile)
 
-    def test_root_guidance_routes_reference_repository_changes(self) -> None:
-        for path in [ROOT / "README.md", ROOT / "AGENTS.md", ROOT / "CONTRIBUTING.md"]:
-            text = path.read_text(encoding="utf-8")
-            self.assertIn("maintain-reference-repository", text)
-            self.assertIn("project", text)
-            self.assertIn("nonfunctional", text)
+    def test_user_guidance_routes_to_current_documents(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        contributing = (ROOT / ".github" / "CONTRIBUTING.md").read_text(encoding="utf-8")
+        self.assertIn("docs/guides/getting-started.md", readme)
+        self.assertIn("docs/reference/development.md", readme)
+        self.assertIn("$maintain-reference-repository", agents)
+        self.assertIn("maintain-reference-repository", contributing)
 
 
 if __name__ == "__main__":
