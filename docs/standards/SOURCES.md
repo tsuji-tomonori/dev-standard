@@ -16,7 +16,7 @@
 | `GCP-WAF` | Google Cloud | [Google Cloud Well-Architected Framework](https://docs.cloud.google.com/docs/get-started/well-architected-framework) | 継続更新 | Google Cloudおよびクラウド共通の設計原則、柱、運用上のトレードオフ。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, GCP-DELTA | — |
 | `GCP-AIML-WAF` | Google Cloud | [Google Cloud Well-Architected Framework: AI and ML perspective](https://cloud.google.com/architecture/framework/perspectives/ai-ml) | 継続更新 | Google Cloud上のAI/MLデータ、モデル、運用、責任あるAIの設計観点。 | 2026-07-18 | 2026-07-18 | 90日 | AI-CONDITIONAL, GCP-DELTA | — |
 | `OCI-WAF` | Oracle | [Best practices framework for Oracle Cloud Infrastructure](https://docs.oracle.com/en/solutions/oci-best-practices/) | F29550-09 / 2025-05 | OCIおよびクラウド共通の設計原則とベンダー固有差分。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, OCI-DELTA | — |
-| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-07-21 | 実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約、profile連携。導入時はAdvisoryから評価する。 | 2026-07-21 | 2026-07-21 | 180日 | CORE | `f35016e6dcfa0ea52225a68e2659f07f29c65333e5a5aa6778caee7a1533b05f` |
+| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-07-21.1 | 実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約、profile連携。標準contract変更とrepository採用scopeを別flagで管理する。 | 2026-07-21 | 2026-07-21 | 180日 | CORE | `5eae0d50abea38bd8c612d85ce791e99209b53744860fb8333fa3b9a0bb5d9aa` |
 
 ## 前版との差分・変更確認
 
@@ -31,4 +31,4 @@
 - `GCP-WAF`: 継続更新型資料として変更確認日を固定し、Cloud CommonとGCP固有差分の重複規則を適用。
 - `GCP-AIML-WAF`: AI/ML perspectiveを一般WAFから分離し、AI-CONDITIONALとGCP差分に対応付け。
 - `OCI-WAF`: 文書版F29550-09を維持し、Cloud Common評価後にOCI固有差分だけを追加する。
-- `DEVSTD-AS-BUILT`: 利用者提供の汎用要件を要件正本、標準、check catalog、既存Skillへ分配し、3本柱モデルとauthority boundaryへ整合した初版。
+- `DEVSTD-AS-BUILT`: as_built_standard_changeとas_built_adoptionを分離し、規範強度・採用scope・enforcement stateを独立した軸として明文化。

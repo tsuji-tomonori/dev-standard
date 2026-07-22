@@ -1,7 +1,7 @@
 # as-built設計標準
 
 - 標準ID: `DEVSTD-AS-BUILT`
-- 版: `2026-07-21`
+- 版: `2026-07-21.1`
 - 適用対象: このrepositoryから標準を導入するrepository
 - 機械可読checkの正本: `governance/checks/catalog.yaml`
 - 永続要件の正本: `spec/requirements/requirements.json`
@@ -13,17 +13,31 @@
 
 この文書は人が読む標準ビューである。要件IDの意味は`spec/requirements/requirements.json`、check ID・class・timing・trigger・enforcementは`governance/checks/catalog.yaml`を参照する。
 
-この標準を配布しただけでは、dev-standard自身の既存`tools/`コードへ以下のレイアウト規約やテスト構造を遡及強制しない。導入先は変更対象とartifactに応じてcheckを選択し、Advisoryから実測を開始する。既存コードへ適用する場合は、移行範囲と互換性を別変更として定義する。
+この標準を配布または改訂しただけでは、dev-standard自身や導入先repositoryの既存コードへ以下のレイアウト規約やテスト構造を遡及強制しない。repositoryが具体的なartifact・code scopeを採用する場合は`as_built_adoption: true`とscope・除外をreview YAMLへ記録し、Advisoryから実測を開始する。既存コードへ適用する場合は、移行範囲と互換性を別変更として定義する。
 
 ### 1.1 規範語彙
 
 | 語彙 | 意味 |
 |---|---|
-| MUST / MUST NOT | 適用triggerに該当し、対応checkがblockingの場合に満たす必須条件 |
-| SHOULD / SHOULD NOT | Advisoryとして評価し、修正・Issue・残存リスクへ収束させる条件 |
+| MUST / MUST NOT | 採用済みscope内で満たす、または禁止する規範上の必須条件 |
+| SHOULD / SHOULD NOT | 採用済みscope内で通常満たす推奨条件。逸脱する場合は具体的理由を記録する |
 | MAY | 選択可能で、未採用を違反としない条件 |
 
 規範行は`<領域>-<DO|DONT>-NNN`形式の一意なRule IDを持つ。規範行と自動検査の対応は本書の`Check ID`列で示し、実行定義はcatalogへ集約する。規範行では「適切に」「必要に応じて」「原則として」など、機械的な判定条件を欠く語を使用しない。
+
+### 1.2 規範強度・採用scope・enforcement
+
+規範強度、採用scope、check classは独立した軸である。
+
+| 軸 | 決定するもの | 正本 |
+|---|---|---|
+| 規範強度 | 採用済みscopeで何をMUST / SHOULD / MAYとするか | 本書のRule ID付き規範行 |
+| 採用scope | どのartifact・code pathへ規範を適用するか、何を除外するか | schema v2 review YAMLの`impact_details.as_built_adoption` |
+| enforcement state | いつ、どのriskで検査し、mergeを停止するか | catalogのclass・trigger・enforcement |
+
+`Invariant` / `Risk-selected` / `Advisory` / `Periodic`は規範語彙の別名ではない。MUSTに対応するcheckを段階導入中にAdvisoryとして評価しても、MUSTをSHOULDへ弱めたことにはならない。未採用scopeには規範を適用せず、採用または移行中scopeでは実測結果、欠陥予防効果、安定性、運用costを根拠にenforcementを昇格する。
+
+標準contract自体の定義・改訂は`as_built_standard_change: true`、repositoryへの採用・scope拡張は`as_built_adoption: true`で表す。両方に該当する変更だけ両flagをtrueにする。
 
 ## 2. 基本原則
 
@@ -165,7 +179,7 @@
 | `UT-DO-005` | SHOULD | C0命令網羅95%以上、C1分岐網羅90%以上を採用目標にする。 | `FAST-019` |
 | `UT-DO-006` | MUST | `samples.py`の正常・異常sampleを実responseとのassertへ接続する。 | `FAST-017` |
 
-`FAST-019`は導入時にAdvisoryとする。実測で欠陥予防効果、測定安定性、運用costが確認された後だけ、`retrospect-and-improve`に従いRisk-selectedまたはInvariantへの昇格を検討する。
+`FAST-019`は採用またはscope拡張時のenforcement stateをAdvisoryから開始する。これは対応する規範強度を弱める意味ではない。実測で欠陥予防効果、測定安定性、運用costが確認された後だけ、`retrospect-and-improve`に従いRisk-selectedまたはInvariantへの昇格を検討する。
 
 ### 7.2 E2E test規約
 
@@ -207,4 +221,8 @@
 
 ## 10. 変更管理
 
-この標準のRule ID、既定path、生成対象、閾値、check mappingを変更する場合は`assured`を選択する。標準本文とmachine-readable設定の差分を`FAST-022`で確認する。checkをblockingへ昇格する場合は、実測evidence、適用trigger、予想cost、rollback、再評価日を記録する。
+本標準の要件正本、Rule ID、既定path、生成対象、check mapping、generator contract、配布定義、traceを変更する場合は`assured`を選択し、`as_built_standard_change: true`と`FAST-024`で正本間の整合を確認する。generatorの生成対象・出力も変える場合だけ`generated_change: true`と`FAST-006`を、定量閾値またはlinter delegationも変える場合だけ`quality_threshold_change: true`と`FAST-022`を追加する。
+
+repositoryが本標準を具体的なartifact・code scopeへ採用する、または適用scopeを拡張する場合は`as_built_adoption: true`とし、schema v2 review YAMLへ採用scopeと除外を記録する。標準contractを変更しただけでは`FAST-019`〜`FAST-021`、`FAST-023`を選択しない。
+
+checkをblockingへ昇格する場合は、実測evidence、適用trigger、予想cost、rollback、再評価日を記録する。過去のreview YAMLは変更時点の不変証拠として保持し、現行schemaやcatalog digestへ合わせて書き換えない。

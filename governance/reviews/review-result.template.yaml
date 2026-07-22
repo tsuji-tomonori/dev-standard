@@ -1,6 +1,6 @@
-schema_version: 1
-catalog_version: 2
-catalog_digest: sha256:25f6d0445c983b08bc1499d70b55c30b45aa603e4ef839e28bfd852a214179b3
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
 change_id: CHG-YYYYMMDD-slug
 profile: direct
 source_ref: self
@@ -39,8 +39,14 @@ impact_flags:
   periodic_cycle: false
   monthly_cycle: false
   recheck_due: false
+  as_built_standard_change: false
   as_built_adoption: false
   quality_threshold_change: false
+
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
 
 selected_checks:
   - id: IMP-001
