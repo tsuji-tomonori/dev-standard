@@ -1,0 +1,175 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260724-readme-three-pillars
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: true
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 既存の要件管理、as-built設計、変更検証の意味を変えず、READMEで3本柱として明示するため要件影響なしと判定した
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:README.md
+      - test:tests/test_reference_repository_contract.py
+    note: READMEの公開説明契約と、その明記を維持するrepository contract testへの設計影響を判定した
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-readme-three-pillars.yaml
+    note: 公開説明契約と回帰テストを同時に変更するためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者のPR作成依頼をbranch、commit、draft PRへの外部書込み権限として扱った
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_reference_repository_contract.py
+      - workflow:Governance
+    note: 追加したPythonテストの構文とrepository全体の検証をGovernance workflowで実行する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Governance workflowのruff checkを現在HEADへ実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_reference_repository_contract.py
+      - workflow:Governance#Run unit tests
+    note: READMEに3本柱の見出しがすべて存在することを契約テストで検証する
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: GitleaksをPR HEADへ実行する
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:README.md
+      - test:tests/test_reference_repository_contract.py
+    note: READMEの3本柱明記と、その回帰防止に差分を限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 最終Commit Commentへ目的、変更、影響、検証契約、互換性と残存リスクを記載した
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 既存の永続要件と外部挙動は変更せず、README上の説明を復元するため要件影響なしとした
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:README.md
+      - test:tests/test_reference_repository_contract.py
+    note: 公開説明契約への影響をcontractとして記録し、生成設計とADRは対象外とした
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_reference_repository_contract.py
+      - workflow:Governance#Run unit tests
+    note: 利用者の受入条件をREADME見出しの契約テストへ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-readme-three-pillars.yaml
+    note: 今回選択したcheckだけをschema v2とcatalog v3に適合するYAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-readme-three-pillars.yaml
+    note: 適用されないcheckを形式的なN/Aとして登録していない
+
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:README.md
+      - test:tests/test_reference_repository_contract.py
+    note: 見出しと説明を追加する後方互換な文書変更であり、導入手順、配布profile、実行contract、既存リンクは維持する
+
+advisories: []
+residual_risks: []
