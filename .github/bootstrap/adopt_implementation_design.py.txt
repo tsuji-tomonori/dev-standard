@@ -1,0 +1,87 @@
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+import sys
+from pathlib import Path
+
+PROFILES = {"backend", "frontend", "infrastructure", "batch"}
+
+
+def _plan(source_root: Path, target: Path, profile: str) -> list[tuple[Path, bytes]]:
+    if profile not in PROFILES:
+        raise ValueError(f"unknown profile: {profile}")
+    wrapper = (
+        "#!/usr/bin/env python3\n"
+        "from pathlib import Path\n"
+        "import runpy\n"
+        "root = Path(__file__).resolve().parent\n"
+        "runpy.run_path(str(root / '.agents/skills/generate-implementation-design/scripts/designflow.py'), run_name='__main__')\n"
+    ).encode("utf-8")
+    config = (
+        "schema_version: designflow-config/v1.0\n"
+        "projects:\n"
+        "  - id: application\n"
+        "    root: .\n"
+        f"    profiles: [{profile}]\n"
+        "    adapters: []\n"
+        f"    required_capabilities: []\n"
+        "    output: docs/design/generated/application\n"
+    ).encode("utf-8")
+    source_skill = source_root / ".agents/skills/generate-implementation-design"
+    adopt_skill = source_root / ".agents/skills/adopt-implementation-design"
+    files: list[tuple[Path, bytes]] = [
+        (target / "designflow.yaml", config),
+        (target / "designflow", wrapper),
+    ]
+    for source_directory in (source_skill, adopt_skill):
+        for path in sorted(source_directory.rglob("*")):
+            if not path.is_file() or "__pycache__" in path.parts:
+                continue
+            relative = path.relative_to(source_root)
+            files.append((target / relative, path.read_bytes()))
+    return files
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Canonical Design IR delivery adopter")
+    parser.add_argument("--source-root", default=".")
+    parser.add_argument("--target", required=True)
+    parser.add_argument("--profile", choices=sorted(PROFILES), required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--dry-run", action="store_true")
+    mode.add_argument("--apply", action="store_true")
+    args = parser.parse_args(argv)
+
+    source_root = Path(args.source_root).resolve()
+    target = Path(args.target).resolve()
+    target.mkdir(parents=True, exist_ok=True)
+    plan = _plan(source_root, target, args.profile)
+    existing = [path for path, _ in plan if path.exists()]
+    report = {
+        "schema_version": "designflow-adoption/v1.0",
+        "profile": args.profile,
+        "mode": "dry-run" if args.dry_run else "apply",
+        "files": [path.relative_to(target).as_posix() for path, _ in plan],
+        "conflicts": [path.relative_to(target).as_posix() for path in existing],
+    }
+    if args.apply and existing:
+        print(
+            "adoption refuses to overwrite existing paths: "
+            + ", ".join(path.relative_to(target).as_posix() for path in existing),
+            file=sys.stderr,
+        )
+        return 2
+    if args.apply:
+        for path, content in plan:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+            if path.name == "designflow":
+                path.chmod(path.stat().st_mode | 0o111)
+    print(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
