@@ -1,0 +1,585 @@
+from __future__ import annotations
+
+import copy
+import importlib.util
+import inspect
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+ROOT = Path(__file__).resolve().parents[1]
+MODULE_PATH = ROOT / "tools/designflow_platform.py"
+SPEC = importlib.util.spec_from_file_location("designflow_platform", MODULE_PATH)
+assert SPEC and SPEC.loader
+platform = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = platform
+SPEC.loader.exec_module(platform)
+
+
+class CanonicalContractTests(unittest.TestCase):
+    def test_canonical_schema_and_four_profile_extensions_exist(self) -> None:
+        paths = [
+            ROOT / "spec/design-ir/canonical-design-ir.schema.json",
+            ROOT / "spec/design-ir/profiles/backend.schema.json",
+            ROOT / "spec/design-ir/profiles/frontend.schema.json",
+            ROOT / "spec/design-ir/profiles/infrastructure.schema.json",
+            ROOT / "spec/design-ir/profiles/batch.schema.json",
+            ROOT / "spec/design-ir/adapter-protocol.schema.json",
+            ROOT / "spec/design-ir/adapter-manifest.schema.json",
+            ROOT / "spec/design-ir/support-registry.schema.json",
+            ROOT / "spec/design-ir/designflow-config.schema.json",
+            ROOT / "spec/design-ir/bundle-manifest.schema.json",
+        ]
+        for path in paths:
+            with self.subTest(path=path):
+                document = json.loads(path.read_text(encoding="utf-8"))
+                self.assertIn("$id", document)
+                self.assertIn("$schema", document)
+        self.assertEqual(
+            json.loads(paths[0].read_text(encoding="utf-8"))["properties"]["schema_version"]["const"],
+            platform.IR_SCHEMA_VERSION,
+        )
+
+    def test_schema_contract_sample_validates_in_runtime(self) -> None:
+        sample = {
+            "schema_version": platform.IR_SCHEMA_VERSION,
+            "project_id": "sample",
+            "profile_ids": ["backend"],
+            "facts": [],
+            "relations": [],
+            "identity_migrations": [],
+            "capability_results": [],
+            "diagnostics": [],
+            "metadata": {
+                "generator": {},
+                "adapters": [],
+                "inputs": [],
+                "authority_decisions": [],
+                "normalized_environment": platform.normalized_environment(),
+            },
+        }
+        platform.validate_ir(sample)
+        invalid = copy.deepcopy(sample)
+        invalid["schema_version"] = "design-ir/v999"
+        with self.assertRaises(platform.ContractError):
+            platform.validate_ir(invalid)
+
+    def test_adapter_manifests_and_registry_are_contract_valid(self) -> None:
+        manifests = list((ROOT / "spec/design-ir/adapters").glob("*/adapter-manifest.json"))
+        self.assertGreaterEqual(len(manifests), 10)
+        for path in manifests:
+            with self.subTest(path=path):
+                platform.validate_adapter_manifest(json.loads(path.read_text(encoding="utf-8")))
+        registry = json.loads(
+            (ROOT / "governance/design-adapters/support-registry.json").read_text(encoding="utf-8")
+        )
+        platform.validate_support_registry(registry)
+        lifecycles = {entry["support_lifecycle"] for entry in registry["entries"]}
+        self.assertTrue(lifecycles <= platform.LIFECYCLES)
+        for entry in registry["entries"]:
+            self.assertIn("extraction_status", entry)
+            self.assertNotEqual(entry["support_lifecycle"], entry["extraction_status"])
+
+    def test_positive_fixture_alone_cannot_promote_support(self) -> None:
+        registry = {
+            "schema_version": platform.SUPPORT_REGISTRY_VERSION,
+            "entries": [
+                {
+                    "adapter_id": "fake",
+                    "capability_id": "backend.routes",
+                    "support_lifecycle": "supported",
+                    "extraction_status": "exact",
+                    "conformance_evidence": {
+                        "layers": [1, 2],
+                        "real_toolchain": False,
+                        "workflow": ".github/workflows/designflow-conformance.yml",
+                        "scope": "positive fixture only",
+                    },
+                }
+            ],
+        }
+        with self.assertRaises(platform.ContractError):
+            platform.validate_support_registry(registry)
+
+    def test_canonical_serialization_and_ids_are_stable(self) -> None:
+        left = {"z": [3, 2], "a": {"y": 2, "x": 1}}
+        right = {"a": {"x": 1, "y": 2}, "z": [3, 2]}
+        self.assertEqual(platform.canonical_json_bytes(left), platform.canonical_json_bytes(right))
+        self.assertEqual(
+            platform.stable_id("fact", "project", "backend.operation", "listOrders"),
+            platform.stable_id("fact", "project", "backend.operation", "listOrders"),
+        )
+
+    def test_profile_namespace_is_enforced(self) -> None:
+        ir = {
+            "schema_version": platform.IR_SCHEMA_VERSION,
+            "project_id": "bad",
+            "profile_ids": ["backend"],
+            "facts": [
+                {
+                    "fact_id": "fact:x",
+                    "fact_type": "node",
+                    "kind": "frontend.route",
+                    "natural_key": "x",
+                    "capability_id": "frontend.routes",
+                    "value": {},
+                    "evidence": [],
+                    "requirement_refs": [],
+                    "test_refs": [],
+                    "external_evidence_refs": [],
+                }
+            ],
+            "relations": [],
+            "identity_migrations": [],
+            "capability_results": [],
+            "diagnostics": [],
+        }
+        with self.assertRaises(platform.ContractError):
+            platform.validate_ir(ir)
+
+
+class AdapterAndConformanceTests(unittest.TestCase):
+    def test_nine_layer_conformance_passes(self) -> None:
+        report = platform.run_conformance(ROOT, real_toolchain=False)
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual([layer["layer"] for layer in report["layers"]], list(range(1, 10)))
+        self.assertGreaterEqual(report["metrics"]["positive_cases"], 5)
+        self.assertGreaterEqual(report["metrics"]["negative_cases"], 5)
+        self.assertEqual(report["layers"][8]["status"], "external-evidence-required")
+
+    def test_real_toolchain_fastapi_generates_openapi(self) -> None:
+        try:
+            import fastapi  # noqa: F401
+        except ImportError:
+            self.skipTest("FastAPI is installed in the real-toolchain CI job")
+        result = platform._real_toolchain_conformance(ROOT)
+        self.assertEqual(result["status"], "pass")
+        self.assertIn("framework_version", result)
+
+    def test_five_framework_positive_projection_is_equivalent(self) -> None:
+        projections = []
+        for case_path in sorted((ROOT / "tests/fixtures/designflow/conformance/backend").glob("*-positive/case.json")):
+            case = json.loads(case_path.read_text(encoding="utf-8"))
+            context = platform.AdapterContext(
+                root=case_path.parent,
+                project_id=case["id"],
+                profile_ids=("backend",),
+                adapter_config={"id": case["adapter"], "inputs": case["inputs"], "required": True},
+                normalized_environment=platform.normalized_environment(),
+            )
+            fragment = platform.AdapterRunner().run_builtin(case["adapter"], context)
+            ir = platform.merge_fragments(case["id"], ["backend"], [fragment])
+            projections.append(platform._semantic_projection(ir))
+        self.assertEqual(len(projections), 5)
+        semantic_values = [
+            [{"kind": item["kind"], "value": item["value"]} for item in projection]
+            for projection in projections
+        ]
+        self.assertTrue(all(value == semantic_values[0] for value in semantic_values[1:]))
+
+    def test_dynamic_negative_corpus_fails_closed(self) -> None:
+        cases = list((ROOT / "tests/fixtures/designflow/conformance/backend").glob("*-negative/case.json"))
+        self.assertGreaterEqual(len(cases), 5)
+        for case_path in cases:
+            case = json.loads(case_path.read_text(encoding="utf-8"))
+            context = platform.AdapterContext(
+                root=case_path.parent,
+                project_id=case["id"],
+                profile_ids=("backend",),
+                adapter_config={"id": case["adapter"], "inputs": case["inputs"], "required": True},
+                normalized_environment=platform.normalized_environment(),
+            )
+            fragment = platform.AdapterRunner().run_builtin(case["adapter"], context)
+            ir = platform.merge_fragments(case["id"], ["backend"], [fragment])
+            with self.subTest(case=case["id"]):
+                self.assertIn(case["expected_diagnostic"], {item["code"] for item in ir["diagnostics"]})
+                self.assertTrue(platform.required_capability_failures(ir))
+
+    def test_framework_specific_logic_stays_in_adapter_classes(self) -> None:
+        core_source = inspect.getsource(platform.merge_fragments) + inspect.getsource(platform.build_project_bundle)
+        for framework in ("fastapi", "spring", "rails", "nestjs", "gin"):
+            self.assertNotIn(framework, core_source.lower())
+
+    def test_sandbox_security_corpus_rejects_all_cases(self) -> None:
+        results = platform._run_security_conformance(ROOT / "tests/fixtures/designflow/security")
+        self.assertEqual({item["id"] for item in results}, {
+            "path-escape",
+            "timeout",
+            "resource",
+            "secret-log",
+            "secret-fragment",
+        })
+
+    def test_process_runner_scrubs_ambient_credentials(self) -> None:
+        fixture = ROOT / "tests/fixtures/designflow/security/environment"
+        config = json.loads((fixture / "case.json").read_text(encoding="utf-8"))
+        context = platform.AdapterContext(
+            root=fixture,
+            project_id="environment",
+            profile_ids=("backend",),
+            adapter_config=config["adapter"],
+            normalized_environment=platform.normalized_environment(),
+        )
+        with mock.patch.dict(os.environ, {"AWS_SECRET_ACCESS_KEY": "must-not-enter-sandbox"}, clear=False):
+            fragment = platform.AdapterRunner().run_process(fixture / "adapter-manifest.json", context)
+        self.assertFalse(fragment.diagnostics)
+        self.assertEqual(fragment.facts[0]["value"]["ambient_secret_present"], False)
+
+
+class PhaseOneVerticalSliceTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "phase1"
+        shutil.copytree(ROOT / "tests/fixtures/designflow/phase1", self.root)
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def _config(self) -> dict:
+        config = platform.load_config(self.root / "designflow.yaml")
+        config["config_path"] = "designflow.yaml"
+        return config
+
+    def test_fastapi_openapi_and_sql_are_merged_into_one_ir(self) -> None:
+        result = platform.build_project_bundle(self.root, self._config(), "orders-backend")
+        kinds = {fact["kind"] for fact in result.ir["facts"]}
+        self.assertIn("backend.operation", kinds)
+        self.assertIn("backend.table", kinds)
+        self.assertIn("backend.query", kinds)
+        operation = next(fact for fact in result.ir["facts"] if fact["kind"] == "backend.operation")
+        self.assertGreaterEqual(len(operation["evidence"]), 2)
+        self.assertIn("requirement_refs", operation)
+        self.assertIn("test_refs", operation)
+        self.assertIn("external_evidence_refs", operation)
+
+    def test_markdown_reads_ir_only_and_mermaid_reads_graph_only(self) -> None:
+        self.assertEqual(list(inspect.signature(platform.render_project_files).parameters), ["ir"])
+        self.assertEqual(list(inspect.signature(platform.render_graph_mmd).parameters), ["graph"])
+        ir = platform._run_project_ir(self.root, platform._find_project(self._config(), "orders-backend"))
+        graph = platform.project_graph(ir)
+        with mock.patch.object(Path, "read_text", side_effect=AssertionError("renderer side channel")):
+            files = platform.render_project_files(ir)
+            mermaid = platform.render_graph_mmd(graph)
+        self.assertIn("TRACEABILITY.gen.md", files)
+        self.assertTrue(mermaid.startswith("graph TD"))
+
+    def test_project_bundle_contract_and_compatibility_views(self) -> None:
+        result = platform.build_project_bundle(self.root, self._config(), "orders-backend")
+        expected = {
+            "manifest.json",
+            "design.ir.json",
+            "design.graph.json",
+            "design.graph.mmd",
+            "TRACEABILITY.gen.md",
+            "API_CATALOG.gen.md",
+            "INTERFACES.gen.md",
+            "OPERATIONS.gen.md",
+            "SEQUENCES.gen.md",
+            "DATA_MODEL.gen.md",
+            "CRUD.gen.md",
+            "QUERY_OBJECTS.gen.md",
+        }
+        self.assertTrue(expected <= set(result.files))
+        self.assertNotIn("DIAGNOSTICS.gen.md", result.files)
+        manifest = json.loads(result.files["manifest.json"])
+        self.assertEqual(manifest["schema_version"], platform.BUNDLE_VERSION)
+        self.assertEqual({item["path"] for item in manifest["files"]}, set(result.files) - {"manifest.json"})
+
+    def test_generation_is_byte_deterministic_across_environment(self) -> None:
+        first = platform.build_project_bundle(self.root, self._config(), "orders-backend")
+        first_bytes = dict(first.files)
+        shutil.rmtree(first.output_dir)
+        with mock.patch.dict(os.environ, {"TZ": "Asia/Tokyo", "LANG": "ja_JP.UTF-8"}, clear=False):
+            second = platform.build_project_bundle(self.root, self._config(), "orders-backend")
+        self.assertEqual(first_bytes, second.files)
+
+    def test_check_detects_semantic_and_byte_drift_without_overwrite(self) -> None:
+        result = platform.build_project_bundle(self.root, self._config(), "orders-backend")
+        target = result.output_dir / "API_CATALOG.gen.md"
+        target.write_text(target.read_text(encoding="utf-8") + "drift\n", encoding="utf-8")
+        before = target.read_bytes()
+        with self.assertRaises(platform.DriftDetected) as raised:
+            platform.build_project_bundle(self.root, self._config(), "orders-backend", check=True)
+        self.assertIn("API_CATALOG.gen.md", {item["path"] for item in raised.exception.details["changes"]})
+        self.assertEqual(before, target.read_bytes())
+
+    def test_required_unknown_fails_closed_and_emits_diagnostics(self) -> None:
+        app = self.root / "app.py"
+        app.write_text(
+            "from fastapi import FastAPI\napp=FastAPI()\npath='/orders'\n@app.get(path)\ndef listOrders(): return []\n",
+            encoding="utf-8",
+        )
+        config = self._config()
+        project = platform._find_project(config, "orders-backend")
+        project["adapters"] = [project["adapters"][0]]
+        ir = platform._run_project_ir(self.root, project)
+        self.assertTrue(platform.required_capability_failures(ir))
+        self.assertIn("ROUTE_DYNAMIC_UNRESOLVED", {item["code"] for item in ir["diagnostics"]})
+
+    def test_equal_authority_conflict_is_retained_not_guessed(self) -> None:
+        fixture = ROOT / "tests/fixtures/designflow/conformance/conflict"
+        config = platform.load_config(fixture / "designflow.yaml")
+        ir = platform._run_project_ir(fixture, platform._find_project(config, "conflict"))
+        self.assertIn("AUTHORITY_CONFLICT", {item["code"] for item in ir["diagnostics"]})
+        self.assertTrue(any(item["status"] == "conflict" for item in ir["capability_results"]))
+
+    def test_explain_returns_provenance_and_authority_decisions(self) -> None:
+        ir = platform._run_project_ir(self.root, platform._find_project(self._config(), "orders-backend"))
+        fact = next(item for item in ir["facts"] if item["kind"] == "backend.operation")
+        explanation = platform.explain(ir, fact["fact_id"])
+        self.assertEqual(explanation["facts"][0]["fact_id"], fact["fact_id"])
+        self.assertGreaterEqual(len(explanation["facts"][0]["evidence"]), 2)
+
+
+class MigrationAndIdentityTests(unittest.TestCase):
+    def test_generate_refuses_legacy_bundle_until_explicit_migration(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            shutil.copytree(ROOT / "tests/fixtures/designflow/phase1", root / "fixture")
+            fixture = root / "fixture"
+            output = fixture / "docs/design/generated/orders-backend"
+            output.mkdir(parents=True)
+            (output / "manifest.json").write_text('{"schema_version":"legacy/v1"}\n', encoding="utf-8")
+            (output / "API_CATALOG.gen.md").write_text("legacy\n", encoding="utf-8")
+            config = platform.load_config(fixture / "designflow.yaml")
+            config["config_path"] = "designflow.yaml"
+            with self.assertRaises(platform.MigrationRequired):
+                platform.build_project_bundle(fixture, config, "orders-backend")
+            check = platform.migrate_bundle(fixture, output, apply=False)
+            self.assertEqual(check["status"], "required")
+            self.assertEqual(check["compatibility_mapping"]["API_CATALOG.gen.md"], "API_CATALOG.gen.md")
+            self.assertEqual((output / "manifest.json").read_text(encoding="utf-8").strip(), '{"schema_version":"legacy/v1"}')
+            applied = platform.migrate_bundle(fixture, output, apply=True)
+            self.assertEqual(applied["status"], "applied")
+            self.assertTrue((output / "design.ir.json").exists())
+            self.assertEqual((output / "API_CATALOG.gen.md").read_text(encoding="utf-8"), "legacy\n")
+
+    def test_rename_with_traces_requires_explicit_identity_migration(self) -> None:
+        old_fact = {
+            "fact_id": "fact:old",
+            "fact_type": "node",
+            "kind": "backend.operation",
+            "natural_key": "old",
+            "capability_id": "backend.routes",
+            "value": {},
+            "evidence": [],
+            "requirement_refs": ["REQ-ASBUILT-001"],
+            "test_refs": ["test-old"],
+            "external_evidence_refs": [],
+        }
+        previous = {"facts": [old_fact]}
+        current = {"facts": [], "identity_migrations": []}
+        diagnostics = platform._orphan_trace_diagnostics(previous, current)
+        self.assertEqual(diagnostics[0]["code"], "ORPHAN_TRACE_AFTER_RENAME")
+        current["identity_migrations"] = [
+            {
+                "old_fact_id": "fact:old",
+                "new_fact_id": "fact:new",
+                "reason": "handler rename",
+                "evidence": [{"path": "app.py", "line": 1}],
+            }
+        ]
+        self.assertFalse(platform._orphan_trace_diagnostics(previous, current))
+
+    def test_identity_migration_requires_reason_and_evidence(self) -> None:
+        ir = {
+            "schema_version": platform.IR_SCHEMA_VERSION,
+            "project_id": "x",
+            "profile_ids": ["backend"],
+            "facts": [],
+            "relations": [],
+            "identity_migrations": [{"old_fact_id": "a", "new_fact_id": "b"}],
+            "capability_results": [],
+            "diagnostics": [],
+        }
+        with self.assertRaises(platform.ContractError):
+            platform.validate_ir(ir)
+
+
+class FourProfileAndSystemTests(unittest.TestCase):
+    def test_frontend_profile_views_have_evidence_and_verification(self) -> None:
+        fixture = ROOT / "tests/fixtures/designflow/profiles/frontend"
+        config = platform.load_config(fixture / "designflow.yaml")
+        config["config_path"] = "designflow.yaml"
+        result = platform.build_project_bundle(fixture, config, "web")
+        self.assertIn("IMPLEMENTATION.gen.md", result.files)
+        self.assertIn("VERIFICATION_MAP.gen.md", result.files)
+        self.assertTrue(any(fact["test_refs"] for fact in result.ir["facts"]))
+
+    def test_infrastructure_profile_views_use_synthesized_artifact(self) -> None:
+        fixture = ROOT / "tests/fixtures/designflow/profiles/infrastructure"
+        config = platform.load_config(fixture / "designflow.yaml")
+        config["config_path"] = "designflow.yaml"
+        result = platform.build_project_bundle(fixture, config, "infra")
+        self.assertIn("RESOURCES.gen.md", result.files)
+        self.assertIn("PARAMETERS.gen.md", result.files)
+        self.assertIn("DEPENDENCIES.gen.md", result.files)
+        self.assertFalse(platform.secret_findings(result.ir))
+        secret_fact = next(fact for fact in result.ir["facts"] if fact["kind"] == "infra.parameter" and fact["value"]["no_echo"])
+        self.assertIn("secret_reference", secret_fact["value"])
+        self.assertNotIn("default", secret_fact["value"])
+
+    def test_batch_profile_views_include_flow_effect_recovery_and_tests(self) -> None:
+        fixture = ROOT / "tests/fixtures/designflow/profiles/batch"
+        config = platform.load_config(fixture / "designflow.yaml")
+        config["config_path"] = "designflow.yaml"
+        result = platform.build_project_bundle(fixture, config, "nightly")
+        expected = {"BATCH_CATALOG.gen.md", "JOBS.gen.md", "FLOWS.gen.md", "EFFECTS.gen.md", "RECOVERY.gen.md", "VERIFICATION_MAP.gen.md"}
+        self.assertTrue(expected <= set(result.files))
+
+    def test_system_fixture_merges_two_projects_and_two_profiles(self) -> None:
+        fixture = ROOT / "tests/fixtures/designflow/system"
+        config_path = fixture / "designflow.yaml"
+        results = platform.generate_all(fixture, config_path)
+        system = next(result for result in results if result.project_id == "system")
+        self.assertGreaterEqual(len({fact["kind"].split(".", 1)[0] for fact in system.ir["facts"]}), 2)
+        self.assertTrue(any(relation["kind"] == "system.calls" for relation in system.ir["relations"]))
+        self.assertFalse(platform.required_capability_failures(system.ir))
+        self.assertIn("SYSTEM_OVERVIEW.gen.md", system.files)
+        self.assertIn("SYSTEM_GRAPH.gen.md", system.files)
+
+    def test_system_orphan_and_conflict_are_explicit(self) -> None:
+        fixture = ROOT / "tests/fixtures/designflow/system"
+        config = platform.load_config(fixture / "designflow.yaml")
+        config["system_links"].append(
+            {
+                "id": "missing",
+                "kind": "system.calls",
+                "from": {"project": "web", "kind": "frontend.route", "natural_key": "missing"},
+                "to": {"project": "api", "kind": "backend.operation", "natural_key": "listOrders"},
+            }
+        )
+        config["config_path"] = "designflow.yaml"
+        project_results = [
+            platform.build_project_bundle(fixture, config, project["id"], output_override=Path(tempfile.mkdtemp()) / project["id"])
+            for project in config["projects"]
+        ]
+        output = Path(tempfile.mkdtemp()) / "system"
+        config["system_output"] = output.as_posix()
+        result = platform.build_system_bundle(fixture, config, project_results)
+        self.assertIsNotNone(result)
+        assert result is not None
+        self.assertIn("SYSTEM_LINK_ORPHAN", {item["code"] for item in result.ir["diagnostics"]})
+        self.assertTrue(platform.required_capability_failures(result.ir))
+
+
+class DeliveryAndGovernanceTests(unittest.TestCase):
+    def test_all_canonical_cli_commands_are_exposed(self) -> None:
+        help_result = subprocess.run(
+            [sys.executable, str(ROOT / ".agents/skills/generate-implementation-design/scripts/designflow.py"), "--help"],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            check=True,
+        )
+        for command in ("discover", "generate", "check", "explain", "describe-capabilities", "conformance", "migrate"):
+            self.assertIn(command, help_result.stdout)
+
+    def test_legacy_wrapper_is_preserved(self) -> None:
+        self.assertTrue((ROOT / ".agents/skills/generate-implementation-design/scripts/designflow_legacy.py").exists())
+        wrapper = (ROOT / ".agents/skills/generate-implementation-design/scripts/designflow.py").read_text(encoding="utf-8")
+        self.assertIn("designflow_legacy.py", wrapper)
+        self.assertIn("validate-adapter", wrapper)
+
+    def test_project_local_adapter_template_is_complete(self) -> None:
+        template = ROOT / ".agents/skills/generate-implementation-design/templates/project-local-adapter"
+        expected = {
+            "README.md",
+            "adapter-manifest.json",
+            "adapter.py",
+            "fixtures/positive/request.json",
+            "fixtures/negative/request.json",
+        }
+        actual = {path.relative_to(template).as_posix() for path in template.rglob("*") if path.is_file()}
+        self.assertTrue(expected <= actual)
+        platform.validate_adapter_manifest(json.loads((template / "adapter-manifest.json").read_text(encoding="utf-8")))
+        self.assertEqual(
+            json.loads((template / "adapter-manifest.json").read_text(encoding="utf-8"))["support_lifecycle"],
+            "candidate",
+        )
+
+    def test_adoption_dry_run_apply_and_no_overwrite(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            consumer = Path(temporary) / "consumer"
+            consumer.mkdir()
+            (consumer / "AGENTS.md").write_text("keep agents\n", encoding="utf-8")
+            workflow = consumer / ".github/workflows/ci.yml"
+            workflow.parent.mkdir(parents=True)
+            workflow.write_text("name: keep\n", encoding="utf-8")
+            command = [
+                sys.executable,
+                str(ROOT / "tools/adopt_implementation_design.py"),
+                "--source-root",
+                str(ROOT),
+                "--target",
+                str(consumer),
+                "--profile",
+                "backend",
+            ]
+            dry = subprocess.run([*command, "--dry-run"], text=True, stdout=subprocess.PIPE, check=True)
+            self.assertIn("designflow.yaml", dry.stdout)
+            self.assertFalse((consumer / "designflow.yaml").exists())
+            subprocess.run([*command, "--apply"], check=True)
+            self.assertTrue((consumer / "designflow.yaml").exists())
+            self.assertEqual((consumer / "AGENTS.md").read_text(encoding="utf-8"), "keep agents\n")
+            self.assertEqual(workflow.read_text(encoding="utf-8"), "name: keep\n")
+            second = subprocess.run([*command, "--apply"], text=True, stderr=subprocess.PIPE)
+            self.assertNotEqual(second.returncode, 0)
+            self.assertIn("refuses to overwrite", second.stderr)
+
+    def test_distribution_contains_adoption_and_four_profile_entries(self) -> None:
+        manifest = json.loads((ROOT / "distribution/designflow/manifest.json").read_text(encoding="utf-8"))
+        self.assertIn(".agents/skills/adopt-implementation-design/SKILL.md", manifest["skills"])
+        self.assertEqual(set(manifest["profiles"]), {"backend", "frontend", "infrastructure", "batch"})
+        for profile in manifest["profiles"]:
+            self.assertTrue((ROOT / f".agents/skills/adopt-implementation-design/references/{profile}.md").exists())
+
+    def test_requirement_binding_ids_exist_in_canonical_requirements(self) -> None:
+        requirements = json.loads((ROOT / "spec/requirements/requirements.json").read_text(encoding="utf-8"))
+        canonical_ids = set(_all_requirement_ids(requirements))
+        bindings = json.loads((ROOT / "spec/design-ir/requirement-bindings.json").read_text(encoding="utf-8"))
+        bound_ids = {item for binding in bindings["bindings"] for item in binding["requirement_ids"]}
+        self.assertTrue(bound_ids)
+        self.assertTrue(bound_ids <= canonical_ids)
+
+    def test_traceability_contract_reuses_no_check_id(self) -> None:
+        trace = json.loads((ROOT / "spec/design-ir/traceability.json").read_text(encoding="utf-8"))
+        check_ids = [check for item in trace["acceptance_criteria"] for check in item["check_ids"]]
+        self.assertTrue(all(check.startswith("FAST-") for check in check_ids))
+        catalog_text = (ROOT / "governance/checks/catalog.yaml").read_text(encoding="utf-8")
+        for check_id in set(check_ids):
+            self.assertEqual(catalog_text.count(f"id: {check_id}"), 1)
+
+    def test_issue_22_boundary_uses_shared_conformance_api(self) -> None:
+        document = (ROOT / "docs/reference/designflow-conformance-api.md").read_text(encoding="utf-8")
+        self.assertIn("run_conformance", document)
+        self.assertIn("E2E harness", document)
+        self.assertIn("agent interaction", document)
+
+    def test_phase_one_exit_decision_record_contains_measured_metrics(self) -> None:
+        record = (ROOT / "docs/decisions/DR-20260724-designflow-phase1-exit.md").read_text(encoding="utf-8")
+        self.assertIn("positive_cases", record)
+        self.assertIn("negative_cases", record)
+        self.assertIn("PASS", record)
+        self.assertIn("Phase 2", record)
+
+
+def _all_requirement_ids(value):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in {"id", "requirement_id"} and isinstance(item, str) and item.startswith("REQ-"):
+                yield item
+            yield from _all_requirement_ids(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _all_requirement_ids(item)
+
+
+if __name__ == "__main__":
+    unittest.main()

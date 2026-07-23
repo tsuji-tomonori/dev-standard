@@ -1,0 +1,109 @@
+name: Canonical Designflow Final Build
+
+on:
+  push:
+    branches: [agent/canonical-design-platform]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: canonical-designflow-final-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/canonical-design-platform
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Patch bootstrap payloads without changing repository history
+        shell: python
+        run: |
+          import re
+          from pathlib import Path
+
+          adoption = Path('.github/bootstrap/adopt_implementation_design.py.txt')
+          adoption.write_text(
+              adoption.read_text(encoding='utf-8').replace('import shutil\n', ''),
+              encoding='utf-8',
+          )
+
+          builder = Path('.github/bootstrap/build_designflow_platform.py')
+          text = builder.read_text(encoding='utf-8')
+          pattern = re.compile(
+              r'        first_command = next\(\(item for item in arguments if not item\.startswith\("-"\)\), None\)\n'
+              r'        if first_command == "validate-adapter":\n'
+              r'            index = arguments\.index\(first_command\)\n'
+              r'            arguments\[index\] = "conformance"\n'
+              r'            return int\(_load_platform\(\)\.main\(arguments\)\)\n'
+              r'        if first_command in CANONICAL or first_command is None:\n'
+              r'            return int\(_load_platform\(\)\.main\(arguments\)\)\n'
+          )
+          replacement = (
+              '        first_command = next(\n'
+              '            (item for item in arguments if item in CANONICAL or item == "validate-adapter"),\n'
+              '            None,\n'
+              '        )\n'
+              '        if first_command == "validate-adapter":\n'
+              '            index = arguments.index(first_command)\n'
+              '            arguments[index] = "conformance"\n'
+              '            return int(_load_platform().main(arguments))\n'
+              '        if first_command in CANONICAL or not arguments or arguments == ["--help"]:\n'
+              '            return int(_load_platform().main(arguments))\n'
+          )
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'wrapper dispatch patch count was {count}')
+          text = text.replace(
+              'run: python -m unittest tests.test_designflow_platform',
+              "run: python -m unittest discover -s tests -p 'test_designflow_platform.py'",
+          )
+          anchor = '    build_workflows()\n\n    # Generate committed deterministic baselines'
+          insertion = (
+              '    build_workflows()\n'
+              '    standard_titles = {\n'
+              '        "BACKEND-AS-BUILT-DESIGN.md": "Backend 実装済み設計",\n'
+              '        "FRONTEND-AS-BUILT-DESIGN.md": "Frontend 実装済み設計",\n'
+              '        "INFRASTRUCTURE-AS-BUILT-DESIGN.md": "Infrastructure 実装済み設計",\n'
+              '        "BATCH-AS-BUILT-DESIGN.md": "Batch 実装済み設計",\n'
+              '    }\n'
+              '    for standard_name, standard_title in standard_titles.items():\n'
+              '        standard_path = ROOT / "docs/standards" / standard_name\n'
+              '        standard_text = standard_path.read_text(encoding="utf-8")\n'
+              '        standard_text = standard_text.replace(\n'
+              '            f"# {standard_name[:-3]}", f"# {standard_title}", 1\n'
+              '        )\n'
+              '        standard_path.write_text(standard_text, encoding="utf-8")\n'
+              '\n'
+              '    # Generate committed deterministic baselines'
+          )
+          if anchor not in text:
+              raise SystemExit('post-build patch anchor was not found')
+          text = text.replace(anchor, insertion, 1)
+          builder.write_text(text, encoding='utf-8')
+      - name: Install repository and real-toolchain dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install "fastapi>=0.115,<1"
+      - name: Build, validate, and force-update the PR branch
+        shell: bash
+        run: |
+          set -o pipefail
+          python .github/bootstrap/build_designflow_platform.py 2>&1 | tee /tmp/canonical-designflow-final.log
+      - name: Upload final build log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: canonical-designflow-final-log
+          path: /tmp/canonical-designflow-final.log
+          archive: false
+          retention-days: 3
