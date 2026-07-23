@@ -25,16 +25,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat \
-            .bootstrap/issue20.part.00 \
-            .bootstrap/issue20.part.02 \
-            .bootstrap/issue20.part.03 \
-            .bootstrap/issue20.part.04 \
-            .bootstrap/issue20.part.05 \
-            .bootstrap/issue20.part.07 \
-            .bootstrap/issue20.part.09 \
-            .bootstrap/issue20.part.11 \
-            > /tmp/issue20.b64
+          : > /tmp/issue20.b64
+          head -c 10000 .bootstrap/issue20.part.00 >> /tmp/issue20.b64
+          head -c 10000 .bootstrap/issue20.part.02 >> /tmp/issue20.b64
+          head -c 10000 .bootstrap/issue20.part.03 >> /tmp/issue20.b64
+          head -c 10000 .bootstrap/issue20.part.04 >> /tmp/issue20.b64
+          head -c 20000 .bootstrap/issue20.part.05 >> /tmp/issue20.b64
+          head -c 20000 .bootstrap/issue20.part.07 >> /tmp/issue20.b64
+          head -c 20000 .bootstrap/issue20.part.09 >> /tmp/issue20.b64
+          head -c 14288 .bootstrap/issue20.part.11 >> /tmp/issue20.b64
           test "$(wc -c < /tmp/issue20.b64)" = "114288"
           base64 --decode /tmp/issue20.b64 > /tmp/issue20.tar.gz
           echo "41aa5ee3578e67aa0ae370fd24870442160d39ae0970d501efcfa4ea78dfbe09  /tmp/issue20.tar.gz" | sha256sum -c -
