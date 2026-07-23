@@ -67,3 +67,14 @@ jobs:
       - name: Run regulated audit
         if: success()
         run: python tools/devflow.py audit
+      - name: Create temporary source snapshot
+        if: always()
+        run: git archive --format=tar.gz --output=dev-standard-source-snapshot.tar.gz HEAD
+      - name: Upload temporary source snapshot
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dev-standard-source-snapshot
+          path: dev-standard-source-snapshot.tar.gz
+          archive: false
+          retention-days: 1
