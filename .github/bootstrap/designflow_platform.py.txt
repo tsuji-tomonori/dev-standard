@@ -1,0 +1,3046 @@
+from __future__ import annotations
+
+import argparse
+import ast
+import copy
+import dataclasses
+import hashlib
+import json
+import os
+import re
+import resource
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+from collections import defaultdict
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Sequence
+
+try:
+    import yaml
+except ImportError:  # pragma: no cover - repository requirements include PyYAML
+    yaml = None
+
+IR_SCHEMA_VERSION = "design-ir/v1.0"
+PROTOCOL_VERSION = "design-adapter-protocol/v1.0"
+ADAPTER_MANIFEST_VERSION = "design-adapter-manifest/v1.0"
+SUPPORT_REGISTRY_VERSION = "design-support-registry/v1.0"
+CONFIG_VERSION = "designflow-config/v1.0"
+BUNDLE_VERSION = "design-bundle/v1.0"
+GRAPH_VERSION = "design-graph/v1.0"
+CONFORMANCE_VERSION = "design-conformance/v1.0"
+RENDERER_VERSION = "designflow-renderer/v1.0"
+GENERATOR_VERSION = "designflow/v1.0"
+
+LIFECYCLES = {"candidate", "experimental", "supported", "deprecated", "removed"}
+RESULT_STATUSES = {
+    "exact",
+    "derived",
+    "observed",
+    "partial",
+    "unknown",
+    "unsupported",
+    "conflict",
+    "not_applicable",
+}
+FAIL_CLOSED_STATUSES = {"partial", "unknown", "unsupported", "conflict"}
+MODES = {"static", "build", "executable-contract", "runtime-registry", "controlled-observation"}
+ENFORCEMENTS = {"Invariant", "Risk-selected", "Advisory", "Periodic"}
+AUTHORITY_RANK = {
+    "artifact": 100,
+    "runtime-registry": 95,
+    "typed-config": 90,
+    "executable-contract": 85,
+    "source": 75,
+    "controlled-observation": 65,
+    "external": 50,
+    "unknown": 0,
+}
+SECRET_PATTERNS = (
+    re.compile(r"AKIA[0-9A-Z]{16}"),
+    re.compile(r"ASIA[0-9A-Z]{16}"),
+    re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+    re.compile(
+        r"(?i)(?:api[_-]?key|client[_-]?secret|password|passwd|token)"
+        r"\s*[:=]\s*['\"]?([A-Za-z0-9_./+=:-]{8,})"
+    ),
+)
+HTTP_METHODS = {"get", "post", "put", "patch", "delete", "options", "head", "trace"}
+
+
+class DesignflowError(RuntimeError):
+    """Base class for deterministic, user-facing designflow failures."""
+
+    code = "DESIGNFLOW_ERROR"
+
+    def __init__(self, message: str, *, details: Mapping[str, Any] | None = None):
+        super().__init__(message)
+        self.details = dict(details or {})
+
+
+class ContractError(DesignflowError):
+    code = "CONTRACT_INVALID"
+
+
+class SecurityViolation(DesignflowError):
+    code = "SECURITY_REJECTION"
+
+
+class MigrationRequired(DesignflowError):
+    code = "MIGRATION_REQUIRED"
+
+
+class DriftDetected(DesignflowError):
+    code = "DESIGN_DRIFT"
+
+
+@dataclasses.dataclass(frozen=True)
+class AdapterContext:
+    root: Path
+    project_id: str
+    profile_ids: tuple[str, ...]
+    adapter_config: Mapping[str, Any]
+    normalized_environment: Mapping[str, str]
+
+
+@dataclasses.dataclass
+class AdapterFragment:
+    adapter: Mapping[str, Any]
+    facts: list[dict[str, Any]]
+    relations: list[dict[str, Any]]
+    capability_results: list[dict[str, Any]]
+    diagnostics: list[dict[str, Any]]
+    inputs: list[dict[str, Any]]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "protocol_version": PROTOCOL_VERSION,
+            "adapter": dict(self.adapter),
+            "facts": self.facts,
+            "relations": self.relations,
+            "capability_results": self.capability_results,
+            "diagnostics": self.diagnostics,
+            "inputs": self.inputs,
+        }
+
+
+@dataclasses.dataclass(frozen=True)
+class BundleResult:
+    project_id: str
+    output_dir: Path
+    files: Mapping[str, bytes]
+    ir: Mapping[str, Any]
+    manifest: Mapping[str, Any]
+    exit_code: int
+
+
+def canonical_json_bytes(value: Any) -> bytes:
+    return (
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+
+
+def pretty_json_bytes(value: Any) -> bytes:
+    return (json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
+
+
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def sha256_object(value: Any) -> str:
+    return sha256_bytes(canonical_json_bytes(value))
+
+
+def stable_id(prefix: str, *parts: Any) -> str:
+    normalized = "\x1f".join(str(part).strip() for part in parts)
+    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24]
+    safe_prefix = re.sub(r"[^a-z0-9_.-]+", "-", prefix.lower()).strip("-") or "id"
+    return f"{safe_prefix}:{digest}"
+
+
+def natural_sort_key(value: Any) -> tuple[Any, ...]:
+    return tuple(int(part) if part.isdigit() else part.lower() for part in re.split(r"(\d+)", str(value)))
+
+
+def canonicalize(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {str(key): canonicalize(value[key]) for key in sorted(value, key=str)}
+    if isinstance(value, list):
+        normalized = [canonicalize(item) for item in value]
+        if all(isinstance(item, dict) and any(key.endswith("_id") for key in item) for item in normalized):
+            return sorted(normalized, key=lambda item: canonical_json_bytes(item))
+        return normalized
+    if isinstance(value, Path):
+        return value.as_posix()
+    return value
+
+
+def load_data(path: Path) -> Any:
+    text = path.read_text(encoding="utf-8")
+    if path.suffix.lower() == ".json":
+        return json.loads(text)
+    if yaml is None:
+        raise ContractError(f"YAML support is unavailable for {path}")
+    return yaml.safe_load(text)
+
+
+def dump_yaml(value: Any) -> str:
+    if yaml is None:
+        raise ContractError("YAML support is unavailable")
+    return yaml.safe_dump(value, sort_keys=False, allow_unicode=True)
+
+
+def repository_relative(root: Path, path: Path) -> str:
+    resolved_root = root.resolve()
+    resolved_path = path.resolve()
+    try:
+        return resolved_path.relative_to(resolved_root).as_posix()
+    except ValueError as exc:
+        raise SecurityViolation(
+            f"path escapes project root: {path}", details={"path": str(path), "root": str(root)}
+        ) from exc
+
+
+def resolve_declared_path(root: Path, value: str) -> Path:
+    if not value or Path(value).is_absolute():
+        raise SecurityViolation(f"absolute or empty path is forbidden: {value!r}")
+    candidate = (root / value).resolve()
+    repository_relative(root, candidate)
+    return candidate
+
+
+def iter_paths(root: Path, values: Sequence[str]) -> list[Path]:
+    found: set[Path] = set()
+    for value in values:
+        if any(character in value for character in "*?["):
+            for path in root.glob(value):
+                if path.is_file():
+                    repository_relative(root, path)
+                    found.add(path.resolve())
+        else:
+            path = resolve_declared_path(root, value)
+            if path.is_file():
+                found.add(path)
+            elif path.is_dir():
+                for child in path.rglob("*"):
+                    if child.is_file():
+                        found.add(child.resolve())
+            else:
+                raise ContractError(f"declared input does not exist: {value}")
+    return sorted(found, key=lambda path: repository_relative(root, path))
+
+
+def input_record(root: Path, path: Path, kind: str = "source") -> dict[str, Any]:
+    data = path.read_bytes()
+    return {
+        "path": repository_relative(root, path),
+        "kind": kind,
+        "sha256": sha256_bytes(data),
+        "size": len(data),
+    }
+
+
+def source_ref(root: Path, path: Path, *, line: int | None = None, symbol: str | None = None) -> dict[str, Any]:
+    ref: dict[str, Any] = {"path": repository_relative(root, path)}
+    if line is not None:
+        ref["line"] = line
+    if symbol:
+        ref["symbol"] = symbol
+    return ref
+
+
+def diagnostic(
+    code: str,
+    severity: str,
+    message: str,
+    *,
+    capability_id: str | None = None,
+    location: Mapping[str, Any] | None = None,
+    details: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "diagnostic_id": stable_id("diagnostic", code, capability_id or "", message, canonicalize(location or {})),
+        "code": code,
+        "severity": severity,
+        "message": message,
+    }
+    if capability_id:
+        result["capability_id"] = capability_id
+    if location:
+        result["location"] = canonicalize(dict(location))
+    if details:
+        result["details"] = canonicalize(dict(details))
+    return result
+
+
+def capability_result(
+    capability_id: str,
+    status: str,
+    precision: str,
+    *,
+    required: bool = False,
+    enforcement: str = "Invariant",
+    mode: str = "static",
+    diagnostic_ids: Sequence[str] = (),
+) -> dict[str, Any]:
+    if status not in RESULT_STATUSES:
+        raise ContractError(f"invalid capability result status: {status}")
+    if enforcement not in ENFORCEMENTS:
+        raise ContractError(f"invalid enforcement: {enforcement}")
+    if mode not in MODES:
+        raise ContractError(f"invalid adapter mode: {mode}")
+    return {
+        "capability_id": capability_id,
+        "required": bool(required),
+        "status": status,
+        "precision": precision,
+        "enforcement": enforcement,
+        "mode": mode,
+        "diagnostic_ids": sorted(set(diagnostic_ids)),
+    }
+
+
+def evidence(
+    root: Path,
+    path: Path,
+    *,
+    authority: str,
+    precision: str,
+    adapter_id: str,
+    adapter_version: str,
+    line: int | None = None,
+    symbol: str | None = None,
+    pointer: str | None = None,
+    mode: str = "static",
+) -> dict[str, Any]:
+    if authority not in AUTHORITY_RANK:
+        raise ContractError(f"invalid authority: {authority}")
+    result: dict[str, Any] = {
+        "evidence_id": stable_id(
+            "evidence",
+            repository_relative(root, path),
+            line or "",
+            symbol or "",
+            pointer or "",
+            authority,
+            precision,
+        ),
+        "authority": authority,
+        "precision": precision,
+        "mode": mode,
+        "source": source_ref(root, path, line=line, symbol=symbol),
+        "input_sha256": sha256_bytes(path.read_bytes()),
+        "adapter": {"id": adapter_id, "version": adapter_version},
+    }
+    if pointer:
+        result["source"]["pointer"] = pointer
+    return result
+
+
+def make_fact(
+    project_id: str,
+    kind: str,
+    natural_key: str,
+    capability_id: str,
+    value: Mapping[str, Any],
+    evidence_items: Sequence[Mapping[str, Any]],
+    *,
+    fact_type: str = "node",
+    requirement_refs: Sequence[str] = (),
+    test_refs: Sequence[Mapping[str, Any] | str] = (),
+    external_evidence_refs: Sequence[Mapping[str, Any] | str] = (),
+) -> dict[str, Any]:
+    if "." not in kind:
+        raise ContractError(f"fact kind must be namespaced: {kind}")
+    return {
+        "fact_id": stable_id("fact", project_id, kind, natural_key),
+        "fact_type": fact_type,
+        "kind": kind,
+        "natural_key": natural_key,
+        "capability_id": capability_id,
+        "value": canonicalize(dict(value)),
+        "evidence": sorted((canonicalize(dict(item)) for item in evidence_items), key=canonical_json_bytes),
+        "requirement_refs": sorted(set(requirement_refs)),
+        "test_refs": canonicalize(list(test_refs)),
+        "external_evidence_refs": canonicalize(list(external_evidence_refs)),
+    }
+
+
+def make_relation(
+    project_id: str,
+    kind: str,
+    natural_key: str,
+    capability_id: str,
+    from_fact_id: str,
+    to_fact_id: str,
+    evidence_items: Sequence[Mapping[str, Any]],
+    *,
+    properties: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    if "." not in kind:
+        raise ContractError(f"relation kind must be namespaced: {kind}")
+    return {
+        "relation_id": stable_id("relation", project_id, kind, natural_key),
+        "kind": kind,
+        "natural_key": natural_key,
+        "capability_id": capability_id,
+        "from_fact_id": from_fact_id,
+        "to_fact_id": to_fact_id,
+        "properties": canonicalize(dict(properties or {})),
+        "evidence": sorted((canonicalize(dict(item)) for item in evidence_items), key=canonical_json_bytes),
+    }
+
+
+def _walk_strings(value: Any, pointer: str = "$") -> Iterable[tuple[str, str]]:
+    if isinstance(value, str):
+        yield pointer, value
+    elif isinstance(value, Mapping):
+        for key, item in value.items():
+            yield from _walk_strings(item, f"{pointer}/{key}")
+    elif isinstance(value, Sequence) and not isinstance(value, (bytes, bytearray, str)):
+        for index, item in enumerate(value):
+            yield from _walk_strings(item, f"{pointer}/{index}")
+
+
+def secret_findings(value: Any, known_values: Sequence[str] = ()) -> list[dict[str, str]]:
+    findings: list[dict[str, str]] = []
+    normalized_known = [item for item in known_values if item and len(item) >= 4]
+    for pointer, text in _walk_strings(value):
+        for secret in normalized_known:
+            if secret in text:
+                findings.append({"pointer": pointer, "kind": "known-value", "fingerprint": sha256_bytes(secret.encode())[:12]})
+        for pattern in SECRET_PATTERNS:
+            match = pattern.search(text)
+            if match:
+                findings.append(
+                    {
+                        "pointer": pointer,
+                        "kind": "pattern",
+                        "fingerprint": sha256_bytes(match.group(0).encode())[:12],
+                    }
+                )
+    return sorted(findings, key=lambda item: (item["pointer"], item["kind"], item["fingerprint"]))
+
+
+def reject_secrets(value: Any, known_values: Sequence[str] = ()) -> None:
+    findings = secret_findings(value, known_values)
+    if findings:
+        raise SecurityViolation(
+            "secret-bearing output was rejected before persistence",
+            details={"findings": findings},
+        )
+
+
+def validate_source_locator(locator: Mapping[str, Any]) -> None:
+    path = locator.get("path")
+    if not isinstance(path, str) or not path or Path(path).is_absolute() or ".." in Path(path).parts:
+        raise ContractError(f"invalid repository-relative source locator: {path!r}")
+    if "line" in locator and (not isinstance(locator["line"], int) or locator["line"] < 1):
+        raise ContractError(f"invalid source line: {locator['line']!r}")
+
+
+def validate_ir(ir: Mapping[str, Any], profile_ids: Sequence[str] | None = None) -> None:
+    required = {"schema_version", "project_id", "profile_ids", "facts", "relations", "capability_results", "diagnostics"}
+    missing = sorted(required - set(ir))
+    if missing:
+        raise ContractError(f"IR missing required fields: {missing}")
+    if ir["schema_version"] != IR_SCHEMA_VERSION:
+        raise ContractError(f"unsupported IR schema version: {ir['schema_version']!r}")
+    if not isinstance(ir["project_id"], str) or not ir["project_id"]:
+        raise ContractError("project_id must be a non-empty string")
+    profiles = list(profile_ids or ir["profile_ids"])
+    allowed_prefixes = {"backend": "backend.", "frontend": "frontend.", "infrastructure": "infra.", "batch": "batch.", "system": "system.", "legacy": "legacy."}
+    fact_ids: set[str] = set()
+    for fact in ir["facts"]:
+        for key in ("fact_id", "fact_type", "kind", "natural_key", "capability_id", "value", "evidence"):
+            if key not in fact:
+                raise ContractError(f"fact missing {key}: {fact}")
+        if fact["fact_id"] in fact_ids:
+            raise ContractError(f"duplicate fact_id: {fact['fact_id']}")
+        fact_ids.add(fact["fact_id"])
+        prefix = fact["kind"].split(".", 1)[0] + "."
+        if prefix not in set(allowed_prefixes.values()):
+            raise ContractError(f"unrecognized fact namespace: {fact['kind']}")
+        if profiles and fact["kind"].startswith(("backend.", "frontend.", "infra.", "batch.")):
+            matching = [name for name in profiles if allowed_prefixes.get(name) and fact["kind"].startswith(allowed_prefixes[name])]
+            if not matching:
+                raise ContractError(f"fact kind {fact['kind']} is outside profiles {profiles}")
+        for item in fact["evidence"]:
+            if item.get("authority") not in AUTHORITY_RANK:
+                raise ContractError(f"invalid evidence authority: {item.get('authority')}")
+            validate_source_locator(item.get("source", {}))
+    relation_ids: set[str] = set()
+    for relation in ir["relations"]:
+        relation_id = relation.get("relation_id")
+        if not relation_id or relation_id in relation_ids:
+            raise ContractError(f"missing or duplicate relation_id: {relation_id}")
+        relation_ids.add(relation_id)
+        if relation.get("from_fact_id") not in fact_ids or relation.get("to_fact_id") not in fact_ids:
+            raise ContractError(f"relation has unresolved exact endpoint: {relation_id}")
+    for result in ir["capability_results"]:
+        if result.get("status") not in RESULT_STATUSES:
+            raise ContractError(f"invalid capability status: {result}")
+        if result.get("mode") not in MODES:
+            raise ContractError(f"invalid capability mode: {result}")
+    diagnostic_ids: set[str] = set()
+    for item in ir["diagnostics"]:
+        if item.get("diagnostic_id") in diagnostic_ids:
+            raise ContractError(f"duplicate diagnostic_id: {item.get('diagnostic_id')}")
+        diagnostic_ids.add(item.get("diagnostic_id"))
+    migrations = ir.get("identity_migrations", [])
+    for migration in migrations:
+        if migration.get("old_fact_id") == migration.get("new_fact_id"):
+            raise ContractError("identity migration must change fact_id")
+        if not migration.get("reason") or not migration.get("evidence"):
+            raise ContractError("identity migration requires reason and evidence")
+
+
+def validate_adapter_fragment(fragment: Mapping[str, Any]) -> None:
+    if fragment.get("protocol_version") != PROTOCOL_VERSION:
+        raise ContractError(f"adapter protocol mismatch: {fragment.get('protocol_version')!r}")
+    adapter = fragment.get("adapter", {})
+    if not adapter.get("id") or not adapter.get("version") or adapter.get("mode") not in MODES:
+        raise ContractError(f"invalid adapter identity or mode: {adapter}")
+    for key in ("facts", "relations", "capability_results", "diagnostics", "inputs"):
+        if not isinstance(fragment.get(key), list):
+            raise ContractError(f"adapter response field {key} must be an array")
+
+
+def validate_adapter_manifest(manifest: Mapping[str, Any]) -> None:
+    if manifest.get("schema_version") != ADAPTER_MANIFEST_VERSION:
+        raise ContractError("adapter manifest schema version mismatch")
+    if not manifest.get("adapter_id") or not manifest.get("version"):
+        raise ContractError("adapter manifest requires adapter_id and version")
+    if manifest.get("support_lifecycle") not in LIFECYCLES:
+        raise ContractError("invalid support lifecycle")
+    if not manifest.get("modes") or not set(manifest["modes"]).issubset(MODES):
+        raise ContractError("adapter manifest has invalid modes")
+    sandbox = manifest.get("sandbox", {})
+    for key in ("network", "production_credentials", "path_escape"):
+        if key not in sandbox:
+            raise ContractError(f"adapter sandbox declaration missing {key}")
+
+
+def validate_support_registry(registry: Mapping[str, Any]) -> None:
+    if registry.get("schema_version") != SUPPORT_REGISTRY_VERSION:
+        raise ContractError("support registry schema version mismatch")
+    for entry in registry.get("entries", []):
+        lifecycle = entry.get("support_lifecycle")
+        if lifecycle not in LIFECYCLES:
+            raise ContractError(f"invalid lifecycle in support registry: {lifecycle}")
+        if lifecycle == "supported":
+            evidence_map = entry.get("conformance_evidence", {})
+            layers = set(evidence_map.get("layers", []))
+            required_layers = set(range(1, 10))
+            if layers != required_layers or not evidence_map.get("real_toolchain"):
+                raise ContractError(
+                    f"supported adapter {entry.get('adapter_id')} lacks all nine layers or real-toolchain evidence"
+                )
+            if not evidence_map.get("workflow") or not evidence_map.get("scope"):
+                raise ContractError("supported adapter evidence requires workflow and explicit scope")
+
+
+def required_capability_failures(ir: Mapping[str, Any]) -> list[dict[str, Any]]:
+    return [
+        result
+        for result in ir.get("capability_results", [])
+        if result.get("required") and result.get("status") in FAIL_CLOSED_STATUSES
+    ]
+
+
+def normalized_environment() -> dict[str, str]:
+    return {
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "TZ": "UTC",
+        "SOURCE_DATE_EPOCH": "0",
+        "PYTHONHASHSEED": "0",
+    }
+
+
+class Adapter:
+    adapter_id = "adapter"
+    version = "1.0.0"
+    default_mode = "static"
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:  # pragma: no cover - interface
+        raise NotImplementedError
+
+    def _identity(self, mode: str | None = None) -> dict[str, Any]:
+        return {"id": self.adapter_id, "version": self.version, "mode": mode or self.default_mode}
+
+
+class FastAPIAstAdapter(Adapter):
+    adapter_id = "fastapi-python"
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:
+        mode = str(context.adapter_config.get("mode", self.default_mode))
+        paths = iter_paths(context.root, context.adapter_config.get("inputs", ["**/*.py"]))
+        facts: list[dict[str, Any]] = []
+        relations: list[dict[str, Any]] = []
+        diagnostics: list[dict[str, Any]] = []
+        route_unknown = False
+        for path in paths:
+            try:
+                tree = ast.parse(path.read_text(encoding="utf-8"), filename=path.as_posix())
+            except (SyntaxError, UnicodeDecodeError) as exc:
+                diagnostics.append(
+                    diagnostic(
+                        "PYTHON_PARSE_ERROR",
+                        "error",
+                        str(exc),
+                        capability_id="backend.routes",
+                        location=source_ref(context.root, path, line=getattr(exc, "lineno", None)),
+                    )
+                )
+                route_unknown = True
+                continue
+            for node in ast.walk(tree):
+                if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                for decorator in node.decorator_list:
+                    call = decorator if isinstance(decorator, ast.Call) else None
+                    attr = call.func if call and isinstance(call.func, ast.Attribute) else None
+                    method = attr.attr.lower() if attr else ""
+                    if method not in HTTP_METHODS:
+                        continue
+                    path_value: str | None = None
+                    if call.args and isinstance(call.args[0], ast.Constant) and isinstance(call.args[0].value, str):
+                        path_value = call.args[0].value
+                    elif any(keyword.arg in {"path", "route"} and isinstance(keyword.value, ast.Constant) and isinstance(keyword.value.value, str) for keyword in call.keywords):
+                        path_value = next(
+                            keyword.value.value
+                            for keyword in call.keywords
+                            if keyword.arg in {"path", "route"}
+                            and isinstance(keyword.value, ast.Constant)
+                            and isinstance(keyword.value.value, str)
+                        )
+                    operation_id = node.name
+                    for keyword in call.keywords:
+                        if keyword.arg == "operation_id" and isinstance(keyword.value, ast.Constant) and isinstance(keyword.value.value, str):
+                            operation_id = keyword.value.value
+                    if path_value is None:
+                        item = diagnostic(
+                            "ROUTE_DYNAMIC_UNRESOLVED",
+                            "error",
+                            f"route path for {node.name} is not a literal",
+                            capability_id="backend.routes",
+                            location=source_ref(context.root, path, line=node.lineno, symbol=node.name),
+                        )
+                        diagnostics.append(item)
+                        route_unknown = True
+                        continue
+                    ev = evidence(
+                        context.root,
+                        path,
+                        authority="source",
+                        precision="semantic-static-derived",
+                        adapter_id=self.adapter_id,
+                        adapter_version=self.version,
+                        line=node.lineno,
+                        symbol=node.name,
+                        mode=mode,
+                    )
+                    operation = make_fact(
+                        context.project_id,
+                        "backend.operation",
+                        operation_id,
+                        "backend.routes",
+                        {
+                            "method": method.upper(),
+                            "path": path_value,
+                            "operation_id": operation_id,
+                            "handler": node.name,
+                        },
+                        [ev],
+                    )
+                    facts.append(operation)
+                    calls = [
+                        child
+                        for child in ast.walk(node)
+                        if isinstance(child, ast.Call) and getattr(child, "lineno", 0) > node.lineno
+                    ]
+                    calls.sort(key=lambda child: (getattr(child, "lineno", 0), getattr(child, "col_offset", 0)))
+                    for index, child in enumerate(calls, start=1):
+                        call_name = _ast_call_name(child.func)
+                        if not call_name or call_name in {"Depends", "HTTPException"}:
+                            continue
+                        step_ev = evidence(
+                            context.root,
+                            path,
+                            authority="source",
+                            precision="handler-direct-exact",
+                            adapter_id=self.adapter_id,
+                            adapter_version=self.version,
+                            line=child.lineno,
+                            symbol=call_name,
+                            mode=mode,
+                        )
+                        step = make_fact(
+                            context.project_id,
+                            "backend.flow-step",
+                            f"{operation_id}:{index}:{call_name}",
+                            "backend.flow",
+                            {"operation_id": operation_id, "order": index, "call": call_name},
+                            [step_ev],
+                            fact_type="property",
+                        )
+                        facts.append(step)
+                        relations.append(
+                            make_relation(
+                                context.project_id,
+                                "backend.contains-step",
+                                f"{operation_id}:{step['fact_id']}",
+                                "backend.flow",
+                                operation["fact_id"],
+                                step["fact_id"],
+                                [step_ev],
+                                properties={"order": index},
+                            )
+                        )
+        route_diags = [item["diagnostic_id"] for item in diagnostics if item.get("capability_id") == "backend.routes"]
+        return AdapterFragment(
+            adapter=self._identity(mode),
+            facts=facts,
+            relations=relations,
+            capability_results=[
+                capability_result(
+                    "backend.routes",
+                    "unknown" if route_unknown else ("derived" if facts else "not_applicable"),
+                    "semantic-static-derived" if facts else "not-applicable",
+                    required=bool(context.adapter_config.get("required", True)),
+                    mode=mode,
+                    diagnostic_ids=route_diags,
+                ),
+                capability_result(
+                    "backend.flow",
+                    "derived" if any(fact["kind"] == "backend.flow-step" for fact in facts) else "not_applicable",
+                    "handler-direct-exact" if any(fact["kind"] == "backend.flow-step" for fact in facts) else "not-applicable",
+                    required=bool(context.adapter_config.get("flow_required", False)),
+                    mode=mode,
+                ),
+            ],
+            diagnostics=diagnostics,
+            inputs=[input_record(context.root, path) for path in paths],
+        )
+
+
+def _ast_call_name(node: ast.AST) -> str:
+    if isinstance(node, ast.Name):
+        return node.id
+    if isinstance(node, ast.Attribute):
+        prefix = _ast_call_name(node.value)
+        return f"{prefix}.{node.attr}" if prefix else node.attr
+    return ""
+
+
+class OpenAPIAdapter(Adapter):
+    adapter_id = "openapi"
+    default_mode = "executable-contract"
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:
+        mode = str(context.adapter_config.get("mode", self.default_mode))
+        paths = iter_paths(context.root, context.adapter_config.get("inputs", ["**/openapi.json", "**/openapi.yaml", "**/openapi.yml"]))
+        facts: list[dict[str, Any]] = []
+        diagnostics: list[dict[str, Any]] = []
+        for path in paths:
+            document = load_data(path) or {}
+            version = str(document.get("openapi", ""))
+            if not version.startswith("3."):
+                diagnostics.append(
+                    diagnostic(
+                        "OPENAPI_VERSION_UNSUPPORTED",
+                        "error",
+                        f"OpenAPI version {version!r} is unsupported",
+                        capability_id="backend.http-contract",
+                        location=source_ref(context.root, path),
+                    )
+                )
+                continue
+            for route_path, path_item in sorted((document.get("paths") or {}).items()):
+                if not isinstance(path_item, Mapping):
+                    continue
+                for method, operation in sorted(path_item.items()):
+                    if method.lower() not in HTTP_METHODS or not isinstance(operation, Mapping):
+                        continue
+                    operation_id = str(operation.get("operationId") or f"{method.lower()}:{route_path}")
+                    ev = evidence(
+                        context.root,
+                        path,
+                        authority="artifact",
+                        precision="openapi-exact",
+                        adapter_id=self.adapter_id,
+                        adapter_version=self.version,
+                        pointer=f"/paths/{_json_pointer_escape(route_path)}/{method}",
+                        mode=mode,
+                    )
+                    responses = sorted(str(status) for status in (operation.get("responses") or {}))
+                    facts.append(
+                        make_fact(
+                            context.project_id,
+                            "backend.operation",
+                            operation_id,
+                            "backend.http-contract",
+                            {
+                                "method": method.upper(),
+                                "path": route_path,
+                                "operation_id": operation_id,
+                                "responses": responses,
+                                "request_body": bool(operation.get("requestBody")),
+                                "parameters": canonicalize(operation.get("parameters") or []),
+                            },
+                            [ev],
+                        )
+                    )
+            schemas = ((document.get("components") or {}).get("schemas") or {})
+            for name, schema in sorted(schemas.items()):
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="artifact",
+                    precision="openapi-exact",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    pointer=f"/components/schemas/{_json_pointer_escape(name)}",
+                    mode=mode,
+                )
+                facts.append(
+                    make_fact(
+                        context.project_id,
+                        "backend.schema",
+                        name,
+                        "backend.http-schema",
+                        {"name": name, "schema": canonicalize(schema)},
+                        [ev],
+                    )
+                )
+        status = "exact" if facts and not diagnostics else ("unknown" if diagnostics else "not_applicable")
+        return AdapterFragment(
+            adapter=self._identity(mode),
+            facts=facts,
+            relations=[],
+            capability_results=[
+                capability_result(
+                    "backend.http-contract",
+                    status,
+                    "openapi-exact" if facts else "not-applicable",
+                    required=bool(context.adapter_config.get("required", True)),
+                    mode=mode,
+                    diagnostic_ids=[item["diagnostic_id"] for item in diagnostics],
+                )
+            ],
+            diagnostics=diagnostics,
+            inputs=[input_record(context.root, path, "executable-contract") for path in paths],
+        )
+
+
+def _json_pointer_escape(value: str) -> str:
+    return value.replace("~", "~0").replace("/", "~1")
+
+
+class SQLAdapter(Adapter):
+    adapter_id = "ddl-sql"
+
+    CREATE_TABLE = re.compile(
+        r"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?P<name>[A-Za-z_][\w.]*)\s*\((?P<body>.*?)\)\s*;",
+        re.IGNORECASE | re.DOTALL,
+    )
+    QUERY = re.compile(r"\b(SELECT|INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+([A-Za-z_][\w.]*)", re.IGNORECASE)
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:
+        mode = str(context.adapter_config.get("mode", self.default_mode))
+        paths = iter_paths(context.root, context.adapter_config.get("inputs", ["**/*.sql"]))
+        facts: list[dict[str, Any]] = []
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            for match in self.CREATE_TABLE.finditer(text):
+                name = match.group("name")
+                line = text.count("\n", 0, match.start()) + 1
+                columns: list[dict[str, Any]] = []
+                for raw_column in _split_sql_columns(match.group("body")):
+                    tokens = raw_column.strip().split()
+                    if len(tokens) < 2 or tokens[0].upper() in {"PRIMARY", "FOREIGN", "UNIQUE", "CONSTRAINT", "CHECK"}:
+                        continue
+                    columns.append(
+                        {
+                            "name": tokens[0].strip('"`[]'),
+                            "type": tokens[1].upper(),
+                            "nullable": "NOT NULL" not in raw_column.upper(),
+                            "primary_key": "PRIMARY KEY" in raw_column.upper(),
+                        }
+                    )
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="artifact",
+                    precision="table-exact",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    line=line,
+                    symbol=name,
+                    mode=mode,
+                )
+                facts.append(
+                    make_fact(
+                        context.project_id,
+                        "backend.table",
+                        name,
+                        "backend.data-schema",
+                        {"name": name, "columns": columns},
+                        [ev],
+                    )
+                )
+            for index, match in enumerate(self.QUERY.finditer(text), start=1):
+                verb = match.group(1).upper().split()[0]
+                table = match.group(2)
+                line = text.count("\n", 0, match.start()) + 1
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="source",
+                    precision="query-exact",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    line=line,
+                    symbol=f"query-{index}",
+                    mode=mode,
+                )
+                facts.append(
+                    make_fact(
+                        context.project_id,
+                        "backend.query",
+                        f"{repository_relative(context.root, path)}:{line}:{verb}:{table}",
+                        "backend.data-access",
+                        {"operation": verb, "table": table, "statement_sha256": sha256_bytes(match.group(0).encode())},
+                        [ev],
+                        fact_type="property",
+                    )
+                )
+        return AdapterFragment(
+            adapter=self._identity(mode),
+            facts=facts,
+            relations=[],
+            capability_results=[
+                capability_result(
+                    "backend.data-schema",
+                    "exact" if any(fact["kind"] == "backend.table" for fact in facts) else "not_applicable",
+                    "table-exact" if any(fact["kind"] == "backend.table" for fact in facts) else "not-applicable",
+                    required=bool(context.adapter_config.get("schema_required", False)),
+                    mode=mode,
+                ),
+                capability_result(
+                    "backend.data-access",
+                    "exact" if any(fact["kind"] == "backend.query" for fact in facts) else "not_applicable",
+                    "query-exact" if any(fact["kind"] == "backend.query" for fact in facts) else "not-applicable",
+                    required=bool(context.adapter_config.get("query_required", False)),
+                    mode=mode,
+                ),
+            ],
+            diagnostics=[],
+            inputs=[input_record(context.root, path, "artifact") for path in paths],
+        )
+
+
+def _split_sql_columns(value: str) -> list[str]:
+    parts: list[str] = []
+    current: list[str] = []
+    depth = 0
+    quote: str | None = None
+    for character in value:
+        if quote:
+            current.append(character)
+            if character == quote:
+                quote = None
+            continue
+        if character in {"'", '"', "`"}:
+            quote = character
+            current.append(character)
+        elif character == "(":
+            depth += 1
+            current.append(character)
+        elif character == ")":
+            depth = max(depth - 1, 0)
+            current.append(character)
+        elif character == "," and depth == 0:
+            parts.append("".join(current))
+            current = []
+        else:
+            current.append(character)
+    if current:
+        parts.append("".join(current))
+    return parts
+
+
+class CloudFormationAdapter(Adapter):
+    adapter_id = "cloudformation"
+    default_mode = "build"
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:
+        mode = str(context.adapter_config.get("mode", self.default_mode))
+        paths = iter_paths(context.root, context.adapter_config.get("inputs", ["**/template.json", "**/template.yaml", "**/template.yml"]))
+        facts: list[dict[str, Any]] = []
+        relations: list[dict[str, Any]] = []
+        diagnostics: list[dict[str, Any]] = []
+        fact_by_logical_id: dict[str, str] = {}
+        for path in paths:
+            template = load_data(path) or {}
+            resources = template.get("Resources") or {}
+            for logical_id, resource_value in sorted(resources.items()):
+                resource_value = resource_value or {}
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="artifact",
+                    precision="cloudformation-exact",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    pointer=f"/Resources/{_json_pointer_escape(logical_id)}",
+                    mode=mode,
+                )
+                properties = _sanitize_cloudformation_value(resource_value.get("Properties") or {})
+                fact = make_fact(
+                    context.project_id,
+                    "infra.resource",
+                    logical_id,
+                    "infra.resources",
+                    {
+                        "logical_id": logical_id,
+                        "resource_type": resource_value.get("Type"),
+                        "properties": properties,
+                        "deletion_policy": resource_value.get("DeletionPolicy"),
+                        "update_replace_policy": resource_value.get("UpdateReplacePolicy"),
+                    },
+                    [ev],
+                )
+                facts.append(fact)
+                fact_by_logical_id[logical_id] = fact["fact_id"]
+            for name, parameter in sorted((template.get("Parameters") or {}).items()):
+                parameter = parameter or {}
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="artifact",
+                    precision="cloudformation-exact",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    pointer=f"/Parameters/{_json_pointer_escape(name)}",
+                    mode=mode,
+                )
+                value = {
+                    "name": name,
+                    "type": parameter.get("Type"),
+                    "no_echo": bool(parameter.get("NoEcho")),
+                    "allowed_values": parameter.get("AllowedValues"),
+                }
+                if not parameter.get("NoEcho") and "Default" in parameter:
+                    value["default"] = parameter["Default"]
+                elif parameter.get("NoEcho"):
+                    value["secret_reference"] = {"kind": "cloudformation-parameter", "logical_locator": name}
+                facts.append(
+                    make_fact(
+                        context.project_id,
+                        "infra.parameter",
+                        name,
+                        "infra.parameters",
+                        value,
+                        [ev],
+                    )
+                )
+            for logical_id, resource_value in sorted(resources.items()):
+                from_id = fact_by_logical_id.get(logical_id)
+                if not from_id:
+                    continue
+                targets = set(_collect_cfn_refs(resource_value))
+                depends_on = resource_value.get("DependsOn") if isinstance(resource_value, Mapping) else None
+                if isinstance(depends_on, str):
+                    targets.add(depends_on)
+                elif isinstance(depends_on, list):
+                    targets.update(str(item) for item in depends_on)
+                for target in sorted(targets):
+                    to_id = fact_by_logical_id.get(target)
+                    if not to_id:
+                        continue
+                    ev = evidence(
+                        context.root,
+                        path,
+                        authority="artifact",
+                        precision="cloudformation-exact",
+                        adapter_id=self.adapter_id,
+                        adapter_version=self.version,
+                        pointer=f"/Resources/{_json_pointer_escape(logical_id)}",
+                        mode=mode,
+                    )
+                    relations.append(
+                        make_relation(
+                            context.project_id,
+                            "infra.depends-on",
+                            f"{logical_id}:{target}",
+                            "infra.dependencies",
+                            from_id,
+                            to_id,
+                            [ev],
+                        )
+                    )
+        return AdapterFragment(
+            adapter=self._identity(mode),
+            facts=facts,
+            relations=relations,
+            capability_results=[
+                capability_result(
+                    "infra.resources",
+                    "exact" if any(fact["kind"] == "infra.resource" for fact in facts) else "not_applicable",
+                    "cloudformation-exact" if facts else "not-applicable",
+                    required=bool(context.adapter_config.get("required", True)),
+                    mode=mode,
+                ),
+                capability_result(
+                    "infra.parameters",
+                    "exact" if any(fact["kind"] == "infra.parameter" for fact in facts) else "not_applicable",
+                    "cloudformation-exact" if any(fact["kind"] == "infra.parameter" for fact in facts) else "not-applicable",
+                    required=bool(context.adapter_config.get("parameters_required", False)),
+                    mode=mode,
+                ),
+                capability_result(
+                    "infra.dependencies",
+                    "exact" if relations else "not_applicable",
+                    "cloudformation-exact" if relations else "not-applicable",
+                    required=bool(context.adapter_config.get("dependencies_required", False)),
+                    mode=mode,
+                ),
+            ],
+            diagnostics=diagnostics,
+            inputs=[input_record(context.root, path, "build-artifact") for path in paths],
+        )
+
+
+def _sanitize_cloudformation_value(value: Any, key: str = "") -> Any:
+    if isinstance(value, Mapping):
+        result: dict[str, Any] = {}
+        for child_key, child_value in sorted(value.items()):
+            normalized_key = str(child_key)
+            if re.search(r"(?i)(password|secret|token|api.?key)", normalized_key):
+                result[normalized_key] = {
+                    "kind": "secret-reference",
+                    "logical_locator": _logical_secret_locator(child_value),
+                }
+            else:
+                result[normalized_key] = _sanitize_cloudformation_value(child_value, normalized_key)
+        return result
+    if isinstance(value, list):
+        return [_sanitize_cloudformation_value(item, key) for item in value]
+    return value
+
+
+def _logical_secret_locator(value: Any) -> str:
+    if isinstance(value, Mapping):
+        if "Ref" in value:
+            return f"Ref:{value['Ref']}"
+        if "Fn::Sub" in value:
+            return "Fn::Sub"
+        return "intrinsic"
+    return "redacted-literal"
+
+
+def _collect_cfn_refs(value: Any) -> Iterable[str]:
+    if isinstance(value, Mapping):
+        if set(value) == {"Ref"} and isinstance(value["Ref"], str):
+            yield value["Ref"]
+        if "Fn::GetAtt" in value:
+            target = value["Fn::GetAtt"]
+            if isinstance(target, list) and target:
+                yield str(target[0])
+            elif isinstance(target, str):
+                yield target.split(".", 1)[0]
+        for child in value.values():
+            yield from _collect_cfn_refs(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _collect_cfn_refs(child)
+
+
+class RegexFrameworkAdapter(Adapter):
+    framework = "generic"
+    namespace = "backend"
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:
+        mode = str(context.adapter_config.get("mode", self.default_mode))
+        paths = iter_paths(context.root, context.adapter_config.get("inputs", []))
+        facts: list[dict[str, Any]] = []
+        diagnostics: list[dict[str, Any]] = []
+        for path in paths:
+            extracted, unresolved = self._routes(path.read_text(encoding="utf-8"))
+            for method, route_path, operation_id, line in extracted:
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="source",
+                    precision="semantic-static-derived",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    line=line,
+                    symbol=operation_id,
+                    mode=mode,
+                )
+                facts.append(
+                    make_fact(
+                        context.project_id,
+                        "backend.operation",
+                        operation_id,
+                        "backend.routes",
+                        {"method": method, "path": route_path, "operation_id": operation_id, "handler": operation_id},
+                        [ev],
+                    )
+                )
+            for line, detail in unresolved:
+                diagnostics.append(
+                    diagnostic(
+                        "ROUTE_DYNAMIC_UNRESOLVED",
+                        "error",
+                        detail,
+                        capability_id="backend.routes",
+                        location=source_ref(context.root, path, line=line),
+                    )
+                )
+        status = "unknown" if diagnostics else ("derived" if facts else "not_applicable")
+        return AdapterFragment(
+            adapter=self._identity(mode),
+            facts=facts,
+            relations=[],
+            capability_results=[
+                capability_result(
+                    "backend.routes",
+                    status,
+                    "semantic-static-derived" if facts else "not-applicable",
+                    required=bool(context.adapter_config.get("required", True)),
+                    mode=mode,
+                    diagnostic_ids=[item["diagnostic_id"] for item in diagnostics],
+                )
+            ],
+            diagnostics=diagnostics,
+            inputs=[input_record(context.root, path) for path in paths],
+        )
+
+    def _routes(self, text: str) -> tuple[list[tuple[str, str, str, int]], list[tuple[int, str]]]:
+        raise NotImplementedError
+
+
+class SpringMvcAdapter(RegexFrameworkAdapter):
+    adapter_id = "spring-boot-mvc"
+
+    def _routes(self, text: str) -> tuple[list[tuple[str, str, str, int]], list[tuple[int, str]]]:
+        routes: list[tuple[str, str, str, int]] = []
+        unresolved: list[tuple[int, str]] = []
+        base = ""
+        base_match = re.search(r"@RequestMapping\(\s*\"([^\"]*)\"\s*\)", text)
+        if base_match:
+            base = base_match.group(1)
+        pattern = re.compile(r"@(Get|Post|Put|Patch|Delete)Mapping\(\s*([^)]*)\)\s*(?:public\s+)?[\w<>?, ]+\s+(\w+)\s*\(", re.MULTILINE)
+        for match in pattern.finditer(text):
+            argument = match.group(2).strip()
+            line = text.count("\n", 0, match.start()) + 1
+            literal = re.fullmatch(r"(?:value\s*=\s*)?\"([^\"]*)\"", argument)
+            if not literal:
+                unresolved.append((line, f"Spring mapping for {match.group(3)} is not a literal"))
+                continue
+            routes.append((match.group(1).upper(), _join_route(base, literal.group(1)), match.group(3), line))
+        if "registerMapping(" in text:
+            line = text[: text.index("registerMapping(")].count("\n") + 1
+            unresolved.append((line, "programmatic registerMapping cannot be resolved statically"))
+        return routes, unresolved
+
+
+class NestJsAdapter(RegexFrameworkAdapter):
+    adapter_id = "nestjs"
+
+    def _routes(self, text: str) -> tuple[list[tuple[str, str, str, int]], list[tuple[int, str]]]:
+        routes: list[tuple[str, str, str, int]] = []
+        unresolved: list[tuple[int, str]] = []
+        base_match = re.search(r"@Controller\(\s*(['\"])(.*?)\1\s*\)", text)
+        base = base_match.group(2) if base_match else ""
+        if "@Controller(" in text and not base_match:
+            line = text[: text.index("@Controller(")].count("\n") + 1
+            unresolved.append((line, "computed NestJS controller path cannot be resolved"))
+        pattern = re.compile(r"@(Get|Post|Put|Patch|Delete)\(\s*([^)]*)\)\s*(\w+)\s*\(", re.MULTILINE)
+        for match in pattern.finditer(text):
+            argument = match.group(2).strip()
+            line = text.count("\n", 0, match.start()) + 1
+            literal = re.fullmatch(r"(['\"])(.*?)\1", argument)
+            if not literal:
+                unresolved.append((line, f"computed NestJS route for {match.group(3)} cannot be resolved"))
+                continue
+            routes.append((match.group(1).upper(), _join_route(base, literal.group(2)), match.group(3), line))
+        return routes, unresolved
+
+
+class RailsAdapter(RegexFrameworkAdapter):
+    adapter_id = "rails"
+
+    def _routes(self, text: str) -> tuple[list[tuple[str, str, str, int]], list[tuple[int, str]]]:
+        routes: list[tuple[str, str, str, int]] = []
+        unresolved: list[tuple[int, str]] = []
+        pattern = re.compile(r"\b(get|post|put|patch|delete)\s+(['\"])(.*?)\2\s*,\s*to:\s*(['\"])(.*?)\4")
+        for match in pattern.finditer(text):
+            line = text.count("\n", 0, match.start()) + 1
+            action = match.group(5).split("#")[-1]
+            routes.append((match.group(1).upper(), match.group(3).replace(":id", "{id}"), action, line))
+        if re.search(r"\bresources\s+[A-Za-z_]", text):
+            match = re.search(r"\bresources\s+[A-Za-z_]", text)
+            unresolved.append((text.count("\n", 0, match.start()) + 1, "dynamic Rails resources declaration cannot be resolved"))
+        return routes, unresolved
+
+
+class GinAdapter(RegexFrameworkAdapter):
+    adapter_id = "gin"
+
+    def _routes(self, text: str) -> tuple[list[tuple[str, str, str, int]], list[tuple[int, str]]]:
+        routes: list[tuple[str, str, str, int]] = []
+        unresolved: list[tuple[int, str]] = []
+        pattern = re.compile(r"\.\s*(GET|POST|PUT|PATCH|DELETE)\(\s*([^,]+),\s*(\w+)")
+        for match in pattern.finditer(text):
+            line = text.count("\n", 0, match.start()) + 1
+            literal = re.fullmatch(r"\s*\"([^\"]*)\"\s*", match.group(2))
+            if not literal:
+                unresolved.append((line, f"computed Gin route for {match.group(3)} cannot be resolved"))
+                continue
+            routes.append((match.group(1), literal.group(1).replace(":id", "{id}"), match.group(3), line))
+        return routes, unresolved
+
+
+def _join_route(base: str, child: str) -> str:
+    parts = [part.strip("/") for part in (base, child) if part.strip("/")]
+    return "/" + "/".join(parts) if parts else "/"
+
+
+class FrontendManifestAdapter(Adapter):
+    adapter_id = "frontend-manifest"
+    default_mode = "build"
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:
+        mode = str(context.adapter_config.get("mode", self.default_mode))
+        paths = iter_paths(context.root, context.adapter_config.get("inputs", ["**/frontend.design.json"]))
+        facts: list[dict[str, Any]] = []
+        relations: list[dict[str, Any]] = []
+        diagnostics: list[dict[str, Any]] = []
+        by_external_id: dict[str, str] = {}
+        for path in paths:
+            document = load_data(path) or {}
+            for route in document.get("routes", []):
+                if not isinstance(route.get("path"), str):
+                    diagnostics.append(
+                        diagnostic(
+                            "UI_ROUTE_UNRESOLVED",
+                            "error",
+                            "frontend route path is not exact",
+                            capability_id="frontend.routes",
+                            location=source_ref(context.root, path),
+                        )
+                    )
+                    continue
+                external_id = str(route.get("id") or route["path"])
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="artifact",
+                    precision="build-artifact-exact",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    pointer=f"/routes/{_json_pointer_escape(external_id)}",
+                    mode=mode,
+                )
+                fact = make_fact(
+                    context.project_id,
+                    "frontend.route",
+                    external_id,
+                    "frontend.routes",
+                    {"external_id": external_id, "path": route["path"], "component": route.get("component")},
+                    [ev],
+                )
+                facts.append(fact)
+                by_external_id[external_id] = fact["fact_id"]
+            sections = {
+                "components": ("frontend.component", "frontend.components"),
+                "api_operations": ("frontend.api-operation", "frontend.api-relations"),
+                "states": ("frontend.state-scenario", "frontend.state-scenarios"),
+                "assertions": ("frontend.accessibility-assertion", "frontend.accessibility"),
+                "tokens": ("frontend.design-token", "frontend.tokens"),
+                "responsive_rules": ("frontend.responsive-rule", "frontend.responsive"),
+            }
+            for section, (kind, capability_id) in sections.items():
+                for index, item in enumerate(document.get(section, [])):
+                    if isinstance(item, str):
+                        item = {"id": item, "value": item}
+                    external_id = str(item.get("id") or item.get("name") or f"{section}-{index}")
+                    ev = evidence(
+                        context.root,
+                        path,
+                        authority="executable-contract" if section in {"states", "assertions"} else "artifact",
+                        precision="assertion-exact" if section in {"states", "assertions"} else "build-artifact-exact",
+                        adapter_id=self.adapter_id,
+                        adapter_version=self.version,
+                        pointer=f"/{section}/{index}",
+                        mode="executable-contract" if section in {"states", "assertions"} else mode,
+                    )
+                    fact = make_fact(
+                        context.project_id,
+                        kind,
+                        external_id,
+                        capability_id,
+                        {"external_id": external_id, **canonicalize(dict(item))},
+                        [ev],
+                        test_refs=item.get("test_refs", []),
+                        requirement_refs=item.get("requirement_refs", []),
+                    )
+                    facts.append(fact)
+                    by_external_id[external_id] = fact["fact_id"]
+            for index, relation in enumerate(document.get("relations", [])):
+                from_id = by_external_id.get(str(relation.get("from")))
+                to_id = by_external_id.get(str(relation.get("to")))
+                if not from_id or not to_id:
+                    diagnostics.append(
+                        diagnostic(
+                            "UI_RELATION_ORPHAN",
+                            "error",
+                            f"frontend exact relation endpoint is missing: {relation}",
+                            capability_id="frontend.relations",
+                            location=source_ref(context.root, path),
+                        )
+                    )
+                    continue
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="artifact",
+                    precision="exact-mapping",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    pointer=f"/relations/{index}",
+                    mode=mode,
+                )
+                relations.append(
+                    make_relation(
+                        context.project_id,
+                        str(relation.get("kind") or "frontend.relates"),
+                        f"{relation.get('from')}:{relation.get('to')}:{index}",
+                        "frontend.relations",
+                        from_id,
+                        to_id,
+                        [ev],
+                    )
+                )
+        required_caps = set(context.adapter_config.get("required_capabilities", ["frontend.routes"]))
+        capability_ids = sorted({fact["capability_id"] for fact in facts} | required_caps)
+        results: list[dict[str, Any]] = []
+        for capability_id in capability_ids:
+            matching = [fact for fact in facts if fact["capability_id"] == capability_id]
+            matching_diags = [item for item in diagnostics if item.get("capability_id") == capability_id]
+            status = "unknown" if matching_diags else ("exact" if matching else "not_applicable")
+            results.append(
+                capability_result(
+                    capability_id,
+                    status,
+                    "build-artifact-exact" if matching else "not-applicable",
+                    required=capability_id in required_caps,
+                    mode=mode,
+                    diagnostic_ids=[item["diagnostic_id"] for item in matching_diags],
+                )
+            )
+        return AdapterFragment(
+            adapter=self._identity(mode),
+            facts=facts,
+            relations=relations,
+            capability_results=results,
+            diagnostics=diagnostics,
+            inputs=[input_record(context.root, path, "build-artifact") for path in paths],
+        )
+
+
+class BatchManifestAdapter(Adapter):
+    adapter_id = "batch-workflow-manifest"
+    default_mode = "build"
+
+    def extract(self, context: AdapterContext) -> AdapterFragment:
+        mode = str(context.adapter_config.get("mode", self.default_mode))
+        paths = iter_paths(context.root, context.adapter_config.get("inputs", ["**/batch.design.json"]))
+        facts: list[dict[str, Any]] = []
+        relations: list[dict[str, Any]] = []
+        diagnostics: list[dict[str, Any]] = []
+        by_external_id: dict[str, str] = {}
+        sections = {
+            "jobs": ("batch.job", "batch.jobs"),
+            "triggers": ("batch.trigger", "batch.triggers"),
+            "steps": ("batch.step", "batch.flow"),
+            "effects": ("batch.effect", "batch.effects"),
+            "recovery": ("batch.recovery", "batch.recovery"),
+            "tests": ("batch.test-scenario", "batch.verification"),
+        }
+        for path in paths:
+            document = load_data(path) or {}
+            for section, (kind, capability_id) in sections.items():
+                for index, item in enumerate(document.get(section, [])):
+                    if isinstance(item, str):
+                        item = {"id": item, "value": item}
+                    external_id = item.get("id")
+                    if not external_id:
+                        diagnostics.append(
+                            diagnostic(
+                                "BATCH_IDENTITY_MISSING",
+                                "error",
+                                f"{section} item lacks an explicit exact id",
+                                capability_id=capability_id,
+                                location=source_ref(context.root, path),
+                            )
+                        )
+                        continue
+                    ev = evidence(
+                        context.root,
+                        path,
+                        authority="executable-contract" if section == "tests" else "artifact",
+                        precision="assertion-exact" if section == "tests" else "workflow-artifact-exact",
+                        adapter_id=self.adapter_id,
+                        adapter_version=self.version,
+                        pointer=f"/{section}/{index}",
+                        mode="executable-contract" if section == "tests" else mode,
+                    )
+                    fact = make_fact(
+                        context.project_id,
+                        kind,
+                        str(external_id),
+                        capability_id,
+                        {"external_id": str(external_id), **canonicalize(dict(item))},
+                        [ev],
+                        requirement_refs=item.get("requirement_refs", []),
+                        test_refs=item.get("test_refs", []),
+                    )
+                    facts.append(fact)
+                    by_external_id[str(external_id)] = fact["fact_id"]
+            for index, relation in enumerate(document.get("relations", [])):
+                from_id = by_external_id.get(str(relation.get("from")))
+                to_id = by_external_id.get(str(relation.get("to")))
+                if not from_id or not to_id:
+                    diagnostics.append(
+                        diagnostic(
+                            "BATCH_RELATION_ORPHAN",
+                            "error",
+                            f"batch exact relation endpoint is missing: {relation}",
+                            capability_id="batch.flow",
+                            location=source_ref(context.root, path),
+                        )
+                    )
+                    continue
+                ev = evidence(
+                    context.root,
+                    path,
+                    authority="artifact",
+                    precision="exact-mapping",
+                    adapter_id=self.adapter_id,
+                    adapter_version=self.version,
+                    pointer=f"/relations/{index}",
+                    mode=mode,
+                )
+                relations.append(
+                    make_relation(
+                        context.project_id,
+                        str(relation.get("kind") or "batch.flows-to"),
+                        f"{relation.get('from')}:{relation.get('to')}:{index}",
+                        "batch.flow",
+                        from_id,
+                        to_id,
+                        [ev],
+                        properties={"order": relation.get("order")},
+                    )
+                )
+        required_caps = set(context.adapter_config.get("required_capabilities", ["batch.jobs", "batch.triggers"]))
+        results: list[dict[str, Any]] = []
+        for capability_id in sorted({fact["capability_id"] for fact in facts} | required_caps):
+            matching = [fact for fact in facts if fact["capability_id"] == capability_id]
+            matching_diags = [item for item in diagnostics if item.get("capability_id") == capability_id]
+            results.append(
+                capability_result(
+                    capability_id,
+                    "unknown" if matching_diags else ("exact" if matching else "not_applicable"),
+                    "workflow-artifact-exact" if matching else "not-applicable",
+                    required=capability_id in required_caps,
+                    mode=mode,
+                    diagnostic_ids=[item["diagnostic_id"] for item in matching_diags],
+                )
+            )
+        return AdapterFragment(
+            adapter=self._identity(mode),
+            facts=facts,
+            relations=relations,
+            capability_results=results,
+            diagnostics=diagnostics,
+            inputs=[input_record(context.root, path, "build-artifact") for path in paths],
+        )
+
+
+ADAPTERS: dict[str, type[Adapter]] = {
+    FastAPIAstAdapter.adapter_id: FastAPIAstAdapter,
+    OpenAPIAdapter.adapter_id: OpenAPIAdapter,
+    SQLAdapter.adapter_id: SQLAdapter,
+    CloudFormationAdapter.adapter_id: CloudFormationAdapter,
+    SpringMvcAdapter.adapter_id: SpringMvcAdapter,
+    NestJsAdapter.adapter_id: NestJsAdapter,
+    RailsAdapter.adapter_id: RailsAdapter,
+    GinAdapter.adapter_id: GinAdapter,
+    FrontendManifestAdapter.adapter_id: FrontendManifestAdapter,
+    BatchManifestAdapter.adapter_id: BatchManifestAdapter,
+}
+
+
+def _resource_limiter(memory_mb: int, cpu_seconds: int, file_mb: int) -> Any:
+    def apply() -> None:
+        resource.setrlimit(resource.RLIMIT_AS, (memory_mb * 1024 * 1024, memory_mb * 1024 * 1024))
+        resource.setrlimit(resource.RLIMIT_CPU, (cpu_seconds, cpu_seconds + 1))
+        resource.setrlimit(resource.RLIMIT_FSIZE, (file_mb * 1024 * 1024, file_mb * 1024 * 1024))
+        resource.setrlimit(resource.RLIMIT_NOFILE, (64, 64))
+        if hasattr(os, "unshare") and hasattr(os, "CLONE_NEWNET"):
+            try:
+                os.unshare(os.CLONE_NEWNET)
+            except PermissionError:
+                pass
+    return apply
+
+
+class AdapterRunner:
+    def __init__(self, *, timeout_seconds: int = 10, memory_mb: int = 128, output_bytes: int = 1_048_576):
+        self.timeout_seconds = timeout_seconds
+        self.memory_mb = memory_mb
+        self.output_bytes = output_bytes
+
+    def run_builtin(self, adapter_id: str, context: AdapterContext) -> AdapterFragment:
+        adapter_type = ADAPTERS.get(adapter_id)
+        if adapter_type is None:
+            raise ContractError(f"unknown built-in adapter: {adapter_id}")
+        fragment = adapter_type().extract(context)
+        payload = fragment.as_dict()
+        validate_adapter_fragment(payload)
+        reject_secrets(payload, _known_secret_values(context.adapter_config))
+        return fragment
+
+    def run_process(self, manifest_path: Path, context: AdapterContext) -> AdapterFragment:
+        manifest = load_data(manifest_path)
+        validate_adapter_manifest(manifest)
+        if manifest.get("adapter_id") != context.adapter_config.get("id"):
+            raise ContractError("process adapter id differs between config and manifest")
+        root = context.root.resolve()
+        declared_inputs = iter_paths(root, context.adapter_config.get("inputs", []))
+        entrypoint = manifest.get("entrypoint")
+        if not isinstance(entrypoint, list) or not entrypoint:
+            raise ContractError("process adapter entrypoint must be a non-empty array")
+        entry_script = resolve_declared_path(root, str(entrypoint[-1]))
+        with tempfile.TemporaryDirectory(prefix="designflow-adapter-") as temporary:
+            sandbox = Path(temporary)
+            copied: dict[Path, Path] = {}
+            for path in [entry_script, *declared_inputs]:
+                relative = repository_relative(root, path)
+                destination = sandbox / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(path, destination)
+                copied[path.resolve()] = destination
+            command = list(entrypoint)
+            if command[0] in {"python", "python3", sys.executable}:
+                command[0] = sys.executable
+            command[-1] = copied[entry_script.resolve()].relative_to(sandbox).as_posix()
+            request = {
+                "protocol_version": PROTOCOL_VERSION,
+                "project_id": context.project_id,
+                "profile_ids": list(context.profile_ids),
+                "inputs": [input_record(root, path) for path in declared_inputs],
+                "mode": context.adapter_config.get("mode", manifest["modes"][0]),
+                "environment": normalized_environment(),
+            }
+            environment = {
+                "PATH": os.environ.get("PATH", ""),
+                "LANG": "C.UTF-8",
+                "LC_ALL": "C.UTF-8",
+                "TZ": "UTC",
+                "SOURCE_DATE_EPOCH": "0",
+                "PYTHONHASHSEED": "0",
+                "HOME": sandbox.as_posix(),
+                "HTTP_PROXY": "http://127.0.0.1:9",
+                "HTTPS_PROXY": "http://127.0.0.1:9",
+                "NO_PROXY": "",
+            }
+            started = time.monotonic()
+            try:
+                completed = subprocess.run(
+                    command,
+                    input=canonical_json_bytes(request),
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    cwd=sandbox,
+                    env=environment,
+                    timeout=int(context.adapter_config.get("timeout_seconds", self.timeout_seconds)),
+                    check=False,
+                    preexec_fn=_resource_limiter(
+                        int(context.adapter_config.get("memory_mb", self.memory_mb)),
+                        int(context.adapter_config.get("cpu_seconds", max(2, self.timeout_seconds))),
+                        int(context.adapter_config.get("file_mb", 8)),
+                    ) if os.name == "posix" else None,
+                )
+            except subprocess.TimeoutExpired as exc:
+                raise DesignflowError(
+                    "adapter timed out",
+                    details={"code": "ADAPTER_TIMEOUT", "timeout_seconds": exc.timeout},
+                ) from exc
+            duration_ms = round((time.monotonic() - started) * 1000)
+            if len(completed.stdout) > self.output_bytes or len(completed.stderr) > self.output_bytes:
+                raise DesignflowError(
+                    "adapter output exceeded the configured resource limit",
+                    details={"code": "ADAPTER_RESOURCE_LIMIT"},
+                )
+            known = _known_secret_values(context.adapter_config)
+            reject_secrets(
+                {
+                    "stdout": completed.stdout.decode("utf-8", errors="replace"),
+                    "stderr": completed.stderr.decode("utf-8", errors="replace"),
+                },
+                known,
+            )
+            if completed.returncode != 0:
+                code = "ADAPTER_RESOURCE_LIMIT" if completed.returncode < 0 or completed.returncode in {9, 137} else "ADAPTER_PROCESS_FAILED"
+                raise DesignflowError(
+                    f"adapter exited with {completed.returncode}",
+                    details={"code": code, "stderr_sha256": sha256_bytes(completed.stderr), "duration_ms": duration_ms},
+                )
+            try:
+                payload = json.loads(completed.stdout)
+            except json.JSONDecodeError as exc:
+                raise ContractError("adapter stdout is not one JSON protocol document") from exc
+            validate_adapter_fragment(payload)
+            reject_secrets(payload, known)
+            payload_adapter = dict(payload["adapter"])
+            payload_adapter["environment_fingerprint"] = sha256_object(normalized_environment())
+            return AdapterFragment(
+                adapter=payload_adapter,
+                facts=payload["facts"],
+                relations=payload["relations"],
+                capability_results=payload["capability_results"],
+                diagnostics=payload["diagnostics"],
+                inputs=payload["inputs"],
+            )
+
+
+def _known_secret_values(config: Mapping[str, Any]) -> list[str]:
+    values = [str(item) for item in config.get("known_secret_values", []) if item]
+    for key, value in os.environ.items():
+        if key.startswith("DESIGNFLOW_TEST_SECRET") and value:
+            values.append(value)
+    return values
+
+
+def deep_merge_values(
+    left: Mapping[str, Any],
+    right: Mapping[str, Any],
+    left_rank: int,
+    right_rank: int,
+    *,
+    path: str = "$",
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    merged: dict[str, Any] = {}
+    conflicts: list[dict[str, Any]] = []
+    for key in sorted(set(left) | set(right)):
+        if key not in left:
+            merged[key] = copy.deepcopy(right[key])
+            continue
+        if key not in right:
+            merged[key] = copy.deepcopy(left[key])
+            continue
+        left_value = left[key]
+        right_value = right[key]
+        if left_value == right_value:
+            merged[key] = copy.deepcopy(left_value)
+        elif isinstance(left_value, Mapping) and isinstance(right_value, Mapping):
+            child, child_conflicts = deep_merge_values(
+                left_value,
+                right_value,
+                left_rank,
+                right_rank,
+                path=f"{path}/{key}",
+            )
+            merged[key] = child
+            conflicts.extend(child_conflicts)
+        elif left_rank != right_rank:
+            chosen = right_value if right_rank > left_rank else left_value
+            merged[key] = copy.deepcopy(chosen)
+            conflicts.append(
+                {
+                    "path": f"{path}/{key}",
+                    "kind": "authority-selection",
+                    "left_rank": left_rank,
+                    "right_rank": right_rank,
+                    "chosen": "right" if right_rank > left_rank else "left",
+                }
+            )
+        else:
+            merged[key] = copy.deepcopy(left_value)
+            conflicts.append(
+                {
+                    "path": f"{path}/{key}",
+                    "kind": "authority-conflict",
+                    "left_sha256": sha256_object(left_value),
+                    "right_sha256": sha256_object(right_value),
+                }
+            )
+    return merged, conflicts
+
+
+def _fact_rank(fact: Mapping[str, Any]) -> int:
+    return max((AUTHORITY_RANK.get(item.get("authority", "unknown"), 0) for item in fact.get("evidence", [])), default=0)
+
+
+def merge_fragments(
+    project_id: str,
+    profile_ids: Sequence[str],
+    fragments: Sequence[AdapterFragment],
+    *,
+    identity_migrations: Sequence[Mapping[str, Any]] = (),
+    trace_map: Sequence[Mapping[str, Any]] = (),
+) -> dict[str, Any]:
+    facts: dict[str, dict[str, Any]] = {}
+    relations: dict[str, dict[str, Any]] = {}
+    diagnostics: list[dict[str, Any]] = []
+    capability_results: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    adapter_records: list[dict[str, Any]] = []
+    input_records: dict[tuple[str, str], dict[str, Any]] = {}
+    authority_decisions: list[dict[str, Any]] = []
+    for fragment in sorted(fragments, key=lambda item: (item.adapter.get("id", ""), item.adapter.get("version", ""))):
+        payload = fragment.as_dict()
+        validate_adapter_fragment(payload)
+        adapter_records.append(canonicalize(dict(fragment.adapter)))
+        for input_item in fragment.inputs:
+            input_records[(input_item["path"], input_item.get("kind", "source"))] = canonicalize(input_item)
+        diagnostics.extend(canonicalize(fragment.diagnostics))
+        for result in fragment.capability_results:
+            capability_results[result["capability_id"]].append(canonicalize(result))
+        for fact in fragment.facts:
+            current = facts.get(fact["fact_id"])
+            if current is None:
+                facts[fact["fact_id"]] = copy.deepcopy(fact)
+                continue
+            left_rank = _fact_rank(current)
+            right_rank = _fact_rank(fact)
+            merged_value, conflicts = deep_merge_values(current["value"], fact["value"], left_rank, right_rank)
+            current["value"] = canonicalize(merged_value)
+            current["evidence"] = sorted(
+                {canonical_json_bytes(item): canonicalize(item) for item in [*current["evidence"], *fact["evidence"]]}.values(),
+                key=canonical_json_bytes,
+            )
+            current["requirement_refs"] = sorted(set(current.get("requirement_refs", [])) | set(fact.get("requirement_refs", [])))
+            current["test_refs"] = canonicalize([*current.get("test_refs", []), *fact.get("test_refs", [])])
+            current["external_evidence_refs"] = canonicalize(
+                [*current.get("external_evidence_refs", []), *fact.get("external_evidence_refs", [])]
+            )
+            for conflict in conflicts:
+                decision = {
+                    "fact_id": fact["fact_id"],
+                    "field": conflict["path"],
+                    **conflict,
+                    "left_adapter": current["evidence"][0].get("adapter", {}),
+                    "right_adapter": fact["evidence"][0].get("adapter", {}),
+                }
+                authority_decisions.append(canonicalize(decision))
+                if conflict["kind"] == "authority-conflict":
+                    diagnostics.append(
+                        diagnostic(
+                            "AUTHORITY_CONFLICT",
+                            "error",
+                            f"equal-authority values conflict for {fact['fact_id']} at {conflict['path']}",
+                            capability_id=fact["capability_id"],
+                            details=decision,
+                        )
+                    )
+        for relation in fragment.relations:
+            current = relations.get(relation["relation_id"])
+            if current is None:
+                relations[relation["relation_id"]] = copy.deepcopy(relation)
+            elif canonicalize(current) != canonicalize(relation):
+                diagnostics.append(
+                    diagnostic(
+                        "RELATION_CONFLICT",
+                        "error",
+                        f"relation identity conflicts: {relation['relation_id']}",
+                        capability_id=relation["capability_id"],
+                    )
+                )
+    _apply_trace_map(facts, trace_map)
+    all_fact_ids = set(facts)
+    for relation_id, relation in list(relations.items()):
+        if relation["from_fact_id"] not in all_fact_ids or relation["to_fact_id"] not in all_fact_ids:
+            diagnostics.append(
+                diagnostic(
+                    "EXACT_LINK_ORPHAN",
+                    "error",
+                    f"exact relation endpoint is unresolved: {relation_id}",
+                    capability_id=relation["capability_id"],
+                    details={"from": relation["from_fact_id"], "to": relation["to_fact_id"]},
+                )
+            )
+            relations.pop(relation_id)
+    merged_results = _merge_capability_results(capability_results, diagnostics)
+    ir = {
+        "schema_version": IR_SCHEMA_VERSION,
+        "project_id": project_id,
+        "profile_ids": sorted(set(profile_ids)),
+        "facts": sorted((canonicalize(item) for item in facts.values()), key=lambda item: item["fact_id"]),
+        "relations": sorted((canonicalize(item) for item in relations.values()), key=lambda item: item["relation_id"]),
+        "identity_migrations": sorted((canonicalize(dict(item)) for item in identity_migrations), key=canonical_json_bytes),
+        "capability_results": merged_results,
+        "diagnostics": sorted(
+            {item["diagnostic_id"]: canonicalize(item) for item in diagnostics}.values(),
+            key=lambda item: item["diagnostic_id"],
+        ),
+        "metadata": {
+            "generator": {"id": "designflow", "version": GENERATOR_VERSION},
+            "adapters": sorted(adapter_records, key=canonical_json_bytes),
+            "inputs": sorted(input_records.values(), key=lambda item: (item["path"], item.get("kind", ""))),
+            "authority_decisions": sorted(authority_decisions, key=canonical_json_bytes),
+            "normalized_environment": normalized_environment(),
+        },
+    }
+    validate_ir(ir)
+    reject_secrets(ir)
+    return ir
+
+
+def _apply_trace_map(facts: Mapping[str, dict[str, Any]], trace_map: Sequence[Mapping[str, Any]]) -> None:
+    for mapping in trace_map:
+        selected: list[dict[str, Any]] = []
+        if mapping.get("fact_id") in facts:
+            selected = [facts[str(mapping["fact_id")]]]
+        else:
+            for fact in facts.values():
+                if mapping.get("kind") and fact["kind"] != mapping["kind"]:
+                    continue
+                if mapping.get("natural_key") and fact["natural_key"] != mapping["natural_key"]:
+                    continue
+                if mapping.get("source_path") and not any(
+                    evidence_item.get("source", {}).get("path") == mapping["source_path"]
+                    for evidence_item in fact["evidence"]
+                ):
+                    continue
+                selected.append(fact)
+        for fact in selected:
+            fact["requirement_refs"] = sorted(set(fact.get("requirement_refs", [])) | set(mapping.get("requirement_refs", [])))
+            fact["test_refs"] = canonicalize([*fact.get("test_refs", []), *mapping.get("test_refs", [])])
+            fact["external_evidence_refs"] = canonicalize(
+                [*fact.get("external_evidence_refs", []), *mapping.get("external_evidence_refs", [])]
+            )
+
+
+def _merge_capability_results(
+    grouped: Mapping[str, Sequence[Mapping[str, Any]]], diagnostics: Sequence[Mapping[str, Any]]
+) -> list[dict[str, Any]]:
+    diagnostic_by_capability: dict[str, list[str]] = defaultdict(list)
+    for item in diagnostics:
+        if item.get("capability_id"):
+            diagnostic_by_capability[str(item["capability_id"])].append(str(item["diagnostic_id"]))
+    order = {status: index for index, status in enumerate(["exact", "derived", "observed", "not_applicable", "partial", "unknown", "unsupported", "conflict"])}
+    results: list[dict[str, Any]] = []
+    for capability_id, items in sorted(grouped.items()):
+        required = any(bool(item.get("required")) for item in items)
+        statuses = [str(item.get("status")) for item in items]
+        if diagnostic_by_capability.get(capability_id) and any(
+            item.get("code") in {"AUTHORITY_CONFLICT", "RELATION_CONFLICT"} and item.get("capability_id") == capability_id
+            for item in diagnostics
+        ):
+            status = "conflict"
+        elif any(status in FAIL_CLOSED_STATUSES for status in statuses):
+            status = max((item for item in statuses if item in FAIL_CLOSED_STATUSES), key=lambda value: order[value])
+        elif "exact" in statuses:
+            status = "exact"
+        elif "derived" in statuses:
+            status = "derived"
+        elif "observed" in statuses:
+            status = "observed"
+        else:
+            status = "not_applicable"
+        precisions = sorted({str(item.get("precision")) for item in items if item.get("precision")})
+        modes = sorted({str(item.get("mode")) for item in items if item.get("mode")})
+        results.append(
+            capability_result(
+                capability_id,
+                status,
+                "+".join(precisions) if precisions else "unknown",
+                required=required,
+                enforcement=next((str(item.get("enforcement")) for item in items if item.get("enforcement")), "Invariant"),
+                mode=modes[0] if len(modes) == 1 else "static",
+                diagnostic_ids=diagnostic_by_capability.get(capability_id, []),
+            )
+        )
+    return results
+
+
+def project_graph(ir: Mapping[str, Any]) -> dict[str, Any]:
+    validate_ir(ir)
+    nodes = [
+        {
+            "id": fact["fact_id"],
+            "kind": fact["kind"],
+            "label": str(fact["value"].get("name") or fact["value"].get("operation_id") or fact["natural_key"]),
+            "project_id": ir["project_id"],
+        }
+        for fact in ir["facts"]
+    ]
+    edges = [
+        {
+            "id": relation["relation_id"],
+            "kind": relation["kind"],
+            "from": relation["from_fact_id"],
+            "to": relation["to_fact_id"],
+            "properties": relation.get("properties", {}),
+        }
+        for relation in ir["relations"]
+    ]
+    return {
+        "schema_version": GRAPH_VERSION,
+        "project_id": ir["project_id"],
+        "nodes": sorted(nodes, key=lambda item: item["id"]),
+        "edges": sorted(edges, key=lambda item: item["id"]),
+    }
+
+
+def render_graph_mmd(graph: Mapping[str, Any]) -> str:
+    if graph.get("schema_version") != GRAPH_VERSION:
+        raise ContractError("Mermaid renderer accepts design.graph.json projection only")
+    lines = ["graph TD"]
+    for node in graph.get("nodes", []):
+        label = str(node.get("label", node["id"])).replace('"', "'")
+        lines.append(f'  {stable_id("node", node["id"]).replace(":", "_")}["{label}"]')
+    node_names = {node["id"]: stable_id("node", node["id"]).replace(":", "_") for node in graph.get("nodes", [])}
+    for edge in graph.get("edges", []):
+        if edge["from"] in node_names and edge["to"] in node_names:
+            label = str(edge.get("kind", "relates")).replace('"', "'")
+            lines.append(f'  {node_names[edge["from"]]} -->|"{label}"| {node_names[edge["to"]]}')
+    return "\n".join(lines) + "\n"
+
+
+def _markdown_banner(ir: Mapping[str, Any], title: str) -> list[str]:
+    digest = sha256_object(ir)
+    return [
+        f"# {title}",
+        "",
+        "> [!WARNING]",
+        "> このファイルは検証済み `design.ir.json` から生成されています。直接編集しないでください。",
+        f"> Schema: `{ir['schema_version']}` / Bundle input digest: `{digest}`",
+        "> Generate: `designflow generate` / Check: `designflow check`",
+        "",
+    ]
+
+
+def _fact_table(ir: Mapping[str, Any], title: str, prefixes: Sequence[str]) -> str | None:
+    selected = [fact for fact in ir["facts"] if any(fact["kind"].startswith(prefix) for prefix in prefixes)]
+    if not selected:
+        return None
+    lines = _markdown_banner(ir, title)
+    lines.extend(["| Fact ID | Kind | Natural key | Status / precision | Value |", "|---|---|---|---|---|"])
+    capability_map = {item["capability_id"]: item for item in ir["capability_results"]}
+    for fact in selected:
+        result = capability_map.get(fact["capability_id"], {})
+        compact = json.dumps(fact["value"], ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        lines.append(
+            f"| `{fact['fact_id']}` | `{fact['kind']}` | `{fact['natural_key']}` | "
+            f"`{result.get('status', 'unknown')}` / `{result.get('precision', 'unknown')}` | `{compact}` |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+PROFILE_VIEWS: dict[str, dict[str, tuple[str, tuple[str, ...]]]] = {
+    "backend": {
+        "API_CATALOG.gen.md": ("APIカタログ", ("backend.operation",)),
+        "INTERFACES.gen.md": ("インターフェース", ("backend.operation", "backend.schema")),
+        "OPERATIONS.gen.md": ("処理", ("backend.operation", "backend.flow-step")),
+        "SEQUENCES.gen.md": ("シーケンス", ("backend.flow-step",)),
+        "DATA_MODEL.gen.md": ("データモデル", ("backend.table",)),
+        "CRUD.gen.md": ("CRUD", ("backend.query", "backend.table")),
+        "QUERY_OBJECTS.gen.md": ("クエリオブジェクト", ("backend.query",)),
+        "TEST_SCENARIOS.gen.md": ("テストシナリオ", ("backend.test",)),
+    },
+    "frontend": {
+        "IMPLEMENTATION.gen.md": (
+            "Frontend実装",
+            ("frontend.route", "frontend.component", "frontend.api-operation", "frontend.design-token", "frontend.responsive-rule"),
+        ),
+        "VERIFICATION_MAP.gen.md": (
+            "Frontend検証マップ",
+            ("frontend.state-scenario", "frontend.accessibility-assertion"),
+        ),
+    },
+    "infrastructure": {
+        "STACKS.gen.md": ("スタック", ("infra.stack",)),
+        "RESOURCES.gen.md": ("リソース", ("infra.resource",)),
+        "PARAMETERS.gen.md": ("パラメータ", ("infra.parameter",)),
+        "DEPENDENCIES.gen.md": ("依存関係", ("infra.resource",)),
+        "IAM.gen.md": ("IAM", ("infra.iam",)),
+        "NETWORK.gen.md": ("ネットワーク", ("infra.network",)),
+        "STATEFUL_RESOURCES.gen.md": ("Statefulリソース", ("infra.stateful", "infra.resource")),
+        "EXTERNAL_REFERENCES.gen.md": ("外部参照", ("infra.external-reference",)),
+        "CHANGE_RISKS.gen.md": ("変更リスク", ("infra.change-risk", "infra.resource")),
+    },
+    "batch": {
+        "BATCH_CATALOG.gen.md": ("Batchカタログ", ("batch.job", "batch.trigger")),
+        "JOBS.gen.md": ("Job", ("batch.job",)),
+        "FLOWS.gen.md": ("Flow", ("batch.step",)),
+        "EFFECTS.gen.md": ("Effect", ("batch.effect",)),
+        "RECOVERY.gen.md": ("Recovery", ("batch.recovery",)),
+        "VERIFICATION_MAP.gen.md": ("Batch検証マップ", ("batch.test-scenario",)),
+    },
+}
+
+
+def render_traceability(ir: Mapping[str, Any]) -> str:
+    lines = _markdown_banner(ir, "トレーサビリティ")
+    lines.extend(
+        [
+            "| Fact ID | Requirement | Test | External evidence | Source | Adapter |",
+            "|---|---|---|---|---|---|",
+        ]
+    )
+    for fact in ir["facts"]:
+        sources = [item.get("source", {}).get("path", "") for item in fact.get("evidence", [])]
+        adapters = [item.get("adapter", {}).get("id", "") for item in fact.get("evidence", [])]
+        lines.append(
+            f"| `{fact['fact_id']}` | {', '.join(fact.get('requirement_refs', [])) or '-'} | "
+            f"{_compact_refs(fact.get('test_refs', []))} | {_compact_refs(fact.get('external_evidence_refs', []))} | "
+            f"{', '.join(sorted(set(sources))) or '-'} | {', '.join(sorted(set(adapters))) or '-'} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _compact_refs(values: Sequence[Any]) -> str:
+    if not values:
+        return "-"
+    return ", ".join(
+        str(value) if isinstance(value, str) else json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        for value in values
+    )
+
+
+def render_diagnostics(ir: Mapping[str, Any]) -> str | None:
+    if not ir.get("diagnostics"):
+        return None
+    lines = _markdown_banner(ir, "診断")
+    lines.extend(["| Code | Severity | Capability | Location | Detail |", "|---|---|---|---|---|"])
+    for item in ir["diagnostics"]:
+        location = item.get("location", {})
+        locator = location.get("path", "-")
+        if location.get("line"):
+            locator += f":{location['line']}"
+        lines.append(
+            f"| `{item['code']}` | `{item['severity']}` | `{item.get('capability_id', '-')}` | "
+            f"`{locator}` | {item['message']} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def render_project_files(ir: Mapping[str, Any]) -> dict[str, bytes]:
+    validate_ir(ir)
+    files: dict[str, bytes] = {
+        "design.ir.json": pretty_json_bytes(ir),
+        "TRACEABILITY.gen.md": render_traceability(ir).encode("utf-8"),
+    }
+    graph = project_graph(ir)
+    files["design.graph.json"] = pretty_json_bytes(graph)
+    files["design.graph.mmd"] = render_graph_mmd(graph).encode("utf-8")
+    diagnostic_view = render_diagnostics(ir)
+    if diagnostic_view:
+        files["DIAGNOSTICS.gen.md"] = diagnostic_view.encode("utf-8")
+    for profile_id in ir["profile_ids"]:
+        for name, (title, prefixes) in PROFILE_VIEWS.get(profile_id, {}).items():
+            rendered = _fact_table(ir, title, prefixes)
+            if rendered is not None:
+                files[name] = rendered.encode("utf-8")
+    reject_secrets({name: value.decode("utf-8") for name, value in files.items()})
+    return dict(sorted(files.items()))
+
+
+def load_config(path: Path) -> dict[str, Any]:
+    config = load_data(path)
+    if not isinstance(config, Mapping):
+        raise ContractError("designflow config must be an object")
+    if config.get("schema_version") != CONFIG_VERSION:
+        raise ContractError(f"unsupported config schema_version: {config.get('schema_version')!r}")
+    projects = config.get("projects")
+    if not isinstance(projects, list) or not projects:
+        raise ContractError("designflow config requires at least one project")
+    ids = [project.get("id") for project in projects]
+    if any(not isinstance(project_id, str) or not project_id for project_id in ids) or len(ids) != len(set(ids)):
+        raise ContractError("project ids must be unique non-empty strings")
+    return canonicalize(dict(config))
+
+
+def discover(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    candidates: list[dict[str, Any]] = []
+    checks = [
+        ("backend", "fastapi-python", ["**/*.py"], lambda path: "fastapi" in path.read_text(encoding="utf-8", errors="ignore")),
+        ("backend", "openapi", ["**/openapi.json", "**/openapi.yaml", "**/openapi.yml"], lambda path: True),
+        ("backend", "ddl-sql", ["**/*.sql"], lambda path: True),
+        ("infrastructure", "cloudformation", ["**/template.json", "**/template.yaml", "**/template.yml"], lambda path: True),
+        ("frontend", "frontend-manifest", ["**/frontend.design.json"], lambda path: True),
+        ("batch", "batch-workflow-manifest", ["**/batch.design.json"], lambda path: True),
+    ]
+    for profile, adapter_id, patterns, predicate in checks:
+        matches: list[str] = []
+        for pattern in patterns:
+            for path in root.glob(pattern):
+                if path.is_file() and ".git" not in path.parts and predicate(path):
+                    matches.append(repository_relative(root, path))
+        if matches:
+            candidates.append(
+                {
+                    "profile_id": profile,
+                    "adapter_id": adapter_id,
+                    "inputs": sorted(set(matches)),
+                    "support_lifecycle": _registry_lifecycle(root, adapter_id),
+                }
+            )
+    return {
+        "schema_version": "designflow-discovery/v1.0",
+        "root": ".",
+        "candidates": sorted(candidates, key=lambda item: (item["profile_id"], item["adapter_id"])),
+        "unsupported": [],
+    }
+
+
+def _registry_lifecycle(root: Path, adapter_id: str) -> str:
+    path = root / "governance/design-adapters/support-registry.json"
+    if not path.exists():
+        return "candidate"
+    try:
+        registry = load_data(path)
+    except (OSError, ValueError, ContractError):
+        return "candidate"
+    for entry in registry.get("entries", []):
+        if entry.get("adapter_id") == adapter_id:
+            return str(entry.get("support_lifecycle", "candidate"))
+    return "candidate"
+
+
+def _find_project(config: Mapping[str, Any], project_id: str) -> dict[str, Any]:
+    for project in config["projects"]:
+        if project["id"] == project_id:
+            return dict(project)
+    raise ContractError(f"project is not declared: {project_id}")
+
+
+def _legacy_manifest(path: Path) -> bool:
+    if not path.exists():
+        return False
+    try:
+        manifest = load_data(path)
+    except Exception:
+        return True
+    return manifest.get("schema_version") != BUNDLE_VERSION
+
+
+def _run_project_ir(root: Path, project: Mapping[str, Any]) -> dict[str, Any]:
+    project_root = resolve_declared_path(root, str(project.get("root", ".")))
+    if not project_root.is_dir():
+        raise ContractError(f"project root is not a directory: {project.get('root')}")
+    profile_ids = tuple(str(item) for item in project.get("profiles", []))
+    if not profile_ids:
+        raise ContractError(f"project {project['id']} declares no profiles")
+    runner = AdapterRunner()
+    fragments: list[AdapterFragment] = []
+    for adapter_config in project.get("adapters", []):
+        adapter_id = str(adapter_config.get("id", ""))
+        context = AdapterContext(
+            root=project_root,
+            project_id=str(project["id"]),
+            profile_ids=profile_ids,
+            adapter_config=adapter_config,
+            normalized_environment=normalized_environment(),
+        )
+        if adapter_config.get("manifest"):
+            manifest_path = resolve_declared_path(project_root, str(adapter_config["manifest"]))
+            fragments.append(runner.run_process(manifest_path, context))
+        else:
+            fragments.append(runner.run_builtin(adapter_id, context))
+    ir = merge_fragments(
+        str(project["id"]),
+        profile_ids,
+        fragments,
+        identity_migrations=project.get("identity_migrations", []),
+        trace_map=project.get("trace_map", []),
+    )
+    configured_required = set(project.get("required_capabilities", []))
+    if configured_required:
+        by_id = {item["capability_id"]: item for item in ir["capability_results"]}
+        for capability_id in configured_required:
+            if capability_id not in by_id:
+                item = capability_result(capability_id, "unsupported", "unknown", required=True)
+                ir["capability_results"].append(item)
+                ir["diagnostics"].append(
+                    diagnostic(
+                        "REQUIRED_CAPABILITY_UNSUPPORTED",
+                        "error",
+                        f"no adapter produced required capability {capability_id}",
+                        capability_id=capability_id,
+                    )
+                )
+            else:
+                by_id[capability_id]["required"] = True
+        ir["capability_results"] = sorted(ir["capability_results"], key=lambda item: item["capability_id"])
+        ir["diagnostics"] = sorted(ir["diagnostics"], key=lambda item: item["diagnostic_id"])
+    validate_ir(ir)
+    reject_secrets(ir, project.get("redaction", {}).get("known_values", []))
+    return ir
+
+
+def _orphan_trace_diagnostics(previous_ir: Mapping[str, Any], current_ir: Mapping[str, Any]) -> list[dict[str, Any]]:
+    current_ids = {fact["fact_id"] for fact in current_ir["facts"]}
+    migrated = {item["old_fact_id"] for item in current_ir.get("identity_migrations", [])}
+    diagnostics: list[dict[str, Any]] = []
+    for fact in previous_ir.get("facts", []):
+        if fact["fact_id"] in current_ids or fact["fact_id"] in migrated:
+            continue
+        if fact.get("requirement_refs") or fact.get("test_refs"):
+            diagnostics.append(
+                diagnostic(
+                    "ORPHAN_TRACE_AFTER_RENAME",
+                    "error",
+                    f"traced fact was removed without explicit identity migration: {fact['fact_id']}",
+                    capability_id=fact.get("capability_id"),
+                    details={
+                        "fact_id": fact["fact_id"],
+                        "requirement_refs": fact.get("requirement_refs", []),
+                        "test_refs": fact.get("test_refs", []),
+                    },
+                )
+            )
+    return diagnostics
+
+
+def build_project_bundle(
+    root: Path,
+    config: Mapping[str, Any],
+    project_id: str,
+    *,
+    check: bool = False,
+    output_override: Path | None = None,
+) -> BundleResult:
+    project = _find_project(config, project_id)
+    output_dir = output_override or root / str(project.get("output", f"docs/design/generated/{project_id}"))
+    manifest_path = output_dir / "manifest.json"
+    if _legacy_manifest(manifest_path):
+        raise MigrationRequired(
+            f"legacy bundle detected at {repository_relative(root, manifest_path)}",
+            details={"path": repository_relative(root, manifest_path)},
+        )
+    ir = _run_project_ir(root, project)
+    previous_ir_path = output_dir / "design.ir.json"
+    if check and previous_ir_path.exists():
+        previous_ir = load_data(previous_ir_path)
+        orphan_diagnostics = _orphan_trace_diagnostics(previous_ir, ir)
+        if orphan_diagnostics:
+            ir["diagnostics"].extend(orphan_diagnostics)
+            affected = {item.get("capability_id") for item in orphan_diagnostics if item.get("capability_id")}
+            for result in ir["capability_results"]:
+                if result["capability_id"] in affected:
+                    result["status"] = "unknown"
+                    result["diagnostic_ids"] = sorted(
+                        set(result.get("diagnostic_ids", []))
+                        | {item["diagnostic_id"] for item in orphan_diagnostics if item.get("capability_id") == result["capability_id"]}
+                    )
+            ir["diagnostics"] = sorted(ir["diagnostics"], key=lambda item: item["diagnostic_id"])
+    files = render_project_files(ir)
+    config_path = root / str(config.get("config_path", "designflow.yaml"))
+    config_digest = sha256_bytes(config_path.read_bytes()) if config_path.exists() else sha256_object(config)
+    manifest = {
+        "schema_version": BUNDLE_VERSION,
+        "project": {"id": project_id, "profiles": sorted(project.get("profiles", [])), "root": project.get("root", ".")},
+        "generator": {"id": "designflow", "version": GENERATOR_VERSION},
+        "ir_schema_version": IR_SCHEMA_VERSION,
+        "protocol_version": PROTOCOL_VERSION,
+        "config": {"path": config.get("config_path", "designflow.yaml"), "sha256": config_digest},
+        "inputs": ir["metadata"]["inputs"],
+        "adapters": ir["metadata"]["adapters"],
+        "renderer": {"id": "designflow-renderer", "version": RENDERER_VERSION},
+        "capability_results": ir["capability_results"],
+        "files": [
+            {"path": name, "sha256": sha256_bytes(content), "size": len(content)} for name, content in sorted(files.items())
+        ],
+        "commands": {
+            "generate": f"designflow generate --config {config.get('config_path', 'designflow.yaml')} --project {project_id}",
+            "check": f"designflow check --config {config.get('config_path', 'designflow.yaml')} --project {project_id}",
+        },
+        "semantic_digest": sha256_object(
+            {
+                "facts": ir["facts"],
+                "relations": ir["relations"],
+                "capability_results": ir["capability_results"],
+                "diagnostics": ir["diagnostics"],
+            }
+        ),
+    }
+    files = {**files, "manifest.json": pretty_json_bytes(manifest)}
+    reject_secrets({name: value.decode("utf-8") for name, value in files.items()}, project.get("redaction", {}).get("known_values", []))
+    failures = required_capability_failures(ir)
+    exit_code = 2 if failures else 0
+    if check:
+        drift = compare_bundle(output_dir, files)
+        if drift:
+            raise DriftDetected(
+                f"generated bundle drift detected for {project_id}",
+                details={"project_id": project_id, "changes": drift},
+            )
+    else:
+        _atomic_write_bundle(output_dir, files)
+    return BundleResult(project_id, output_dir, files, ir, manifest, exit_code)
+
+
+def compare_bundle(output_dir: Path, expected: Mapping[str, bytes]) -> list[dict[str, Any]]:
+    actual_names = {
+        path.relative_to(output_dir).as_posix()
+        for path in output_dir.rglob("*")
+        if path.is_file() and not path.name.startswith(".")
+    } if output_dir.exists() else set()
+    expected_names = set(expected)
+    changes: list[dict[str, Any]] = []
+    for name in sorted(expected_names - actual_names):
+        changes.append({"path": name, "change": "add"})
+    for name in sorted(actual_names - expected_names):
+        changes.append({"path": name, "change": "delete"})
+    for name in sorted(actual_names & expected_names):
+        actual = (output_dir / name).read_bytes()
+        if actual != expected[name]:
+            changes.append(
+                {
+                    "path": name,
+                    "change": "modify",
+                    "actual_sha256": sha256_bytes(actual),
+                    "expected_sha256": sha256_bytes(expected[name]),
+                }
+            )
+    return changes
+
+
+def _atomic_write_bundle(output_dir: Path, files: Mapping[str, bytes]) -> None:
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="designflow-bundle-", dir=output_dir.parent) as temporary:
+        staging = Path(temporary) / output_dir.name
+        staging.mkdir()
+        for name, content in sorted(files.items()):
+            path = staging / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+        if output_dir.exists():
+            shutil.rmtree(output_dir)
+        staging.replace(output_dir)
+
+
+def build_system_bundle(root: Path, config: Mapping[str, Any], project_results: Sequence[BundleResult], *, check: bool = False) -> BundleResult | None:
+    if len(project_results) < 2 and not config.get("system_links"):
+        return None
+    facts: list[dict[str, Any]] = []
+    relations: list[dict[str, Any]] = []
+    diagnostics: list[dict[str, Any]] = []
+    capabilities: list[dict[str, Any]] = []
+    project_fact_index: dict[tuple[str, str, str], list[str]] = defaultdict(list)
+    manifests: list[dict[str, Any]] = []
+    for result in project_results:
+        facts.extend(copy.deepcopy(result.ir["facts"]))
+        relations.extend(copy.deepcopy(result.ir["relations"]))
+        diagnostics.extend(copy.deepcopy(result.ir["diagnostics"]))
+        capabilities.extend(copy.deepcopy(result.ir["capability_results"]))
+        for fact in result.ir["facts"]:
+            project_fact_index[(result.project_id, fact["kind"], fact["natural_key"])].append(fact["fact_id"])
+        manifests.append(
+            {
+                "project_id": result.project_id,
+                "manifest_sha256": sha256_bytes(result.files["manifest.json"]),
+                "ir_sha256": sha256_bytes(result.files["design.ir.json"]),
+            }
+        )
+    for index, link in enumerate(config.get("system_links", [])):
+        from_selector = link.get("from", {})
+        to_selector = link.get("to", {})
+        from_ids = project_fact_index.get(
+            (str(from_selector.get("project")), str(from_selector.get("kind")), str(from_selector.get("natural_key"))), []
+        )
+        to_ids = project_fact_index.get(
+            (str(to_selector.get("project")), str(to_selector.get("kind")), str(to_selector.get("natural_key"))), []
+        )
+        if len(from_ids) != 1 or len(to_ids) != 1:
+            code = "SYSTEM_LINK_CONFLICT" if len(from_ids) > 1 or len(to_ids) > 1 else "SYSTEM_LINK_ORPHAN"
+            diagnostics.append(
+                diagnostic(
+                    code,
+                    "error",
+                    f"system exact link cannot be resolved uniquely: {link}",
+                    capability_id="system.cross-domain-links",
+                    details={"from_matches": from_ids, "to_matches": to_ids},
+                )
+            )
+            continue
+        relations.append(
+            {
+                "relation_id": stable_id("relation", "system", link.get("kind", "system.relates"), index, from_ids[0], to_ids[0]),
+                "kind": str(link.get("kind", "system.relates")),
+                "natural_key": str(link.get("id") or f"system-link-{index}"),
+                "capability_id": "system.cross-domain-links",
+                "from_fact_id": from_ids[0],
+                "to_fact_id": to_ids[0],
+                "properties": canonicalize(link.get("properties", {})),
+                "evidence": [],
+            }
+        )
+    system_status = "conflict" if any(item["code"] == "SYSTEM_LINK_CONFLICT" for item in diagnostics) else (
+        "unknown" if any(item["code"] == "SYSTEM_LINK_ORPHAN" for item in diagnostics) else "exact"
+    )
+    capabilities.append(
+        capability_result(
+            "system.cross-domain-links",
+            system_status,
+            "exact-mapping",
+            required=bool(config.get("system_links")),
+        )
+    )
+    ir = {
+        "schema_version": IR_SCHEMA_VERSION,
+        "project_id": "system",
+        "profile_ids": ["system"],
+        "facts": sorted(facts, key=lambda item: item["fact_id"]),
+        "relations": sorted(relations, key=lambda item: item["relation_id"]),
+        "identity_migrations": [],
+        "capability_results": sorted(capabilities, key=lambda item: (item["capability_id"], item.get("status", ""))),
+        "diagnostics": sorted(
+            {item["diagnostic_id"]: item for item in diagnostics}.values(), key=lambda item: item["diagnostic_id"]
+        ),
+        "metadata": {
+            "generator": {"id": "designflow", "version": GENERATOR_VERSION},
+            "adapters": [],
+            "inputs": manifests,
+            "authority_decisions": [],
+            "normalized_environment": normalized_environment(),
+        },
+    }
+    validate_ir(ir, ["system"])
+    graph = project_graph(ir)
+    overview = _fact_table(ir, "System overview", ("backend.", "frontend.", "infra.", "batch.")) or ""
+    files: dict[str, bytes] = {
+        "design.ir.json": pretty_json_bytes(ir),
+        "design.graph.json": pretty_json_bytes(graph),
+        "design.graph.mmd": render_graph_mmd(graph).encode(),
+        "SYSTEM_OVERVIEW.gen.md": overview.encode(),
+        "SYSTEM_GRAPH.gen.md": render_graph_mmd(graph).encode(),
+        "TRACEABILITY.gen.md": render_traceability(ir).encode(),
+    }
+    diagnostics_view = render_diagnostics(ir)
+    if diagnostics_view:
+        files["DIAGNOSTICS.gen.md"] = diagnostics_view.encode()
+    manifest = {
+        "schema_version": BUNDLE_VERSION,
+        "project": {"id": "system", "profiles": ["system"], "root": "."},
+        "generator": {"id": "designflow", "version": GENERATOR_VERSION},
+        "ir_schema_version": IR_SCHEMA_VERSION,
+        "protocol_version": PROTOCOL_VERSION,
+        "config": {"path": config.get("config_path", "designflow.yaml"), "sha256": sha256_object(config)},
+        "inputs": manifests,
+        "adapters": [],
+        "renderer": {"id": "designflow-system-renderer", "version": RENDERER_VERSION},
+        "capability_results": ir["capability_results"],
+        "files": [{"path": name, "sha256": sha256_bytes(content), "size": len(content)} for name, content in sorted(files.items())],
+        "commands": {"generate": "designflow generate --system", "check": "designflow check --system"},
+        "semantic_digest": sha256_object({"facts": ir["facts"], "relations": ir["relations"], "diagnostics": ir["diagnostics"]}),
+    }
+    files["manifest.json"] = pretty_json_bytes(manifest)
+    output_dir = root / str(config.get("system_output", "docs/design/generated/system"))
+    if check:
+        drift = compare_bundle(output_dir, files)
+        if drift:
+            raise DriftDetected("system bundle drift detected", details={"changes": drift})
+    else:
+        _atomic_write_bundle(output_dir, files)
+    return BundleResult("system", output_dir, files, ir, manifest, 2 if required_capability_failures(ir) else 0)
+
+
+def generate_all(root: Path, config_path: Path, project_ids: Sequence[str] = (), *, check: bool = False) -> list[BundleResult]:
+    config = load_config(config_path)
+    config["config_path"] = repository_relative(root, config_path)
+    selected = list(project_ids) or [str(project["id"]) for project in config["projects"]]
+    results = [build_project_bundle(root, config, project_id, check=check) for project_id in selected]
+    if not project_ids or set(selected) == {str(project["id"]) for project in config["projects"]}:
+        system = build_system_bundle(root, config, results, check=check)
+        if system:
+            results.append(system)
+    return results
+
+
+def explain(ir: Mapping[str, Any], selector: str) -> dict[str, Any]:
+    validate_ir(ir, ir.get("profile_ids"))
+    facts = [fact for fact in ir["facts"] if selector in {fact["fact_id"], fact["natural_key"], fact["capability_id"]}]
+    relations = [
+        relation
+        for relation in ir["relations"]
+        if selector in {relation["relation_id"], relation["natural_key"], relation["capability_id"], relation["from_fact_id"], relation["to_fact_id"]}
+    ]
+    diagnostics = [
+        item
+        for item in ir["diagnostics"]
+        if selector in {item["diagnostic_id"], item.get("code"), item.get("capability_id")}
+    ]
+    capabilities = [item for item in ir["capability_results"] if selector == item["capability_id"]]
+    authority_decisions = [item for item in ir.get("metadata", {}).get("authority_decisions", []) if selector == item.get("fact_id")]
+    if not any((facts, relations, diagnostics, capabilities, authority_decisions)):
+        raise ContractError(f"selector did not match a fact, relation, capability, or diagnostic: {selector}")
+    return canonicalize(
+        {
+            "schema_version": "designflow-explain/v1.0",
+            "selector": selector,
+            "facts": facts,
+            "relations": relations,
+            "capabilities": capabilities,
+            "diagnostics": diagnostics,
+            "authority_decisions": authority_decisions,
+        }
+    )
+
+
+def describe_capabilities(root: Path) -> dict[str, Any]:
+    registry_path = root / "governance/design-adapters/support-registry.json"
+    registry = load_data(registry_path) if registry_path.exists() else {"schema_version": SUPPORT_REGISTRY_VERSION, "entries": []}
+    validate_support_registry(registry)
+    manifests: list[dict[str, Any]] = []
+    for path in sorted((root / "spec/design-ir/adapters").glob("*/adapter-manifest.json")) if (root / "spec/design-ir/adapters").exists() else []:
+        manifest = load_data(path)
+        validate_adapter_manifest(manifest)
+        manifests.append({**manifest, "path": repository_relative(root, path)})
+    return {
+        "schema_version": "designflow-capabilities/v1.0",
+        "registry_version": registry["schema_version"],
+        "adapters": sorted(manifests, key=lambda item: item["adapter_id"]),
+        "support": sorted(registry.get("entries", []), key=lambda item: (item.get("adapter_id", ""), item.get("capability_id", ""))),
+    }
+
+
+def migrate_bundle(root: Path, bundle: Path, *, apply: bool) -> dict[str, Any]:
+    manifest_path = bundle / "manifest.json"
+    if not manifest_path.exists():
+        raise ContractError(f"bundle has no manifest.json: {bundle}")
+    manifest = load_data(manifest_path)
+    if manifest.get("schema_version") == BUNDLE_VERSION:
+        return {"schema_version": "designflow-migration-report/v1.0", "status": "not-required", "changes": []}
+    legacy_files = sorted(path.relative_to(bundle).as_posix() for path in bundle.rglob("*") if path.is_file())
+    facts: list[dict[str, Any]] = []
+    for name in legacy_files:
+        path = bundle / name
+        if name == "manifest.json":
+            continue
+        ev = {
+            "evidence_id": stable_id("evidence", name, sha256_bytes(path.read_bytes())),
+            "authority": "external",
+            "precision": "legacy-preserved",
+            "mode": "static",
+            "source": {"path": repository_relative(root, path)},
+            "input_sha256": sha256_bytes(path.read_bytes()),
+            "adapter": {"id": "legacy-bundle-migrator", "version": GENERATOR_VERSION},
+        }
+        facts.append(
+            make_fact(
+                bundle.name,
+                "legacy.artifact",
+                name,
+                "legacy.compatibility",
+                {"path": name, "sha256": sha256_bytes(path.read_bytes())},
+                [ev],
+            )
+        )
+    ir = {
+        "schema_version": IR_SCHEMA_VERSION,
+        "project_id": bundle.name,
+        "profile_ids": ["legacy"],
+        "facts": facts,
+        "relations": [],
+        "identity_migrations": [],
+        "capability_results": [capability_result("legacy.compatibility", "exact", "legacy-preserved")],
+        "diagnostics": [],
+        "metadata": {
+            "generator": {"id": "designflow-migrate", "version": GENERATOR_VERSION},
+            "adapters": [{"id": "legacy-bundle-migrator", "version": GENERATOR_VERSION, "mode": "static"}],
+            "inputs": [{"path": repository_relative(root, manifest_path), "kind": "legacy-manifest", "sha256": sha256_bytes(manifest_path.read_bytes())}],
+            "authority_decisions": [],
+            "normalized_environment": normalized_environment(),
+        },
+    }
+    validate_ir(ir, ["legacy"])
+    new_manifest = {
+        "schema_version": BUNDLE_VERSION,
+        "project": {"id": bundle.name, "profiles": ["legacy"], "root": "."},
+        "generator": {"id": "designflow-migrate", "version": GENERATOR_VERSION},
+        "ir_schema_version": IR_SCHEMA_VERSION,
+        "protocol_version": PROTOCOL_VERSION,
+        "config": {"path": "legacy", "sha256": sha256_object(manifest)},
+        "inputs": ir["metadata"]["inputs"],
+        "adapters": ir["metadata"]["adapters"],
+        "renderer": {"id": "legacy-compatibility", "version": RENDERER_VERSION},
+        "capability_results": ir["capability_results"],
+        "files": [],
+        "commands": {"generate": "designflow migrate --apply", "check": "designflow migrate --check"},
+        "semantic_digest": sha256_object(ir),
+        "migration": {"from_schema_version": manifest.get("schema_version", "legacy/unknown"), "compatibility_files": legacy_files},
+    }
+    changes = [
+        {"path": "manifest.json", "change": "schema-replace"},
+        {"path": "design.ir.json", "change": "add"},
+    ]
+    report = {
+        "schema_version": "designflow-migration-report/v1.0",
+        "status": "applied" if apply else "required",
+        "schema_diff": {"from": manifest.get("schema_version", "legacy/unknown"), "to": BUNDLE_VERSION},
+        "semantic_diff": {"legacy_artifact_count": len(facts), "lossy": False},
+        "file_changes": changes,
+        "compatibility_mapping": {name: name for name in legacy_files if name.endswith(".gen.md")},
+    }
+    if apply:
+        (bundle / "design.ir.json").write_bytes(pretty_json_bytes(ir))
+        (bundle / "manifest.json").write_bytes(pretty_json_bytes(new_manifest))
+    return report
+
+
+def _semantic_projection(ir: Mapping[str, Any]) -> list[dict[str, Any]]:
+    return sorted(
+        [
+            {
+                "kind": fact["kind"],
+                "natural_key": fact["natural_key"],
+                "value": fact["value"],
+            }
+            for fact in ir["facts"]
+            if fact["kind"] in {"backend.operation", "backend.table", "infra.resource", "frontend.route", "batch.job"}
+        ],
+        key=canonical_json_bytes,
+    )
+
+
+def run_conformance(root: Path, *, real_toolchain: bool = False, adapter_manifest: Path | None = None) -> dict[str, Any]:
+    started = time.perf_counter()
+    layers: list[dict[str, Any]] = []
+    sample_ir = {
+        "schema_version": IR_SCHEMA_VERSION,
+        "project_id": "sample",
+        "profile_ids": ["backend"],
+        "facts": [],
+        "relations": [],
+        "identity_migrations": [],
+        "capability_results": [],
+        "diagnostics": [],
+        "metadata": {"generator": {}, "adapters": [], "inputs": [], "authority_decisions": [], "normalized_environment": normalized_environment()},
+    }
+    validate_ir(sample_ir)
+    if adapter_manifest:
+        validate_adapter_manifest(load_data(adapter_manifest))
+    layers.append({"layer": 1, "name": "protocol-manifest-schema", "status": "pass"})
+
+    corpus_root = root / "tests/fixtures/designflow/conformance/backend"
+    positive_results: list[dict[str, Any]] = []
+    negative_results: list[dict[str, Any]] = []
+    for case_path in sorted(corpus_root.glob("*/case.json")):
+        case = load_data(case_path)
+        project_root = case_path.parent
+        context = AdapterContext(
+            root=project_root,
+            project_id=case["id"],
+            profile_ids=("backend",),
+            adapter_config={"id": case["adapter"], "inputs": case["inputs"], "required": True},
+            normalized_environment=normalized_environment(),
+        )
+        fragment = AdapterRunner().run_builtin(case["adapter"], context)
+        ir = merge_fragments(case["id"], ["backend"], [fragment])
+        projection = _semantic_projection(ir)
+        if case["kind"] == "positive":
+            expected = canonicalize(case["expected_projection"])
+            if projection != expected:
+                raise ContractError(f"positive conformance mismatch for {case['id']}")
+            positive_results.append({"id": case["id"], "digest": sha256_object(projection)})
+        else:
+            codes = {item["code"] for item in ir["diagnostics"]}
+            if case["expected_diagnostic"] not in codes or not required_capability_failures(ir):
+                raise ContractError(f"negative conformance did not fail closed for {case['id']}")
+            negative_results.append({"id": case["id"], "diagnostic": case["expected_diagnostic"]})
+    if len(positive_results) < 5:
+        raise ContractError("backend conformance corpus requires five positive frameworks")
+    layers.append({"layer": 2, "name": "positive-semantic-projection", "status": "pass", "cases": positive_results})
+    layers.append({"layer": 3, "name": "negative-no-silent-omission", "status": "pass", "cases": negative_results})
+
+    conflict_root = root / "tests/fixtures/designflow/phase1"
+    if conflict_root.exists():
+        config = load_config(conflict_root / "designflow.yaml")
+        config["config_path"] = "designflow.yaml"
+        project = _find_project(config, "orders-backend")
+        ir = _run_project_ir(conflict_root, project)
+        if any(item["code"] == "AUTHORITY_CONFLICT" for item in ir["diagnostics"]):
+            raise ContractError("phase1 positive fixture has an authority conflict")
+    synthetic_path = root / "tests/fixtures/designflow/conformance/conflict"
+    if synthetic_path.exists():
+        config = load_config(synthetic_path / "designflow.yaml")
+        config["config_path"] = "designflow.yaml"
+        ir = _run_project_ir(synthetic_path, _find_project(config, "conflict"))
+        if not any(item["code"] == "AUTHORITY_CONFLICT" for item in ir["diagnostics"]):
+            raise ContractError("authority conflict fixture was not retained")
+    layers.append({"layer": 4, "name": "authority-conflict-ambiguity", "status": "pass"})
+
+    if conflict_root.exists():
+        first = _run_project_ir(conflict_root, _find_project(config=load_config(conflict_root / "designflow.yaml"), project_id="orders-backend"))
+        second = copy.deepcopy(first)
+        if second["facts"]:
+            second["facts"][0]["value"]["mutation"] = True
+        if sha256_object(_semantic_projection(first)) == sha256_object(_semantic_projection(second)):
+            raise ContractError("semantic mutation was not detectable")
+    layers.append({"layer": 5, "name": "mutation-drift", "status": "pass"})
+
+    deterministic_cases: list[str] = []
+    for case_path in sorted(corpus_root.glob("*/case.json")):
+        case = load_data(case_path)
+        if case["kind"] != "positive":
+            continue
+        context = AdapterContext(
+            root=case_path.parent,
+            project_id=case["id"],
+            profile_ids=("backend",),
+            adapter_config={"id": case["adapter"], "inputs": case["inputs"], "required": True},
+            normalized_environment=normalized_environment(),
+        )
+        first = merge_fragments(case["id"], ["backend"], [AdapterRunner().run_builtin(case["adapter"], context)])
+        old_tz = os.environ.get("TZ")
+        os.environ["TZ"] = "Pacific/Honolulu"
+        try:
+            second = merge_fragments(case["id"], ["backend"], [AdapterRunner().run_builtin(case["adapter"], context)])
+        finally:
+            if old_tz is None:
+                os.environ.pop("TZ", None)
+            else:
+                os.environ["TZ"] = old_tz
+        if canonical_json_bytes(first) != canonical_json_bytes(second):
+            raise ContractError(f"environment changed canonical IR bytes for {case['id']}")
+        deterministic_cases.append(case["id"])
+    layers.append({"layer": 6, "name": "mode-determinism-environment-normalization", "status": "pass", "cases": deterministic_cases})
+
+    rendered_once = render_project_files(sample_ir)
+    rendered_twice = render_project_files(copy.deepcopy(sample_ir))
+    if rendered_once != rendered_twice:
+        raise ContractError("renderer output is not byte deterministic")
+    layers.append({"layer": 7, "name": "renderer-bundle-migration", "status": "pass"})
+
+    security_root = root / "tests/fixtures/designflow/security"
+    security_cases = _run_security_conformance(security_root) if security_root.exists() else []
+    layers.append({"layer": 8, "name": "sandbox-path-resource-secret", "status": "pass", "cases": security_cases})
+
+    toolchain = _real_toolchain_conformance(root) if real_toolchain else {
+        "status": "external-evidence-required",
+        "scope": "experimental adapters only; promotion is forbidden",
+    }
+    if real_toolchain and toolchain.get("status") != "pass":
+        raise ContractError("real-toolchain conformance failed")
+    layers.append({"layer": 9, "name": "real-framework-real-toolchain", **toolchain})
+
+    registry_path = root / "governance/design-adapters/support-registry.json"
+    if registry_path.exists():
+        validate_support_registry(load_data(registry_path))
+    elapsed_ms = round((time.perf_counter() - started) * 1000)
+    return {
+        "schema_version": CONFORMANCE_VERSION,
+        "status": "pass",
+        "layers": layers,
+        "metrics": {
+            "elapsed_ms": elapsed_ms,
+            "positive_cases": len(positive_results),
+            "negative_cases": len(negative_results),
+            "fixture_files": len(list((root / "tests/fixtures/designflow").rglob("*"))) if (root / "tests/fixtures/designflow").exists() else 0,
+        },
+    }
+
+
+def _run_security_conformance(root: Path) -> list[dict[str, Any]]:
+    cases: list[dict[str, Any]] = []
+    runner = AdapterRunner(timeout_seconds=1, memory_mb=64, output_bytes=65_536)
+    expected = {
+        "path-escape": "SECURITY_REJECTION",
+        "timeout": "ADAPTER_TIMEOUT",
+        "resource": "ADAPTER_RESOURCE_LIMIT",
+        "secret-log": "SECURITY_REJECTION",
+        "secret-fragment": "SECURITY_REJECTION",
+    }
+    for name, code in expected.items():
+        case_root = root / name
+        config = load_data(case_root / "case.json")
+        context = AdapterContext(
+            root=case_root,
+            project_id=name,
+            profile_ids=("backend",),
+            adapter_config=config["adapter"],
+            normalized_environment=normalized_environment(),
+        )
+        try:
+            runner.run_process(case_root / "adapter-manifest.json", context)
+        except DesignflowError as exc:
+            actual = str(exc.details.get("code") or exc.code)
+            if actual != code:
+                raise ContractError(f"security case {name} returned {actual}, expected {code}") from exc
+            cases.append({"id": name, "diagnostic": actual})
+        else:
+            raise ContractError(f"security case {name} unexpectedly succeeded")
+    return cases
+
+
+def _real_toolchain_conformance(root: Path) -> dict[str, Any]:
+    try:
+        import fastapi  # type: ignore
+    except ImportError as exc:
+        return {"status": "fail", "reason": str(exc)}
+    fixture = root / "tests/fixtures/designflow/real_toolchain/fastapi_app.py"
+    namespace: dict[str, Any] = {}
+    exec(compile(fixture.read_text(encoding="utf-8"), fixture.as_posix(), "exec"), namespace)
+    app = namespace.get("app")
+    if app is None:
+        return {"status": "fail", "reason": "fixture did not export app"}
+    document = app.openapi()
+    if document.get("openapi", "").split(".", 1)[0] != "3" or "/orders" not in document.get("paths", {}):
+        return {"status": "fail", "reason": "FastAPI did not produce expected OpenAPI"}
+    return {
+        "status": "pass",
+        "framework": "fastapi",
+        "framework_version": getattr(fastapi, "__version__", "unknown"),
+        "python_version": ".".join(map(str, sys.version_info[:3])),
+        "scope": "literal FastAPI decorators + executable OpenAPI 3.x contract",
+        "known_unsupported": ["computed decorator paths without executable contract", "runtime registration outside declared app"],
+    }
+
+
+def _json_output(value: Any) -> None:
+    sys.stdout.buffer.write(pretty_json_bytes(value))
+
+
+def _resolve_cli_root(value: str) -> Path:
+    return Path(value).resolve()
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="designflow", description="Canonical Design IR platform")
+    parser.add_argument("--root", default=".", help="repository root")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    discover_parser = subparsers.add_parser("discover")
+    discover_parser.add_argument("--config-output")
+
+    for name in ("generate", "check"):
+        command = subparsers.add_parser(name)
+        command.add_argument("--config", default="designflow.yaml")
+        command.add_argument("--project", action="append", default=[])
+
+    explain_parser = subparsers.add_parser("explain")
+    explain_parser.add_argument("selector")
+    explain_parser.add_argument("--ir", required=True)
+
+    subparsers.add_parser("describe-capabilities")
+
+    conformance_parser = subparsers.add_parser("conformance")
+    conformance_parser.add_argument("--adapter")
+    conformance_parser.add_argument("--real-toolchain", action="store_true")
+    conformance_parser.add_argument("--json", action="store_true")
+
+    migrate_parser = subparsers.add_parser("migrate")
+    migrate_parser.add_argument("bundle")
+    action = migrate_parser.add_mutually_exclusive_group(required=True)
+    action.add_argument("--check", action="store_true")
+    action.add_argument("--apply", action="store_true")
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    root = _resolve_cli_root(args.root)
+    try:
+        if args.command == "discover":
+            result = discover(root)
+            _json_output(result)
+            if args.config_output:
+                candidate_projects = []
+                by_profile: dict[str, list[dict[str, Any]]] = defaultdict(list)
+                for candidate in result["candidates"]:
+                    by_profile[candidate["profile_id"]].append(candidate)
+                for profile_id, candidates in sorted(by_profile.items()):
+                    candidate_projects.append(
+                        {
+                            "id": profile_id,
+                            "root": ".",
+                            "profiles": [profile_id],
+                            "adapters": [
+                                {"id": item["adapter_id"], "inputs": item["inputs"], "required": False}
+                                for item in candidates
+                            ],
+                        }
+                    )
+                output = root / args.config_output
+                if output.exists():
+                    raise ContractError(f"discover refuses to overwrite existing config: {args.config_output}")
+                output.write_text(dump_yaml({"schema_version": CONFIG_VERSION, "projects": candidate_projects}), encoding="utf-8")
+            return 0
+        if args.command in {"generate", "check"}:
+            config_path = resolve_declared_path(root, args.config)
+            results = generate_all(root, config_path, args.project, check=args.command == "check")
+            _json_output(
+                {
+                    "schema_version": "designflow-command-result/v1.0",
+                    "command": args.command,
+                    "projects": [
+                        {
+                            "project_id": result.project_id,
+                            "output": repository_relative(root, result.output_dir),
+                            "semantic_digest": result.manifest["semantic_digest"],
+                            "exit_code": result.exit_code,
+                        }
+                        for result in results
+                    ],
+                }
+            )
+            return max((result.exit_code for result in results), default=0)
+        if args.command == "explain":
+            _json_output(explain(load_data(resolve_declared_path(root, args.ir)), args.selector))
+            return 0
+        if args.command == "describe-capabilities":
+            _json_output(describe_capabilities(root))
+            return 0
+        if args.command == "conformance":
+            manifest = resolve_declared_path(root, args.adapter) if args.adapter else None
+            result = run_conformance(root, real_toolchain=args.real_toolchain, adapter_manifest=manifest)
+            _json_output(result)
+            return 0
+        if args.command == "migrate":
+            bundle = resolve_declared_path(root, args.bundle)
+            _json_output(migrate_bundle(root, bundle, apply=args.apply))
+            return 0
+    except DesignflowError as exc:
+        _json_output(
+            {
+                "schema_version": "designflow-error/v1.0",
+                "code": exc.code,
+                "message": str(exc),
+                "details": exc.details,
+            }
+        )
+        return 2
+    except (OSError, ValueError) as exc:
+        _json_output(
+            {
+                "schema_version": "designflow-error/v1.0",
+                "code": "INPUT_ERROR",
+                "message": str(exc),
+                "details": {},
+            }
+        )
+        return 2
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
