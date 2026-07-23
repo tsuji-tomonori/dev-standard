@@ -18,6 +18,8 @@
           "revision": {"type": "integer", "minimum": 1},
           "status": {"enum": ["active", "retired"]},
           "type": {"enum": ["functional", "quality", "constraint", "interface", "data", "operational"]},
+          "scope": {"enum": ["product", "project"]},
+          "category": {"enum": ["functional", "nonfunctional"]},
           "title": {"type": "string", "minLength": 1},
           "subject": {"type": "string", "minLength": 1},
           "action": {"type": "string", "pattern": "^[a-z][a-z0-9]*$"},
@@ -64,6 +66,10 @@
           "superseded_by": {"type": "string"}
         },
         "additionalProperties": false,
+        "dependentRequired": {
+          "scope": ["category"],
+          "category": ["scope"]
+        },
         "allOf": [{
           "if": {"properties": {"status": {"const": "retired"}}},
           "then": {"required": ["retirement_reason"], "properties": {"retirement_reason": {"minLength": 1}}}

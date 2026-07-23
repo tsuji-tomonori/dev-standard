@@ -1,6 +1,6 @@
 # Skills根拠資料一覧・整合性監査
 
-- 確認日: 2026-07-23
+- 確認日: 2026-07-24
 - 対象: `distribution/manifest.json`に登録された18 Skills、各Skillの`references/`、`governance/standards/registry.json`
 - 目的: Skillsが参照する研究・規格・公式ガイダンス・実装例を列挙し、主張、適用範囲、訂正、版、運用規則との整合を確認する
 
@@ -15,6 +15,7 @@
 5. SUS、UEQ、美的ユーザビリティ効果を一次資料へ寄せ、主観尺度と行動・アクセシビリティ証拠を分離した。
 6. ISO、W3C、NASA、SWEBOK等の規格・公式資料、Figma/OpenAI/Anthropic/web.dev等の実装・実務ガイダンス、リポジトリ固有方針を査読研究と区別した。
 7. 日本語あいづち資料は有効な資料だったため、題名とDOIを付与して会話コーパス上の文脈依存性を明示した。
+8. SWEBOK、NASA Systems Engineering Handbook、NASA SWE-050、Twin Peaks、architecturally significant requirements研究を照合し、上位要件はsolution-neutralを原則としつつ、権限あるtechnology / project constraintとtrace可能なderived requirementを保持する境界へ統一した。
 
 ## 根拠区分
 
@@ -63,9 +64,12 @@
 | ID | 区分 | 資料 | 使用Skill | 確認した利用方法・限界 | 判定 |
 |---|---|---|---|---|---|
 | RQ-01 | G | Design Council, [Framework for Innovation](https://www.designcouncil.org.uk/our-resources/framework-for-innovation/) | `maintain-canonical-requirements`, frontend Skills | divergence/convergenceを探索順序へ使用する公式framework。工程を一律固定する規格ではない。 | 整合 |
-| RQ-02 | N | IEEE Computer Society, [SWEBOK Guide Version 4.0a](https://www.computer.org/education/bodies-of-knowledge/software-engineering) | `maintain-canonical-requirements`, `verify-against-engineering-standards` | requirements lifecycleと知識領域を参照する。完全準拠を主張せずregistryのscopeに従う。 | 旧Wikiリンクを修正 |
-| RQ-03 | N | NASA SWEHB, [Software Requirements](https://swehb.nasa.gov/display/SWEHBVD/4.1+-+Software+Requirements) | `maintain-canonical-requirements` | traceable、verifiable、unambiguous、change controlをrequirements contractへ使用する。 | 整合 |
-| RQ-04 | R | Basili et al. (1996), [The Empirical Investigation of Perspective-Based Reading](https://doi.org/10.1007/BF00368702) | `maintain-canonical-requirements`, `adversarial-review` | user/designer/tester等の異なるscenarioで欠陥探索する。各perspectiveが必ず同数の欠陥を見つけるとは扱わない。 | 整合 |
+| RQ-02 | N | IEEE Computer Society, [SWEBOK Guide Version 4.0a](https://www.computer.org/education/bodies-of-knowledge/software-engineering) | `maintain-canonical-requirements`, `verify-against-engineering-standards` | product / project、functional / nonfunctional、technology / quality-of-service constraint、derived requirementを区別する。特定projectのconstraintを資料だけから生成しない。 | 適用境界を追加 |
+| RQ-03 | N | NASA, [Systems Engineering Handbook Appendix](https://www.nasa.gov/reference/system-engineering-handbook-appendix/) | `maintain-canonical-requirements` | requirement validationでimplementation-free、what not how、必要性、適切なlevel、親needへのtraceを確認する。named technologyの一律禁止には使わない。 | 追加 |
+| RQ-04 | N | NASA, [SWE-050 Software Requirements](https://swehb.nasa.gov/spaces/SWEHBVD/pages/102695421/SWE-050+-+Software+Requirements) | `maintain-canonical-requirements` | functional requirementのimplementation-neutralityと、architecture / designから生じるderived requirementの記録・検証・traceを併記する。NASA準拠認証を表明しない。 | 旧章リンクを具体的な現行項目へ更新 |
+| RQ-05 | R | Nuseibeh (2001), [Weaving Together Requirements and Architectures](https://doi.org/10.1109/2.910904) | `maintain-canonical-requirements`, `chat-first-development` | Twin Peaksとしてrequirementsとarchitectureをincremental / iterativeに共同進化させる。solution-neutralityをarchitecture検討の先送りや一方向waterfallにしない。 | 追加 |
+| RQ-06 | R | Chen, Babar, & Nuseibeh (2013), [Characterizing Architecturally Significant Requirements](https://doi.org/10.1109/MS.2012.174) | `maintain-canonical-requirements`, `requirements-reviewer` | architecturally significant requirementsとrequirements-architecture interactionを実務調査から整理する。architectureへの影響を、選択済みdesignのstakeholder requirement化とは扱わない。 | 追加 |
+| RQ-07 | R | Basili et al. (1996), [The Empirical Investigation of Perspective-Based Reading](https://doi.org/10.1007/BF00368702) | `maintain-canonical-requirements`, `adversarial-review` | user/designer/tester等の異なるscenarioで欠陥探索する。各perspectiveが必ず同数の欠陥を見つけるとは扱わない。 | 整合 |
 | AR-01 | R | Claessen & Hughes (2000), [QuickCheck](https://doi.org/10.1145/357766.351266) | `adversarial-review` | executable property、generated input、counterexample reductionをproperty-based testingへ使用する。 | 整合 |
 | AR-02 | R | Chen et al. (2018), [Metamorphic Testing: A Review of Challenges and Opportunities](https://doi.org/10.1145/3143561) | 同上 | oracleが難しい場合のmetamorphic relationへ使用する。relation自体の妥当性検証が必要。 | 整合 |
 | AR-03 | R | Jia & Harman (2011), [Mutation Testing Survey](https://doi.org/10.1109/TSE.2010.62) | 同上 | test adequacy評価へ限定し、equivalent mutantをfailureに数えない。 | 整合 |
@@ -166,6 +170,7 @@
 | 感情承認と反証 | acknowledgementとmoral endorsement/frame acceptanceを分離するため、`calibrated-collaborative-listening`と`adversarial-review`は補完関係にある。 |
 | HCDとdelivery | frontend4 Skillsはelicitation、design、implementation、testを分離しつつ、ISO/WCAGのcontext/lifecycleを継続して扱う。短いintakeや自動checkだけでqualityを証明しない。 |
 | design guidanceとrequirements | Figma/OpenAI/Anthropic等は`G`であり、approved requirement、accessibility、repository conventionより下位に置く。 |
+| requirementsとarchitecture | 上位のfunctional requirementはsolution-neutralを原則とし、権限あるtechnology / project constraintと親判断へtraceしたderived requirementを例外として保持する。Twin Peaksに従い反復的に再分析できるが、要件正本、ADR、生成設計、current-task contextのauthorityを混同しない。 |
 | 自動評価 | LLM judge、visual diff、automated accessibility、questionnaire、performance metricはいずれもbounded evidenceとして扱い、単独oracleにしない。 |
 | engineering standards | versioned registryが適用資料を選び、一般WAFやlocal standardを一律準拠として扱わない。 |
 | local policy | JSON shape、revision protocol、review schema、commit extensions、閾値、file layoutは`L`として明示し、研究結果と混同しない。 |
