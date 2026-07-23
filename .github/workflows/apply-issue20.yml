@@ -1,20 +1,21 @@
 name: Apply Issue 20 Payload
 
 on:
-  push:
+  pull_request:
     branches:
-      - agent/issue-20-two-layer-branch-trial
+      - main
 
 permissions:
   contents: write
 
 jobs:
   apply:
-    if: github.event.head_commit.message == 'chore: apply issue 20 payload'
+    if: github.event.pull_request.head.ref == 'agent/issue-20-two-layer-branch-trial'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
@@ -31,7 +32,7 @@ jobs:
         id: build
         shell: bash
         env:
-          TRIGGER_SHA: ${{ github.sha }}
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           git fetch origin main
@@ -109,7 +110,7 @@ jobs:
       - name: Publish the verified single commit
         shell: bash
         env:
-          TRIGGER_SHA: ${{ github.sha }}
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           git push --force-with-lease=refs/heads/agent/issue-20-two-layer-branch-trial:${TRIGGER_SHA} origin HEAD:refs/heads/agent/issue-20-two-layer-branch-trial
