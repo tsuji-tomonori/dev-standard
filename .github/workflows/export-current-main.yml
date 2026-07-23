@@ -29,5 +29,4 @@ jobs:
         with:
           name: current-main-snapshot
           path: .export/
-          archive: false
           retention-days: 1
