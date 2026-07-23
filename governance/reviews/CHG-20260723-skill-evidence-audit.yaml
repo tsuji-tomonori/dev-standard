@@ -1,0 +1,135 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260723-skill-evidence-audit
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: false
+  typed_code_change: false
+  behavior_change: false
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: false
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: true
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 査読研究・規格・実装ガイダンスの整理は外部挙動、業務ルール、受入条件、非機能閾値を変更しない
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: Skillの根拠資料と保守境界を更新するが、生成設計、公開API、データモデル、構成は変更しない
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260723-skill-evidence-audit.yaml
+    note: 7つのevidence mapと横断監査文書を更新するためassuredを選択した
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 許可されたGitHub repositoryへのbranch pushとdraft PR作成だけを行い、merge、release、deployは行わない
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/reference/skill-evidence-audit.md
+      - workflow:Governance
+    note: 追加内容は公開文献metadata、分類、内部pathだけで、credential、token、PII、production dataを含まない
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/reference/skill-evidence-audit.md
+      - path:.agents/skills/calibrated-collaborative-listening/references/evidence-map.md
+      - path:.agents/skills/maintain-canonical-requirements/references/research-basis.md
+      - path:.agents/skills/adversarial-review/references/research-basis.md
+      - path:.agents/skills/elicit-frontend-requirements/references/evidence-map.md
+      - path:.agents/skills/design-frontend-experience/references/evidence-map.md
+      - path:.agents/skills/implement-frontend-experience/references/evidence-map.md
+      - path:.agents/skills/test-frontend-experience/references/evidence-map.md
+    note: 文献一覧、整合性監査、確認で判明した引用・適用境界の修正だけを含む
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 最終Commit Commentに目的、変更、要件・設計影響、review path、検証契約、互換性を記録する
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 永続要件の意味は変更せず、外部資料だけで要件を自動生成しない既存境界を明文化する
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/reference/skill-evidence-audit.md
+    note: as-built生成対象、ADR対象、公開契約を変更しない。根拠分類と訂正の理由は監査文書に保存する
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/reference/skill-evidence-audit.md
+      - path:.github/workflows/governance.yml
+      - workflow:Governance
+    note: local validationでMarkdown構造、内部link、DOI補正、source class、YAML構文を確認し、PRではGovernance workflowがrepository contractを検証する
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260723-skill-evidence-audit.yaml
+    note: 選択したcheck結果をschema v2 review YAMLへ保存した
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260723-skill-evidence-audit.yaml
+    note: selectorで選ばれないcheckをN/Aとして記録していない
+advisories: []
+residual_risks:
+  - 継続更新型のWeb資料とpreprintは将来変更され得るため、Skill保守時に版、訂正、撤回、URLを再確認する
