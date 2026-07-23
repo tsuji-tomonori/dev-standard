@@ -1,0 +1,115 @@
+name: Apply Issue 20 Payload
+
+on:
+  push:
+    branches:
+      - agent/issue-20-two-layer-branch-trial
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.head_commit.message == 'chore: apply issue 20 payload'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Reconstruct and verify payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .bootstrap/issue20.part.* > /tmp/issue20.b64
+          base64 --decode /tmp/issue20.b64 > /tmp/issue20.tar.gz
+          echo "41aa5ee3578e67aa0ae370fd24870442160d39ae0970d501efcfa4ea78dfbe09  /tmp/issue20.tar.gz" | sha256sum -c -
+      - name: Build the final commit from main
+        id: build
+        shell: bash
+        env:
+          TRIGGER_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+          tar -xzf /tmp/issue20.tar.gz
+          git add -A
+          git diff --cached --check
+          test "$(git write-tree)" = "767b7a09516cb08aeedbee82deea9ef27eec95a0"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cat > /tmp/commit-message.txt <<'COMMIT_MESSAGE'
+          🧭 feat(branches): 二層branch試行契約を実装する
+
+          目的:
+          - mainのsquash release履歴とdevの意味あるengineering commit履歴を両立し、release後の祖先関係を安全に回復できる管理された2 release試行を実装する。
+
+          変更内容:
+          - repository固有のbranch-policy正本とvalidatorを追加し、bootstrap、topic、release、hotfix、reconciliation、rollbackの方向・topology・証跡契約を検査する。
+          - Governance workflowをintegration、evidence、branch-policyへ分離し、PR headとsynthetic merge結果、main/dev pushを別々に検証する。
+          - REQ-REPO-001から003、ADR-0002、開発・commit・PR文書、branch graph回帰test、非移植性contractを追加する。
+          - Issue参照、release時のclosing issue、hotfix conflict解消用reconcile branch、policy自己緩和防止を機械検査する。
+
+          要件影響:
+          - あり
+          - 要件ID: REQ-REPO-001, REQ-REPO-002, REQ-REPO-003
+          - 理由: branch役割、release reconciliation、2 cycle限定試行、恒久採用・rollback条件を将来も検証するproject / nonfunctional requirementとして追加する。
+
+          設計影響:
+          - あり
+          - 対象: branch topology、GitHub Actions、review authority、release transaction、repository governance
+          - 生成設計: 対象外
+          - ADR: ADR-0002で採用理由、一般化しない境界、GitHub上の限界、代替案、昇格条件を記録する。
+
+          チェックリスト:
+          - governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+
+          検証契約:
+          - GitHub Actions: Governanceのintegration、evidence、branch-policy、verify
+          - ローカル: branch-policy、specflow、review contract、reference repository contract、catalog/spec/standards drift、repository validation、audit、Python構文、git diff check
+          - 結果の正本: GitHub Actionsの現在HEAD
+
+          互換性・残存リスク:
+          - bootstrap phaseでは既存main運用を維持し、dev作成、ruleset、required checks、PR #12移行、tree一致を確認するまでtrialを有効化しない。
+          - GitHub required checksはcross-branchの原子的lockではなく、最終squash commit messageの検査はmain push後のauditになる。試行中は単一release operatorと明示freezeを必要とする。
+          - 本契約はdev-standard固有であり、portable Skillsやdistribution profileの既定branchへは組み込まない。
+
+          Branch-Policy-Bootstrap: true
+          Requirements: REQ-REPO-001, REQ-REPO-002, REQ-REPO-003
+          Design-Impact: mixed
+          Review-Checklist: governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+          Refs: #20
+          COMMIT_MESSAGE
+          sed -i 's/^          //' /tmp/commit-message.txt
+          git commit -F /tmp/commit-message.txt
+          test "$(git rev-parse HEAD^)" = "$(git rev-parse origin/main)"
+          test "$(git rev-parse HEAD^{tree})" = "767b7a09516cb08aeedbee82deea9ef27eec95a0"
+          echo "final_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Validate final commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/branch_policy.py config --root .
+          python tools/devflow.py catalog --check
+          python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
+          python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
+          ruff check .
+          python governance/reviews/validate.py --root . --commit HEAD
+          python -m unittest discover -s tests -v
+          python tools/validate_repo.py
+          python tools/devflow.py audit
+          python -m compileall -q tools governance tests
+          git diff --check HEAD^
+      - name: Publish the verified single commit
+        shell: bash
+        env:
+          TRIGGER_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git push --force-with-lease=refs/heads/agent/issue-20-two-layer-branch-trial:${TRIGGER_SHA} origin HEAD:refs/heads/agent/issue-20-two-layer-branch-trial
