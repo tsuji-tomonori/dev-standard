@@ -113,7 +113,7 @@
 
 `router.py`/`functions.py`分離、3引数目安、direct return、`/health`配置、generated path、digest、drift、coverage閾値等は外部資料の直接結論ではなく`L`区分のportable contractである。
 
-## 5. Engineering standards registry
+## 5. Engineering standards registryの確認
 
 次の資料は`verify-against-engineering-standards`が`governance/standards/registry.json`を通じて参照する。版、確認日、更新間隔、適用profile、scopeはregistryと生成物`docs/standards/SOURCES.md`をauthorityとする。
 
@@ -134,7 +134,7 @@
 
 注: ST-06の実際のURL・版はregistryを正とする。監査文書のリンクは説明用であり、standard selectionは必ずregistry経由で行う。
 
-## 6. Commit convention
+## 6. Commit conventionの確認
 
 | ID | 区分 | 資料 | 使用Skill | 確認した利用方法・限界 | 判定 |
 |---|---|---|---|---|---|
