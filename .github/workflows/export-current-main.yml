@@ -19,16 +19,16 @@ jobs:
           fetch-depth: 1
       - name: Record current main revision
         run: |
-          git rev-parse HEAD > current-main-sha.txt
-          git rev-parse HEAD^{tree} > current-main-tree.txt
+          git rev-parse HEAD > /tmp/current-main-sha.txt
+          git rev-parse HEAD^{tree} > /tmp/current-main-tree.txt
       - name: Package current main
-        run: tar --exclude=.git -czf current-main.tar.gz .
+        run: tar --exclude=.git -czf /tmp/current-main.tar.gz .
       - uses: actions/upload-artifact@v7
         with:
           name: current-main-snapshot
           path: |
-            current-main.tar.gz
-            current-main-sha.txt
-            current-main-tree.txt
+            /tmp/current-main.tar.gz
+            /tmp/current-main-sha.txt
+            /tmp/current-main-tree.txt
           archive: false
           retention-days: 1
