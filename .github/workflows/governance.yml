@@ -16,6 +16,16 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
+      - name: Create repository snapshot
+        shell: bash
+        run: tar --exclude=.git -czf /tmp/repository-snapshot.tar.gz .
+      - name: Upload repository snapshot
+        uses: actions/upload-artifact@v7
+        with:
+          name: repository-snapshot
+          path: /tmp/repository-snapshot.tar.gz
+          archive: false
+          retention-days: 1
       - name: Secret scan
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
         env:
