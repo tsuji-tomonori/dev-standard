@@ -1,0 +1,102 @@
+name: Canonical Designflow Bootstrap Repair
+
+on:
+  push:
+    branches: [agent/canonical-design-platform]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: canonical-designflow-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/canonical-design-platform
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Apply bootstrap hardening patches
+        shell: python
+        run: |
+          from pathlib import Path
+
+          adoption = Path('.github/bootstrap/adopt_implementation_design.py.txt')
+          text = adoption.read_text(encoding='utf-8').replace('import shutil\n', '')
+          adoption.write_text(text, encoding='utf-8')
+
+          builder = Path('.github/bootstrap/build_designflow_platform.py')
+          text = builder.read_text(encoding='utf-8')
+          old = '''        first_command = next((item for item in arguments if not item.startswith("-")), None)
+                  if first_command == "validate-adapter":
+                      index = arguments.index(first_command)
+                      arguments[index] = "conformance"
+                      return int(_load_platform().main(arguments))
+                  if first_command in CANONICAL or first_command is None:
+                      return int(_load_platform().main(arguments))
+          '''
+          new = '''        first_command = next(
+                      (item for item in arguments if item in CANONICAL or item == "validate-adapter"),
+                      None,
+                  )
+                  if first_command == "validate-adapter":
+                      index = arguments.index(first_command)
+                      arguments[index] = "conformance"
+                      return int(_load_platform().main(arguments))
+                  if first_command in CANONICAL or not arguments or arguments == ["--help"]:
+                      return int(_load_platform().main(arguments))
+          '''
+          if old not in text:
+              raise SystemExit('wrapper dispatch patch anchor was not found')
+          text = text.replace(old, new)
+          text = text.replace(
+              'run: python -m unittest tests.test_designflow_platform',
+              "run: python -m unittest discover -s tests -p 'test_designflow_platform.py'",
+          )
+          anchor = '    build_workflows()\n\n    # Generate committed deterministic baselines'
+          insertion = '''    build_workflows()
+              standard_titles = {
+                  "BACKEND-AS-BUILT-DESIGN.md": "Backend 実装済み設計",
+                  "FRONTEND-AS-BUILT-DESIGN.md": "Frontend 実装済み設計",
+                  "INFRASTRUCTURE-AS-BUILT-DESIGN.md": "Infrastructure 実装済み設計",
+                  "BATCH-AS-BUILT-DESIGN.md": "Batch 実装済み設計",
+              }
+              for standard_name, standard_title in standard_titles.items():
+                  standard_path = ROOT / "docs/standards" / standard_name
+                  standard_text = standard_path.read_text(encoding="utf-8")
+                  standard_text = standard_text.replace(
+                      f"# {standard_name.removesuffix('.md')}", f"# {standard_title}", 1
+                  )
+                  standard_path.write_text(standard_text, encoding="utf-8")
+
+              # Generate committed deterministic baselines'''
+          if anchor not in text:
+              raise SystemExit('post-build patch anchor was not found')
+          text = text.replace(anchor, insertion)
+          builder.write_text(text, encoding='utf-8')
+      - name: Install repository and real-toolchain dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install "fastapi>=0.115,<1"
+      - name: Build, validate, and push the canonical platform
+        shell: bash
+        run: |
+          set -o pipefail
+          python .github/bootstrap/build_designflow_platform.py 2>&1 | tee /tmp/canonical-designflow-bootstrap-repair.log
+      - name: Upload repair log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: canonical-designflow-bootstrap-repair-log
+          path: /tmp/canonical-designflow-bootstrap-repair.log
+          archive: false
+          retention-days: 3
