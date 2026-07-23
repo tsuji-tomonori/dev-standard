@@ -130,6 +130,16 @@ class ReferenceRepositoryContractTest(unittest.TestCase):
         for profile, entries in manifest["profiles"].items():
             self.assertNotIn("work", {entry["source"] for entry in entries}, profile)
 
+    def test_readme_states_three_pillars(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for required in [
+            "## このリポジトリが担保する3本柱",
+            "### 1. 対話から原子的な永続要件を維持する",
+            "### 2. 実装と1対1のas-built設計を生成する",
+            "### 3. 必要なチェックだけを、適切な時点で行う",
+        ]:
+            self.assertIn(required, readme)
+
     def test_user_guidance_routes_to_current_documents(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
