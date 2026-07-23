@@ -8,4 +8,3 @@ hooks = true
 max_threads = 3
 max_depth = 1
 interrupt_message = true
-
