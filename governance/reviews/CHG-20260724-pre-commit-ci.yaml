@@ -1,0 +1,147 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260724-pre-commit-ci
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: true
+  code_change: false
+  typed_code_change: false
+  behavior_change: false
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: false
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: true
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: applicationの外部挙動、業務ルール、受入条件、非機能閾値は変更せず、既存pre-commit統制をCIでも実行する
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:.github/workflows/governance.yml
+    note: GitHub Actionsのgovernance構成とCI tool dependencyを変更するが、生成設計、公開契約、data modelは変更しない
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+    note: dependencyとrepository governanceを変更するためassuredを選択した
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者が許可した作業branch更新とdraft PR作成だけを行い、mainへの直接push、merge、release、deployは行わない
+  - id: IMP-010
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+      - path:.pre-commit-config.yaml
+    note: CIで使用するpre-commit 4.6.0を固定し、hook repositoryは既存設定の完全なcommit SHAを使用する
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:.github/workflows/governance.yml
+      - path:requirements.txt
+      - workflow:Governance#Secret scan
+    note: 追加内容は公開dependency、workflow command、review metadataだけで、credential、token、PII、production dataを含まない
+  - id: FAST-008
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+    note: pre-commit dependencyをrequirements.txtでversion固定し、CIは同じmanifestからinstallする
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - path:.github/workflows/governance.yml
+      - path:requirements.txt
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+    note: pre-commitのCI実行に必要なworkflow、dependency、selected check結果だけを変更対象にした
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 最終Commit Commentに目的、変更、要件・設計影響、review path、検証契約、互換性と残存リスクを記録する
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: applicationの外部挙動や恒久要件の意味を変更しないため要件正本は更新しない
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:.github/workflows/governance.yml
+    note: 設計影響はCI governance構成に限定し、生成設計とADRは対象外と判定した
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:.pre-commit-config.yaml
+      - path:.github/workflows/governance.yml
+      - workflow:Governance#Validate pre-commit configuration
+      - workflow:Governance#Run pre-commit checks
+    note: PR HEADで設定構文と全tracked fileの8 hookを実行し、違反または自動修正差分をblocking failureにする
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+    note: 選択したcheck結果をschema v2 review YAMLへ保存した
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+    note: selectorで選ばれないcheckをN/Aとして記録していない
+advisories: []
+residual_risks:
+  - 初回のhook environment構築によりGovernance workflowの実行時間が増加する
+  - git-secretsの検出patternはrepositoryまたはglobal git configに依存するため、CIでは独立したgitleaks scanも継続する
