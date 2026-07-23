@@ -7,6 +7,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -27,12 +29,42 @@ class SpecflowTest(unittest.TestCase):
         catalog = specflow.validate_catalog(specflow.read_json(ROOT / "spec/requirements/requirements.json"))
         generated = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")
         self.assertEqual(generated, specflow.render(catalog))
-        self.assertEqual(len(catalog["requirements"]), 48)
+        self.assertEqual(len(catalog["requirements"]), 49)
         self.assertIn("# dev-standard 要件一覧", generated)
         by_id = {item["id"]: item for item in catalog["requirements"]}
         self.assertEqual(by_id["REQ-DESIGN-006"]["revision"], 3)
         self.assertEqual(by_id["REQ-ASBUILT-016"]["object"], "C0命令網羅95%以上とC1分岐網羅90%以上のcoverage")
         self.assertEqual(by_id["REQ-ASBUILT-019"]["type"], "operational")
+        self.assertEqual(by_id["REQ-DISC-005"]["scope"], "product")
+        self.assertEqual(by_id["REQ-DISC-005"]["category"], "functional")
+        self.assertEqual(by_id["REQ-DISC-005"]["last_changed_by"], "CHG-20260724-solution-neutral-requirements")
+        self.assertIn("issue:25", by_id["REQ-DISC-005"]["source_refs"])
+
+    def test_json_schema_matches_runtime_classification_contract(self) -> None:
+        catalog = specflow.read_json(ROOT / "spec/requirements/requirements.json")
+        schema = specflow.read_json(
+            ROOT / ".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"
+        )
+        validator = Draft202012Validator(schema)
+        self.assertEqual([], list(validator.iter_errors(catalog)))
+
+        requirement_schema = schema["properties"]["requirements"]["items"]
+        self.assertEqual(["product", "project"], requirement_schema["properties"]["scope"]["enum"])
+        self.assertEqual(
+            ["functional", "nonfunctional"],
+            requirement_schema["properties"]["category"]["enum"],
+        )
+        self.assertEqual(
+            {"scope": ["category"], "category": ["scope"]},
+            requirement_schema["dependentRequired"],
+        )
+
+        invalid = copy.deepcopy(catalog)
+        item = next(value for value in invalid["requirements"] if value["id"] == "REQ-DISC-005")
+        del item["category"]
+        self.assertTrue(list(validator.iter_errors(invalid)))
+        with self.assertRaises(specflow.SpecError):
+            specflow.validate_catalog(invalid)
 
     def test_composite_action_and_clause_are_rejected(self) -> None:
         catalog = specflow.read_json(ROOT / "spec/requirements/requirements.json")

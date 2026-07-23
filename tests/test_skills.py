@@ -215,6 +215,49 @@ class SkillContractTest(unittest.TestCase):
         for required in ["Design Council", "Double Diamond", "SWEBOK", "NASA", "Perspective-Based Reading", "stakeholder", "tester"]:
             self.assertIn(required, research)
 
+    def test_requirements_contract_delegates_reversible_solution_choices(self) -> None:
+        standard = (ROOT / "docs" / "standards" / "REQUIREMENT-CLASSIFICATION.md").read_text(encoding="utf-8")
+        maintain = (SKILLS / "maintain-canonical-requirements" / "SKILL.md").read_text(encoding="utf-8")
+        chat = (SKILLS / "chat-first-development" / "SKILL.md").read_text(encoding="utf-8")
+        frontend = (SKILLS / "elicit-frontend-requirements" / "SKILL.md").read_text(encoding="utf-8")
+        research = (SKILLS / "maintain-canonical-requirements" / "references" / "research-basis.md").read_text(encoding="utf-8")
+        reviewer = tomllib.loads((ROOT / ".codex" / "agents" / "requirements-reviewer.toml").read_text(encoding="utf-8"))["developer_instructions"]
+        cases = json.loads((ROOT / "tests" / "fixtures" / "solution-specificity-cases.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            {
+                "one-off-fastapi",
+                "authoritative-windows",
+                "qos-latency",
+                "architecture-decision",
+                "unjustified-process",
+                "product-interoperability",
+            },
+            {case["id"] for case in cases},
+        )
+        for case in cases:
+            self.assertIn(case["candidate"], standard, case["id"])
+            self.assertIn(case["expected_contract"], standard, case["id"])
+        self.assertEqual(3, sum(case["canonical_requirement"] for case in cases))
+
+        for required in [
+            "Underlying obligation",
+            "Necessity",
+            "Authority",
+            "Lifetime and scope",
+            "Placement",
+            "repository conventionとsafe defaultへ委任",
+            "親requirement IDまたはADR path",
+        ]:
+            self.assertIn(required, maintain)
+        for required in ["current-task instruction", "exact technology", "flow down", "ADR"]:
+            self.assertIn(required, chat)
+        self.assertIn("user outcomeなしにsolutionだけを固定する", frontend)
+        for required in ["solution-only prescriptions", "wrong abstraction levels", "approved decision trace"]:
+            self.assertIn(required, reviewer)
+        for required in ["Twin Peaks", "Implementation neutrality is not a blanket ban", "derived requirements"]:
+            self.assertIn(required, research)
+
     def test_single_authorization_policy_has_no_later_phase_approvals(self) -> None:
         policy = json.loads((ROOT / "governance" / "policy.json").read_text(encoding="utf-8"))
         authorization = policy["authorization"]

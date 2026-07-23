@@ -81,6 +81,10 @@ description: Start and complete repository development from ordinary natural-lan
 
 外部挙動、業務ルール、受入条件、非機能閾値、権限要求が変わる場合だけ永続要件を更新する。
 
+framework、language、database、architecture、tool、path、process、工程、成果物が依頼に含まれるだけでは要件影響ありとしない。underlying outcome、quality of service、権限ある永続制約、または親要件・承認済みdecisionから下位scopeへflow downする義務が変わる場合だけ`$maintain-canonical-requirements`を使う。
+
+今回だけの実装指示や可逆な選択はcurrent contextまたは実装へ委任する。長期architecture choiceはADR、実装済み構造は生成設計へ置く。exact technologyまたはproject processを永続化する場合は、必要性、authority、lifetime、scope、verificationを確認する。
+
 判定はCommit Commentへ必ず記録する。
 
 ## Design impact
@@ -104,6 +108,7 @@ CI実行結果は外部サービスを正本とし、YAMLにはcheck名や証拠
 
 - 利用者へSkill名、work item、command、test実行を要求しない。
 - 可逆な実装判断を質問へ変えない。
+- 利用者がnamed solutionを例示または指定しても、current-task instructionとdurable requirementを自動的に同一視しない。
 - 通常変更へ一律の初回承認を要求しない。公開API変更は`assured`としてRisk-selected checkを追加し、公開APIであることだけを承認理由にしない。
 - 外部書込み、不可逆操作、production、公開、merge、高額操作、regulated条件など実在するauthority boundaryで明示承認を求める。
 - 未確実性だけを理由に作業を停止しない。

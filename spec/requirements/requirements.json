@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 5,
+  "catalog_revision": 6,
   "product": "dev-standard",
   "requirements": [
     {
@@ -1258,6 +1258,74 @@
     {
       "acceptance_criteria": [
         {
+          "given": "technology、architecture、tool、path、process、工程または成果物を名指しする要件候補がある",
+          "id": "AC-DISC-005-1",
+          "then": "underlying outcome、necessity、authority、lifetime、scope、placementを判定し、可逆なsolution choiceを永続要件へ固定しない",
+          "when": "正本への反映可否を判定する"
+        },
+        {
+          "given": "exact technology、architectureまたはproject process自体が権限ある永続制約である",
+          "id": "AC-DISC-005-2",
+          "then": "source_refs、必要性を示すrationale、scopeとcategory、verificationを記録する",
+          "when": "永続要件として保持する"
+        },
+        {
+          "given": "親要件または承認済みarchitecture decisionが下位scopeを拘束する",
+          "id": "AC-DISC-005-3",
+          "then": "親要件またはdecision、下位scope、verificationへtraceしたderived requirementとして記録し、上位stakeholder requirementへ過剰一般化しない",
+          "when": "下位の永続義務として保持する"
+        }
+      ],
+      "action": "separate",
+      "category": "functional",
+      "id": "REQ-DISC-005",
+      "last_changed_by": "CHG-20260724-solution-neutral-requirements",
+      "object": "solution候補と権限ある永続要件",
+      "rationale": "結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "user:2026-07-24",
+        "issue:25",
+        "NASA Systems Engineering Handbook Appendix",
+        "NASA SWE-050",
+        "SWEBOK-V4A",
+        "Nuseibeh:10.1109/2.910904",
+        "Chen-Babar-Nuseibeh:10.1109/MS.2012.174"
+      ],
+      "status": "active",
+      "subject": "要件管理Skill",
+      "title": "solution候補と永続要件の境界",
+      "traces": {
+        "design": [
+          "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+          "docs/reference/development.md",
+          ".agents/skills/maintain-canonical-requirements/references/research-basis.md"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-canonical-requirements/SKILL.md",
+          ".agents/skills/chat-first-development/SKILL.md",
+          ".agents/skills/elicit-frontend-requirements/SKILL.md",
+          ".codex/agents/requirements-reviewer.toml",
+          ".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/test_skills.py",
+          "tests/test_specflow.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test",
+        "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
           "given": "利用者向けMarkdownまたは生成文書がある",
           "id": "AC-DOCS-001-1",
           "then": "見出しと説明が日本語であり、生成物が日本語テンプレートから再現される",
@@ -2106,5 +2174,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-07-21"
+  "updated_at": "2026-07-24"
 }

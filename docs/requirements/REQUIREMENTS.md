@@ -1,8 +1,8 @@
 <!-- specflow.pyによる自動生成。spec/requirements/requirements.jsonを編集すること。 -->
 # dev-standard 要件一覧
 
-- カタログ版: 5
-- 更新日: 2026-07-21
+- カタログ版: 6
+- 更新日: 2026-07-24
 - 正本: `spec/requirements/requirements.json`
 
 | ID | 版 | 状態 | 種別 | 原子的な義務 | 検証方法 |
@@ -36,6 +36,7 @@
 | `REQ-DISC-002` | 2 | 有効 | データ | 要件カタログは、正本要件IDごとの一つの原子的な義務を**維持する** | 自動テスト |
 | `REQ-DISC-003` | 2 | 有効 | 機能 | 仕様管理フローは、版競合を検査した追加、更新、廃止操作を**適用する** | 自動テスト |
 | `REQ-DISC-004` | 2 | 有効 | 機能 | 仕様管理フローは、正本カタログからの日本語の人間向け要件文書を**生成する** | 自動テスト |
+| `REQ-DISC-005` | 1 | 有効 | 機能 | 要件管理Skillは、solution候補と権限ある永続要件を**分離する** | 自動テスト |
 | `REQ-DOCS-001` | 1 | 有効 | 品質 | 文書生成フローは、識別子と固有名詞を除いて日本語で統一された利用者向け文書を**提供する** | 自動検査 |
 | `REQ-EXEC-001` | 2 | 有効 | 運用 | 開発実行基盤は、相互に独立した変更範囲、保証水準、計算資源および実行方式を**推定する** | 自動テスト |
 | `REQ-EXEC-002` | 2 | 有効 | 品質 | 開発実行基盤は、risk tag、成果物、外部副作用および不可逆性から導出したassurance下限を**強制する** | 自動テスト |
@@ -433,6 +434,23 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 要求源: user:2026-07-17
 検証証跡: 生成文書の完全一致検査
 トレース: 設計=docs/requirements/REQUIREMENTS.md; 実装=.agents/skills/maintain-canonical-requirements/scripts/specflow.py; テスト=tests/test_specflow.py; 参照資料=SWEBOK-V4A
+
+## REQ-DISC-005: solution候補と永続要件の境界
+
+要件管理Skillは、solution候補と権限ある永続要件を**分離する**。
+
+根拠: 結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。
+
+分類: `product` / `functional`
+
+受入条件:
+- `AC-DISC-005-1` 前提: technology、architecture、tool、path、process、工程または成果物を名指しする要件候補がある。条件: 正本への反映可否を判定する。期待結果: underlying outcome、necessity、authority、lifetime、scope、placementを判定し、可逆なsolution choiceを永続要件へ固定しない。
+- `AC-DISC-005-2` 前提: exact technology、architectureまたはproject process自体が権限ある永続制約である。条件: 永続要件として保持する。期待結果: source_refs、必要性を示すrationale、scopeとcategory、verificationを記録する。
+- `AC-DISC-005-3` 前提: 親要件または承認済みarchitecture decisionが下位scopeを拘束する。条件: 下位の永続義務として保持する。期待結果: 親要件またはdecision、下位scope、verificationへtraceしたderived requirementとして記録し、上位stakeholder requirementへ過剰一般化しない。
+
+要求源: user:2026-07-24, issue:25, NASA Systems Engineering Handbook Appendix, NASA SWE-050, SWEBOK-V4A, Nuseibeh:10.1109/2.910904, Chen-Babar-Nuseibeh:10.1109/MS.2012.174
+検証証跡: solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test
+トレース: 設計=docs/standards/REQUIREMENT-CLASSIFICATION.md,docs/reference/development.md,.agents/skills/maintain-canonical-requirements/references/research-basis.md; 実装=.agents/skills/maintain-canonical-requirements/SKILL.md,.agents/skills/chat-first-development/SKILL.md,.agents/skills/elicit-frontend-requirements/SKILL.md,.codex/agents/requirements-reviewer.toml,.agents/skills/maintain-canonical-requirements/assets/requirements.schema.json; テスト=tests/test_skills.py,tests/test_specflow.py; 参照資料=SWEBOK-V4A
 
 ## REQ-DOCS-001: 日本語の利用者向け文書
 
