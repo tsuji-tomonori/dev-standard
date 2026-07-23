@@ -8,9 +8,10 @@ completed_timings:
   - impact
   - implementation
   - pre-pr
+  - pre-merge
 impact_flags:
   external_write: true
-  irreversible_operation: false
+  irreversible_operation: true
   auth_change: false
   data_change: false
   public_api_change: false
@@ -33,7 +34,7 @@ impact_flags:
   important_ui_change: false
   long_term_decision: false
   squash: true
-  external_side_effect: false
+  external_side_effect: true
   production_deploy: false
   major_incident: false
   periodic_cycle: false
@@ -59,7 +60,7 @@ selected_checks:
     evidence:
       - commit:self
       - path:.pre-commit-config.yaml
-    note: 恒久的な開発統制構成を追加するが、生成設計、公開契約、data modelは変更せず、ADRを必要とする不可逆な設計判断ではない
+    note: 恒久的な開発統制構成を追加するが、生成設計、公開契約、data modelは変更せず、既存fileの変更は末尾空行の正規化に限定する
   - id: IMP-003
     class: Invariant
     result: pass
@@ -71,7 +72,13 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: 許可されたrepositoryの作業branchとdraft PRだけへ書き込み、mainへの直接push、merge、release、deployは行わない
+    note: 利用者が明示した範囲で作業branch更新とPRのsquash mergeだけを行い、mainへの直接push、release、deployは行わない
+  - id: IMP-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: PR mergeは利用者が明示承認しており、最新HEADの検証成功後にsquash方式で実行する
   - id: IMP-010
     class: Risk-selected
     result: pass
@@ -84,20 +91,28 @@ selected_checks:
     evidence:
       - path:.pre-commit-config.yaml
       - workflow:Governance#Secret scan
-    note: 追加内容は公開repository URL、commit SHA、hook IDだけで、credential、token、PII、production dataを含まない
+    note: 追加内容は公開repository URL、commit SHA、hook IDとformatting正規化だけで、credential、token、PII、production dataを含まない
   - id: FAST-008
     class: Risk-selected
     result: pass
     evidence:
       - path:.pre-commit-config.yaml
-    note: pre-commit設定がdependency解決の正本であり、両repositoryを完全なcommit SHAで固定している
+    note: pre-commit設定がhook dependency解決の正本であり、両repositoryを完全なcommit SHAで固定している
   - id: REV-001
     class: Invariant
     result: pass
     evidence:
       - path:.pre-commit-config.yaml
+      - path:.agents/skills/author-lifecycle-docs/references/learned-rules.md
+      - path:.agents/skills/authorize-autonomous-execution/references/learned-rules.md
+      - path:.agents/skills/chat-first-development/agents/openai.yaml
+      - path:.agents/skills/govern-development-request/references/learned-rules.md
+      - path:.agents/skills/inspect-quality-gates/references/learned-rules.md
+      - path:.agents/skills/retrospect-and-improve/references/learned-rules.md
+      - path:distribution/snippets/codex-config.toml
+      - path:reports/.gitkeep
       - path:governance/reviews/CHG-20260723-pre-commit-config.yaml
-    note: pre-commit設定とそのselected check結果だけを変更対象にした
+    note: pre-commit設定、全file実行で必要と判明した末尾空行のbaseline正規化、selected check結果だけを最終差分に含め、一時CI診断変更は相殺した
   - id: REV-002
     class: Invariant
     result: pass
@@ -109,7 +124,7 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: 新しい外部挙動や受入条件を追加せず、既存governance checkの実行手段を追加するため要件正本は変更しない
+    note: 新しい利用者向け挙動や受入条件を追加せず、既存governance checkの実行手段とformatting baselineを追加するため要件正本は変更しない
   - id: REV-004
     class: Invariant
     result: pass
@@ -122,8 +137,9 @@ selected_checks:
     result: pass
     evidence:
       - path:.pre-commit-config.yaml
+      - commit:0d3b5e08c519818666988ebe31e83876fac21b9c
       - workflow:Governance
-    note: YAML構文、固定revision、hook ID、LF引数、末尾空白、EOFをローカル検査し、PRではGovernance workflowがreview contractとsecret scanを検証する
+    note: pre-commit 4.6.0でvalidate-configとrun --all-filesをPR branch上で実行し、baseline正規化後にgit-secretsを含む全8 hookが成功した。現在HEADはGovernance workflowでrepository contractを検証する
   - id: REV-007
     class: Invariant
     result: pass
@@ -136,6 +152,37 @@ selected_checks:
     evidence:
       - path:governance/reviews/CHG-20260723-pre-commit-config.yaml
     note: selectorで選ばれないcheckをN/Aとして記録していない
+  - id: MRG-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: merge直前にPRの最新HEADを対象とするGovernance workflowの全blocking step成功を確認する
+  - id: MRG-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260723-pre-commit-config.yaml
+    note: selected checkにblocking failはなく、実行検証で判明したEOF差分は修正済みである
+  - id: MRG-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: squash merge時のcommit本文へ要件・設計影響、review path、検証契約、互換性と残存リスクを統合する
+  - id: MRG-006
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がPRの評価、テスト、問題がなければmergeすることを明示承認しており、mainへの直接pushは行わない
+  - id: MRG-007
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260723-pre-commit-config.yaml
+    note: 要件影響、設計影響、互換性、残存リスクを確定し、unknownまたはTBDを残していない
 advisories: []
 residual_risks:
   - 各cloneでpre-commit installを実行するまでlocal hookは有効化されず、現在のGovernance workflowは全pre-commit hookを直接実行しない
