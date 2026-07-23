@@ -117,7 +117,7 @@ selected_checks:
       - path:docs/reference/skill-evidence-audit.md
       - path:.github/workflows/governance.yml
       - workflow:Governance
-    note: local validationでMarkdown構造、内部link、DOI補正、source class、YAML構文を確認し、PRではGovernance workflowがrepository contractを検証する
+    note: local validationでMarkdown構造、日本語heading、内部link、DOI補正、source class、YAML構文を確認し、PRではGovernance workflowがrepository contractを検証する
   - id: REV-007
     class: Invariant
     result: pass
