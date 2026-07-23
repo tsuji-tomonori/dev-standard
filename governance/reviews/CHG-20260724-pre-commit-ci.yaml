@@ -8,9 +8,10 @@ completed_timings:
   - impact
   - implementation
   - pre-pr
+  - pre-merge
 impact_flags:
   external_write: true
-  irreversible_operation: false
+  irreversible_operation: true
   auth_change: false
   data_change: false
   public_api_change: false
@@ -33,7 +34,7 @@ impact_flags:
   important_ui_change: false
   long_term_decision: false
   squash: true
-  external_side_effect: false
+  external_side_effect: true
   production_deploy: false
   major_incident: false
   periodic_cycle: false
@@ -71,7 +72,13 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: 利用者が許可した作業branch更新とdraft PR作成だけを行い、mainへの直接push、merge、release、deployは行わない
+    note: 利用者が許可した作業branch更新、dev向けPR、devからmain向けPR、各PRのmergeだけを行い、mainまたはdevへの直接push、release、deployは行わない
+  - id: IMP-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: devへのsquash mergeと、その後のsecurity検証成功を条件とするmainへのsquash mergeは利用者が明示承認している
   - id: IMP-010
     class: Risk-selected
     result: pass
@@ -128,7 +135,7 @@ selected_checks:
       - path:.github/workflows/governance.yml
       - workflow:Governance#Validate pre-commit configuration
       - workflow:Governance#Run pre-commit checks
-    note: PR HEADで設定構文と全tracked fileの8 hookを実行し、違反または自動修正差分をblocking failureにする
+    note: 各PR HEADで設定構文と全tracked fileの8 hookを実行し、違反または自動修正差分をblocking failureにする
   - id: REV-007
     class: Invariant
     result: pass
@@ -141,6 +148,37 @@ selected_checks:
     evidence:
       - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
     note: selectorで選ばれないcheckをN/Aとして記録していない
+  - id: MRG-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: dev向けPRとmain向けPRのそれぞれで、merge直前に最新HEADを対象とするGovernance workflowの全blocking step成功を確認する
+  - id: MRG-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+    note: selected checkに未解決blocking failを残さず、失敗した場合はmerge前に修正する
+  - id: MRG-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 各squash mergeのcommit本文へ要件・設計影響、review path、検証契約、互換性と残存リスクを統合する
+  - id: MRG-006
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がdevへのmerge、security検証、問題がなければmainへのmergeを明示承認しており、mainまたはdevへの直接pushは行わない
+  - id: MRG-007
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+    note: 要件影響、設計影響、互換性、残存リスクを確定し、unknownまたはTBDを残していない
 advisories: []
 residual_risks:
   - 初回のhook environment構築によりGovernance workflowの実行時間が増加する
