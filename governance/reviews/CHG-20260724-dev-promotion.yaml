@@ -1,0 +1,250 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260724-dev-promotion
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+  - pre-merge
+impact_flags:
+  external_write: true
+  irreversible_operation: true
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: true
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: true
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: true
+  external_side_effect: true
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+      - path:governance/reviews/CHG-20260724-solution-neutral-requirements.yaml
+    note: devからmainへ昇格する差分にはREQ-DISC-005の要件変更とpre-commit CI統制が含まれるため、両変更の影響判定を統合した
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/REQUIREMENT-CLASSIFICATION.md
+      - path:.github/workflows/governance.yml
+    note: 要件分類・Skill・Schema・生成表示とCI governance構成へ設計影響があり、生成設計とADRは対象外と判定した
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-dev-promotion.yaml
+    note: 永続要件、共有Skills、Schema、tests、dependency、workflowに跨る昇格であるためassuredを選択した
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者が許可した修正branch、dev向けPR、devからmain向けPR、各PRのmergeだけを行い、mainまたはdevへの直接push、release、deployは行わない
+  - id: IMP-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: review contract修復のdev向けsquash mergeと、security検証成功を条件とするmain向けsquash mergeは利用者が明示承認している
+  - id: IMP-010
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+      - path:.pre-commit-config.yaml
+    note: pre-commitはversion固定し、hook repositoryは完全なcommit SHAで固定している
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+      - workflow:Governance
+    note: 変更したPython testとrepository toolの実行可能性をGovernanceで確認する
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: 現在HEADのrepository全体へRuffを実行する
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+      - test:tests/test_reference_repository_contract.py
+      - path:tests/fixtures/solution-specificity-cases.json
+    note: solution specificity境界、Schema pair、Skill contractと失敗経路を直接検証する
+  - id: FAST-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - path:docs/requirements/REQUIREMENTS.md
+      - workflow:Governance
+    note: requirements正本と生成表示のbyte driftをspecflow checkとGovernanceで拒否する
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+      - path:.pre-commit-config.yaml
+    note: Gitleaksとgit-secretsを含むpre-commitでcredential、token、PII、production dataの混入を検査する
+  - id: FAST-008
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+    note: CI dependencyをrequirements.txtでversion固定し、同じmanifestからinstallする
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260724-pre-commit-ci.yaml
+      - path:governance/reviews/CHG-20260724-solution-neutral-requirements.yaml
+      - path:governance/reviews/CHG-20260724-dev-promotion.yaml
+    note: devに統合済みの2変更と、その昇格契約を修復するreview metadataだけを対象にした
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: Commit Commentへ目的、変更、要件・設計影響、review path、検証契約、互換性・残存リスクを記録する
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+      - path:docs/requirements/REQUIREMENTS.md
+    note: REQ-DISC-005の要件影響とpre-commit CI変更の要件影響なし判定を区別し、統合差分として明示する
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/REQUIREMENT-CLASSIFICATION.md
+      - path:.github/workflows/governance.yml
+    note: requirement authorityとCI governanceの設計影響を記録し、生成設計とADRは対象外と判定した
+  - id: REV-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+    note: REQ-DISC-005から共通Skills、reviewer、Schema、fixture、生成表示へtraceできることを確認した
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - path:.pre-commit-config.yaml
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+      - test:tests/test_reference_repository_contract.py
+    note: Secret scan、pre-commit全hook、Ruff、review contract、unit tests、repository validation、auditを現在HEADで実行する
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-dev-promotion.yaml
+    note: 選択したcheck結果をschema v2とcatalog v3に適合するreview YAMLへ保存した
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-dev-promotion.yaml
+    note: selectorで選ばれないcheckを形式的なN/Aとして登録していない
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:distribution/manifest.json
+      - test:tests/test_install_reference.py
+      - test:tests/test_skills.py
+    note: 既存profileの配布pathを維持し、requirements Schemaはoptional pair追加として後方互換を保つ
+  - id: MRG-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: 修正PRとdevからmainへの昇格PRで、merge直前に最新HEADを対象とする全blocking step成功を確認する
+  - id: MRG-002
+    class: Invariant
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - path:docs/requirements/REQUIREMENTS.md
+      - workflow:Governance
+    note: specflow checkで正本と生成表示のdriftがないことを確認する
+  - id: MRG-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-dev-promotion.yaml
+    note: selected checkに未解決blocking failを残さず、失敗した場合はmerge前に修正する
+  - id: MRG-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 各squash mergeのcommit本文へ要件・設計影響、review path、検証契約、互換性と残存リスクを統合する
+  - id: MRG-006
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がdevへの修正merge、security検証、問題がなければmainへのmergeを明示承認しており、mainまたはdevへの直接pushは行わない
+  - id: MRG-007
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260724-dev-promotion.yaml
+    note: 要件影響、設計影響、互換性、残存リスクを確定し、unknownまたはTBDを残していない
+advisories: []
+residual_risks:
+  - natural-language Skill契約の遵守は静的contract testだけでは完全に証明できないため、6ケースfixtureを将来のE2E benchmarkへ再利用できる形で保持する
+  - 初回のpre-commit hook environment構築によりGovernance workflowの実行時間が増加する
+  - git-secretsの検出patternはrepositoryまたはglobal git configに依存するため、CIでは独立したGitleaks scanも継続する
