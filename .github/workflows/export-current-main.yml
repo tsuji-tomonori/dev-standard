@@ -15,9 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: main
           fetch-depth: 1
-      - name: Record base revision
+      - name: Record current main revision
         run: |
           git rev-parse HEAD > current-main-sha.txt
           git rev-parse HEAD^{tree} > current-main-tree.txt
