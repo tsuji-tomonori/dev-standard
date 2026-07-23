@@ -30,7 +30,22 @@ jobs:
       - name: Validate pre-commit configuration
         run: pre-commit validate-config
       - name: Execute pre-commit hooks
-        run: pre-commit run --all-files --show-diff-on-failure
+        id: precommit
+        shell: bash
+        run: |
+          set +e
+          pre-commit run --all-files --show-diff-on-failure > pre-commit.log 2>&1
+          status=$?
+          cat pre-commit.log
+          exit "$status"
+      - name: Upload pre-commit log on failure
+        if: failure() && steps.precommit.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          name: pre-commit-log
+          path: pre-commit.log
+          archive: false
+          retention-days: 3
       - run: python tools/devflow.py catalog --check
       - run: python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
       - run: python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
