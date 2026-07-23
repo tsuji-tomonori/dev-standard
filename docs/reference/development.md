@@ -45,6 +45,8 @@
 
 要件分類は[要件分類標準](../standards/REQUIREMENT-CLASSIFICATION.md)を正とします。外部挙動、業務ルール、受入条件、非機能制約、権限、恒久的なproject義務が変わる場合だけ要件正本を更新します。
 
+具体的なtechnology、architecture、tool、path、process、工程、成果物が依頼に含まれるだけでは要件影響ありとしません。underlying outcome、quality threshold、exact choiceの必要性とauthority、lifetime、scopeを判定し、可逆な実装選択は実装、長期判断はADR、実装済み構造は生成設計、下位拘束は親判断へtraceしたderived requirementへ置きます。
+
 コードや宣言から生成できる情報を手書き設計として複製しません。as-built生成・実装・test規約は[as-built設計標準](../standards/AS-BUILT-DESIGN.md)を参照し、コードだけでは理由が分からない長期判断だけをADRにします。
 
 ## Review結果

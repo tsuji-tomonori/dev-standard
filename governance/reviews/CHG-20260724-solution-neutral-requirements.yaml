@@ -1,0 +1,184 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260724-solution-neutral-requirements
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: true
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: true
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+    note: 要件管理Skillがsolution候補と権限ある永続要件を分離するproduct behaviorをREQ-DISC-005として追加した
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/REQUIREMENT-CLASSIFICATION.md
+      - path:.agents/skills/maintain-canonical-requirements/SKILL.md
+    note: 要件分類標準、Skill契約、reviewer、Schema、生成表示へ設計影響があり、実装由来生成設計とADRは対象外と判定した
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-solution-neutral-requirements.yaml
+    note: 永続要件、共有Skills、公開分類標準、Schema、reviewer、generator、複数contract testに跨るためassuredを選択した
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者のIssue評価とPR作成依頼を、対象repositoryのbranch、commit、Pull Requestへの外部書込み権限として扱った
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+      - workflow:Governance
+    note: 変更したPython testの構文をcompileallで検査し、依存導入済みGitHub Actions Governanceで全unit testとrepository全体の実行可能性を確認する
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: 現在HEADのrepository全体へGovernance workflowのruff checkを実行する
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+      - test:tests/test_reference_repository_contract.py
+      - path:tests/fixtures/solution-specificity-cases.json
+    note: solution-only、権限あるtechnology constraint、QoS、ADR、derived requirement、product interoperabilityのpositive / negative caseとSchema pairを直接検証する
+  - id: FAST-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - path:docs/requirements/REQUIREMENTS.md
+      - workflow:Governance
+    note: specflowのapplyで正本を更新して人向け表示を再生成し、check modeとGovernance workflowでbyte driftを拒否する
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: 追加内容は公開研究metadata、要件・Skill契約、synthetic fixtureだけであり、現在HEADをGitleaksで検査する
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/REQUIREMENT-CLASSIFICATION.md
+    note: 差分をIssue #25のsolution specificity境界、発見したscope/category Schema不整合、対応する正本・証拠・testへ限定した
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: Commit Commentへ目的、変更、要件・設計影響、review path、検証契約、互換性・残存リスクを記録しvalidatorで確認する
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+      - path:docs/requirements/REQUIREMENTS.md
+    note: 要件影響ありとしてREQ-DISC-005を正本へ追加し、catalog revision 6の生成表示へ反映した
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/standards/REQUIREMENT-CLASSIFICATION.md
+      - path:.agents/skills/maintain-canonical-requirements/references/research-basis.md
+    note: requirement authority、ADR、生成設計、current-task context、derived requirementの配置を標準とevidence mapへ記録し、独立ADRは不要と判定した
+  - id: REV-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+    note: REQ-DISC-005から共通Skills、reviewer、Schema、6ケースfixture、生成表示へtraceできることを確認した
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_skills.py
+      - test:tests/test_specflow.py
+      - test:tests/test_reference_repository_contract.py
+      - workflow:Governance
+    note: 受入条件をcontract test、JSON Schema validation、specflow drift check、全repository CIへ接続した
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-solution-neutral-requirements.yaml
+    note: 選択したcheck結果をschema v2とcatalog v3に適合するreview YAMLへ保存した
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260724-solution-neutral-requirements.yaml
+    note: selectorで選ばれないcheckを形式的なN/Aとして登録していない
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:distribution/manifest.json
+      - test:tests/test_install_reference.py
+      - test:tests/test_skills.py
+    note: 既存profileが配布する同一Skill・標準pathを維持し、Schemaはoptional pairを追加する後方互換変更とし、正当なtechnology / project constraintを禁止しない
+advisories: []
+residual_risks:
+  - natural-language Skill契約の遵守は静的contract testだけでは完全に証明できないため、6ケースfixtureを将来のIssue #22 E2E benchmarkへ再利用できる形で保持する
+  - 既存要件のscope/categoryは後方互換のため遡及必須にせず、意味を更新する時点で段階的に分類する

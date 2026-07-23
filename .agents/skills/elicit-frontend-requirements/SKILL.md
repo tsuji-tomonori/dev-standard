@@ -10,7 +10,7 @@ description: Discover human-centred, testable frontend requirements from users w
 ## Composition
 
 - ambiguityが結果を変える場合だけ`$calibrated-collaborative-listening`を使う。
-- 永続的な義務だけを`$maintain-canonical-requirements`へ渡す。
+- 永続的な義務だけを`$maintain-canonical-requirements`へ渡し、solution候補は共通のnecessity、authority、lifetime、scope、placement判定を通す。
 - accessibility、法令、platform conventionが実質的に関係する場合だけ`$verify-against-engineering-standards`を使う。
 - 高影響flow、排除risk、高額な作り直しriskでは必要時だけ`$adversarial-review`を使う。
 

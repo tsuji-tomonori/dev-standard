@@ -1,0 +1,38 @@
+[
+  {
+    "canonical_requirement": false,
+    "candidate": "今回の変更をFastAPIで実装する",
+    "expected_contract": "current-task instruction",
+    "id": "one-off-fastapi"
+  },
+  {
+    "canonical_requirement": true,
+    "candidate": "support contract上Windows 11で動作する",
+    "expected_contract": "technology constraint",
+    "id": "authoritative-windows"
+  },
+  {
+    "canonical_requirement": true,
+    "candidate": "p95 latencyを200ms以内にする",
+    "expected_contract": "quality-of-service requirement",
+    "id": "qos-latency"
+  },
+  {
+    "canonical_requirement": false,
+    "candidate": "architectがpipes-and-filtersを選ぶ",
+    "expected_contract": "原則ADR",
+    "id": "architecture-decision"
+  },
+  {
+    "canonical_requirement": false,
+    "candidate": "Scrumと日次test reportを採用する",
+    "expected_contract": "根拠がなければ要件にしない",
+    "id": "unjustified-process"
+  },
+  {
+    "canonical_requirement": true,
+    "candidate": "productがFastAPI plugin互換を提供する",
+    "expected_contract": "product identity",
+    "id": "product-interoperability"
+  }
+]
