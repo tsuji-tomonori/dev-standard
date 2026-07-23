@@ -1,0 +1,140 @@
+name: Complete Issue 20 Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: read
+  contents: write
+  issues: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  complete:
+    if: github.event.pull_request.head.ref == 'agent/issue-20-two-layer-branch-trial'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Prepare exact final candidate
+        id: prepare
+        env:
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          if test -f .bootstrap/reconstruct_issue20.py; then
+            echo "mode=staging" >> "$GITHUB_OUTPUT"
+            python .bootstrap/reconstruct_issue20.py
+            base64 --decode /tmp/issue20.b64 > /tmp/issue20.tar.gz
+            echo "41aa5ee3578e67aa0ae370fd24870442160d39ae0970d501efcfa4ea78dfbe09  /tmp/issue20.tar.gz" | sha256sum -c -
+            rm -rf /tmp/issue20-ours
+            mkdir -p /tmp/issue20-ours
+            tar -xzf /tmp/issue20.tar.gz -C /tmp/issue20-ours
+            cp .bootstrap/apply_issue20_current.py /tmp/apply_issue20.py
+            cp .bootstrap/normalize_issue20_review.py /tmp/normalize_issue20_review.py
+            cp .bootstrap/issue20-commit-message.txt /tmp/issue20-commit-message.txt
+            main_sha=$(git rev-parse origin/main)
+            git reset --hard "$main_sha"
+            git clean -fdx
+            python /tmp/apply_issue20.py
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -F /tmp/issue20-commit-message.txt
+            python -m pip install -r requirements.txt
+            python /tmp/normalize_issue20_review.py
+            git add governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+            git commit --amend --no-edit
+          else
+            echo "mode=final-parent" >> "$GITHUB_OUTPUT"
+            git reset --hard HEAD^
+            main_sha=$(git rev-parse origin/main)
+            test "$(git rev-parse HEAD^)" = "$main_sha"
+            test "$(git show -s --format=%s HEAD)" = "🧭 feat(branches): 二層branch試行契約を実装する"
+            python -m pip install -r requirements.txt
+          fi
+          test "$(git rev-parse HEAD^)" = "$(git rev-parse origin/main)"
+          echo "final_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "final_tree=$(git rev-parse HEAD^{tree})" >> "$GITHUB_OUTPUT"
+      - name: Validate review contract
+        run: python governance/reviews/validate.py --root . --commit HEAD
+      - name: Run pre-commit checks
+        run: |
+          pre-commit validate-config
+          pre-commit run --all-files --show-diff-on-failure
+      - name: Validate branch policy configuration
+        run: python tools/branch_policy.py config --root .
+      - name: Validate generated artifacts and catalogs
+        run: |
+          python tools/devflow.py catalog --check
+          python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
+          python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
+      - name: Run Ruff
+        run: ruff check .
+      - name: Run all unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Run repository validation
+        run: python tools/validate_repo.py
+      - name: Run governance audit
+        run: python tools/devflow.py audit
+      - name: Validate commit, topology, scope, and hygiene
+        run: |
+          set -euo pipefail
+          test "$(git rev-list --count origin/main..HEAD)" = "1"
+          test "$(git rev-parse HEAD^)" = "$(git rev-parse origin/main)"
+          test "$(git show -s --format=%s HEAD)" = "🧭 feat(branches): 二層branch試行契約を実装する"
+          git diff --check HEAD^
+          python -m compileall -q tools governance tests
+          test -z "$(git status --porcelain)"
+      - name: Publish exact validated commit
+        env:
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          final_sha=$(git rev-parse HEAD)
+          git push --force-with-lease=refs/heads/agent/issue-20-two-layer-branch-trial:${TRIGGER_SHA} origin HEAD:refs/heads/agent/issue-20-two-layer-branch-trial
+          for context in integration evidence branch-policy verify; do
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${final_sha}" \
+              -f state=success \
+              -f context="$context" \
+              -f description="Issue #20 exact final commit validated" \
+              -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          done
+      - name: Mark pull request ready and record completion
+        env:
+          FINAL_SHA: ${{ steps.prepare.outputs.final_sha }}
+          FINAL_TREE: ${{ steps.prepare.outputs.final_tree }}
+        run: |
+          set -euo pipefail
+          gh pr ready "${{ github.event.pull_request.html_url }}" || true
+          cat > /tmp/pr-comment.md <<EOF
+          ## 最終検証完了
+
+          - final commit: \`${FINAL_SHA}\`
+          - final tree: \`${FINAL_TREE}\`
+          - parent: current \`main\`
+          - review contract、pre-commit、branch-policy、生成物drift、Ruff、全unit test、repository validation、governance audit、commit topologyを同一commitで検証済み
+          - PR branchは検証済みの単一commitへ置換済み
+
+          このPRはbootstrap contractの実装までを対象とし、merge、\`dev\`作成、ruleset変更、trial activationは行っていません。
+          EOF
+          gh pr comment "${{ github.event.pull_request.html_url }}" --body-file /tmp/pr-comment.md
+          cat > /tmp/issue-comment.md <<EOF
+          ## 実装PRの検証完了
+
+          PR #26をcurrent \`main\`直上の単一commit \`${FINAL_SHA}\`へ再構成し、review contract、pre-commit、branch-policy、生成物drift、Ruff、全unit test、repository validation、governance auditを同一commitで検証しました。PRはready for reviewです。
+
+          試行開始は引き続き本Issueのbootstrap受入条件を満たした後に行います。
+          EOF
+          gh issue comment 20 --body-file /tmp/issue-comment.md

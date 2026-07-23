@@ -1,0 +1,91 @@
+name: Finalize Issue 20 Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.event.pull_request.head.ref == 'agent/issue-20-two-layer-branch-trial'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Reconstruct verified payload and preserve helpers
+        run: |
+          set -euo pipefail
+          python .bootstrap/reconstruct_issue20.py
+          base64 --decode /tmp/issue20.b64 > /tmp/issue20.tar.gz
+          echo "41aa5ee3578e67aa0ae370fd24870442160d39ae0970d501efcfa4ea78dfbe09  /tmp/issue20.tar.gz" | sha256sum -c -
+          rm -rf /tmp/issue20-ours
+          mkdir -p /tmp/issue20-ours
+          tar -xzf /tmp/issue20.tar.gz -C /tmp/issue20-ours
+          cp .bootstrap/apply_issue20_current.py /tmp/apply_issue20.py
+          cp .bootstrap/normalize_issue20_review.py /tmp/normalize_issue20_review.py
+          cp .bootstrap/issue20-commit-message.txt /tmp/issue20-commit-message.txt
+      - name: Rebase payload onto current main
+        id: base
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          main_sha=$(git rev-parse origin/main)
+          echo "main_sha=$main_sha" >> "$GITHUB_OUTPUT"
+          git reset --hard "$main_sha"
+          git clean -fdx
+          python /tmp/apply_issue20.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -F /tmp/issue20-commit-message.txt
+          test "$(git rev-parse HEAD^)" = "$main_sha"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Normalize review evidence for the active catalog
+        run: |
+          set -euo pipefail
+          python /tmp/normalize_issue20_review.py
+          git add governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+          git commit --amend --no-edit
+          test "$(git rev-parse HEAD^)" = "${{ steps.base.outputs.main_sha }}"
+      - name: Validate review contract first
+        run: python governance/reviews/validate.py --root . --commit HEAD
+      - name: Run pre-commit checks
+        run: |
+          pre-commit validate-config
+          pre-commit run --all-files --show-diff-on-failure
+      - name: Validate branch policy configuration
+        run: python tools/branch_policy.py config --root .
+      - name: Validate generated artifacts and source catalogs
+        run: |
+          python tools/devflow.py catalog --check
+          python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
+          python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
+      - name: Run Ruff
+        run: ruff check .
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Run repository validation
+        run: python tools/validate_repo.py
+      - name: Run governance audit
+        run: python tools/devflow.py audit
+      - name: Validate final hygiene
+        run: |
+          set -euo pipefail
+          python -m compileall -q tools governance tests
+          git diff --check HEAD^
+          test -z "$(git status --porcelain)"
+      - name: Publish verified single commit
+        env:
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git push --force-with-lease=refs/heads/agent/issue-20-two-layer-branch-trial:${TRIGGER_SHA} origin HEAD:refs/heads/agent/issue-20-two-layer-branch-trial

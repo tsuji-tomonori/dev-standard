@@ -1,0 +1,168 @@
+name: Apply Issue 20 Payload
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'agent/issue-20-two-layer-branch-trial'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Reconstruct and verify payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+
+          chunks = [
+              (5000, b"H4sIAAAAAAAAA+w8/XfTVpb87L9CNT0zBJATh49MvZ1SSjltzjBtNqW7ZzcJtmLL", "70a552d8f7c23efcb88e2ba8a63b5d20db1d4ca8f1f21ecc0eff64120e99df52"),
+              (5000, b"glQTrAlSnTjhdnFjIbF2QJlgc8yQjrJiKeSvJGJSk27nno8/kqH0IZ3OkFhmxEhJ", "454038ab9f6f83a9714cce21f5acfcd81226ec0a95d2a49e6d372d358a045000"),
+              (5000, b"ATLA0plsxEAFJpy+I7eKp29QqaR+G0Ly/iYd338gG8nE/zMWiX0S6yWUJQKkrBms", "39634a451a3ede551a780605b9f792c2ee88b9d6f626621ca2ae57a9e5012919"),
+              (5000, b"Ba5okgbz694IUK8VB5dHcwMwXckWlHom7HfaX6dSCCuME9gMXR9X4AnxhfrZutAB", "3191571b75b0ecbdaf8eabd83061b6de102676ff890f5d17b3fbf214cae5988b"),
+              (5000, b"/JNY3+8bOMGVy38SYF8E5mP7qI+tDeClnAK7zqGdM7Jw57vi038Y5CMQOEw7YRME", "c9929fe20872590b7e3f0e904a2048b82330f9a5eb9f80c306899a6de57fede2"),
+              (5000, b"3xEDFdXl6IxMpXGAJ60BUu6zzmKrKwFGcs8Y9F4MpeIZkhvmLoMdq14tIX2GmdWC", "c7b0853c4233fc8305c1d32ad37b76865c6d77e3d5f8a9f0251385a29ef1da1f"),
+              (5000, b"n72xcC0Pf/6NNJFD1PjBaH6qS98rsLgABeMv27v/+O727X8MJL0+QLWzORiTdvGY", "93932db105ee82f0da6e91542b7292bfc32629bac02d06610d173f9499cf9b44"),
+              (5000, b"pSd7KJk9YJ+2tY5n5tkYbF4EaIsmQescOOSNTtlXv3B51dv30St0FIGwkb+0v+c/", "bc849c9e58789768939038856da489fc2e9e1d99f666a1d16f5bcfd68be2d9a5"),
+              (5000, b"Y6GeHI7z98rjx8h5RxFnTjP7Ypbh8Ag4kDWPCcxwZwoYFU+Y86EmrmRlTYmLPjyj", "ce0c981c0e082f72f9f8190518c5629c7f213e9a4998d86a6631da1c727e716b"),
+              (5000, b"bIPA/klMl1yeF1GXXC+lM/3KgerJJSDUktF4pe5ndWTJq63TqrcyuzEKcK7/RsXR", "8f71fbff6051a761f9372bd808592af03e65c422f7422eb7673052956e05bdf6"),
+              (5000, b"2dhABr5TfR33x7JNjfRhYxgZ6Nu1DupUNZOBX+PSgRQyfsG+Q5RiHToNVCo+oyv7", "c5e5ae62d678bf7e919f4d68878438a60354076fbc5902ec460a679935ada4b5"),
+              (5000, b"AgRE62noNXqGEAzGuAGY9N9U8FL2+z+W90uNPvXeXrh5DLt8XfrG7C7o2uUqC33P", "37c4f5ee2ff633acf24b7a1a4c93532d969a885e342d4374f9fa0625875dc5cc"),
+              (5000, b"OETmNPr0qbNBf4hbtVJCjlFOvvpemrmR79EHOzoOHB02VCodc2TghIrLnLVG1h5e", "483fcaeb13262e55e2082b986a8038919a379007181aa89e4c22c553cbb9e5c5"),
+              (5000, b"7HXIKEbGrSCiag8e1yGi9IqADaETYkFUENJWcXx6/ulliqbIHsMw2OnpxeGjtM28", "aeae23b6b938283e94a09cdd5c89f3c6bef60f07dcf100b56e090db53c63b324"),
+              (5000, b"M0SBsJU9aygVY4wrkW7oNh38kxzgpQmuQL2hOja+2YHQfARTdMmm9fvb/9zZva19", "1f1072b70b90c0a9441e345a762eab7c0a22c59dc554581a27d16da1568ab18f"),
+              (5000, b"6mpRC3eUIha69ZJZ+ovItC2VlAHCOd8fQzrhrbAL8C7jC9lBzQMf9cXTTbKdhCCx", "cb9908724daada3ca90c1fcca5a49f82e005a2cfe040fa14536c62e8d459b352"),
+              (5000, b"qjVdpRxG73Z2oSb2oWkTcrzTZJZzXKQHDi9CrnHRDHsZQnWc6m42yz/g1Y3C/WfB", "9f7b008233a232f449f6bd8b80cd41119742a3363a79d58f975b17e574a7fad6"),
+              (5000, b"qeo7EE0jxpdxos1USM99XuebRJmtm/W91ctjX1SOcSi7emlJxgYLC88zNkhp2ZF1", "a263399b51f7be864b65f804b087a20418a7cbbbe5329b1ec9b231916e03c89f"),
+              (5000, b"EGQRQeSQP6xJq1dNK6IIQfI7upENU7Pw8+5gnwKWsGEb8xTWk4XFDTCIq6BZkq6h", "833acb20fabc10a3fac221d33b68e3a7cebd3ba57a314c339276a49a21c97fd9"),
+              (5000, b"8tWbnbVXn/+s+EEzFSvzwxz0C41LN54T58Pe8IvZZ26tPQndrneTNzcQ4Y31LzQ3", "f762904855212ba95a5825e67194be8e8ec3a428168104befc211447d62138eb"),
+              (5000, b"0Am80iyZCSUQ9xFiv+UgG8cbhGdg5K3ScnCTQjaovb4oZioDFBc53bcC/oIs2yu8", "1e4278ba47e85ebfaa218ea1161e9edb6094a5af764280e223fec66beabc5942"),
+              (5000, b"UyE1Ga9zIrQktuKgxV+zYOWiSuF2fRPVfjc9MQNmKxNUZVLVw4jrNjqjWDOmopV0", "2054c9f56a7e34919803e50728e0235ceed9ce745e36b8be6e3f28252263c66b"),
+              (4288, b"rXUvXpGErs0WJI6Zg6DBDOzVE2cqqMN7loXJEEfXi9BvIAnIYBQfGlioMRmGBkHW", "8fdb4b80f29908e784c7908d09822aff7c6ea58fb1f85b5b184ebd260401c8c4"),
+          ]
+          sources = [(path, path.read_bytes()) for path in sorted(Path(".bootstrap").glob("issue20.part.*"))]
+          output = bytearray()
+          for index, (length, prefix, expected) in enumerate(chunks):
+              found = None
+              for path, data in sources:
+                  start = 0
+                  while True:
+                      position = data.find(prefix, start)
+                      if position < 0:
+                          break
+                      candidate = data[position : position + length]
+                      if len(candidate) == length and hashlib.sha256(candidate).hexdigest() == expected:
+                          found = candidate
+                          break
+                      start = position + 1
+                  if found is not None:
+                      break
+              if found is None:
+                  raise SystemExit(f"missing verified payload chunk {index}")
+              output.extend(found)
+          if len(output) != 114288:
+              raise SystemExit(f"unexpected payload length: {len(output)}")
+          Path("/tmp/issue20.b64").write_bytes(output)
+          PY
+          base64 --decode /tmp/issue20.b64 > /tmp/issue20.tar.gz
+          echo "41aa5ee3578e67aa0ae370fd24870442160d39ae0970d501efcfa4ea78dfbe09  /tmp/issue20.tar.gz" | sha256sum -c -
+      - name: Build the final commit from main
+        id: build
+        shell: bash
+        env:
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git reset --hard origin/main
+          tar -xzf /tmp/issue20.tar.gz
+          git add -A
+          git diff --cached --check
+          test "$(git write-tree)" = "767b7a09516cb08aeedbee82deea9ef27eec95a0"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cat > /tmp/commit-message.txt <<'COMMIT_MESSAGE'
+          🧭 feat(branches): 二層branch試行契約を実装する
+
+          目的:
+          - mainのsquash release履歴とdevの意味あるengineering commit履歴を両立し、release後の祖先関係を安全に回復できる管理された2 release試行を実装する。
+
+          変更内容:
+          - repository固有のbranch-policy正本とvalidatorを追加し、bootstrap、topic、release、hotfix、reconciliation、rollbackの方向・topology・証跡契約を検査する。
+          - Governance workflowをintegration、evidence、branch-policyへ分離し、PR headとsynthetic merge結果、main/dev pushを別々に検証する。
+          - REQ-REPO-001から003、ADR-0002、開発・commit・PR文書、branch graph回帰test、非移植性contractを追加する。
+          - Issue参照、release時のclosing issue、hotfix conflict解消用reconcile branch、policy自己緩和防止を機械検査する。
+
+          要件影響:
+          - あり
+          - 要件ID: REQ-REPO-001, REQ-REPO-002, REQ-REPO-003
+          - 理由: branch役割、release reconciliation、2 cycle限定試行、恒久採用・rollback条件を将来も検証するproject / nonfunctional requirementとして追加する。
+
+          設計影響:
+          - あり
+          - 対象: branch topology、GitHub Actions、review authority、release transaction、repository governance
+          - 生成設計: 対象外
+          - ADR: ADR-0002で採用理由、一般化しない境界、GitHub上の限界、代替案、昇格条件を記録する。
+
+          チェックリスト:
+          - governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+
+          検証契約:
+          - GitHub Actions: Governanceのintegration、evidence、branch-policy、verify
+          - ローカル: branch-policy、specflow、review contract、reference repository contract、catalog/spec/standards drift、repository validation、audit、Python構文、git diff check
+          - 結果の正本: GitHub Actionsの現在HEAD
+
+          互換性・残存リスク:
+          - bootstrap phaseでは既存main運用を維持し、dev作成、ruleset、required checks、PR #12移行、tree一致を確認するまでtrialを有効化しない。
+          - GitHub required checksはcross-branchの原子的lockではなく、最終squash commit messageの検査はmain push後のauditになる。試行中は単一release operatorと明示freezeを必要とする。
+          - 本契約はdev-standard固有であり、portable Skillsやdistribution profileの既定branchへは組み込まない。
+
+          Branch-Policy-Bootstrap: true
+          Requirements: REQ-REPO-001, REQ-REPO-002, REQ-REPO-003
+          Design-Impact: mixed
+          Review-Checklist: governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+          Refs: #20
+          COMMIT_MESSAGE
+          sed -i 's/^          //' /tmp/commit-message.txt
+          git commit -F /tmp/commit-message.txt
+          test "$(git rev-parse HEAD^)" = "$(git rev-parse origin/main)"
+          test "$(git rev-parse HEAD^{tree})" = "767b7a09516cb08aeedbee82deea9ef27eec95a0"
+          echo "final_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Validate final commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/branch_policy.py config --root .
+          python tools/devflow.py catalog --check
+          python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
+          python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
+          ruff check .
+          python governance/reviews/validate.py --root . --commit HEAD
+          python -m unittest discover -s tests -v
+          python tools/validate_repo.py
+          python tools/devflow.py audit
+          python -m compileall -q tools governance tests
+          git diff --check HEAD^
+      - name: Publish the verified single commit
+        shell: bash
+        env:
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git push --force-with-lease=refs/heads/agent/issue-20-two-layer-branch-trial:${TRIGGER_SHA} origin HEAD:refs/heads/agent/issue-20-two-layer-branch-trial

@@ -1,0 +1,32 @@
+name: Export Current Main
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    if: github.event.pull_request.head.ref == 'agent/issue-20-two-layer-branch-trial'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Package current main
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD > /tmp/current-main-sha.txt
+          git rev-parse HEAD^{tree} > /tmp/current-main-tree.txt
+          tar --exclude=.git -czf /tmp/current-main.tar.gz .
+          mkdir -p .export
+          cp /tmp/current-main.tar.gz /tmp/current-main-sha.txt /tmp/current-main-tree.txt .export/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: current-main-snapshot
+          path: .export/
+          retention-days: 1

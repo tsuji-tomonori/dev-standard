@@ -1,0 +1,40 @@
+🧭 feat(branches): 二層branch試行契約を実装する
+
+目的:
+- mainのsquash release履歴とdevの意味あるengineering commit履歴を両立し、release後の祖先関係を安全に回復できる管理された2 release試行を実装する。
+
+変更内容:
+- repository固有のbranch-policy正本とvalidatorを追加し、bootstrap、topic、release、hotfix、reconciliation、rollbackの方向・topology・証跡契約を検査する。
+- Governance workflowをintegration、evidence、branch-policyへ分離し、PR headとsynthetic merge結果、main/dev pushを別々に検証する。
+- REQ-REPO-001から003、ADR-0002、開発・commit・PR文書、branch graph回帰test、非移植性contractを追加する。
+- Issue参照、release時のclosing issue、hotfix conflict解消用reconcile branch、policy自己緩和防止を機械検査する。
+
+要件影響:
+- あり
+- 要件ID: REQ-REPO-001, REQ-REPO-002, REQ-REPO-003
+- 理由: branch役割、release reconciliation、2 cycle限定試行、恒久採用・rollback条件を将来も検証するproject / nonfunctional requirementとして追加する。
+
+設計影響:
+- あり
+- 対象: branch topology、GitHub Actions、review authority、release transaction、repository governance
+- 生成設計: 対象外
+- ADR: ADR-0002で採用理由、一般化しない境界、GitHub上の限界、代替案、昇格条件を記録する。
+
+チェックリスト:
+- governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+
+検証契約:
+- GitHub Actions: Governanceのintegration、evidence、branch-policy、verify
+- ローカル: branch-policy、specflow、review contract、reference repository contract、catalog/spec/standards drift、repository validation、audit、Python構文、git diff check
+- 結果の正本: GitHub Actionsの現在HEAD
+
+互換性・残存リスク:
+- bootstrap phaseでは既存main運用を維持し、dev作成、ruleset、required checks、PR #12移行、tree一致を確認するまでtrialを有効化しない。
+- GitHub required checksはcross-branchの原子的lockではなく、最終squash commit messageの検査はmain push後のauditになる。試行中は単一release operatorと明示freezeを必要とする。
+- 本契約はdev-standard固有であり、portable Skillsやdistribution profileの既定branchへは組み込まない。
+
+Branch-Policy-Bootstrap: true
+Requirements: REQ-REPO-001, REQ-REPO-002, REQ-REPO-003
+Design-Impact: mixed
+Review-Checklist: governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+Refs: #20
