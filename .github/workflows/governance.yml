@@ -25,6 +25,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Validate pre-commit configuration
+        run: pre-commit validate-config
+      - name: Run pre-commit checks
+        run: pre-commit run --all-files --show-diff-on-failure
       - run: python tools/devflow.py catalog --check
       - run: python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
       - run: python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
