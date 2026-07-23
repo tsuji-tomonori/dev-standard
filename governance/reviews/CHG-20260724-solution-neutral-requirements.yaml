@@ -81,7 +81,7 @@ selected_checks:
       - test:tests/test_skills.py
       - test:tests/test_specflow.py
       - workflow:Governance
-    note: 変更したPython testの構文とrepository全体の実行可能性をcompileall、unit test、Governance workflowで検査する
+    note: 変更したPython testの構文をcompileallで検査し、依存導入済みGitHub Actions Governanceで全unit testとrepository全体の実行可能性を確認する
   - id: FAST-003
     class: Invariant
     result: pass
