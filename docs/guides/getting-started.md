@@ -44,4 +44,6 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 | `retrospect-and-improve` | 重大失敗時の改善 |
 | `maintain-reference-repository` | この参照リポジトリ自身の保守 |
 
+各Skillが利用する査読研究、規格、公式ガイダンス、実装例、ローカル方針の区分と確認結果は[Skills根拠資料一覧・整合性監査](../reference/skill-evidence-audit.md)を参照してください。
+
 通常はSkill名を指定せず、実現したい結果を自然言語で依頼します。詳細な実行契約は[開発契約](../reference/development.md)を参照してください。

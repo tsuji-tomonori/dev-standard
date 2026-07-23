@@ -5,6 +5,7 @@
 - [導入とSkills一覧](guides/getting-started.md)
 - [開発契約](reference/development.md)
 - [コミットメッセージ契約](reference/commit-message.md)
+- [Skills根拠資料一覧・整合性監査](reference/skill-evidence-audit.md)
 
 ## 正本と生成物
 
