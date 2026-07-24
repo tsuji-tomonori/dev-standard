@@ -1,3 +1,4 @@
+# Temporary bootstrap workflow; removed by the final Issue #22 commit.
 name: Issue 22 source export
 
 on:
