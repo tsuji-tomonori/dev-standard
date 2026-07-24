@@ -1,0 +1,32 @@
+# Temporary bootstrap workflow; removed by the final Issue #22 commit.
+name: Issue 22 source export
+
+on:
+  push:
+    branches:
+      - agent/issue-22-e2e-benchmark
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+      - name: Package source tree
+        shell: bash
+        run: tar --exclude=.git -czf /tmp/dev-standard-source.tgz .
+      - name: Upload source tree
+        uses: actions/upload-artifact@v7
+        with:
+          name: issue22-source-export
+          path: /tmp/dev-standard-source.tgz
+          archive: false
+          retention-days: 1

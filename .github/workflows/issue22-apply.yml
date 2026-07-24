@@ -1,0 +1,13 @@
+name: Issue 22 apply certified tree
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  disabled-bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "payload update in progress"
