@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - agent/issue-22-e2e-benchmark
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -14,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 1
       - name: Package source tree
         shell: bash
