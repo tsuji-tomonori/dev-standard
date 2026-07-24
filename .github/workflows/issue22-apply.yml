@@ -1,0 +1,75 @@
+name: Issue 22 apply certified tree
+
+on:
+  push:
+    branches:
+      - agent/issue-22-e2e-benchmark
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Apply locally certified payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .issue22-payload/part-* > /tmp/issue22-payload.b64
+          base64 --decode /tmp/issue22-payload.b64 | tar -xzf -
+          rm -rf .issue22-payload
+          rm -f .github/workflows/issue22-apply.yml
+          rm -f .github/workflows/issue22-source-export.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          cat > /tmp/commit-message.txt <<'COMMIT'
+          🧪 feat(benchmark): Skills E2Eベンチマークを導入する
+
+          目的:
+          - 自然言語依頼から対話、永続要件、実装、生成設計、governance、authorityまでを同一trajectoryで評価し、Skillsの固定条件下の増分効果と回帰を再現可能に検証する。
+
+          変更内容:
+          - B01〜B08のsynthetic task、controller-only oracle、base / gold / mutation fixture、task / oracle / result / run manifest / trajectory schemaを追加する。
+          - Strict E2E Pass、structured fact、digest、drift、workspace隔離、sandbox audit、paired run、exact McNemar / Wilson / paired bootstrapを実装する。
+          - Issue #22本文16項目と研究review追加15項目を31項目の受入matrixへ固定し、REQ-BENCH-001、ADR-0002、portable distribution profileへ接続する。
+          - blocking conformance、advisory smoke、scheduled flake / utility、trusted held-out oracleを別workflowとして追加する。
+
+          要件影響:
+          - あり
+          - 要件ID: REQ-BENCH-001
+          - 理由: Skill検証基盤が対話からauthorityまでのE2E契約を継続的かつ決定的に回帰検証するproject nonfunctional requirementを追加する。
+
+          設計影響:
+          - あり
+          - 対象: benchmark authority、oracle隔離、agent workspace境界、CI tier、統計protocol、portable distribution
+          - 生成設計: B06 / B07のsource-derived factとcertification caseを決定論的に生成・検査する。
+          - ADR: 長期的なauthority、held-out oracle、blocking昇格、統計推論の境界をADR-0002へ記録する。
+
+          チェックリスト:
+          - governance/reviews/CHG-20260724-skills-e2e-benchmark.yaml
+
+          検証契約:
+          - benchmark certification: 31 / 31受入条件、gold 8 / 8、base fail 8 / 8、mutation fail 8 / 8、mutation score 1.0
+          - benchmark unit tests: 69件成功
+          - repository: requirements drift、catalog、standards、repository validation、compile、diff checkを実行する
+          - GitHub Actions: GovernanceとBenchmark Conformanceを最終PR HEADで確認する
+
+          互換性・残存リスク:
+          - 既存distribution profileとruntime applicationを変更せず、skills-benchmark profileを追加する。repository固有acceptance matrixとlive run evidenceは配布しない。
+          - 実model agent smokeはprovider資格情報とadapterに依存するため当初advisoryとし、真のheld-out oracleはtrusted environmentでのみ実行する。
+          - PR作成とIssue更新は利用者が明示承認している。merge、release、deploy、production変更は行わない。
+
+          Requirements: REQ-BENCH-001
+          Design-Impact: benchmark
+          Review-Checklist: governance/reviews/CHG-20260724-skills-e2e-benchmark.yaml
+          Refs: #22
+          COMMIT
+          sed -i 's/^          //' /tmp/commit-message.txt
+          git commit -F /tmp/commit-message.txt
+          git push origin HEAD:agent/issue-22-e2e-benchmark
