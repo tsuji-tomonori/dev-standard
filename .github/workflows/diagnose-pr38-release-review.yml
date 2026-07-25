@@ -51,7 +51,7 @@ jobs:
             --github-output /tmp/policy-output.txt
           review_path=$(awk -F= '$1=="review_path"{print $2}' /tmp/policy-output.txt)
           review_commit=$(awk -F= '$1=="review_commit"{print $2}' /tmp/policy-output.txt)
-          mkdir -p .diagnostic
+          mkdir -p diagnostic
           {
             echo "policy outputs:"
             cat /tmp/policy-output.txt
@@ -62,20 +62,20 @@ jobs:
             echo "head blob: $(git rev-parse "HEAD:${review_path}")"
             echo "source blob: $(git rev-parse "${review_commit}:${review_path}")"
             echo "review squash flag: $(python -c 'import yaml; print(yaml.safe_load(open("governance/reviews/CHG-20260724-two-layer-branch-trial.yaml"))["impact_flags"]["squash"])')"
-          } > .diagnostic/metadata.txt
+          } > diagnostic/metadata.txt
           set +e
           python governance/reviews/validate.py --root . \
             --review "${review_path}" \
             --source-commit "${review_commit}" \
-            --require-squash > .diagnostic/validation.log 2>&1
+            --require-squash > diagnostic/validation.log 2>&1
           status=$?
           set -e
-          echo "exit_status=${status}" >> .diagnostic/metadata.txt
-          cat .diagnostic/metadata.txt
-          cat .diagnostic/validation.log
+          echo "exit_status=${status}" >> diagnostic/metadata.txt
+          cat diagnostic/metadata.txt
+          cat diagnostic/validation.log
       - uses: actions/upload-artifact@v7
         with:
           name: pr38-release-review-diagnostic
-          path: .diagnostic/
+          path: diagnostic/
           archive: false
           retention-days: 1
