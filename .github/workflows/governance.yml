@@ -2,19 +2,19 @@ name: Governance
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
+    branches: [main, dev]
 
 permissions:
   contents: read
 
 jobs:
-  verify:
+  integration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
       - name: Secret scan
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7
@@ -33,8 +33,19 @@ jobs:
       - run: python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
       - run: python .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
       - run: ruff check .
-      - name: Validate adaptive review contract
-        run: python governance/reviews/validate.py --root . --commit HEAD
+      - name: Validate main Commit Comment
+        if: github.event_name == 'push' && github.ref_name == 'main'
+        shell: bash
+        run: |
+          validator="$RUNNER_TEMP/review-validate.py"
+          before="$(jq -r .before "$GITHUB_EVENT_PATH")"
+          if [[ "$before" != "0000000000000000000000000000000000000000" ]] \
+            && git cat-file -e "$before:governance/reviews/validate.py" 2>/dev/null; then
+            git show "$before:governance/reviews/validate.py" > "$validator"
+          else
+            cp governance/reviews/validate.py "$validator"
+          fi
+          python "$validator" --root . --commit HEAD
       - name: Run unit tests
         id: unit-tests
         shell: bash
@@ -71,3 +82,153 @@ jobs:
       - name: Run regulated audit
         if: success()
         run: python tools/devflow.py audit
+
+  evidence:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Fetch protected branch refs
+        shell: bash
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if git ls-remote --exit-code --heads origin dev >/dev/null 2>&1; then
+            git fetch --no-tags origin +refs/heads/dev:refs/remotes/origin/dev
+          fi
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Select governing validators
+        id: governing
+        shell: bash
+        run: |
+          base="$(jq -r .pull_request.base.sha "$GITHUB_EVENT_PATH")"
+          policy="$RUNNER_TEMP/branch-policy.py"
+          review="$RUNNER_TEMP/review-validate.py"
+          requirements="$RUNNER_TEMP/review-requirements.txt"
+          for item in \
+            "tools/branch_policy.py:$policy" \
+            "governance/reviews/validate.py:$review" \
+            "governance/reviews/requirements.txt:$requirements"; do
+            source="${item%%:*}"
+            target="${item#*:}"
+            if git cat-file -e "$base:$source" 2>/dev/null; then
+              git show "$base:$source" > "$target"
+            else
+              cp "$source" "$target"
+            fi
+          done
+          echo "policy=$policy" >> "$GITHUB_OUTPUT"
+          echo "review=$review" >> "$GITHUB_OUTPUT"
+          echo "requirements=$requirements" >> "$GITHUB_OUTPUT"
+      - run: pip install -r "${{ steps.governing.outputs.requirements }}"
+      - name: Validate PR head policy
+        id: policy
+        run: >-
+          python "${{ steps.governing.outputs.policy }}" --root . pull-request
+          --event-path "$GITHUB_EVENT_PATH"
+          --checkout head
+          --github-output "$GITHUB_OUTPUT"
+      - name: Validate topic Commit Comment and review
+        if: steps.policy.outputs.evidence_commit != ''
+        run: >-
+          python "${{ steps.governing.outputs.review }}" --root .
+          --commit "${{ steps.policy.outputs.evidence_commit }}"
+      - name: Validate release review
+        if: steps.policy.outputs.review_path != ''
+        run: >-
+          python "${{ steps.governing.outputs.review }}" --root .
+          --review "${{ steps.policy.outputs.review_path }}"
+          --source-commit "${{ steps.policy.outputs.review_commit }}"
+          --require-squash
+
+  branch-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Fetch protected branch refs
+        shell: bash
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if git ls-remote --exit-code --heads origin dev >/dev/null 2>&1; then
+            git fetch --no-tags origin +refs/heads/dev:refs/remotes/origin/dev
+          fi
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Select governing validators
+        id: governing
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            governing="$(jq -r .pull_request.base.sha "$GITHUB_EVENT_PATH")"
+          else
+            governing="$(jq -r .before "$GITHUB_EVENT_PATH")"
+          fi
+          policy="$RUNNER_TEMP/branch-policy.py"
+          review="$RUNNER_TEMP/review-validate.py"
+          requirements="$RUNNER_TEMP/review-requirements.txt"
+          for item in \
+            "tools/branch_policy.py:$policy" \
+            "governance/reviews/validate.py:$review" \
+            "governance/reviews/requirements.txt:$requirements"; do
+            source="${item%%:*}"
+            target="${item#*:}"
+            if [[ "$governing" != "0000000000000000000000000000000000000000" ]] \
+              && git cat-file -e "$governing:$source" 2>/dev/null; then
+              git show "$governing:$source" > "$target"
+            else
+              cp "$source" "$target"
+            fi
+          done
+          echo "policy=$policy" >> "$GITHUB_OUTPUT"
+          echo "review=$review" >> "$GITHUB_OUTPUT"
+          echo "requirements=$requirements" >> "$GITHUB_OUTPUT"
+      - run: pip install -r "${{ steps.governing.outputs.requirements }}"
+      - name: Validate branch topology and direction
+        id: policy
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            python "${{ steps.governing.outputs.policy }}" --root . pull-request \
+              --event-path "$GITHUB_EVENT_PATH" \
+              --checkout integration \
+              --github-output "$GITHUB_OUTPUT"
+          else
+            python "${{ steps.governing.outputs.policy }}" --root . push \
+              --event-path "$GITHUB_EVENT_PATH" \
+              --github-output "$GITHUB_OUTPUT"
+          fi
+      - name: Validate merged topic evidence
+        if: github.event_name == 'push' && steps.policy.outputs.kind == 'topic'
+        run: >-
+          python "${{ steps.governing.outputs.review }}" --root .
+          --commit "${{ steps.policy.outputs.evidence_commit }}"
+
+  verify:
+    if: always()
+    needs: [integration, evidence, branch-policy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preserve the bootstrap required-check context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INTEGRATION_RESULT: ${{ needs.integration.result }}
+          EVIDENCE_RESULT: ${{ needs.evidence.result }}
+          BRANCH_POLICY_RESULT: ${{ needs.branch-policy.result }}
+        shell: bash
+        run: |
+          [[ "$INTEGRATION_RESULT" == "success" ]]
+          [[ "$BRANCH_POLICY_RESULT" == "success" ]]
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            [[ "$EVIDENCE_RESULT" == "success" ]]
+          else
+            [[ "$EVIDENCE_RESULT" == "skipped" || "$EVIDENCE_RESULT" == "success" ]]
+          fi

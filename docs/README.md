@@ -6,6 +6,7 @@
 - [開発契約](reference/development.md)
 - [コミットメッセージ契約](reference/commit-message.md)
 - [Skills根拠資料一覧・整合性監査](reference/skill-evidence-audit.md)
+- [二層branch試行の判断](decisions/ADR-0002-two-layer-branch-history.md)
 
 ## 正本と生成物
 

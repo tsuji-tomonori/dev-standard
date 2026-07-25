@@ -1,0 +1,204 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260724-two-layer-branch-trial
+profile: assured
+source_ref: self
+completed_timings:
+- impact
+- implementation
+- pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: true
+  requirements_impact: true
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: true
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+selected_checks:
+- id: FAST-001
+  class: Invariant
+  result: pass
+  evidence:
+  - path:tools/branch_policy.py
+  - test:tests/test_branch_policy.py
+  - workflow:Governance
+  note: branch-policy validatorの構文とCLIをunit testおよびGovernanceで検査する
+- id: FAST-003
+  class: Invariant
+  result: pass
+  evidence:
+  - workflow:Governance
+  note: 変更したPythonとtestをGovernanceのruff check対象にする
+- id: FAST-004
+  class: Invariant
+  result: pass
+  evidence:
+  - test:tests/test_branch_policy.py
+  - test:tests/test_review_contract.py
+  - test:tests/test_reference_repository_contract.py
+  note: PR方向、synthetic merge、push topology、releaseとhotfix、review authority、非移植性を直接検証する
+- id: FAST-006
+  class: Invariant
+  result: pass
+  evidence:
+  - path:docs/requirements/REQUIREMENTS.md
+  - test:tests/test_specflow.py
+  - workflow:Governance
+  note: 要件正本から人向け表示を再生成し、specflow checkでdriftを拒否する
+- id: FAST-007
+  class: Invariant
+  result: pass
+  evidence:
+  - workflow:Governance
+  note: branch policy、event fixture、文書へcredential、token、PII、production dataを追加しない
+- id: FAST-015
+  class: Advisory
+  result: pass
+  evidence:
+  - path:docs/reference/development.md
+  - path:.github/workflows/governance.yml
+  - test:tests/test_branch_policy.py
+  note: release freeze、base／before側validator、push後audit、rollback、workflow自己統制とcross-branch lockの限界を運用契約へ反映した
+- id: IMP-001
+  class: Invariant
+  result: pass
+  evidence:
+  - path:spec/requirements/requirements.json
+  - path:docs/requirements/REQUIREMENTS.md
+  note: branch運用、release reconciliation、試行範囲をproject/nonfunctional requirementとして原子化した
+- id: IMP-002
+  class: Invariant
+  result: pass
+  evidence:
+  - path:docs/decisions/ADR-0002-two-layer-branch-history.md
+  - path:.github/branch-policy.json
+  note: branch topology、authority、GitHub上の限界、rollbackを長期判断として記録した
+- id: IMP-003
+  class: Invariant
+  result: pass
+  evidence:
+  - path:governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+  note: 要件、workflow、validator、branch graph test、文書に跨るgovernance変更のためassuredを選択した
+- id: IMP-004
+  class: Invariant
+  result: pass
+  evidence:
+  - commit:self
+  note: 利用者の依頼をbranch、commit、PR作成への外部書込み権限として扱い、mergeとruleset適用は実施しない
+- id: REV-001
+  class: Invariant
+  result: pass
+  evidence:
+  - commit:self
+  note: Issue
+- id: REV-002
+  class: Invariant
+  result: pass
+  evidence:
+  - commit:self
+  note: 最終Commit Commentへ目的、変更、要件・設計影響、review path、検証契約、互換性と残存riskを記録する
+- id: REV-003
+  class: Invariant
+  result: pass
+  evidence:
+  - path:spec/requirements/requirements.json
+  - path:docs/requirements/REQUIREMENTS.md
+  note: REQ-REPO-001から003を追加し、branch契約、reconciliation、試行範囲の受入条件へ実装とtestをtraceした
+- id: REV-004
+  class: Invariant
+  result: pass
+  evidence:
+  - path:docs/decisions/ADR-0002-two-layer-branch-history.md
+  - path:.github/branch-policy.json
+  note: machine-readable正本、authority、代替案、制約をADRとpolicyへ分離し、同じ現在状態の第二正本を作らない
+- id: REV-005
+  class: Risk-selected
+  result: pass
+  evidence:
+  - path:spec/requirements/requirements.json
+  - test:tests/test_branch_policy.py
+  - test:tests/test_reference_repository_contract.py
+  note: 各REQ-REPO要件をbranch validator、workflow、branch graph test、distribution境界へ接続した
+- id: REV-006
+  class: Invariant
+  result: pass
+  evidence:
+  - test:tests/test_branch_policy.py
+  - test:tests/test_review_contract.py
+  - test:tests/test_specflow.py
+  - workflow:Governance
+  note: 既出file差分の非再出現と詳細commitの到達可能性を区別し、PR headとsynthetic merge resultを別jobで検査する
+- id: REV-007
+  class: Invariant
+  result: pass
+  evidence:
+  - path:governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+  note: 今回選択したcheckだけをschema v2 review YAMLへ保存した
+- id: REV-008
+  class: Invariant
+  result: pass
+  evidence:
+  - path:governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+  note: selectorで選ばれないcheckを形式的なN/Aとして記録していない
+- id: REV-011
+  class: Risk-selected
+  result: pass
+  evidence:
+  - path:docs/decisions/ADR-0002-two-layer-branch-history.md
+  - path:docs/reference/development.md
+  - test:tests/test_reference_repository_contract.py
+  note: portable profileへ配布しない互換境界、2 release試行、恒久採用条件、rollbackを明示した
+- id: REV-014
+  class: Risk-selected
+  result: pass
+  evidence:
+  - path:docs/reference/development.md
+  - path:.github/workflows/governance.yml
+  - path:.github/branch-policy.json
+  note: release、hotfix、freeze、reconciliation、base／before側validator、policy不変条件、push audit、ruleset設定の恒久運用契約を更新した
+- id: REV-015
+  class: Advisory
+  result: pass
+  evidence:
+  - path:docs/decisions/ADR-0002-two-layer-branch-history.md
+  note: squashと詳細履歴を両立する理由、累積commit表示、GitHub上の限界、却下案、昇格条件をADRへ記録した
+advisories: []
+residual_risks:
+- GitHub rulesetはこのPRのrepository差分だけでは適用されないため、merge後にmainとdevへ設定し確認するまで試行を開始しない
+- 最終squash commitはmerge時に生成されるためPR required checkでは事前保証できず、main push auditは事後検出になる
+- required checkはcross-branchの原子的lockではないため、試行中は単一release operatorと明示freezeを維持する
+- pull_request workflow file自体は候補差分から実行され得るためtamper-proofではなく、workflow変更は単一operatorが差分とGitHub Actions由来checkを確認する
+- 詳細commitをdevから保持するため、次回release PRのcommit一覧には過去releaseの詳細commitが残り得る
+- GitHub Actionsの外部結果はPR公開後の現在HEADで確認する必要がある

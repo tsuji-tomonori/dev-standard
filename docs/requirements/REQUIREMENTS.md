@@ -1,7 +1,7 @@
 <!-- specflow.pyによる自動生成。spec/requirements/requirements.jsonを編集すること。 -->
 # dev-standard 要件一覧
 
-- カタログ版: 6
+- カタログ版: 7
 - 更新日: 2026-07-24
 - 正本: `spec/requirements/requirements.json`
 
@@ -53,6 +53,9 @@
 | `REQ-QUALITY-001` | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する** | 自動検査 |
 | `REQ-QUALITY-002` | 2 | 有効 | 品質 | 品質フローは、適用可能な証拠ベースのチェックリストによる成果物検証を**検証する** | 自動監査 |
 | `REQ-QUALITY-003` | 1 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する** | 自動テストと批判的レビュー |
+| `REQ-REPO-001` | 1 | 有効 | 制約 | dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分離したbranch別統合契約を**強制する** | CIとGitHub ruleset監査 |
+| `REQ-REPO-002` | 1 | 有効 | 運用 | release operatorとCIは、release前後のancestor関係、tip tree条件、freezeを含むreconciliation transactionを**維持する** | branch graph回帰テストとCI |
+| `REQ-REPO-003` | 1 | 有効 | 制約 | dev-standardの二層branch試行は、2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行を**制約する** | repository contract testと試行後review |
 | `REQ-SKILL-001` | 1 | 有効 | 制約 | right-size-executionは、Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約を**提供する** | 自動検査 |
 | `REQ-SKILL-002` | 1 | 有効 | 品質 | Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠を**検証する** | 自動benchmark |
 | `REQ-WORKBOOK-001` | 1 | 有効 | 運用 | チェックリスト生成フローは、実データ範囲だけを集計し決定的に再現できるレビュー用ワークブックを**生成する** | 自動検査と描画確認 |
@@ -661,6 +664,63 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 要求源: user:2026-07-18, SWEBOK Software Quality
 検証証跡: 原子性回帰テストとチェック項目カタログ
 トレース: 設計=docs/GOVERNANCE.md; 実装=update_checklist.py,.agents/skills/verify-against-engineering-standards/SKILL.md; テスト=tests/test_checklist.py; 参照資料=SWEBOK-V4A
+
+## REQ-REPO-001: mainとdevの役割および統合方式
+
+dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分離したbranch別統合契約を**強制する**。
+
+根拠: 利用者向けrelease履歴と到達可能なengineering履歴のauthorityを案件ごとのmerge判断に依存させないため。
+
+分類: `project` / `nonfunctional`
+
+受入条件:
+- `AC-REPO-001-1` 前提: trial phaseでmainまたはdevをbaseとするPull Requestがある。条件: branch-policy checkを実行する。期待結果: mainはrepositoryのdevまたはhotfixだけをsquashで受け入れ、devはtopic、main、またはhotfix競合を解消したreconcile branchだけをmerge commitで受け入れ、その他の方向を拒否する。
+- `AC-REPO-001-2` 前提: mainまたはdevへpushがある。条件: push auditとGitHub rulesetを評価する。期待結果: mainのlinear historyとdevの一回一merge commit更新を監査し、削除またはforce pushを許可しない。
+- `AC-REPO-001-3` 前提: branch policyがbootstrap phaseであり、dev、ruleset、required checks、PR移行、operator確認が完了している。条件: trial phaseへ移行する。期待結果: mainへのactivation PRでpolicyと対応するactive review YAMLだけを変更し、全Activation-Checkを一度ずつ記録した後、bootstrap reconciliationで同じpolicyとreviewをdevへ伝播する。
+
+要求源: user:2026-07-24, issue:#20, docs/decisions/ADR-0002-two-layer-branch-history.md
+検証証跡: branch方向、merge parent、commit subject、protected branch設定のCI結果
+トレース: 設計=docs/decisions/ADR-0002-two-layer-branch-history.md,docs/reference/development.md; 実装=.github/branch-policy.json,.github/workflows/governance.yml,tools/branch_policy.py; テスト=tests/test_branch_policy.py,tests/test_reference_repository_contract.py; 参照資料=—
+
+## REQ-REPO-002: release後の祖先関係とtreeを回復するreconciliation契約
+
+release operatorとCIは、release前後のancestor関係、tip tree条件、freezeを含むreconciliation transactionを**維持する**。
+
+根拠: squashで記録されない祖先関係を回復し、既出file差分とconflictの再評価を防ぎながら詳細commitを保持するため。
+
+分類: `project` / `nonfunctional`
+
+受入条件:
+- `AC-REPO-002-1` 前提: devからmainへ通常releaseをsquash mergeした。条件: release reconciliationを完了する。期待結果: 次のtopic統合前にmainをdevへmergeし、mainがdevの祖先であり両tip treeが一致する。
+- `AC-REPO-002-2` 前提: mainへhotfixをsquash mergeしdevに未release変更がある。条件: hotfix reconciliationを完了する。期待結果: conflict-freeならmainをdevへ直接mergeし、mainをdevの祖先にするが両tip treeの一致は要求しない。
+- `AC-REPO-002-3` 前提: 通常releaseとreconciliationを2回行う。条件: branch graph回帰testを実行する。期待結果: 前回release済みfile差分が次回release diffへ再出現せず、詳細commitはdevから到達可能なまま残る。
+- `AC-REPO-002-4` 前提: hotfix後のmainをdevへ直接mergeするとconflictする。条件: hotfix conflict reconciliationを完了する。期待結果: freeze中のdevからreconcile branchを作り、prior devとcurrent mainをparentに持つ解消mergeをdevへ統合し、outer merge treeとhotfix変更pathを保持してours相当の破棄を拒否する。
+
+要求源: user:2026-07-24, issue:#20, Git FAQ: long-running squash merge, docs/decisions/ADR-0002-two-layer-branch-history.md
+検証証跡: 一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert
+トレース: 設計=docs/decisions/ADR-0002-two-layer-branch-history.md,docs/reference/development.md; 実装=.github/branch-policy.json,.github/workflows/governance.yml,tools/branch_policy.py; テスト=tests/test_branch_policy.py; 参照資料=—
+
+## REQ-REPO-003: 試行範囲、非移植性、rollback
+
+dev-standardの二層branch試行は、2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行を**制約する**。
+
+根拠: 長寿命devは一般解ではなく、追加操作とGitHub上の非原子的なlock制約を受容できるrepositoryだけで評価すべきため。
+
+分類: `project` / `nonfunctional`
+
+受入条件:
+- `AC-REPO-003-1` 前提: 二層branch契約のassetを配布profileへ追加しようとする。条件: distribution contractを検査する。期待結果: dev-standard固有のbranch policyとvalidatorをportable profileへ含めず、導入先の既定branch戦略を変更しない。
+- `AC-REPO-003-2` 前提: 2回のrelease試行が完了していない、または昇格条件を満たさない。条件: 試行結果を判断する。期待結果: 恒久採用と一般化を行わず、必要時はdevへの新規統合を停止して同期済み状態で凍結する。
+- `AC-REPO-003-3` 前提: GitHub Actionsでmainとdevの状態を検査する。条件: authority boundaryを確認する。期待結果: required checkを原子的なcross-branch lockとは表明せず、単一operatorと明示freezeの限界を文書化する。
+- `AC-REPO-003-4` 前提: branch policyがbootstrap phaseである。条件: 二層branch試行を開始する。期待結果: activation前にtopic mergeを拒否してbranch graph回帰testと外部GitHub設定を確認し、policyとactive reviewを両branchへ伝播した後の最初の小変更を1回目の管理されたdry runとして扱う。
+- `AC-REPO-003-5` 前提: 二層branch試行を停止する。条件: rollback transactionを完了する。期待結果: policyと対応するactive review YAMLだけを変更するrollback hotfixをmainへsquashし、hotfix reconciliationでdevへ伝播した後にbootstrapで新規topic統合と通常releaseを停止する。
+- `AC-REPO-003-6` 前提: branch policyまたはreview validatorを変更するPull Requestまたはprotected branch pushがある。条件: Governanceのevidenceまたはbranch-policy jobを実行する。期待結果: 利用可能な場合はPR baseまたはpush before側のvalidatorとdependencyで候補treeを検査し、候補validatorだけの自己緩和を当該判定へ使用しない。
+- `AC-REPO-003-7` 前提: Governance workflowを変更するPull Requestがある。条件: CIの自己統制境界を評価する。期待結果: workflow file自体をimmutableまたはtamper-proofとは表明せず、required checkのGitHub Actions由来sourceとworkflow差分を単一operatorが確認する。
+- `AC-REPO-003-8` 前提: 既存の二層branch policyを変更するPull Requestまたはprotected branch pushがある。条件: baseまたはbefore側policyと候補policyを比較する。期待結果: 2回の管理された試行中はtrial.phase以外のmachine contract変更を拒否し、契約変更は試行停止後の別判断として扱う。
+
+要求源: user:2026-07-24, issue:#20, docs/decisions/ADR-0002-two-layer-branch-history.md
+検証証跡: trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト
+トレース: 設計=docs/decisions/ADR-0002-two-layer-branch-history.md; 実装=.github/branch-policy.json,.github/workflows/governance.yml,distribution/manifest.json,tools/branch_policy.py; テスト=tests/test_reference_repository_contract.py,tests/test_branch_policy.py; 参照資料=—
 
 ## REQ-SKILL-001: right-size-executionのSkill境界
 

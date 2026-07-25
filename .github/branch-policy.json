@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "repository": "tsuji-tomonori/dev-standard",
+  "trial": {
+    "issue": 20,
+    "phase": "bootstrap",
+    "release_cycles": 2,
+    "portable_default": false,
+    "single_release_operator": true,
+    "atomic_cross_branch_lock": false,
+    "activation_requirements": [
+      "dev-created-from-current-main",
+      "main-and-dev-rulesets-configured",
+      "required-checks-configured",
+      "squash-message-title-and-description",
+      "open-pr-12-migrated",
+      "dev-tree-equals-main-before-activation",
+      "branch-graph-regression-passed",
+      "single-release-operator-confirmed"
+    ]
+  },
+  "branches": {
+    "main": {
+      "merge_method": "squash",
+      "linear_history": true,
+      "require_pull_request": true,
+      "required_checks": [
+        "integration",
+        "evidence",
+        "branch-policy"
+      ],
+      "allow_deletion": false,
+      "allow_force_push": false
+    },
+    "dev": {
+      "merge_method": "merge",
+      "linear_history": false,
+      "require_pull_request": true,
+      "required_checks": [
+        "integration",
+        "evidence",
+        "branch-policy"
+      ],
+      "allow_deletion": false,
+      "allow_force_push": false
+    }
+  },
+  "pull_requests": {
+    "bootstrap_marker": "Branch-Policy-Bootstrap",
+    "activation_marker": "Trial-Activation",
+    "activation_check_marker": "Activation-Check",
+    "rollback_marker": "Trial-Rollback",
+    "release_type_marker": "Release-Type",
+    "release_review_marker": "Release-Review",
+    "included_prs_marker": "Included-PRs",
+    "reconciliation_type_marker": "Reconciliation-Type",
+    "source_pr_marker": "Source-PR",
+    "topic_prefixes": [
+      "agent/",
+      "feature/",
+      "fix/",
+      "refactor/",
+      "perf/",
+      "docs/",
+      "test/",
+      "build/",
+      "ci/",
+      "chore/",
+      "topic/"
+    ],
+    "hotfix_prefixes": [
+      "hotfix/"
+    ],
+    "reconciliation_prefixes": [
+      "reconcile/"
+    ],
+    "issue_reference_pattern": "(?i)^\\s*(?:[-*]\\s*)?Refs(?::|\\s)\\s*#\\d+(?:\\s*,\\s*#\\d+)*\\s*$",
+    "release_required_headings": [
+      "## 含まれるPR",
+      "## 要件・設計影響",
+      "## 互換性・rollback",
+      "## 残存リスク"
+    ],
+    "closing_issue_pattern": "(?i)\\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\\s+#\\d+"
+  },
+  "commit_subject": {
+    "conventional_pattern": "^(?P<gitmoji>\\S+)\\s+[a-z]+(?:\\([^)]+\\))?!?:\\s+.+$",
+    "japanese_pattern": "[ぁ-んァ-ヶ一-龠々]",
+    "forbidden_patterns": [
+      "(?i)^fixup!",
+      "(?i)^squash!",
+      "(?i):\\s*(?:WIP|tmp|temp|checkpoint)(?:[:\\s]|$)",
+      "^🚧(?:️)?(?:\\s|$)"
+    ]
+  }
+}

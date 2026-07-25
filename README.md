@@ -42,6 +42,7 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 - [導入とSkills一覧](docs/guides/getting-started.md)
 - [開発契約](docs/reference/development.md)
 - [コミットメッセージ契約](docs/reference/commit-message.md)
+- [二層branch履歴の管理された試行](docs/decisions/ADR-0002-two-layer-branch-history.md)
 - [要件分類標準](docs/standards/REQUIREMENT-CLASSIFICATION.md)
 - [as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)
 - [文書索引](docs/README.md)

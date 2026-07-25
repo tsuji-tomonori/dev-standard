@@ -164,9 +164,40 @@ def validate_repo(failures: list[str]) -> None:
     except json.JSONDecodeError as exc:
         fail(f".codex/hooks.json invalid: {exc}", failures)
 
-    for path in ["AGENTS.md", "README.md", ".github/workflows/governance.yml"]:
+    for path in [
+        "AGENTS.md",
+        "README.md",
+        ".github/workflows/governance.yml",
+        ".github/branch-policy.json",
+        "tools/branch_policy.py",
+    ]:
         if not (ROOT / path).is_file():
             fail(f"required repository file missing: {path}", failures)
+
+    workflow_text = (ROOT / ".github" / "workflows" / "governance.yml").read_text(encoding="utf-8")
+    for required in [
+        "branches: [main, dev]",
+        "  integration:",
+        "  evidence:",
+        "  branch-policy:",
+        "  verify:",
+        "needs: [integration, evidence, branch-policy]",
+        "tools/branch_policy.py",
+        "github.event.pull_request.head.sha",
+        'git show "$base:$source"',
+        'git show "$governing:$source"',
+        '"$before:governance/reviews/validate.py"',
+    ]:
+        if required not in workflow_text:
+            fail(f"governance workflow missing branch contract: {required}", failures)
+
+    branch_policy = json.loads((ROOT / ".github" / "branch-policy.json").read_text(encoding="utf-8"))
+    if branch_policy.get("trial", {}).get("portable_default") is not False:
+        fail("two-layer branch trial must not be a portable default", failures)
+    if branch_policy.get("trial", {}).get("atomic_cross_branch_lock") is not False:
+        fail("branch policy must not claim an atomic cross-branch lock", failures)
+    if branch_policy.get("pull_requests", {}).get("reconciliation_prefixes") != ["reconcile/"]:
+        fail("hotfix conflict reconciliation must use the repository-specific reconcile/ prefix", failures)
 
     root_markdown = {path.name for path in ROOT.glob("*.md")}
     if root_markdown != {"README.md", "AGENTS.md"}:
@@ -259,6 +290,13 @@ def validate_repo(failures: list[str]) -> None:
             for removed in ["docs/ARTIFACTS-AND-CHECKS.md", "docs/COMMIT-COMMENT.md"]:
                 if removed in sources:
                     fail(f"{profile} profile contains removed documentation: {removed}", failures)
+        repository_only = {".github/branch-policy.json", "tools/branch_policy.py"}
+        for profile, entries in manifest["profiles"].items():
+            sources = {entry["source"] for entry in entries}
+            leaked = sorted(repository_only & sources)
+            if leaked:
+                fail(f"{profile} profile leaks repository branch policy: {leaked}", failures)
+
         scope_skill = ROOT / ".agents" / "skills" / "right-size-execution"
         for path in [
             "assets/execution-policy.json",
@@ -348,6 +386,16 @@ def validate_repo(failures: list[str]) -> None:
                 sys.executable,
                 str(ROOT / ".agents/skills/right-size-execution/scripts/executionflow.py"),
                 "benchmark",
+            ],
+        ),
+        (
+            "branch policy",
+            [
+                sys.executable,
+                str(ROOT / "tools/branch_policy.py"),
+                "--root",
+                str(ROOT),
+                "config",
             ],
         ),
     ]:
