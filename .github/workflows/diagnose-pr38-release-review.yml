@@ -1,0 +1,81 @@
+name: Diagnose PR38 Release Review
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    if: github.event.pull_request.head.ref == 'agent/diagnose-pr38-release-review'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - name: Reproduce PR 38 release review
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main +refs/heads/dev:refs/remotes/origin/dev
+          cat > /tmp/pr38-event.json <<'JSON'
+          {
+            "pull_request": {
+              "base": {
+                "ref": "main",
+                "sha": "8174ec455e7062e5a7eb45f91d2fba60aafc7fcb",
+                "repo": {"full_name": "tsuji-tomonori/dev-standard"}
+              },
+              "head": {
+                "ref": "dev",
+                "sha": "dd86cdaa66738c5e18dd0fd3269c90522380313b",
+                "repo": {"full_name": "tsuji-tomonori/dev-standard"}
+              },
+              "body": "## 含まれるPR\n\n- #37\n\n## 要件・設計影響\n\n- REQ-REPO-001〜003\n\n## 互換性・rollback\n\n- bootstrap\n\n## 残存リスク\n\n- cross-branch lock\n\nBranch-Policy-Bootstrap: true\nRelease-Type: bootstrap\nRelease-Review: governance/reviews/CHG-20260724-two-layer-branch-trial.yaml\nIncluded-PRs: #37\nReview-Checklist: governance/reviews/CHG-20260724-two-layer-branch-trial.yaml\n\nRefs #20"
+            }
+          }
+          JSON
+          git reset --hard dd86cdaa66738c5e18dd0fd3269c90522380313b
+          python tools/branch_policy.py --root . pull-request \
+            --event-path /tmp/pr38-event.json \
+            --checkout head \
+            --github-output /tmp/policy-output.txt
+          review_path=$(awk -F= '$1=="review_path"{print $2}' /tmp/policy-output.txt)
+          review_commit=$(awk -F= '$1=="review_commit"{print $2}' /tmp/policy-output.txt)
+          mkdir -p .diagnostic
+          {
+            echo "policy outputs:"
+            cat /tmp/policy-output.txt
+            echo "head parents: $(git show -s --format=%P HEAD)"
+            echo "review path: ${review_path}"
+            echo "review commit: ${review_commit}"
+            echo "working blob: $(git hash-object "${review_path}")"
+            echo "head blob: $(git rev-parse "HEAD:${review_path}")"
+            echo "source blob: $(git rev-parse "${review_commit}:${review_path}")"
+            echo "review squash flag: $(python -c 'import yaml; print(yaml.safe_load(open("governance/reviews/CHG-20260724-two-layer-branch-trial.yaml"))["impact_flags"]["squash"])')"
+          } > .diagnostic/metadata.txt
+          set +e
+          python governance/reviews/validate.py --root . \
+            --review "${review_path}" \
+            --source-commit "${review_commit}" \
+            --require-squash > .diagnostic/validation.log 2>&1
+          status=$?
+          set -e
+          echo "exit_status=${status}" >> .diagnostic/metadata.txt
+          cat .diagnostic/metadata.txt
+          cat .diagnostic/validation.log
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pr38-release-review-diagnostic
+          path: .diagnostic/
+          archive: false
+          retention-days: 1
