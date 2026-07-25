@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
-      TARGET_SHA: fda467d5703f97a5dd7d78d1fd8608586382efdc
+      TARGET_SHA: 2a4d15171418a0e43971f046716ce917b3ee0644
     steps:
       - name: Observe main push Governance
         shell: bash
