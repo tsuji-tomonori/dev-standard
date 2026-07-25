@@ -78,7 +78,9 @@ jobs:
           - branch-policy: \`${branch_policy}\`
           - verify: \`${verify}\`
           EOF
-          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/result.md
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --body-file /tmp/result.md
 
           [[ "$conclusion" == "success" ]]
           [[ "$integration" == "success" ]]
