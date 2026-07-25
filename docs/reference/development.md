@@ -31,9 +31,11 @@
 
 ### 試行開始前のbootstrap
 
-本契約の導入PRは`main`をbaseとし、`Branch-Policy-Bootstrap: true`と`Refs #20`を記録します。導入直後は`.github/branch-policy.json`の`trial.phase`を`bootstrap`に保ち、通常の`dev → main` releaseを許可しません。次を完了してからtrialへ移行します。
+既存`dev`がcurrent `main`を祖先に持ち、両tip treeが一致し、まだbranch policyを含まない場合、初回導入PRは`dev`をbaseにできます。PR bodyへ`Branch-Policy-Bootstrap: true`と`Refs #20`を記録し、merge commitで統合します。統合後CIが成功したら、`Release-Type: bootstrap`、`Release-Review`、`Included-PRs`、必須4見出し、`Refs #20`を持つ`dev → main` PRを作成します。bootstrap releaseはIssueをcloseせず、2回の通常release試行にも数えません。`dev`が存在しない場合は導入PRを先に`main`へsquashし、そのcommitから`dev`を作成します。
 
-1. 導入時点の`main` commitから`dev`を作成し、両tip treeが一致することを確認する。
+導入直後は`.github/branch-policy.json`の`trial.phase`を`bootstrap`に保ち、通常の`dev → main` releaseを許可しません。次を完了してからtrialへ移行します。
+
+1. `dev`が存在しない場合は導入時点の`main` commitから作成する。既存`dev`を使う場合は、初回導入前に`main → dev`をreconciliationし、両tip treeが一致することを確認する。
 2. `main`と`dev`へ別々のrulesetを設定し、required checksを`integration`、`evidence`、`branch-policy`へ揃える。
 3. squash messageの既定値をPR titleとdescriptionにし、削除・force push・rebase mergeを禁止する。
 4. open PR #12を現在の`dev`へrebaseまたは再作成してretargetする。
@@ -41,7 +43,7 @@
 6. `.github/branch-policy.json`の`phase`を`trial`へ変更し、対応するactive review YAMLも同じcommitで更新するactivation PRを`main`へ作成する。PR bodyへ`Branch-Policy-Bootstrap: true`、`Trial-Activation: true`、全`Activation-Check`、`Refs #20`を記録する。
 7. activation squash commitを`main → dev`へmerge commitで同期する。PR bodyは`Reconciliation-Type: bootstrap`と`Source-PR`を持ち、このreconciliationではactivation policyとそのactive review以外の新しい変更を混在させない。
 
-activationが`main`だけへ入り`dev`がbootstrapのまま残る状態では、topic統合と通常releaseを開始しません。bootstrap中のtopic PRは作成・retargetできてもrequired checkでmergeを拒否します。bootstrap中に`main`へ補正commitが入った場合は、`Reconciliation-Type: bootstrap`で`dev`へ同期し、両tip treeを一致させます。policyとactive reviewが両branchで一致し、`main`が`dev`の祖先になった後だけ試行を開始します。Governance workflowは利用可能な場合にPR baseまたはpush before側からbranch-policy validator、review validator、validator dependencyを取り出して候補treeを検査します。これにより、候補validatorだけを弱める変更は当該PRまたはpushの判定へ使われません。最初の導入PRではbaseにbranch-policy validatorがないためcandidate版へfallbackします。activation後の最初の小さなtopic変更を1回目のrelease dry runとし、`dry-run-completed`をactivation前提にはしません。
+初回のbranch policy導入PRだけは、同期済みでpolicy未導入の`dev`へmergeできます。それ以外のbootstrap中topic PRと通常releaseはrequired checkで拒否します。dev-firstのbootstrap releaseを`main`へsquashした後、およびbootstrap中に`main`へ補正commitが入った場合は、`Reconciliation-Type: bootstrap`で`dev`へ同期し、両tip treeを一致させます。activationが`main`だけへ入り`dev`がbootstrapのまま残る状態でもtopic統合と通常releaseを開始しません。policyとactive reviewが両branchで一致し、`main`が`dev`の祖先になった後だけ試行を開始します。Governance workflowは利用可能な場合にPR baseまたはpush before側からbranch-policy validator、review validator、validator dependencyを取り出して候補treeを検査します。これにより、候補validatorだけを弱める変更は当該PRまたはpushの判定へ使われません。最初の導入PRではbaseにbranch-policy validatorがないためcandidate版へfallbackします。activation後の最初の小さなtopic変更を1回目のrelease dry runとし、`dry-run-completed`をactivation前提にはしません。
 
 ### branchの役割
 

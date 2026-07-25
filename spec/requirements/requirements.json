@@ -2065,6 +2065,12 @@
           "id": "AC-REPO-001-3",
           "then": "mainへのactivation PRでpolicyと対応するactive review YAMLだけを変更し、全Activation-Checkを一度ずつ記録した後、bootstrap reconciliationで同じpolicyとreviewをdevへ伝播する",
           "when": "trial phaseへ移行する"
+        },
+        {
+          "given": "既存devがcurrent mainを祖先に持ち、両tip treeが一致し、まだbranch policyを含まない",
+          "id": "AC-REPO-001-4",
+          "then": "Issue #20を参照する初回bootstrap PRだけをdevへmerge commitで統合し、同じtreeをRelease-Type bootstrapのdevからmainへのsquashで導入できるが、Issueをcloseせず2回の通常releaseへ数えない",
+          "when": "二層branch契約をdev-firstでbootstrap導入する"
         }
       ],
       "action": "enforce",
@@ -2193,7 +2199,7 @@
         {
           "given": "branch policyがbootstrap phaseである",
           "id": "AC-REPO-003-4",
-          "then": "activation前にtopic mergeを拒否してbranch graph回帰testと外部GitHub設定を確認し、policyとactive reviewを両branchへ伝播した後の最初の小変更を1回目の管理されたdry runとして扱う",
+          "then": "activation前に初回bootstrap導入以外のtopic mergeを拒否してbranch graph回帰testと外部GitHub設定を確認し、policyとactive reviewを両branchへ伝播した後の最初の小変更を1回目の管理されたdry runとして扱う",
           "when": "二層branch試行を開始する"
         },
         {

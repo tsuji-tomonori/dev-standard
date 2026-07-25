@@ -20,7 +20,9 @@ machine-readableな正本は`.github/branch-policy.json`とし、`tools/branch_p
 
 ### 導入phaseと有効化
 
-導入commitでは`trial.phase`を`bootstrap`とする。bootstrap中は本Issueの導入・有効化PRだけを`main`へ許可し、`dev → main`の通常releaseは拒否する。これにより、`dev`作成、ruleset、required checks、squash message設定、open PR #12移行より先に運用が切り替わることを防ぐ。bootstrap中はtopic mergeと通常releaseを拒否し、`main`へ補正commitが入った場合だけ`Reconciliation-Type: bootstrap`で`dev`へ同期する。
+導入commitでは`trial.phase`を`bootstrap`とする。bootstrap中は通常topicと通常releaseを拒否するが、既存`dev`がcurrent `main`を祖先に持ち、両tip treeが一致し、まだbranch policyを含まない場合に限り、`Branch-Policy-Bootstrap: true`と`Refs #20`を持つ初回導入PRを`dev`へmerge commitで統合できる。その後、`Release-Type: bootstrap`、`Release-Review`、`Included-PRs`、必須4見出し、`Refs #20`を持つ`dev → main` PRで同じtreeをsquashする。このbootstrap releaseは2回の通常release試行には数えず、Issueをcloseしない。
+
+`dev`が存在しないrepositoryでは、従来どおり導入PRを先に`main`へsquashし、そのcommitから`dev`を作成できる。いずれの経路でも、ruleset、required checks、squash message設定、open PR #12移行、tree一致を確認する前に`trial`へ移行しない。bootstrap中に`main`へ補正commitが入った場合は、`Reconciliation-Type: bootstrap`で`dev`へ同期する。
 
 trialを有効化する前に、`.github/branch-policy.json`の`activation_requirements`をすべて確認する。有効化PRは`main`をbaseとし、次を満たす。
 
@@ -28,7 +30,7 @@ trialを有効化する前に、`.github/branch-policy.json`の`activation_requi
 - PR bodyと最終commitへ`Trial-Activation: true`と各`Activation-Check: <requirement>`を一度ずつ記録する。
 - 利用可能な場合はbase側のbranch-policy validator、review validator、dependencyで候補treeを検査し、変更後validatorだけを弱めても当該PRの判定へ使わない。初回導入はbaseにvalidatorがないためcandidate版へfallbackする。
 
-有効化commitを`main`へsquashした後、`Reconciliation-Type: bootstrap`の`main → dev` PRでpolicyとactive reviewをmerge commitとして伝播する。このreconciliationはmerge resultのtreeがactivated `main`と一致する場合だけ許可する。最初の小さなtopic／release／reconciliationを1回目の管理されたdry runとして扱い、その後に2回目のrelease cycleを行う。
+dev-firstで導入した場合はbootstrap releaseを`main`へsquashした直後に、`Reconciliation-Type: bootstrap`の`main → dev` PRでsquash commitをancestorへ戻す。続いて有効化commitを`main`へsquashした後も、同じreconciliation種別でpolicyとactive reviewをmerge commitとして伝播する。各reconciliationはmerge resultのtreeがsource `main`と一致する場合だけ許可する。最初の小さなtopic／regular release／reconciliationを1回目の管理されたdry runとして扱い、その後に2回目のrelease cycleを行う。
 
 ### branchの役割
 

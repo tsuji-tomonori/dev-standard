@@ -8,6 +8,7 @@ completed_timings:
 - impact
 - implementation
 - pre-pr
+- pre-merge
 impact_flags:
   external_write: true
   irreversible_operation: false
@@ -90,7 +91,8 @@ selected_checks:
   - path:docs/reference/development.md
   - path:.github/workflows/governance.yml
   - test:tests/test_branch_policy.py
-  note: release freeze、base／before側validator、push後audit、rollback、workflow自己統制とcross-branch lockの限界を運用契約へ反映した
+  note: release freeze、base／before側validator、push後audit、rollback、workflow自己統制とcross-branch
+    lockの限界を運用契約へ反映した
 - id: IMP-001
   class: Invariant
   result: pass
@@ -116,7 +118,8 @@ selected_checks:
   result: pass
   evidence:
   - commit:self
-  note: 利用者の依頼をbranch、commit、PR作成への外部書込み権限として扱い、mergeとruleset適用は実施しない
+  note: 利用者の明示依頼に基づきreconciliationと初回bootstrap PRをdevへmergeし、CI成功後にdevからmainへのbootstrap
+    PRを作成する。main merge、ruleset適用、trial activationは行わない
 - id: REV-001
   class: Invariant
   result: pass
@@ -187,18 +190,54 @@ selected_checks:
   - path:docs/reference/development.md
   - path:.github/workflows/governance.yml
   - path:.github/branch-policy.json
-  note: release、hotfix、freeze、reconciliation、base／before側validator、policy不変条件、push audit、ruleset設定の恒久運用契約を更新した
+  note: release、hotfix、freeze、reconciliation、base／before側validator、policy不変条件、push
+    audit、ruleset設定の恒久運用契約を更新した
 - id: REV-015
   class: Advisory
   result: pass
   evidence:
   - path:docs/decisions/ADR-0002-two-layer-branch-history.md
   note: squashと詳細履歴を両立する理由、累積commit表示、GitHub上の限界、却下案、昇格条件をADRへ記録した
+- id: MRG-001
+  class: Invariant
+  result: pass
+  evidence:
+  - workflow:Governance
+  note: dev向けbootstrap PRの最新HEADでintegration、evidence、branch-policy、verifyの全blocking
+    job成功を確認してからmergeする
+- id: MRG-002
+  class: Invariant
+  result: pass
+  evidence:
+  - path:spec/requirements/requirements.json
+  - path:docs/requirements/REQUIREMENTS.md
+  - workflow:Governance
+  note: REQ-REPO更新後の人向け要件を再生成し、specflow checkで正本とのbyte driftがないことを確認する
+- id: MRG-003
+  class: Invariant
+  result: pass
+  evidence:
+  - path:governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+  note: selected checkに未解決blocking failを残さず、CI失敗はdev merge前に修正する
+- id: MRG-005
+  class: Invariant
+  result: pass
+  evidence:
+  - commit:self
+  note: bootstrap topic commitに目的、要件・設計影響、review path、検証契約、残存risk、Issue参照を保持する
+- id: MRG-007
+  class: Invariant
+  result: pass
+  evidence:
+  - commit:self
+  - path:governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
+  note: dev-first bootstrap例外、main merge非実施、rulesetとtrial activationの残作業を確定し、unknownまたはTBDを残していない
 advisories: []
 residual_risks:
 - GitHub rulesetはこのPRのrepository差分だけでは適用されないため、merge後にmainとdevへ設定し確認するまで試行を開始しない
 - 最終squash commitはmerge時に生成されるためPR required checkでは事前保証できず、main push auditは事後検出になる
 - required checkはcross-branchの原子的lockではないため、試行中は単一release operatorと明示freezeを維持する
-- pull_request workflow file自体は候補差分から実行され得るためtamper-proofではなく、workflow変更は単一operatorが差分とGitHub Actions由来checkを確認する
+- pull_request workflow file自体は候補差分から実行され得るためtamper-proofではなく、workflow変更は単一operatorが差分とGitHub
+  Actions由来checkを確認する
 - 詳細commitをdevから保持するため、次回release PRのcommit一覧には過去releaseの詳細commitが残り得る
 - GitHub Actionsの外部結果はPR公開後の現在HEADで確認する必要がある

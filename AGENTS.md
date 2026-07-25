@@ -20,7 +20,9 @@ feature、fix、refactor、設計相談は`$chat-first-development`を入口に�
 
 ## 二層branch試行
 
-このrepository自身はIssue #20の2 release試行として、`main`を利用者向けrelease履歴、`dev`を未release統合先とengineering historyに使用する。導入直後は`bootstrap` phaseであり、`.github/branch-policy.json`のactivation requirementsと外部GitHub設定を満たすまで`dev → main` releaseを開始しない。activation PRはpolicy phaseと対応するactive reviewだけを変更し、全`Activation-Check`を記録し、`Reconciliation-Type: bootstrap`で`dev`へ伝播する。bootstrap中はtopic mergeと通常releaseを拒否し、`main`への補正は同じreconciliation種別で同期する。
+このrepository自身はIssue #20の2 release試行として、`main`を利用者向けrelease履歴、`dev`を未release統合先とengineering historyに使用する。導入直後は`bootstrap` phaseであり、同期済みでpolicy未導入の既存`dev`へは初回bootstrap導入PRだけをmergeできる。続く`Release-Type: bootstrap`の`dev → main`はIssueをcloseせず、通常release回数へ数えない。mainへsquashした後は`Reconciliation-Type: bootstrap`でdevへ同期する。
+
+`.github/branch-policy.json`のactivation requirementsと外部GitHub設定を満たすまで通常の`dev → main` releaseを開始しない。activation PRはpolicy phaseと対応するactive reviewだけを変更し、全`Activation-Check`を記録し、`Reconciliation-Type: bootstrap`で`dev`へ伝播する。それ以外のbootstrap中topic mergeと通常releaseを拒否し、`main`への補正は同じreconciliation種別で同期する。
 
 `trial` phaseでは通常topicを`dev`から分岐して`dev`へmerge commitで統合し、通常releaseは`dev → main`をsquashした直後に`main → dev`をmerge commitでreconciliationする。
 

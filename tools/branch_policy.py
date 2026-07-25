@@ -378,7 +378,13 @@ def has_issue_reference(policy: dict[str, Any], body: str) -> bool:
     return re.search(policy["pull_requests"]["issue_reference_pattern"], visible_markdown(body), flags=re.MULTILINE) is not None
 
 
-def validate_release_manifest(policy: dict[str, Any], body: str, expected_type: str) -> None:
+def validate_release_manifest(
+    policy: dict[str, Any],
+    body: str,
+    expected_type: str,
+    *,
+    require_closing_issue: bool = True,
+) -> None:
     rules = policy["pull_requests"]
     release_type = required_marker(body, rules["release_type_marker"])
     if release_type != expected_type:
@@ -397,8 +403,17 @@ def validate_release_manifest(policy: dict[str, Any], body: str, expected_type: 
         raise PolicyError("## 含まれるPR must not contain duplicate pull request numbers")
     if set(included_numbers) != set(heading_numbers):
         raise PolicyError("Included-PRs and ## 含まれるPR must identify the same pull requests")
-    if not re.search(rules["closing_issue_pattern"], visible_markdown(body)):
+    if require_closing_issue and not re.search(rules["closing_issue_pattern"], visible_markdown(body)):
         raise PolicyError("release PR or squash commit must close at least one Issue")
+
+
+def validate_bootstrap_markers(policy: dict[str, Any], text: str) -> None:
+    """Require the explicit marker and Issue reference for bootstrap delivery."""
+    rules = policy["pull_requests"]
+    if not optional_true_marker(text, rules["bootstrap_marker"]):
+        raise PolicyError("bootstrap delivery requires Branch-Policy-Bootstrap: true")
+    if not contains_issue_reference(text, policy["trial"]["issue"]):
+        raise PolicyError(f"bootstrap delivery must contain `Refs #{policy['trial']['issue']}`")
 
 
 def classify_pull_request(policy: dict[str, Any], event: dict[str, Any]) -> str:
@@ -410,8 +425,13 @@ def classify_pull_request(policy: dict[str, Any], event: dict[str, Any]) -> str:
     expected_repo = policy["repository"]
     rules = policy["pull_requests"]
     phase = policy["trial"]["phase"]
+    body = str(pull.get("body") or "")
 
     if phase == "bootstrap":
+        if base == "main" and head == "dev" and optional_true_marker(body, rules["bootstrap_marker"]):
+            if not same_repository(event, expected_repo):
+                raise PolicyError("bootstrap release head must be this repository's dev branch")
+            return "bootstrap-release"
         if base == "main" and (starts_with_any(head, rules["topic_prefixes"]) or starts_with_any(head, rules["hotfix_prefixes"])):
             if not same_repository(event, expected_repo):
                 raise PolicyError("bootstrap PR head must be in the same repository")
@@ -420,6 +440,13 @@ def classify_pull_request(policy: dict[str, Any], event: dict[str, Any]) -> str:
             if not same_repository(event, expected_repo):
                 raise PolicyError("reconciliation PR head must be this repository's main branch")
             return "reconciliation"
+        if base == "dev" and starts_with_any(head, rules["topic_prefixes"]) and optional_true_marker(
+            body,
+            rules["bootstrap_marker"],
+        ):
+            if not same_repository(event, expected_repo):
+                raise PolicyError("bootstrap topic head must be in the same repository")
+            return "bootstrap-topic"
         raise PolicyError(f"bootstrap phase rejects pull request direction: {head} -> {base}")
 
     if base == "main" and head == "dev":
@@ -511,6 +538,54 @@ def validate_review_path(root: Path, boundary: str, head_sha: str, path_text: st
     if not is_ancestor(root, review_commit, head_sha):
         raise PolicyError("release review commit is not reachable from the release head")
     return path_text, review_commit
+
+
+def validate_bootstrap_review_path(
+    root: Path,
+    boundary: str,
+    head_sha: str,
+    path_text: str,
+) -> tuple[str, str]:
+    """Bind a dev-first bootstrap review to the merge that introduced it after reconciliation."""
+    if not re.fullmatch(r"governance/reviews/CHG-[A-Za-z0-9._-]+\.ya?ml", path_text):
+        raise PolicyError(f"invalid bootstrap review path: {path_text}")
+    path = safe_repo_path(root, path_text)
+    if not path.is_file():
+        raise PolicyError(f"bootstrap review does not exist in checkout: {path_text}")
+    if not is_ancestor(root, boundary, head_sha):
+        raise PolicyError("bootstrap release boundary is not an ancestor of dev")
+    head_entry = tree_entry(root, head_sha, path_text)
+    if head_entry is None:
+        raise PolicyError(f"bootstrap review does not exist at dev head: {path_text}")
+    if tree_entry(root, boundary, path_text) == head_entry:
+        raise PolicyError("bootstrap review must be introduced after the reconciliation boundary")
+
+    integrations: list[str] = []
+    first_parent_commits = git_text(
+        root,
+        "rev-list",
+        "--first-parent",
+        "--reverse",
+        head_sha,
+        f"^{boundary}",
+    ).splitlines()
+    for commit in first_parent_commits:
+        commit_parents = parents(root, commit)
+        if len(commit_parents) != 2:
+            continue
+        first_parent, second_parent = commit_parents
+        if tree_entry(root, commit, path_text) != head_entry:
+            continue
+        if tree_entry(root, first_parent, path_text) == head_entry:
+            continue
+        if tree_entry(root, second_parent, path_text) != head_entry:
+            continue
+        integrations.append(commit)
+    if len(integrations) != 1:
+        raise PolicyError(
+            "bootstrap review must be introduced by exactly one dev first-parent merge after reconciliation"
+        )
+    return path_text, integrations[0]
 
 
 def review_path_from_commit(root: Path, commit: str) -> str:
@@ -642,16 +717,35 @@ def validate_pull_request(
     review_commit = ""
 
     if kind == "bootstrap":
-        if not optional_true_marker(body, rules["bootstrap_marker"]):
-            raise PolicyError("bootstrap PR requires Branch-Policy-Bootstrap: true")
-        if not re.search(
-            rf"(?mi)^\s*(?:[-*]\s*)?Refs(?::|\s)\s*#?{policy['trial']['issue']}\s*$",
-            visible_markdown(body),
-        ):
-            raise PolicyError(f"bootstrap PR must contain `Refs #{policy['trial']['issue']}`")
+        validate_bootstrap_markers(policy, body)
         if not is_ancestor(root, base_sha, head_sha):
             raise PolicyError("bootstrap branch must contain its main base")
         validate_subject_range(root, policy, base_sha, head_sha)
+    elif kind == "bootstrap-topic":
+        if governing_policy is not None:
+            raise PolicyError("bootstrap topic delivery is allowed only before dev contains branch policy")
+        validate_bootstrap_markers(policy, body)
+        if main_sha is None or not is_ancestor(root, main_sha, base_sha):
+            raise PolicyError("bootstrap topic delivery requires current main to be an ancestor of dev")
+        if not trees_equal(root, main_sha, base_sha):
+            raise PolicyError("bootstrap topic delivery requires synchronized main/dev tip trees")
+        if not is_ancestor(root, main_sha, head_sha):
+            raise PolicyError("bootstrap topic branch must contain current main")
+        validate_subject_range(root, policy, main_sha, head_sha)
+    elif kind == "bootstrap-release":
+        if governing_policy is not None:
+            raise PolicyError("bootstrap release is allowed only before main contains branch policy")
+        validate_bootstrap_markers(policy, body)
+        if not is_ancestor(root, base_sha, head_sha):
+            raise PolicyError("bootstrap release requires current main to be an ancestor of dev")
+        validate_release_manifest(policy, body, "bootstrap", require_closing_issue=False)
+        boundary = release_boundary(root, base_sha, head_sha)
+        review_path, review_commit = validate_bootstrap_review_path(
+            root,
+            boundary,
+            head_sha,
+            required_marker(body, rules["release_review_marker"]),
+        )
     elif kind == "topic":
         if main_sha is None or not is_ancestor(root, main_sha, base_sha):
             raise PolicyError("topic PR is blocked until current main is an ancestor of dev")
@@ -733,7 +827,11 @@ def validate_pull_request(
 
     if checkout_mode == "integration":
         merge_sha = validate_merge_checkout(root, base_sha, head_sha)
-        if kind in {"release", "hotfix"} and not trees_equal(root, merge_sha, head_sha):
+        if kind in {"release", "hotfix", "bootstrap-topic", "bootstrap-release"} and not trees_equal(
+            root,
+            merge_sha,
+            head_sha,
+        ):
             raise PolicyError(f"{kind} integration tree must equal the head tree")
         if kind == "reconciliation":
             reconciliation_type = required_marker(body, rules["reconciliation_type_marker"])
@@ -759,7 +857,7 @@ def validate_pull_request(
 
     return PolicyResult(
         kind=kind,
-        evidence_commit=head_sha if kind in {"bootstrap", "topic", "hotfix"} else "",
+        evidence_commit=head_sha if kind in {"bootstrap", "bootstrap-topic", "topic", "hotfix"} else "",
         review_path=review_path,
         review_commit=review_commit,
     )
@@ -796,6 +894,35 @@ def validate_release_commit(root: Path, policy: dict[str, Any], before: str, aft
     else:
         validate_review_path(root, before, after, review_path)
     return release_type
+
+
+def validate_bootstrap_release_commit(
+    root: Path,
+    policy: dict[str, Any],
+    before: str,
+    after: str,
+) -> None:
+    """Validate the one-time dev-first delivery of the initial bootstrap policy."""
+    rules = policy["pull_requests"]
+    message = commit_message(root, after)
+    validate_bootstrap_markers(policy, message)
+    validate_release_manifest(policy, message, "bootstrap", require_closing_issue=False)
+    review_path = required_marker(message, rules["release_review_marker"])
+    checklist = required_marker(message, "Review-Checklist")
+    if review_path != checklist:
+        raise PolicyError("bootstrap Release-Review and Review-Checklist must reference the same YAML")
+    dev_sha = resolve_branch(root, "dev")
+    if dev_sha is None:
+        raise PolicyError("bootstrap release requires the synchronized dev branch")
+    dev_policy = load_policy_at_ref(root, dev_sha)
+    if dev_policy is None or dev_policy != policy:
+        raise PolicyError("bootstrap release must promote the exact policy already integrated in dev")
+    if not is_ancestor(root, before, dev_sha):
+        raise PolicyError("bootstrap release requires current main to be an ancestor of dev")
+    if not trees_equal(root, after, dev_sha):
+        raise PolicyError("bootstrap release main tree must equal the frozen dev tree")
+    boundary = release_boundary(root, before, dev_sha)
+    validate_bootstrap_review_path(root, boundary, dev_sha, review_path)
 
 
 def validate_main_policy_transition(
@@ -859,6 +986,8 @@ def validate_push(root: Path, candidate_policy: dict[str, Any], event: dict[str,
         validate_single_linear_push(root, before, after)
         message = commit_message(root, after)
         validate_main_policy_transition(governing_policy, candidate_policy, message)
+        if governing_policy is None and marker_values(message, policy["pull_requests"]["release_type_marker"]):
+            validate_bootstrap_release_commit(root, candidate_policy, before, after)
         if old_phase == "bootstrap" and new_phase == "trial":
             validate_phase_transition_payload(root, before, after)
         if old_phase == "trial":
@@ -881,6 +1010,25 @@ def validate_push(root: Path, candidate_policy: dict[str, Any], event: dict[str,
     if len(after_parents) != 2 or after_parents[0] != before:
         raise PolicyError("dev updates must contain one merge commit whose first parent is prior dev")
     second_parent = after_parents[1]
+
+    if governing_policy is None:
+        if old_phase != "bootstrap" or new_phase != "bootstrap":
+            raise PolicyError("initial dev policy delivery must remain in bootstrap phase")
+        source_policy = load_policy_at_ref(root, second_parent)
+        if source_policy is None or source_policy != candidate_policy:
+            raise PolicyError("initial dev policy delivery must merge the exact candidate policy")
+        validate_bootstrap_markers(candidate_policy, commit_message(root, second_parent))
+        if not is_ancestor(root, main_sha, before):
+            raise PolicyError("initial dev policy delivery requires current main to be an ancestor of prior dev")
+        if not trees_equal(root, before, main_sha):
+            raise PolicyError("initial dev policy delivery requires synchronized main/dev tip trees")
+        if not is_ancestor(root, main_sha, second_parent):
+            raise PolicyError("initial dev policy topic must contain current main")
+        if not trees_equal(root, after, second_parent):
+            raise PolicyError("initial dev policy merge must preserve the bootstrap topic tree")
+        validate_subject_range(root, candidate_policy, main_sha, second_parent)
+        return PolicyResult(kind="bootstrap-topic", evidence_commit=second_parent)
+
     resolution_parents = parents(root, second_parent)
     direct_reconciliation = second_parent == main_sha
     resolved_hotfix_reconciliation = resolution_parents == [before, main_sha]

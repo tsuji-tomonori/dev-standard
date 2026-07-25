@@ -677,6 +677,7 @@ dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分�
 - `AC-REPO-001-1` 前提: trial phaseでmainまたはdevをbaseとするPull Requestがある。条件: branch-policy checkを実行する。期待結果: mainはrepositoryのdevまたはhotfixだけをsquashで受け入れ、devはtopic、main、またはhotfix競合を解消したreconcile branchだけをmerge commitで受け入れ、その他の方向を拒否する。
 - `AC-REPO-001-2` 前提: mainまたはdevへpushがある。条件: push auditとGitHub rulesetを評価する。期待結果: mainのlinear historyとdevの一回一merge commit更新を監査し、削除またはforce pushを許可しない。
 - `AC-REPO-001-3` 前提: branch policyがbootstrap phaseであり、dev、ruleset、required checks、PR移行、operator確認が完了している。条件: trial phaseへ移行する。期待結果: mainへのactivation PRでpolicyと対応するactive review YAMLだけを変更し、全Activation-Checkを一度ずつ記録した後、bootstrap reconciliationで同じpolicyとreviewをdevへ伝播する。
+- `AC-REPO-001-4` 前提: 既存devがcurrent mainを祖先に持ち、両tip treeが一致し、まだbranch policyを含まない。条件: 二層branch契約をdev-firstでbootstrap導入する。期待結果: Issue #20を参照する初回bootstrap PRだけをdevへmerge commitで統合し、同じtreeをRelease-Type bootstrapのdevからmainへのsquashで導入できるが、Issueをcloseせず2回の通常releaseへ数えない。
 
 要求源: user:2026-07-24, issue:#20, docs/decisions/ADR-0002-two-layer-branch-history.md
 検証証跡: branch方向、merge parent、commit subject、protected branch設定のCI結果
@@ -712,7 +713,7 @@ dev-standardの二層branch試行は、2回のrelease cycleに限定しportable 
 - `AC-REPO-003-1` 前提: 二層branch契約のassetを配布profileへ追加しようとする。条件: distribution contractを検査する。期待結果: dev-standard固有のbranch policyとvalidatorをportable profileへ含めず、導入先の既定branch戦略を変更しない。
 - `AC-REPO-003-2` 前提: 2回のrelease試行が完了していない、または昇格条件を満たさない。条件: 試行結果を判断する。期待結果: 恒久採用と一般化を行わず、必要時はdevへの新規統合を停止して同期済み状態で凍結する。
 - `AC-REPO-003-3` 前提: GitHub Actionsでmainとdevの状態を検査する。条件: authority boundaryを確認する。期待結果: required checkを原子的なcross-branch lockとは表明せず、単一operatorと明示freezeの限界を文書化する。
-- `AC-REPO-003-4` 前提: branch policyがbootstrap phaseである。条件: 二層branch試行を開始する。期待結果: activation前にtopic mergeを拒否してbranch graph回帰testと外部GitHub設定を確認し、policyとactive reviewを両branchへ伝播した後の最初の小変更を1回目の管理されたdry runとして扱う。
+- `AC-REPO-003-4` 前提: branch policyがbootstrap phaseである。条件: 二層branch試行を開始する。期待結果: activation前に初回bootstrap導入以外のtopic mergeを拒否してbranch graph回帰testと外部GitHub設定を確認し、policyとactive reviewを両branchへ伝播した後の最初の小変更を1回目の管理されたdry runとして扱う。
 - `AC-REPO-003-5` 前提: 二層branch試行を停止する。条件: rollback transactionを完了する。期待結果: policyと対応するactive review YAMLだけを変更するrollback hotfixをmainへsquashし、hotfix reconciliationでdevへ伝播した後にbootstrapで新規topic統合と通常releaseを停止する。
 - `AC-REPO-003-6` 前提: branch policyまたはreview validatorを変更するPull Requestまたはprotected branch pushがある。条件: Governanceのevidenceまたはbranch-policy jobを実行する。期待結果: 利用可能な場合はPR baseまたはpush before側のvalidatorとdependencyで候補treeを検査し、候補validatorだけの自己緩和を当該判定へ使用しない。
 - `AC-REPO-003-7` 前提: Governance workflowを変更するPull Requestがある。条件: CIの自己統制境界を評価する。期待結果: workflow file自体をimmutableまたはtamper-proofとは表明せず、required checkのGitHub Actions由来sourceとworkflow差分を単一operatorが確認する。

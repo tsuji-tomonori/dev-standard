@@ -48,6 +48,17 @@ class SpecflowTest(unittest.TestCase):
             "docs/decisions/ADR-0002-two-layer-branch-history.md",
             branch_requirement["source_refs"],
         )
+        self.assertIn(
+            "AC-REPO-001-4",
+            {criterion["id"] for criterion in branch_requirement["acceptance_criteria"]},
+        )
+        trial_requirement = by_id["REQ-REPO-003"]
+        activation = next(
+            criterion
+            for criterion in trial_requirement["acceptance_criteria"]
+            if criterion["id"] == "AC-REPO-003-4"
+        )
+        self.assertIn("初回bootstrap導入以外", activation["then"])
 
     def test_json_schema_matches_runtime_classification_contract(self) -> None:
         catalog = specflow.read_json(ROOT / "spec/requirements/requirements.json")

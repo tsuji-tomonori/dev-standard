@@ -101,6 +101,36 @@ def release_manifest_text(
     return "\n".join(lines)
 
 
+def bootstrap_release_manifest_text(
+    review_path: str,
+    *,
+    subject: str | None = None,
+) -> str:
+    lines: list[str] = []
+    if subject is not None:
+        lines.extend([subject, ""])
+    lines.extend(
+        [
+            "Branch-Policy-Bootstrap: true",
+            "Release-Type: bootstrap",
+            f"Release-Review: {review_path}",
+            "Included-PRs: #26",
+            f"Review-Checklist: {review_path}",
+            "Refs #20",
+            "",
+            "## 含まれるPR",
+            "#26",
+            "## 要件・設計影響",
+            "branch policyのbootstrap導入をdevからmainへ昇格する。",
+            "## 互換性・rollback",
+            "bootstrapのまま維持し、trial有効化は別変更で行う。",
+            "## 残存リスク",
+            "cross-branch lockは原子的ではないため単一operatorで実行する。",
+        ]
+    )
+    return "\n".join(lines)
+
+
 class Repository:
     def __init__(
         self,
@@ -250,6 +280,105 @@ class BranchPolicyTest(unittest.TestCase):
                 ),
                 "head",
             )
+
+    def test_initial_policy_can_merge_to_synced_dev_then_open_bootstrap_release(self) -> None:
+        repo = self.new_repository(policy=None)
+        review_path = "governance/reviews/CHG-20260724-two-layer-branch-trial.yaml"
+
+        repo.checkout("legacy/topic", create=True, start="main")
+        commit(
+            repo.root,
+            "🧪 test(branches): reconciliation前の履歴を作成する",
+            {"legacy.txt": "shared tree\n"},
+        )
+        repo.checkout("dev")
+        repo.merge("legacy/topic", "🔀 test(branches): legacy履歴をdevへ統合する")
+        repo.checkout("main")
+        main = repo.squash(
+            "legacy/topic",
+            "🧪 test(branches): legacy履歴をmainへsquashする",
+        )
+        repo.checkout("dev")
+        before_dev = repo.merge(
+            "main",
+            "🔄 test(branches): mainをdevへreconciliationする",
+        )
+        self.assertTrue(branch_policy.is_ancestor(repo.root, main, before_dev))
+        self.assertTrue(branch_policy.trees_equal(repo.root, main, before_dev))
+
+        repo.checkout("agent/issue-20", create=True, start="main")
+        topic_head = commit(
+            repo.root,
+            (
+                "🧭 feat(branches): 二層branch試行契約を実装する\n\n"
+                "Branch-Policy-Bootstrap: true\n"
+                "Review-Checklist: governance/reviews/CHG-20260724-two-layer-branch-trial.yaml\n"
+                "Refs: #20"
+            ),
+            {
+                ".github/branch-policy.json": policy_text(POLICY),
+                review_path: "change_id: CHG-20260724-two-layer-branch-trial\n",
+                "bootstrap.txt": "candidate\n",
+            },
+        )
+        topic_body = "Branch-Policy-Bootstrap: true\nRefs #20\n"
+        topic_event = pr_event("dev", "agent/issue-20", before_dev, topic_head, topic_body)
+        self.assertEqual(
+            branch_policy.validate_pull_request(repo.root, POLICY, topic_event, "head").kind,
+            "bootstrap-topic",
+        )
+        repo.synthetic_merge("dev", "agent/issue-20")
+        self.assertEqual(
+            branch_policy.validate_pull_request(repo.root, POLICY, topic_event, "integration").kind,
+            "bootstrap-topic",
+        )
+
+        repo.checkout("dev")
+        before_push = repo.sha("dev")
+        after_push = repo.merge("agent/issue-20", "🔀 feat(branches): bootstrap契約をdevへ統合する")
+        candidate = branch_policy.load_policy(repo.root)
+        dev_event = {
+            "ref": "refs/heads/dev",
+            "before": before_push,
+            "after": after_push,
+            "forced": False,
+            "deleted": False,
+        }
+        self.assertEqual(
+            branch_policy.validate_push(repo.root, candidate, dev_event).kind,
+            "bootstrap-topic",
+        )
+
+        release_body = bootstrap_release_manifest_text(review_path)
+        release_event = pr_event("main", "dev", main, after_push, release_body)
+        self.assertEqual(
+            branch_policy.validate_pull_request(repo.root, candidate, release_event, "head").kind,
+            "bootstrap-release",
+        )
+        repo.synthetic_merge("main", "dev")
+        self.assertEqual(
+            branch_policy.validate_pull_request(repo.root, candidate, release_event, "integration").kind,
+            "bootstrap-release",
+        )
+
+        repo.checkout("main")
+        before_main = repo.sha("main")
+        after_main = repo.squash(
+            "dev",
+            bootstrap_release_manifest_text(
+                review_path,
+                subject="🧭 feat(branches): bootstrap契約をmainへ昇格する",
+            ),
+        )
+        main_event = {
+            "ref": "refs/heads/main",
+            "before": before_main,
+            "after": after_main,
+            "forced": False,
+            "deleted": False,
+        }
+        self.assertEqual(branch_policy.validate_push(repo.root, candidate, main_event).kind, "main")
+        self.assertTrue(branch_policy.trees_equal(repo.root, after_main, after_push))
 
     def test_bootstrap_blocks_topics_and_allows_main_synchronization(self) -> None:
         repo = self.new_repository(policy=POLICY)

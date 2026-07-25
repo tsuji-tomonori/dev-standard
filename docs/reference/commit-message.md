@@ -70,7 +70,7 @@ Refs: <Issue / ADR。該当時だけ>
 release PR bodyには次のmarkerと見出しを含めます。
 
 ```text
-Release-Type: regular | hotfix
+Release-Type: bootstrap | regular | hotfix
 Release-Review: governance/reviews/CHG-....yaml
 Included-PRs: #101, #102
 Closes #201
@@ -84,7 +84,7 @@ Closes #201
 ## 残存リスク
 ```
 
-通常releaseでは`Release-Type: regular`、hotfixでは`Release-Type: hotfix`を使用します。`Included-PRs`と「含まれるPR」見出しには少なくとも一つのPR番号を含め、release PRと最終squash commitは少なくとも一つのIssueを`Closes`、`Fixes`、`Resolves`等でcloseします。release reviewは直近reconciliationより後に作成または更新し、過去releaseのreviewを誤流用しません。release reviewの`impact_flags.squash`は`true`とし、squash releaseを評価するreviewであることをvalidatorが検査します。最終squash commitには同じmarker、必須4見出し、Issue closing keywordに加えて同じpathの`Review-Checklist`を残し、push auditとreconciliationがrelease manifestを検証できるようにします。
+初回policyを同期済み`dev`から`main`へ導入する一度限りのPRでは`Release-Type: bootstrap`を使用し、`Branch-Policy-Bootstrap: true`と`Refs #20`を併記します。bootstrap releaseはIssueをcloseせず、2回の通常releaseへ数えません。通常releaseでは`Release-Type: regular`、hotfixでは`Release-Type: hotfix`を使用します。`Included-PRs`と「含まれるPR」見出しには少なくとも一つのPR番号を含め、regular／hotfixのrelease PRと最終squash commitは少なくとも一つのIssueを`Closes`、`Fixes`、`Resolves`等でcloseします。release reviewは直近reconciliationより後に作成または更新し、過去releaseのreviewを誤流用しません。release reviewの`impact_flags.squash`は`true`とし、squash releaseを評価するreviewであることをvalidatorが検査します。最終squash commitには同じmarker、必須4見出し、regular／hotfixではIssue closing keyword、さらに同じpathの`Review-Checklist`を残し、push auditとreconciliationがrelease manifestを検証できるようにします。
 
 reconciliation PR bodyには次を含めます。
 

@@ -20,7 +20,9 @@
 
 ## branch試行
 
-Issue #20のbranch policyは導入直後に`bootstrap` phaseで開始します。`dev`、ruleset、required checks、squash message、PR #12移行、tree一致、回帰test、単一operatorを確認したactivation PRでだけ`trial`へ移行します。activation PRはpolicyのphaseと対応するactive review YAMLだけを変更し、全`Activation-Check`を記録します。activation後は`Reconciliation-Type: bootstrap`で`main`のpolicyとreviewを`dev`へ伝播します。bootstrap中のtopic PRはmergeできません。`main`へ補正が入った場合は同じreconciliation種別で`dev`へ同期します。
+Issue #20のbranch policyは導入直後に`bootstrap` phaseで開始します。同期済みでpolicy未導入の既存`dev`には、`Branch-Policy-Bootstrap: true`と`Refs #20`を持つ初回導入PRだけをmergeできます。その後、`Release-Type: bootstrap`の`dev → main` PRで同じtreeをsquashし、`Reconciliation-Type: bootstrap`で`dev`へ戻します。このbootstrap releaseはIssueをcloseせず、2回の通常releaseへ数えません。それ以外のbootstrap中topic PRと通常releaseはmergeできません。
+
+`dev`、ruleset、required checks、squash message、PR #12移行、tree一致、回帰test、単一operatorを確認したactivation PRでだけ`trial`へ移行します。activation PRはpolicyのphaseと対応するactive review YAMLだけを変更し、全`Activation-Check`を記録します。activation後は`Reconciliation-Type: bootstrap`で`main`のpolicyとreviewを`dev`へ伝播します。`main`へ補正が入った場合も同じreconciliation種別で`dev`へ同期します。
 
 `trial` phaseでは次のフローを使用します。
 

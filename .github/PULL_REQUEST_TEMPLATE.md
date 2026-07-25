@@ -27,11 +27,13 @@ Activation-Check: branch-graph-regression-passed
 Activation-Check: single-release-operator-confirmed
 -->
 
-<!-- release／hotfix PRだけでcommentを外し、直近reconciliationより後のreviewを指定する:
-Release-Type: regular | hotfix
+<!-- bootstrap release／通常release／hotfix PRだけでcommentを外し、直近reconciliationより後のreviewを指定する:
+Release-Type: bootstrap | regular | hotfix
 Release-Review: governance/reviews/CHG-....yaml
 Included-PRs: #...
 Closes #...
+
+bootstrap releaseではClosesを使用せず、Branch-Policy-Bootstrap: trueとRefs #20を併記する。
 
 rollback hotfixだけ追加する。policyとactive review YAML以外を混在させない:
 Trial-Rollback: true
