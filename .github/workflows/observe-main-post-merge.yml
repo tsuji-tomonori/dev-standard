@@ -1,4 +1,4 @@
-name: Observe Main Post-Merge Governance
+name: Observe Protected Branch Post-Merge Governance
 
 on:
   pull_request:
@@ -16,9 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
-      TARGET_SHA: 2a4d15171418a0e43971f046716ce917b3ee0644
+      TARGET_SHA: 0cc65985d2dafb2e1b3030f8600681ae2bcb41c8
+      TARGET_BRANCH: dev
     steps:
-      - name: Observe main push Governance
+      - name: Observe protected branch push Governance
         shell: bash
         run: |
           set -euo pipefail
@@ -29,8 +30,8 @@ jobs:
               -H 'Accept: application/vnd.github+json' \
               -H 'X-GitHub-Api-Version: 2022-11-28' \
               "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${TARGET_SHA}&event=push&per_page=20")
-            run_json=$(jq -c --arg sha "$TARGET_SHA" \
-              '[.workflow_runs[] | select(.head_sha == $sha and .event == "push" and .name == "Governance")][0] // empty' \
+            run_json=$(jq -c --arg sha "$TARGET_SHA" --arg branch "$TARGET_BRANCH" \
+              '[.workflow_runs[] | select(.head_sha == $sha and .head_branch == $branch and .event == "push" and .name == "Governance")][0] // empty' \
               <<<"$response")
             if [[ -n "$run_json" ]]; then
               run_id=$(jq -r '.id' <<<"$run_json")
@@ -43,7 +44,7 @@ jobs:
           done
 
           if [[ -z "$run_id" || -z "$run_json" ]]; then
-            echo "No Governance push run found for ${TARGET_SHA}" >&2
+            echo "No Governance push run found for ${TARGET_BRANCH}@${TARGET_SHA}" >&2
             exit 1
           fi
 
@@ -62,9 +63,10 @@ jobs:
 
           jq -r '.jobs[] | "- `\(.name)`: \(.conclusion)"' <<<"$jobs" > /tmp/jobs.md
           cat > /tmp/result.md <<EOF
-          ## main merge後CI観測
+          ## ${TARGET_BRANCH} merge後CI観測
 
-          - main commit: \`${TARGET_SHA}\`
+          - branch: \`${TARGET_BRANCH}\`
+          - commit: \`${TARGET_SHA}\`
           - Governance run: [#${run_number}](${run_url})
           - event: \`push\`
           - workflow conclusion: \`${conclusion}\`
