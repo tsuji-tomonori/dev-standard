@@ -83,3 +83,15 @@ jobs:
           \`\`\`
           EOF
           gh pr comment 39 --body-file /tmp/diagnostic.md
+      - name: Export current dev Git bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p bundle
+          git bundle create bundle/dev.bundle --all
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pr38-dev-bundle
+          path: bundle/dev.bundle
+          archive: false
+          retention-days: 1
