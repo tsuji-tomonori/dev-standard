@@ -293,9 +293,35 @@ def validate_commit(root: Path, commit_ref: str) -> Path:
     return review_path
 
 
-def validate_repository(root: Path, commit_ref: str) -> None:
+def validate_review_file(
+    root: Path,
+    review_path: Path,
+    source_commit: str,
+    *,
+    require_squash: bool = False,
+) -> dict[str, Any]:
     catalog, checks = load_catalog(root / "governance" / "checks" / "catalog.yaml")
     schema = json.loads((root / "governance" / "reviews" / "review-result.schema.json").read_text(encoding="utf-8"))
+    path = safe_repo_path(root, review_path.as_posix())
+    reviews_root = (root / "governance" / "reviews").resolve()
+    if path.parent != reviews_root or not path.name.startswith("CHG-") or path.suffix not in {".yaml", ".yml"}:
+        raise ContractError("release review must point under governance/reviews/CHG-*.yaml")
+    resolved_commit = git_text(root, "rev-parse", f"{source_commit}^{{commit}}")
+    relative_review = path.relative_to(root).as_posix()
+    git_text(root, "cat-file", "-e", f"{resolved_commit}:{relative_review}")
+    committed_blob = git_text(root, "rev-parse", f"{resolved_commit}:{relative_review}")
+    working_blob = git_text(root, "hash-object", relative_review)
+    if working_blob != committed_blob:
+        raise ContractError(
+            f"{path}: working-tree review differs from the review blob at source commit {resolved_commit}"
+        )
+    review = validate_review(root, path, schema, catalog, checks, resolved_commit)
+    if require_squash and not review["impact_flags"]["squash"]:
+        raise ContractError(f"{path}: release review requires impact_flags.squash: true")
+    return review
+
+
+def validate_repository(root: Path, commit_ref: str) -> None:
     active_review = validate_commit(root, commit_ref)
     reviews_root = (root / "governance" / "reviews").resolve()
     if active_review.parent != reviews_root or not active_review.name.startswith("CHG-"):
@@ -305,18 +331,39 @@ def validate_repository(root: Path, commit_ref: str) -> None:
     source_commit = git_text(root, "log", "-1", "--format=%H", resolved_commit, "--", relative_review)
     if source_commit != resolved_commit:
         raise ContractError(f"{active_review}: active review must be updated by {commit_ref}")
-    review = validate_review(root, active_review, schema, catalog, checks, source_commit)
-    subject = git_text(root, "show", "-s", "--format=%s", resolved_commit)
+    message = git_text(root, "show", "-s", "--format=%B", resolved_commit)
+    review = validate_review_file(
+        root,
+        active_review,
+        source_commit,
+        require_squash=bool(re.search(r"(?m)^Release-Type:\s*(?:regular|hotfix)\s*$", message)),
+    )
+    subject = message.splitlines()[0] if message else ""
     validate_commit_type_flags(subject, review)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
-    parser.add_argument("--commit", default="HEAD")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--commit")
+    selection.add_argument("--review", type=Path)
+    parser.add_argument("--source-commit", default="HEAD")
+    parser.add_argument("--require-squash", action="store_true")
     args = parser.parse_args()
     try:
-        validate_repository(args.root.resolve(), args.commit)
+        root = args.root.resolve()
+        if args.review is not None:
+            validate_review_file(
+                root,
+                args.review,
+                args.source_commit,
+                require_squash=args.require_squash,
+            )
+        else:
+            if args.require_squash:
+                raise ContractError("--require-squash requires --review")
+            validate_repository(root, args.commit or "HEAD")
     except (ContractError, json.JSONDecodeError, yaml.YAMLError) as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1

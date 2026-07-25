@@ -143,9 +143,42 @@ class ReviewContractTest(unittest.TestCase):
             self.assertIn("FAST-024", text)
 
     def test_current_repository_contract_is_valid(self) -> None:
+        parent_count = len(review_contract.git_text(ROOT, "show", "-s", "--format=%P", "HEAD").split())
+        if parent_count > 1:
+            self.skipTest("merge checkouts validate the PR head in the dedicated evidence job")
         review_contract.validate_repository(ROOT, "HEAD")
 
+    def test_release_review_can_be_validated_without_a_commit_comment(self) -> None:
+        review_contract.validate_review_file(
+            ROOT,
+            Path("governance/reviews/CHG-20260723-skill-evidence-audit.yaml"),
+            "HEAD",
+        )
+
+    def test_release_review_requires_squash_impact(self) -> None:
+        review_path = Path("governance/reviews/CHG-20260723-skill-evidence-audit.yaml")
+        with mock.patch.object(review_contract, "validate_review", return_value={"impact_flags": {"squash": False}}):
+            with self.assertRaisesRegex(review_contract.ContractError, "squash"):
+                review_contract.validate_review_file(ROOT, review_path, "HEAD", require_squash=True)
+
+    def test_release_review_must_match_the_blob_at_its_source_commit(self) -> None:
+        review_path = ROOT / "governance" / "reviews" / "CHG-20260723-skill-evidence-audit.yaml"
+        original = review_path.read_bytes()
+        try:
+            review_path.write_bytes(original + b"\n# uncommitted tamper\n")
+            with self.assertRaisesRegex(review_contract.ContractError, "differs from the review blob"):
+                review_contract.validate_review_file(
+                    ROOT,
+                    review_path.relative_to(ROOT),
+                    "HEAD",
+                )
+        finally:
+            review_path.write_bytes(original)
+
     def test_only_active_review_is_revalidated(self) -> None:
+        parent_count = len(review_contract.git_text(ROOT, "show", "-s", "--format=%P", "HEAD").split())
+        if parent_count > 1:
+            self.skipTest("merge checkouts validate the PR head in the dedicated evidence job")
         active_review = review_contract.validate_commit(ROOT, "HEAD")
         with mock.patch.object(
             review_contract, "validate_review", wraps=review_contract.validate_review

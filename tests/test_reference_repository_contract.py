@@ -5,6 +5,8 @@ import json
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / ".agents" / "skills"
 CLASSIFICATION_STANDARD = ROOT / "docs" / "standards" / "REQUIREMENT-CLASSIFICATION.md"
@@ -108,6 +110,22 @@ class ReferenceRepositoryContractTest(unittest.TestCase):
         with self.assertRaises(specflow.SpecError):
             specflow.validate_requirement(example, set())
 
+    def test_requirement_schema_accepts_classification_and_enforces_the_pair(self) -> None:
+        assets = SKILLS / "maintain-canonical-requirements" / "assets"
+        schema = json.loads((assets / "requirements.schema.json").read_text(encoding="utf-8"))
+        example = json.loads((assets / "documentation-project-nfr.example.json").read_text(encoding="utf-8"))
+        catalog = {
+            "schema_version": 1,
+            "catalog_revision": 1,
+            "product": "example",
+            "updated_at": "2026-07-24",
+            "requirements": [example],
+        }
+        validator = Draft202012Validator(schema)
+        self.assertEqual(list(validator.iter_errors(catalog)), [])
+        del example["category"]
+        self.assertTrue(list(validator.iter_errors(catalog)))
+
     def test_meta_skill_is_not_in_portable_default_profiles(self) -> None:
         manifest = json.loads((ROOT / "distribution" / "manifest.json").read_text(encoding="utf-8"))
         self.assertIn("maintain-reference-repository", manifest["inventory"]["skills"])
@@ -129,6 +147,35 @@ class ReferenceRepositoryContractTest(unittest.TestCase):
         )
         for profile, entries in manifest["profiles"].items():
             self.assertNotIn("work", {entry["source"] for entry in entries}, profile)
+
+    def test_two_layer_branch_trial_stays_repository_specific(self) -> None:
+        policy = json.loads((ROOT / ".github" / "branch-policy.json").read_text(encoding="utf-8"))
+        self.assertFalse(policy["trial"]["portable_default"])
+        self.assertFalse(policy["trial"]["atomic_cross_branch_lock"])
+        self.assertEqual(policy["pull_requests"]["reconciliation_prefixes"], ["reconcile/"])
+        manifest = json.loads((ROOT / "distribution" / "manifest.json").read_text(encoding="utf-8"))
+        repository_only = {".github/branch-policy.json", "tools/branch_policy.py"}
+        for profile, entries in manifest["profiles"].items():
+            self.assertTrue(repository_only.isdisjoint({entry["source"] for entry in entries}), profile)
+
+    def test_branch_workflow_documents_its_self_governance_boundary(self) -> None:
+        workflow = (ROOT / ".github" / "workflows" / "governance.yml").read_text(encoding="utf-8")
+        development = (ROOT / "docs" / "reference" / "development.md").read_text(encoding="utf-8")
+        adr = (ROOT / "docs" / "decisions" / "ADR-0002-two-layer-branch-history.md").read_text(
+            encoding="utf-8"
+        )
+        for required in [
+            'git show "$base:$source"',
+            'git show "$governing:$source"',
+            '"$before:governance/reviews/validate.py"',
+        ]:
+            self.assertIn(required, workflow)
+        for document in [development, adr]:
+            self.assertIn("tamper-proof", document)
+            self.assertIn("単一operator", document)
+            self.assertIn("GitHub Actions", document)
+            self.assertIn("reconcile/hotfix-*", document)
+            self.assertIn("ours", document)
 
     def test_user_guidance_routes_to_current_documents(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
