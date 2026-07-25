@@ -29,7 +29,7 @@ class SpecflowTest(unittest.TestCase):
         catalog = specflow.validate_catalog(specflow.read_json(ROOT / "spec/requirements/requirements.json"))
         generated = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")
         self.assertEqual(generated, specflow.render(catalog))
-        self.assertEqual(len(catalog["requirements"]), 49)
+        self.assertEqual(len(catalog["requirements"]), 52)
         self.assertIn("# dev-standard 要件一覧", generated)
         by_id = {item["id"]: item for item in catalog["requirements"]}
         self.assertEqual(by_id["REQ-DESIGN-006"]["revision"], 3)
@@ -39,6 +39,26 @@ class SpecflowTest(unittest.TestCase):
         self.assertEqual(by_id["REQ-DISC-005"]["category"], "functional")
         self.assertEqual(by_id["REQ-DISC-005"]["last_changed_by"], "CHG-20260724-solution-neutral-requirements")
         self.assertIn("issue:25", by_id["REQ-DISC-005"]["source_refs"])
+
+        branch_requirement = by_id["REQ-REPO-001"]
+        self.assertEqual(branch_requirement["scope"], "project")
+        self.assertEqual(branch_requirement["category"], "nonfunctional")
+        self.assertIn("issue:#20", branch_requirement["source_refs"])
+        self.assertIn(
+            "docs/decisions/ADR-0002-two-layer-branch-history.md",
+            branch_requirement["source_refs"],
+        )
+        self.assertIn(
+            "AC-REPO-001-4",
+            {criterion["id"] for criterion in branch_requirement["acceptance_criteria"]},
+        )
+        trial_requirement = by_id["REQ-REPO-003"]
+        activation = next(
+            criterion
+            for criterion in trial_requirement["acceptance_criteria"]
+            if criterion["id"] == "AC-REPO-003-4"
+        )
+        self.assertIn("初回bootstrap導入以外", activation["then"])
 
     def test_json_schema_matches_runtime_classification_contract(self) -> None:
         catalog = specflow.read_json(ROOT / "spec/requirements/requirements.json")

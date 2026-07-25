@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 6,
+  "catalog_revision": 7,
   "product": "dev-standard",
   "requirements": [
     {
@@ -2044,6 +2044,225 @@
       "verification": {
         "evidence": "原子性回帰テストとチェック項目カタログ",
         "method": "自動テストと批判的レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "trial phaseでmainまたはdevをbaseとするPull Requestがある",
+          "id": "AC-REPO-001-1",
+          "then": "mainはrepositoryのdevまたはhotfixだけをsquashで受け入れ、devはtopic、main、またはhotfix競合を解消したreconcile branchだけをmerge commitで受け入れ、その他の方向を拒否する",
+          "when": "branch-policy checkを実行する"
+        },
+        {
+          "given": "mainまたはdevへpushがある",
+          "id": "AC-REPO-001-2",
+          "then": "mainのlinear historyとdevの一回一merge commit更新を監査し、削除またはforce pushを許可しない",
+          "when": "push auditとGitHub rulesetを評価する"
+        },
+        {
+          "given": "branch policyがbootstrap phaseであり、dev、ruleset、required checks、PR移行、operator確認が完了している",
+          "id": "AC-REPO-001-3",
+          "then": "mainへのactivation PRでpolicyと対応するactive review YAMLだけを変更し、全Activation-Checkを一度ずつ記録した後、bootstrap reconciliationで同じpolicyとreviewをdevへ伝播する",
+          "when": "trial phaseへ移行する"
+        },
+        {
+          "given": "既存devがcurrent mainを祖先に持ち、両tip treeが一致し、まだbranch policyを含まない",
+          "id": "AC-REPO-001-4",
+          "then": "Issue #20を参照する初回bootstrap PRだけをdevへmerge commitで統合し、同じtreeをRelease-Type bootstrapのdevからmainへのsquashで導入できるが、Issueをcloseせず2回の通常releaseへ数えない",
+          "when": "二層branch契約をdev-firstでbootstrap導入する"
+        }
+      ],
+      "action": "enforce",
+      "category": "nonfunctional",
+      "id": "REQ-REPO-001",
+      "last_changed_by": "CHG-20260724-two-layer-branch-trial",
+      "object": "mainへのsquashとdevへのmerge commitを分離したbranch別統合契約",
+      "rationale": "利用者向けrelease履歴と到達可能なengineering履歴のauthorityを案件ごとのmerge判断に依存させないため。",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-07-24",
+        "issue:#20",
+        "docs/decisions/ADR-0002-two-layer-branch-history.md"
+      ],
+      "status": "active",
+      "subject": "dev-standardのbranch運用",
+      "title": "mainとdevの役割および統合方式",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0002-two-layer-branch-history.md",
+          "docs/reference/development.md"
+        ],
+        "implementation": [
+          ".github/branch-policy.json",
+          ".github/workflows/governance.yml",
+          "tools/branch_policy.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_branch_policy.py",
+          "tests/test_reference_repository_contract.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "branch方向、merge parent、commit subject、protected branch設定のCI結果",
+        "method": "CIとGitHub ruleset監査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "devからmainへ通常releaseをsquash mergeした",
+          "id": "AC-REPO-002-1",
+          "then": "次のtopic統合前にmainをdevへmergeし、mainがdevの祖先であり両tip treeが一致する",
+          "when": "release reconciliationを完了する"
+        },
+        {
+          "given": "mainへhotfixをsquash mergeしdevに未release変更がある",
+          "id": "AC-REPO-002-2",
+          "then": "conflict-freeならmainをdevへ直接mergeし、mainをdevの祖先にするが両tip treeの一致は要求しない",
+          "when": "hotfix reconciliationを完了する"
+        },
+        {
+          "given": "通常releaseとreconciliationを2回行う",
+          "id": "AC-REPO-002-3",
+          "then": "前回release済みfile差分が次回release diffへ再出現せず、詳細commitはdevから到達可能なまま残る",
+          "when": "branch graph回帰testを実行する"
+        },
+        {
+          "given": "hotfix後のmainをdevへ直接mergeするとconflictする",
+          "id": "AC-REPO-002-4",
+          "then": "freeze中のdevからreconcile branchを作り、prior devとcurrent mainをparentに持つ解消mergeをdevへ統合し、outer merge treeとhotfix変更pathを保持してours相当の破棄を拒否する",
+          "when": "hotfix conflict reconciliationを完了する"
+        }
+      ],
+      "action": "maintain",
+      "category": "nonfunctional",
+      "id": "REQ-REPO-002",
+      "last_changed_by": "CHG-20260724-two-layer-branch-trial",
+      "object": "release前後のancestor関係、tip tree条件、freezeを含むreconciliation transaction",
+      "rationale": "squashで記録されない祖先関係を回復し、既出file差分とconflictの再評価を防ぎながら詳細commitを保持するため。",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-07-24",
+        "issue:#20",
+        "Git FAQ: long-running squash merge",
+        "docs/decisions/ADR-0002-two-layer-branch-history.md"
+      ],
+      "status": "active",
+      "subject": "release operatorとCI",
+      "title": "release後の祖先関係とtreeを回復するreconciliation契約",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0002-two-layer-branch-history.md",
+          "docs/reference/development.md"
+        ],
+        "implementation": [
+          ".github/branch-policy.json",
+          ".github/workflows/governance.yml",
+          "tools/branch_policy.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_branch_policy.py"
+        ]
+      },
+      "type": "operational",
+      "verification": {
+        "evidence": "一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert",
+        "method": "branch graph回帰テストとCI"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "二層branch契約のassetを配布profileへ追加しようとする",
+          "id": "AC-REPO-003-1",
+          "then": "dev-standard固有のbranch policyとvalidatorをportable profileへ含めず、導入先の既定branch戦略を変更しない",
+          "when": "distribution contractを検査する"
+        },
+        {
+          "given": "2回のrelease試行が完了していない、または昇格条件を満たさない",
+          "id": "AC-REPO-003-2",
+          "then": "恒久採用と一般化を行わず、必要時はdevへの新規統合を停止して同期済み状態で凍結する",
+          "when": "試行結果を判断する"
+        },
+        {
+          "given": "GitHub Actionsでmainとdevの状態を検査する",
+          "id": "AC-REPO-003-3",
+          "then": "required checkを原子的なcross-branch lockとは表明せず、単一operatorと明示freezeの限界を文書化する",
+          "when": "authority boundaryを確認する"
+        },
+        {
+          "given": "branch policyがbootstrap phaseである",
+          "id": "AC-REPO-003-4",
+          "then": "activation前に初回bootstrap導入以外のtopic mergeを拒否してbranch graph回帰testと外部GitHub設定を確認し、policyとactive reviewを両branchへ伝播した後の最初の小変更を1回目の管理されたdry runとして扱う",
+          "when": "二層branch試行を開始する"
+        },
+        {
+          "given": "二層branch試行を停止する",
+          "id": "AC-REPO-003-5",
+          "then": "policyと対応するactive review YAMLだけを変更するrollback hotfixをmainへsquashし、hotfix reconciliationでdevへ伝播した後にbootstrapで新規topic統合と通常releaseを停止する",
+          "when": "rollback transactionを完了する"
+        },
+        {
+          "given": "branch policyまたはreview validatorを変更するPull Requestまたはprotected branch pushがある",
+          "id": "AC-REPO-003-6",
+          "then": "利用可能な場合はPR baseまたはpush before側のvalidatorとdependencyで候補treeを検査し、候補validatorだけの自己緩和を当該判定へ使用しない",
+          "when": "Governanceのevidenceまたはbranch-policy jobを実行する"
+        },
+        {
+          "given": "Governance workflowを変更するPull Requestがある",
+          "id": "AC-REPO-003-7",
+          "then": "workflow file自体をimmutableまたはtamper-proofとは表明せず、required checkのGitHub Actions由来sourceとworkflow差分を単一operatorが確認する",
+          "when": "CIの自己統制境界を評価する"
+        },
+        {
+          "given": "既存の二層branch policyを変更するPull Requestまたはprotected branch pushがある",
+          "id": "AC-REPO-003-8",
+          "then": "2回の管理された試行中はtrial.phase以外のmachine contract変更を拒否し、契約変更は試行停止後の別判断として扱う",
+          "when": "baseまたはbefore側policyと候補policyを比較する"
+        }
+      ],
+      "action": "constrain",
+      "category": "nonfunctional",
+      "id": "REQ-REPO-003",
+      "last_changed_by": "CHG-20260724-two-layer-branch-trial",
+      "object": "2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行",
+      "rationale": "長寿命devは一般解ではなく、追加操作とGitHub上の非原子的なlock制約を受容できるrepositoryだけで評価すべきため。",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-07-24",
+        "issue:#20",
+        "docs/decisions/ADR-0002-two-layer-branch-history.md"
+      ],
+      "status": "active",
+      "subject": "dev-standardの二層branch試行",
+      "title": "試行範囲、非移植性、rollback",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0002-two-layer-branch-history.md"
+        ],
+        "implementation": [
+          ".github/branch-policy.json",
+          ".github/workflows/governance.yml",
+          "distribution/manifest.json",
+          "tools/branch_policy.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_reference_repository_contract.py",
+          "tests/test_branch_policy.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト",
+        "method": "repository contract testと試行後review"
       }
     },
     {
