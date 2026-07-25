@@ -1,0 +1,87 @@
+name: Observe Main Post-Merge Governance
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+
+jobs:
+  observe:
+    if: github.event.pull_request.head.ref == 'agent/observe-main-post-merge'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TARGET_SHA: fda467d5703f97a5dd7d78d1fd8608586382efdc
+    steps:
+      - name: Observe main push Governance
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_id=""
+          run_json=""
+          for _ in $(seq 1 60); do
+            response=$(gh api \
+              -H 'Accept: application/vnd.github+json' \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${TARGET_SHA}&event=push&per_page=20")
+            run_json=$(jq -c --arg sha "$TARGET_SHA" \
+              '[.workflow_runs[] | select(.head_sha == $sha and .event == "push" and .name == "Governance")][0] // empty' \
+              <<<"$response")
+            if [[ -n "$run_json" ]]; then
+              run_id=$(jq -r '.id' <<<"$run_json")
+              status=$(jq -r '.status' <<<"$run_json")
+              if [[ "$status" == "completed" ]]; then
+                break
+              fi
+            fi
+            sleep 5
+          done
+
+          if [[ -z "$run_id" || -z "$run_json" ]]; then
+            echo "No Governance push run found for ${TARGET_SHA}" >&2
+            exit 1
+          fi
+
+          jobs=$(gh api \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/jobs?filter=latest&per_page=100")
+          conclusion=$(jq -r '.conclusion' <<<"$run_json")
+          run_number=$(jq -r '.run_number' <<<"$run_json")
+          run_url=$(jq -r '.html_url' <<<"$run_json")
+
+          integration=$(jq -r '[.jobs[] | select(.name == "integration")][0].conclusion // "missing"' <<<"$jobs")
+          evidence=$(jq -r '[.jobs[] | select(.name == "evidence")][0].conclusion // "missing"' <<<"$jobs")
+          branch_policy=$(jq -r '[.jobs[] | select(.name == "branch-policy")][0].conclusion // "missing"' <<<"$jobs")
+          verify=$(jq -r '[.jobs[] | select(.name == "verify")][0].conclusion // "missing"' <<<"$jobs")
+
+          jq -r '.jobs[] | "- `\(.name)`: \(.conclusion)"' <<<"$jobs" > /tmp/jobs.md
+          cat > /tmp/result.md <<EOF
+          ## main merge後CI観測
+
+          - main commit: \`${TARGET_SHA}\`
+          - Governance run: [#${run_number}](${run_url})
+          - event: \`push\`
+          - workflow conclusion: \`${conclusion}\`
+          - job results:
+          $(cat /tmp/jobs.md)
+
+          Expected protected-branch results:
+
+          - integration: \`${integration}\`
+          - evidence: \`${evidence}\`（pushでは\`skipped\`が正常）
+          - branch-policy: \`${branch_policy}\`
+          - verify: \`${verify}\`
+          EOF
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file /tmp/result.md
+
+          [[ "$conclusion" == "success" ]]
+          [[ "$integration" == "success" ]]
+          [[ "$branch_policy" == "success" ]]
+          [[ "$verify" == "success" ]]
+          [[ "$evidence" == "skipped" || "$evidence" == "success" || "$evidence" == "missing" ]]
