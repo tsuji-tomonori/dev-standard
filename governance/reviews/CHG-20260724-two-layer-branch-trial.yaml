@@ -118,8 +118,8 @@ selected_checks:
   result: pass
   evidence:
   - commit:self
-  note: 利用者の明示依頼に基づきreconciliationと初回bootstrap PRをdevへmergeし、CI成功後にdevからmainへのbootstrap
-    PRを作成する。main merge、ruleset適用、trial activationは行わない
+  note: 利用者の明示依頼に基づきdev統合とCI確認を完了した。main側旧validatorとのbootstrap-release CLI不一致を回避するため、devを包含するmain-first
+    bootstrap branchからPRを作成し、main merge、ruleset適用、trial activationは行わない
 - id: REV-001
   class: Invariant
   result: pass
@@ -203,8 +203,8 @@ selected_checks:
   result: pass
   evidence:
   - workflow:Governance
-  note: dev向けbootstrap PRの最新HEADでintegration、evidence、branch-policy、verifyの全blocking
-    job成功を確認してからmergeする
+  note: devを包含するmain-first bootstrap PRの最新HEADでintegration、evidence、branch-policy、verifyの全blocking
+    job成功を確認してから判断する
 - id: MRG-002
   class: Invariant
   result: pass
@@ -231,7 +231,7 @@ selected_checks:
   evidence:
   - commit:self
   - path:governance/reviews/CHG-20260724-two-layer-branch-trial.yaml
-  note: dev-first bootstrap例外、main merge非実施、rulesetとtrial activationの残作業を確定し、unknownまたはTBDを残していない
+  note: dev統合済み、main-first bootstrap delivery、main merge非実施、rulesetとtrial activationの残作業を確定し、unknownまたはTBDを残していない
 advisories: []
 residual_risks:
 - GitHub rulesetはこのPRのrepository差分だけでは適用されないため、merge後にmainとdevへ設定し確認するまで試行を開始しない
@@ -241,3 +241,5 @@ residual_risks:
   Actions由来checkを確認する
 - 詳細commitをdevから保持するため、次回release PRのcommit一覧には過去releaseの詳細commitが残り得る
 - GitHub Actionsの外部結果はPR公開後の現在HEADで確認する必要がある
+- mainにbranch policyが未導入の間はbase側review validatorがrelease専用CLIを持たないため、初回main導入はdevを包含するmain-first
+  bootstrap branchとして検証する
