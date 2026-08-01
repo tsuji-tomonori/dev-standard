@@ -66,7 +66,7 @@ selected_checks:
     class: Invariant
     result: pass
     evidence: [commit:self]
-    note: 利用者がGitHub branch、PR、Issue更新を明示承認した。merge、release、deployは行わない
+    note: 利用者がGitHub branch、PR、Issue更新と、全blocking CI成功後のdev統合を明示承認した。release、deploy、production変更は別transactionとする
   - id: FAST-001
     class: Invariant
     result: pass
@@ -76,12 +76,12 @@ selected_checks:
     class: Invariant
     result: pass
     evidence: [test:tests/benchmark/test_schema_contract.py]
-    note: type annotationを含むharness interfaceをunit testとruffで検査する。独立type checkerは現行repository契約にない
+    note: type annotationを含むharness interfaceをunit testとRuffで検査する。独立type checkerは現行repository契約にない
   - id: FAST-003
     class: Invariant
     result: pass
     evidence: [workflow:Governance, path:.pre-commit-config.yaml, test:tests/benchmark/test_repository_policy.py]
-    note: repository既定のpre-commitとruffをPR HEADで実行し、CloudFormation intrinsic tagは汎用check-yamlから除外してdomain parserで検証する
+    note: repository既定のpre-commitとRuffをPR HEADで実行し、CloudFormation intrinsic tagは汎用check-yamlから除外してdomain parserで検証する
   - id: FAST-004
     class: Invariant
     result: pass
@@ -131,7 +131,7 @@ selected_checks:
     class: Invariant
     result: pass
     evidence: [path:docs/decisions/ADR-0003-skills-e2e-benchmark.md]
-    note: authority、oracle、CI tier、統計推論の長期境界をADR-0002へ記録する
+    note: authority、oracle、CI tier、統計推論の長期境界をADR-0003へ記録する
   - id: REV-005
     class: Risk-selected
     result: pass
@@ -171,3 +171,4 @@ advisories: []
 residual_risks:
   - 実modelによるagent smokeはprovider資格情報とadapter実装に依存し、初版ではadvisoryである
   - public repositoryでは真のheld-out oracleを保管できないためtrusted environmentのprivate artifact運用が必要である
+  - trial branch契約の2 release評価はIssue #20で継続し、本PRのdev統合だけで恒久採用を表明しない
