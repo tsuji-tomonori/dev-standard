@@ -9,6 +9,7 @@
     "requirement_classification_standard": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
     "generated_design": "docs/design/generated/",
     "as_built_standard": "docs/standards/AS-BUILT-DESIGN.md",
+    "aws_cdk_as_built_standard": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
     "review_catalog": "governance/checks/catalog.yaml",
     "review_results": "governance/reviews/",
     "temporary_execution": ".devflow/run/",
@@ -332,6 +333,24 @@
       {
         "source": "docs/standards/AS-BUILT-DESIGN.md",
         "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      },
+      {
+        "source": "governance/checks",
+        "destination": "governance/checks"
+      }
+    ],
+    "aws-cdk-implementation-design": [
+      {
+        "source": ".agents/skills/generate-implementation-design",
+        "destination": ".agents/skills/generate-implementation-design"
+      },
+      {
+        "source": "docs/standards/AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AS-BUILT-DESIGN.md"
+      },
+      {
+        "source": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
+        "destination": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md"
       },
       {
         "source": "governance/checks",

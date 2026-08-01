@@ -17,6 +17,7 @@
 | `GCP-AIML-WAF` | Google Cloud | [Google Cloud Well-Architected Framework: AI and ML perspective](https://cloud.google.com/architecture/framework/perspectives/ai-ml) | 継続更新 | Google Cloud上のAI/MLデータ、モデル、運用、責任あるAIの設計観点。 | 2026-07-18 | 2026-07-18 | 90日 | AI-CONDITIONAL, GCP-DELTA | — |
 | `OCI-WAF` | Oracle | [Best practices framework for Oracle Cloud Infrastructure](https://docs.oracle.com/en/solutions/oci-best-practices/) | F29550-09 / 2025-05 | OCIおよびクラウド共通の設計原則とベンダー固有差分。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, OCI-DELTA | — |
 | `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-07-21.1 | 実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約、profile連携。標準contract変更とrepository採用scopeを別flagで管理する。 | 2026-07-21 | 2026-07-21 | 180日 | CORE | `5eae0d50abea38bd8c612d85ce791e99209b53744860fb8333fa3b9a0bb5d9aa` |
+| `DEVSTD-AWS-CDK-AS-BUILT` | dev-standard maintainers | [AWS CDK実装・as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md) | 2026-07-29 | AWS CDK固有の規範・採用義務と、実装済みcapabilityを区別するas-built設計標準。 | 2026-07-29 | 2026-07-29 | 180日 | CORE, AWS-DELTA | `60c80483cfdbc132ea5c0daddd0e5ca3fc51eb1488341406b4794fc66f634cae` |
 
 ## 前版との差分・変更確認
 
@@ -32,3 +33,4 @@
 - `GCP-AIML-WAF`: AI/ML perspectiveを一般WAFから分離し、AI-CONDITIONALとGCP差分に対応付け。
 - `OCI-WAF`: 文書版F29550-09を維持し、Cloud Common評価後にOCI固有差分だけを追加する。
 - `DEVSTD-AS-BUILT`: as_built_standard_changeとas_built_adoptionを分離し、規範強度・採用scope・enforcement stateを独立した軸として明文化。
+- `DEVSTD-AWS-CDK-AS-BUILT`: AWS CDK固有deltaを追加し、single-templateの現行能力とplanned・adopter-required・periodic能力を分離。
