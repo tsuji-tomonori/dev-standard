@@ -45,4 +45,5 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 - [二層branch履歴の管理された試行](docs/decisions/ADR-0002-two-layer-branch-history.md)
 - [要件分類標準](docs/standards/REQUIREMENT-CLASSIFICATION.md)
 - [as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)
+- [AWS CDK実装・as-built設計標準](docs/standards/AWS-CDK-AS-BUILT-DESIGN.md)
 - [文書索引](docs/README.md)
