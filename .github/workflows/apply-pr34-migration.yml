@@ -1,0 +1,141 @@
+name: Apply PR 34 Migration
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - ".github/workflows/apply-pr34-migration.yml"
+      - "governance/reviews/CHG-20260801-pr34-migration-diagnostic.yaml"
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: github.head_ref == 'agent/diagnose-pr34-migration'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Rebase, resolve the known conflict, and renumber the benchmark ADR
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --no-tags origin \
+            +refs/heads/dev:refs/remotes/origin/dev \
+            +refs/heads/agent/issue-22-e2e-benchmark:refs/remotes/origin/agent/issue-22-e2e-benchmark
+          git switch -C migrated 6d1b74e3425b8bbfad2b165cfa21eae5dec3ebb5
+
+          set +e
+          GIT_EDITOR=true git rebase --onto origin/dev 8174ec455e7062e5a7eb45f91d2fba60aafc7fcb
+          status=$?
+          set -e
+
+          if [[ "$status" -ne 0 ]]; then
+            mapfile -t conflicts < <(git diff --name-only --diff-filter=U)
+            if [[ "${#conflicts[@]}" -ne 1 || "${conflicts[0]}" != "tests/test_specflow.py" ]]; then
+              printf 'Unexpected conflicts:\n%s\n' "${conflicts[*]}" >&2
+              exit 1
+            fi
+
+            git checkout --ours tests/test_specflow.py
+            python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import re
+          from pathlib import Path
+
+          path = Path("tests/test_specflow.py")
+          text = path.read_text(encoding="utf-8")
+          catalog = json.loads(Path("spec/requirements/requirements.json").read_text(encoding="utf-8"))
+          count = len(catalog["requirements"])
+          text, replacements = re.subn(
+              r'self\.assertEqual\(len\(catalog\["requirements"\]\), \d+\)',
+              f'self.assertEqual(len(catalog["requirements"]), {count})',
+              text,
+              count=1,
+          )
+          if replacements != 1:
+              raise SystemExit("requirement count assertion not found")
+          if 'by_id["REQ-BENCH-001"]' not in text:
+              needle = '        self.assertIn("issue:25", by_id["REQ-DISC-005"]["source_refs"])\n'
+              addition = (
+                  needle
+                  + '        self.assertEqual(by_id["REQ-BENCH-001"]["scope"], "project")\n'
+                  + '        self.assertEqual(by_id["REQ-BENCH-001"]["category"], "nonfunctional")\n'
+              )
+              if needle not in text:
+                  raise SystemExit("benchmark assertion insertion point not found")
+              text = text.replace(needle, addition, 1)
+          path.write_text(text, encoding="utf-8")
+          PY
+            git add tests/test_specflow.py
+            GIT_EDITOR=true git rebase --continue
+          fi
+
+          if [[ -d .git/rebase-merge || -d .git/rebase-apply ]]; then
+            echo "rebase did not complete" >&2
+            git status --short >&2
+            exit 1
+          fi
+
+          old="docs/decisions/ADR-0002-skills-e2e-benchmark.md"
+          new="docs/decisions/ADR-0003-skills-e2e-benchmark.md"
+          test -f "$old"
+          git mv "$old" "$new"
+          python - <<'PY'
+          from __future__ import annotations
+
+          import subprocess
+          from pathlib import Path
+
+          old_name = "ADR-0002-skills-e2e-benchmark"
+          new_name = "ADR-0003-skills-e2e-benchmark"
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
+          for raw in tracked:
+              if not raw:
+                  continue
+              path = Path(raw.decode("utf-8"))
+              if not path.is_file():
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except UnicodeDecodeError:
+                  continue
+              updated = text.replace(old_name, new_name)
+              if path.name == "ADR-0003-skills-e2e-benchmark.md":
+                  updated = updated.replace(
+                      "# ADR-0002: Skills E2E benchmark",
+                      "# ADR-0003: Skills E2E benchmark",
+                      1,
+                  )
+              if updated != text:
+                  path.write_text(updated, encoding="utf-8")
+          PY
+
+          if git grep -n "ADR-0002-skills-e2e-benchmark" -- .; then
+            echo "old benchmark ADR reference remains" >&2
+            exit 1
+          fi
+
+          git add -A
+          git commit -m "📝 docs(benchmark): ADR番号をcurrent devへ整合する"
+
+          pip install -r requirements.txt
+          python .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
+          python -m unittest tests.test_specflow
+          python -m benchmarks.harness.certify --root . --check
+          python -m unittest discover -s tests/benchmark -v
+          ruff check .
+          python tools/validate_repo.py
+
+          git push --force-with-lease origin HEAD:refs/heads/agent/issue-22-e2e-benchmark
