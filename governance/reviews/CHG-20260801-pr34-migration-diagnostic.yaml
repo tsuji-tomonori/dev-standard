@@ -1,0 +1,117 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260801-pr34-migration-diagnostic
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+impact_flags:
+  external_write: true
+  irreversible_operation: false
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: false
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: false
+  external_side_effect: false
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence: [commit:self]
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence: [commit:self]
+advisories: []
+residual_risks:
+  - 診断jobはread-onlyで競合情報だけをActions artifactへ保存し、最終PR #34へは取り込まない
+  - 元PRのrebase成功可否はこのPRの診断結果で確定し、競合解消後にPR #34の全CIを再実行する
