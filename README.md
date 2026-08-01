@@ -2,11 +2,19 @@
 
 他のリポジトリへ移植して使う、AI開発用のSkills・agents・標準・検証部品の参照集です。
 
-## 提供するもの
+## このリポジトリが担保する3本柱
 
-- **要件管理**: 会話から永続要件だけを`spec/requirements/requirements.json`へ反映する
-- **as-built設計**: 実装から詳細設計を生成し、生成元とのdriftを検査する
-- **変更検証**: 変更リスクに応じたcheckだけを選び、PRとCIまで進める
+### 1. 対話から原子的な永続要件を維持する
+
+会話から今後も維持すべき要件だけを抽出し、`add`、`update`、`retire`として[`spec/requirements/requirements.json`](spec/requirements/requirements.json)へ反映します。外部挙動や受入条件が変わらない場合、要件正本は更新しません。
+
+### 2. 実装と1対1のas-built設計を生成する
+
+実装成果物から詳細設計を生成し、source digestとdriftを検査します。コードから生成できる情報を手書き設計として二重管理しません。
+
+### 3. 必要なチェックだけを、適切な時点で行う
+
+変更リスクとartifactに応じてcheckを選択し、実装中、PR前、CIで検証します。未選択checkを形式的なN/Aとして保存しません。
 
 通常の依頼は`chat-first-development`が`direct`、`assured`、`regulated`へ振り分けます。利用者がSkill名や内部コマンドを指定する必要はありません。
 
