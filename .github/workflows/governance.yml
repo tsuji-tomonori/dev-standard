@@ -232,3 +232,45 @@ jobs:
           else
             [[ "$EVIDENCE_RESULT" == "skipped" || "$EVIDENCE_RESULT" == "success" ]]
           fi
+
+  pr34-migration-diagnostic:
+    if: github.event_name == 'pull_request' && github.head_ref == 'agent/diagnose-pr34-migration'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Rebase original benchmark commits onto current dev
+        shell: bash
+        run: |
+          set -uo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch --no-tags origin \
+            +refs/heads/dev:refs/remotes/origin/dev \
+            +refs/heads/agent/issue-22-e2e-benchmark:refs/remotes/origin/agent/issue-22-e2e-benchmark
+          git switch -C migrated 6d1b74e3425b8bbfad2b165cfa21eae5dec3ebb5
+          set +e
+          git rebase --onto origin/dev 8174ec455e7062e5a7eb45f91d2fba60aafc7fcb
+          status=$?
+          set -e
+          mkdir -p .diagnostic/conflicts
+          printf '%s\n' "$status" > .diagnostic/rebase-status.txt
+          git status --short > .diagnostic/git-status.txt
+          git diff --name-only --diff-filter=U > .diagnostic/conflict-paths.txt
+          git log --oneline --decorate -12 > .diagnostic/log.txt || true
+          while IFS= read -r path; do
+            [[ -n "$path" ]] || continue
+            safe="${path//\//__}"
+            git show ":1:$path" > ".diagnostic/conflicts/${safe}.base" 2>/dev/null || true
+            git show ":2:$path" > ".diagnostic/conflicts/${safe}.ours" 2>/dev/null || true
+            git show ":3:$path" > ".diagnostic/conflicts/${safe}.theirs" 2>/dev/null || true
+            cp "$path" ".diagnostic/conflicts/${safe}.worktree" 2>/dev/null || true
+          done < .diagnostic/conflict-paths.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pr34-migration-diagnostic
+          path: .diagnostic
+          if-no-files-found: error
+          retention-days: 1
