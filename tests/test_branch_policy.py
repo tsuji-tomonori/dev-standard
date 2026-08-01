@@ -11,8 +11,10 @@ from tools import branch_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = ROOT / ".github" / "branch-policy.json"
-POLICY = branch_policy.load_policy(ROOT)
-TRIAL_POLICY = copy.deepcopy(POLICY)
+REPOSITORY_POLICY = branch_policy.load_policy(ROOT)
+POLICY = copy.deepcopy(REPOSITORY_POLICY)
+POLICY["trial"]["phase"] = "bootstrap"
+TRIAL_POLICY = copy.deepcopy(REPOSITORY_POLICY)
 TRIAL_POLICY["trial"]["phase"] = "trial"
 
 
@@ -197,22 +199,27 @@ class BranchPolicyTest(unittest.TestCase):
         return Repository(Path(temporary.name), policy=policy, with_dev=with_dev)
 
     def test_policy_is_repository_specific_and_matches_workflow_jobs(self) -> None:
-        self.assertEqual(POLICY["repository"], "tsuji-tomonori/dev-standard")
+        self.assertEqual(REPOSITORY_POLICY["repository"], "tsuji-tomonori/dev-standard")
+        self.assertIn(REPOSITORY_POLICY["trial"]["phase"], {"bootstrap", "trial"})
         self.assertEqual(POLICY["trial"]["phase"], "bootstrap")
-        self.assertEqual(POLICY["trial"]["release_cycles"], 2)
-        self.assertFalse(POLICY["trial"]["portable_default"])
-        self.assertTrue(POLICY["trial"]["single_release_operator"])
-        self.assertFalse(POLICY["trial"]["atomic_cross_branch_lock"])
+        self.assertEqual(TRIAL_POLICY["trial"]["phase"], "trial")
+        self.assertEqual(REPOSITORY_POLICY["trial"]["release_cycles"], 2)
+        self.assertFalse(REPOSITORY_POLICY["trial"]["portable_default"])
+        self.assertTrue(REPOSITORY_POLICY["trial"]["single_release_operator"])
+        self.assertFalse(REPOSITORY_POLICY["trial"]["atomic_cross_branch_lock"])
         for branch in ["main", "dev"]:
             self.assertEqual(
-                POLICY["branches"][branch]["required_checks"],
+                REPOSITORY_POLICY["branches"][branch]["required_checks"],
                 ["integration", "evidence", "branch-policy"],
             )
-        self.assertEqual(POLICY["branches"]["main"]["merge_method"], "squash")
-        self.assertEqual(POLICY["branches"]["dev"]["merge_method"], "merge")
-        self.assertEqual(POLICY["pull_requests"]["reconciliation_prefixes"], ["reconcile/"])
-        self.assertTrue(POLICY["pull_requests"]["issue_reference_pattern"])
-        self.assertEqual(POLICY["trial"]["activation_requirements"], branch_policy.ACTIVATION_REQUIREMENTS)
+        self.assertEqual(REPOSITORY_POLICY["branches"]["main"]["merge_method"], "squash")
+        self.assertEqual(REPOSITORY_POLICY["branches"]["dev"]["merge_method"], "merge")
+        self.assertEqual(REPOSITORY_POLICY["pull_requests"]["reconciliation_prefixes"], ["reconcile/"])
+        self.assertTrue(REPOSITORY_POLICY["pull_requests"]["issue_reference_pattern"])
+        self.assertEqual(
+            REPOSITORY_POLICY["trial"]["activation_requirements"],
+            branch_policy.ACTIVATION_REQUIREMENTS,
+        )
 
         workflow = (ROOT / ".github" / "workflows" / "governance.yml").read_text(encoding="utf-8")
         for required in [
@@ -224,11 +231,11 @@ class BranchPolicyTest(unittest.TestCase):
         ]:
             self.assertIn(required, workflow)
 
-        invalid_cycles = copy.deepcopy(POLICY)
+        invalid_cycles = copy.deepcopy(REPOSITORY_POLICY)
         invalid_cycles["trial"]["release_cycles"] = 3
         with self.assertRaisesRegex(branch_policy.PolicyError, "exactly two"):
             branch_policy.validate_policy(invalid_cycles, "test")
-        invalid_activation = copy.deepcopy(POLICY)
+        invalid_activation = copy.deepcopy(REPOSITORY_POLICY)
         invalid_activation["trial"]["activation_requirements"] = invalid_activation["trial"][
             "activation_requirements"
         ][:-1]
