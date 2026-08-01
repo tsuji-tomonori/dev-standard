@@ -54,7 +54,7 @@ selected_checks:
   - id: IMP-002
     class: Invariant
     result: pass
-    evidence: [commit:self]
+    evidence: [commit:self, path:.github/workflows/apply-pr34-migration.yml]
   - id: IMP-003
     class: Invariant
     result: pass
@@ -94,7 +94,7 @@ selected_checks:
   - id: REV-004
     class: Invariant
     result: pass
-    evidence: [commit:self]
+    evidence: [commit:self, path:.github/workflows/apply-pr34-migration.yml]
   - id: REV-006
     class: Invariant
     result: pass
@@ -113,5 +113,6 @@ selected_checks:
     evidence: [commit:self]
 advisories: []
 residual_risks:
-  - 診断jobはread-onlyで競合情報だけをActions artifactへ保存し、最終PR #34へは取り込まない
-  - 元PRのrebase成功可否はこのPRの診断結果で確定し、競合解消後にPR #34の全CIを再実行する
+  - 移行runnerはcurrent devへ既知のtest conflictだけを解消し、unexpected conflictではpushせずfail closedする
+  - 移行後のPR #34は利用者commitへreviewを再束縛し、benchmark固有workflowを含む全CI成功前にmergeしない
+  - 本診断PRのworkflowとreview YAMLは最終PR #34へ取り込まず、移行完了後にcloseする
