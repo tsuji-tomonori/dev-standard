@@ -137,7 +137,7 @@ selected_checks:
     result: pass
     evidence:
       - commit:self
-    note: PR #12をcurrent dev上のAWS CDK標準と明示配布profileへscope限定して再構成した
+    note: PR #12をtrial activation後のcurrent dev上のAWS CDK標準と明示配布profileへscope限定して再構成した
 
   - id: REV-002
     class: Invariant
@@ -206,3 +206,4 @@ selected_checks:
 advisories: []
 residual_risks:
   - multi-stack、dependency、IAM、network、stateful、external reference、rationale、destructive classifierはplannedであり、Issue #13/#15のadapter基盤とconformance実装が必要
+  - trial branch contractの2 release評価はIssue #20で継続し、本PR単独では恒久採用を表明しない
