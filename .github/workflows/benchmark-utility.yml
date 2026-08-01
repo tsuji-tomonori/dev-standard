@@ -1,0 +1,38 @@
+name: Benchmark Paired Utility
+
+on:
+  schedule:
+    - cron: "43 19 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  utility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Validate fixed utility protocol
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          value = json.loads(Path('benchmarks/protocol.json').read_text())
+          assert value['run_types']['utility']['fixed_pairs_per_task'] == 30
+          assert value['statistics']['optional_stopping'] is False
+          assert value['conditions'] == ['full-skills', 'no-skills', 'length-matched-control']
+          PY
+      - name: Store utility protocol manifest
+        run: mkdir -p .benchmark-runs/utility && cp benchmarks/protocol.json .benchmark-runs/utility/protocol.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-utility-protocol
+          if-no-files-found: error
+          path: .benchmark-runs/utility
+          retention-days: 30
