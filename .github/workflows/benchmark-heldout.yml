@@ -1,0 +1,40 @@
+name: Benchmark Trusted Held-out Oracle
+
+on:
+  workflow_dispatch:
+    inputs:
+      oracle_artifact:
+        description: "Trusted private oracle artifact identifier"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  PUBLIC_PR_ORACLE: forbidden
+
+jobs:
+  heldout:
+    environment: benchmark-heldout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Assert trusted-only boundary
+        run: |
+          test "${{ github.event_name }}" = workflow_dispatch
+          test -n "${{ inputs.oracle_artifact }}"
+          test "${PUBLIC_PR_ORACLE}" = forbidden
+      - name: Record held-out controller manifest only
+        run: |
+          mkdir -p .benchmark-runs/heldout
+          echo '${{ inputs.oracle_artifact }}' > .benchmark-runs/heldout/oracle-artifact-id.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-heldout-manifest
+          if-no-files-found: error
+          path: .benchmark-runs/heldout
+          retention-days: 7
