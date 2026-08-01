@@ -3,7 +3,7 @@
   "repository": "tsuji-tomonori/dev-standard",
   "trial": {
     "issue": 20,
-    "phase": "bootstrap",
+    "phase": "trial",
     "release_cycles": 2,
     "portable_default": false,
     "single_release_operator": true,
