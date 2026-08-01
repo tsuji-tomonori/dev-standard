@@ -19,7 +19,7 @@ impact_flags:
   code_change: true
   typed_code_change: false
   behavior_change: true
-  bug_fix: false
+  bug_fix: true
   generated_change: false
   sql_change: false
   e2e_change: false
@@ -75,6 +75,10 @@ selected_checks:
     class: Invariant
     result: pass
     evidence: [commit:self]
+  - id: FAST-005
+    class: Risk-selected
+    result: pass
+    evidence: [commit:self]
   - id: FAST-007
     class: Invariant
     result: pass
@@ -113,6 +117,7 @@ selected_checks:
     evidence: [commit:self]
 advisories: []
 residual_risks:
+  - GitHub Actions tokenはworkflow fileを更新できないため、workflowを除く移行branchを生成し、workflowはGitHub connectorの最終commitで追加する
   - 移行runnerはcurrent devへ既知のtest conflictだけを解消し、unexpected conflictではpushせずfail closedする
   - 移行後のPR #34は利用者commitへreviewを再束縛し、benchmark固有workflowを含む全CI成功前にmergeしない
   - 本診断PRのworkflowとreview YAMLは最終PR #34へ取り込まず、移行完了後にcloseする
