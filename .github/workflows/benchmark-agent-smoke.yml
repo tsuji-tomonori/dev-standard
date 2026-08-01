@@ -1,0 +1,40 @@
+name: Benchmark Agent Smoke
+
+on:
+  pull_request:
+    paths:
+      - "benchmarks/**"
+      - "tests/benchmark/**"
+      - ".github/workflows/benchmark-agent-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run public deterministic adapter wiring smoke
+        run: >-
+          python -m benchmarks.harness.run paired
+          --root . --task B01 --seed 0 --run-type smoke
+          --adapter '["python","-m","benchmarks.harness.reference_adapter"]'
+          --output .benchmark-runs/smoke
+      - name: Upload smoke trajectory and result
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-agent-smoke
+          if-no-files-found: error
+          path: .benchmark-runs/smoke
+          retention-days: 7
