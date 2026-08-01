@@ -148,6 +148,16 @@ class ReferenceRepositoryContractTest(unittest.TestCase):
         for profile, entries in manifest["profiles"].items():
             self.assertNotIn("work", {entry["source"] for entry in entries}, profile)
 
+    def test_readme_states_three_pillars(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for required in [
+            "## このリポジトリが担保する3本柱",
+            "### 1. 対話から原子的な永続要件を維持する",
+            "### 2. 実装と1対1のas-built設計を生成する",
+            "### 3. 必要なチェックだけを、適切な時点で行う",
+        ]:
+            self.assertIn(required, readme)
+
     def test_two_layer_branch_trial_stays_repository_specific(self) -> None:
         policy = json.loads((ROOT / ".github" / "branch-policy.json").read_text(encoding="utf-8"))
         self.assertFalse(policy["trial"]["portable_default"])
