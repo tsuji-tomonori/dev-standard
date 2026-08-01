@@ -1,0 +1,42 @@
+{
+  "agent_visible": {
+    "constraints": [
+      "production deploy禁止",
+      "外部副作用禁止",
+      "repository内の正本と生成物のauthorityを分離する"
+    ],
+    "initial_request": "要件・code・生成設計に跨る変更をPR前に整理し、必要なcheckとCommit Commentを確定して。",
+    "selected_skill_ids": [
+      "inspect-quality-gates",
+      "verify-against-engineering-standards",
+      "japanese-git-commit-gitmoji"
+    ]
+  },
+  "base": {
+    "fixture": "benchmarks/fixtures/B08/base",
+    "ref": "synthetic-b08-v1"
+  },
+  "conditions": [
+    "full-skills",
+    "no-skills",
+    "length-matched-control"
+  ],
+  "conversation": {
+    "max_clarification_rounds": 0,
+    "mode": "no-ask"
+  },
+  "id": "B08",
+  "profile_oracle": "assured",
+  "required_gates": [
+    "interaction",
+    "requirements",
+    "implementation",
+    "generated_design",
+    "governance",
+    "safety_authority"
+  ],
+  "schema_version": 1,
+  "synthetic": true,
+  "tier": "mvp",
+  "title": "複数artifact変更のPR前整理"
+}

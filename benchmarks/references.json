@@ -1,0 +1,114 @@
+{
+  "references": [
+    {
+      "adopted_claim": "固定repository、明示的受入条件、決定的testを用い、skillあり／なしをpaired比較する。task別の負の効果も測る。",
+      "date": "2026-03-16",
+      "limitation": "固定model・harness・task下の条件付き効果であり、Skill一般の普遍的因果効果ではない。",
+      "paper_id": "arXiv:2603.15401",
+      "publication_status": "arXiv preprint",
+      "title": "SWE-Skills-Bench: Do Agent Skills Actually Help in Real-World Software Engineering?",
+      "version": "v1"
+    },
+    {
+      "adopted_claim": "no skill / curated skillをcontainer化taskと決定的verifierで比較し、trajectoryとcostも記録する。",
+      "date": "2026-06-14",
+      "limitation": "context長と手順内容が交絡し得るためlength-matched controlを追加する。",
+      "paper_id": "arXiv:2602.12670",
+      "publication_status": "arXiv preprint",
+      "title": "SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks",
+      "version": "v4"
+    },
+    {
+      "adopted_claim": "固定commitの実repository、fail-to-passとpass-to-pass testでsoftware changeを評価する。",
+      "date": "2024-11-11",
+      "limitation": "bug-fix中心の評価を本benchmarkの要件・設計・governance評価へ過剰一般化しない。",
+      "paper_id": "arXiv:2310.06770",
+      "publication_status": "ICLR 2024 / arXiv revision",
+      "title": "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?",
+      "version": "v3"
+    },
+    {
+      "adopted_claim": "bug fixだけでなくfeature実装をhidden acceptance testで評価する。",
+      "date": "2026-02-11",
+      "limitation": "本repository固有のauthorityと要件正本は別oracleで検証する。",
+      "paper_id": "arXiv:2602.10975",
+      "publication_status": "arXiv preprint",
+      "title": "FeatureBench",
+      "version": "v1"
+    },
+    {
+      "adopted_claim": "design、environment、implementation、acceptance test、unit testをlifecycleとして連続評価する。",
+      "date": "2024-12-14",
+      "limitation": "本文での名称はDevEvalでありDevBenchではない。自由記述judgeは補助に限定する。",
+      "paper_id": "arXiv:2403.08604",
+      "publication_status": "arXiv preprint",
+      "title": "Prompting Large Language Models to Tackle the Full Software Development Lifecycle: A Case Study",
+      "version": "v3"
+    },
+    {
+      "adopted_claim": "曖昧・不完全要求について質問要否、質問品質、回答利用を分離して評価する。",
+      "date": "2024-06-01",
+      "limitation": "対話rubricの数値閾値は本repositoryで別途妥当性を確認する。",
+      "paper_id": "arXiv:2406.00215",
+      "publication_status": "arXiv preprint",
+      "title": "HumanEvalComm",
+      "version": "v1"
+    },
+    {
+      "adopted_claim": "要求曖昧性に対するtargeted clarificationと回答反映を評価する。",
+      "date": "2024-07-01",
+      "limitation": "すべての曖昧さで質問を強制せず、結果を変えるuser-owned decisionに限定する。",
+      "paper_id": "DOI:10.1145/3660810",
+      "publication_status": "peer-reviewed conference publication",
+      "title": "ClarifyGPT",
+      "version": "published"
+    },
+    {
+      "adopted_claim": "repository taskの曖昧性とkey questionを注釈する。",
+      "date": "2025-02-18",
+      "limitation": "annotationはtask作者以外のreviewerが確認する。",
+      "paper_id": "arXiv:2502.13069",
+      "publication_status": "arXiv preprint",
+      "title": "Ambig-SWE",
+      "version": "v1"
+    },
+    {
+      "adopted_claim": "key question、最適turn数、回答variantごとのgold outcomeを評価する。",
+      "date": "2026-07-01",
+      "limitation": "2026年の新しいpreprintであり、task schemaの直接的な標準とはみなさない。",
+      "paper_id": "arXiv:2607.00711",
+      "publication_status": "arXiv preprint",
+      "title": "ClarifyCodeBench",
+      "version": "v1"
+    },
+    {
+      "adopted_claim": "exact proseではなく構造化意味単位でomission、ambiguity、inconsistencyを評価する。",
+      "date": "2026-05-30",
+      "limitation": "SpecBenchのSubject / Predicate / Impactと本projectのslotを区別し、slotはtaskごとにrequired / optional / not_applicableとする。",
+      "paper_id": "arXiv:2605.30314",
+      "publication_status": "arXiv preprint",
+      "title": "SpecBench",
+      "version": "v1"
+    },
+    {
+      "adopted_claim": "原子性、明確性、検証可能性、整合性、traceabilityを要件rubricへ接続する。",
+      "date": "2024-08-20",
+      "limitation": "規格由来criteriaは個別taskの正解文や数値閾値を決めない。",
+      "paper_id": "arXiv:2408.10886",
+      "publication_status": "arXiv preprint",
+      "title": "Requirements quality evaluation based on ISO/IEC/IEEE 29148",
+      "version": "v1"
+    },
+    {
+      "adopted_claim": "runnable repositoryに対しfunctionalとnon-functional requirementをsystem testで評価する。",
+      "date": "2026-02-04",
+      "limitation": "性能・accessibility・security等はtaskごとに実行可能oracleがある場合だけblockingにする。",
+      "paper_id": "arXiv:2602.03462",
+      "publication_status": "arXiv preprint",
+      "title": "RAL-Bench",
+      "version": "v2"
+    }
+  ],
+  "reviewed_at": "2026-07-24",
+  "schema_version": 1
+}

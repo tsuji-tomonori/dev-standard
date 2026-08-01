@@ -1,0 +1,70 @@
+{
+  "$id": "https://github.com/tsuji-tomonori/dev-standard/benchmarks/schemas/acceptance-matrix.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "criteria": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "id": {
+            "pattern": "^I22-(AC|RV)-[0-9]{2}$"
+          },
+          "source": {
+            "enum": [
+              "issue",
+              "research-review"
+            ]
+          },
+          "statement": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "const": "verified"
+          },
+          "tests": {
+            "items": {
+              "pattern": "^tests/benchmark/test_[a-z0-9_]+\\.py::[A-Za-z0-9_]+\\.test_[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "statement",
+          "status",
+          "evidence",
+          "tests"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "issue": {
+      "const": 22
+    },
+    "schema_version": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "issue",
+    "criteria"
+  ],
+  "type": "object"
+}

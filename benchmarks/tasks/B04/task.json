@@ -1,0 +1,40 @@
+{
+  "agent_visible": {
+    "constraints": [
+      "production deploy禁止",
+      "外部副作用禁止",
+      "repository内の正本と生成物のauthorityを分離する"
+    ],
+    "initial_request": "注文の無料配送閾値を5000円から6000円へ変更して。",
+    "selected_skill_ids": [
+      "maintain-canonical-requirements"
+    ]
+  },
+  "base": {
+    "fixture": "benchmarks/fixtures/B04/base",
+    "ref": "synthetic-b04-v1"
+  },
+  "conditions": [
+    "full-skills",
+    "no-skills",
+    "length-matched-control"
+  ],
+  "conversation": {
+    "max_clarification_rounds": 0,
+    "mode": "no-ask"
+  },
+  "id": "B04",
+  "profile_oracle": "assured",
+  "required_gates": [
+    "interaction",
+    "requirements",
+    "implementation",
+    "generated_design",
+    "governance",
+    "safety_authority"
+  ],
+  "schema_version": 1,
+  "synthetic": true,
+  "tier": "mvp",
+  "title": "既存業務閾値の変更"
+}

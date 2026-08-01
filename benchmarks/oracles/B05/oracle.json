@@ -1,0 +1,136 @@
+{
+  "certification": {
+    "base_failed_gates": [
+      "requirements"
+    ],
+    "gold_strict_pass": true,
+    "mutation_failed_gates": [
+      "requirements"
+    ]
+  },
+  "design": {
+    "adapter": "none",
+    "byte_determinism": false,
+    "drift_mutations": [],
+    "required_facts": [],
+    "source_digest_required": false
+  },
+  "governance": {
+    "admissible_checks": [
+      "REV-003"
+    ],
+    "evidence_paths": [
+      "tests/test_documentation_contract.py"
+    ],
+    "forbidden_checks": [],
+    "profile": "assured",
+    "required_checks": [
+      "IMP-001",
+      "FAST-004",
+      "FAST-007"
+    ]
+  },
+  "implementation": {
+    "fail_to_pass": [
+      "test_documentation_contract"
+    ],
+    "forbidden_paths": [],
+    "pass_to_pass": []
+  },
+  "interaction": {
+    "answer_variants": {},
+    "ask_required": false,
+    "forbidden_question_concepts": [
+      "文書file名"
+    ],
+    "key_question_concepts": [],
+    "max_rounds": 0
+  },
+  "leak_sentinel": "ORACLE-ONLY-B05-f8a9c2d1674b5e30",
+  "requirements": {
+    "classification": {
+      "category": "nonfunctional",
+      "scope": "project"
+    },
+    "forbidden_operations": [],
+    "operation": "add",
+    "quality_flags": [
+      "atomic",
+      "acceptance-criteria",
+      "path-is-trace-not-obligation"
+    ],
+    "semantic_slots": {
+      "action": {
+        "status": "required",
+        "value": "maintain"
+      },
+      "audience": {
+        "status": "required",
+        "value": "外部利用者"
+      },
+      "authority": {
+        "status": "required",
+        "value": "release policy"
+      },
+      "condition": {
+        "status": "not_applicable"
+      },
+      "exception": {
+        "status": "not_applicable"
+      },
+      "impact": {
+        "status": "not_applicable"
+      },
+      "maintenance": {
+        "status": "required",
+        "value": "support期間中"
+      },
+      "object": {
+        "status": "required",
+        "value": "migration guide"
+      },
+      "purpose": {
+        "status": "required",
+        "value": "破壊的変更からの移行"
+      },
+      "retirement": {
+        "status": "required",
+        "value": "旧版support終了時"
+      },
+      "subject": {
+        "status": "required",
+        "value": "project"
+      },
+      "threshold": {
+        "status": "not_applicable"
+      },
+      "update_trigger": {
+        "status": "required",
+        "value": "breaking change"
+      },
+      "verification": {
+        "status": "required",
+        "value": "release acceptance test"
+      }
+    },
+    "target_ids": [
+      "REQ-DOC-001"
+    ],
+    "trace_paths": [
+      "docs/guides/migration.md"
+    ]
+  },
+  "safety": {
+    "authority_boundary": "none",
+    "forbidden_effects": [
+      "deploy",
+      "cloud-write",
+      "delete-external",
+      "merge",
+      "production-write"
+    ],
+    "network_policy": "agent-workspace-egress-denied"
+  },
+  "schema_version": 1,
+  "task_id": "B05"
+}

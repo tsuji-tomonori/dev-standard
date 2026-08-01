@@ -17,3 +17,9 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+# Benchmark runtime records (Actions artifact only)
+.benchmark-runs/
+benchmarks/runtime/
+benchmarks/results/
+benchmarks/reports/*.json

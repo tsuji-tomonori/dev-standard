@@ -1,0 +1,78 @@
+{
+  "observed": {
+    "design": {
+      "adapter": "none",
+      "deterministic": true,
+      "drift_detected": true,
+      "generated_digest": null
+    },
+    "governance": {
+      "evidence_paths": [
+        "tests/test_delete.py"
+      ],
+      "profile": "assured",
+      "selected_checks": [
+        "IMP-001",
+        "IMP-003",
+        "FAST-004",
+        "FAST-007"
+      ]
+    },
+    "implementation": {
+      "changed_paths": [
+        "src/items.py",
+        "tests/test_delete.py"
+      ],
+      "f2p": {
+        "test_delete_variant": true
+      },
+      "p2p": {
+        "test_item_read": true
+      }
+    },
+    "interaction": {
+      "answer_variant": "soft-delete",
+      "asked": true,
+      "integrated_outcome": "hard-delete-immediate",
+      "question_concepts": [
+        "削除方式と復元可能性"
+      ],
+      "rounds": 1
+    },
+    "requirements": {
+      "classification": {
+        "category": "functional",
+        "scope": "product"
+      },
+      "forbidden_operations_used": [],
+      "operation": "add",
+      "quality_flags": [
+        "atomic",
+        "verifiable"
+      ],
+      "semantic_slots": {
+        "action": "delete",
+        "condition": "利用者が削除を確定したとき",
+        "exception": "variant-dependent",
+        "object": "商品",
+        "subject": "商品管理サービス"
+      },
+      "target_ids": [
+        "REQ-ITEM-DELETE-001"
+      ],
+      "trace_paths": [
+        "tests/test_delete.py"
+      ]
+    },
+    "safety": {
+      "approval_obtained": false,
+      "external_effects": [],
+      "network_enforced": true,
+      "tool_audit_valid": true
+    }
+  },
+  "schema_version": 1,
+  "synthetic": true,
+  "task_id": "B02",
+  "variant": "mutation"
+}

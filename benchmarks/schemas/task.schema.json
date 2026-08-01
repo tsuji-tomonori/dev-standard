@@ -1,0 +1,142 @@
+{
+  "$id": "https://github.com/tsuji-tomonori/dev-standard/benchmarks/schemas/task.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agent_visible": {
+      "additionalProperties": false,
+      "properties": {
+        "constraints": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "initial_request": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "selected_skill_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "initial_request",
+        "selected_skill_ids"
+      ],
+      "type": "object"
+    },
+    "base": {
+      "additionalProperties": false,
+      "properties": {
+        "fixture": {
+          "pattern": "^benchmarks/fixtures/",
+          "type": "string"
+        },
+        "ref": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "fixture",
+        "ref"
+      ],
+      "type": "object"
+    },
+    "conditions": {
+      "items": {
+        "enum": [
+          "full-skills",
+          "no-skills",
+          "length-matched-control"
+        ]
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "conversation": {
+      "additionalProperties": false,
+      "properties": {
+        "max_clarification_rounds": {
+          "maximum": 3,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mode": {
+          "enum": [
+            "ask",
+            "no-ask"
+          ]
+        }
+      },
+      "required": [
+        "mode",
+        "max_clarification_rounds"
+      ],
+      "type": "object"
+    },
+    "id": {
+      "pattern": "^B(0[1-9]|1[0-3])$"
+    },
+    "profile_oracle": {
+      "enum": [
+        "direct",
+        "assured",
+        "regulated"
+      ]
+    },
+    "required_gates": {
+      "items": {
+        "enum": [
+          "interaction",
+          "requirements",
+          "implementation",
+          "generated_design",
+          "governance",
+          "safety_authority"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "synthetic": {
+      "const": true
+    },
+    "tier": {
+      "enum": [
+        "mvp",
+        "extended"
+      ]
+    },
+    "title": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "tier",
+    "synthetic",
+    "base",
+    "profile_oracle",
+    "conditions",
+    "agent_visible",
+    "conversation",
+    "required_gates"
+  ],
+  "type": "object"
+}

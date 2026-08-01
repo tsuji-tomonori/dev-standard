@@ -1,0 +1,41 @@
+{
+  "agent_visible": {
+    "constraints": [
+      "production deploy禁止",
+      "外部副作用禁止",
+      "repository内の正本と生成物のauthorityを分離する"
+    ],
+    "initial_request": "一覧の空状態に控えめなアイコンを追加して。",
+    "selected_skill_ids": [
+      "calibrated-collaborative-listening",
+      "right-size-execution"
+    ]
+  },
+  "base": {
+    "fixture": "benchmarks/fixtures/B03/base",
+    "ref": "synthetic-b03-v1"
+  },
+  "conditions": [
+    "full-skills",
+    "no-skills",
+    "length-matched-control"
+  ],
+  "conversation": {
+    "max_clarification_rounds": 0,
+    "mode": "no-ask"
+  },
+  "id": "B03",
+  "profile_oracle": "direct",
+  "required_gates": [
+    "interaction",
+    "requirements",
+    "implementation",
+    "generated_design",
+    "governance",
+    "safety_authority"
+  ],
+  "schema_version": 1,
+  "synthetic": true,
+  "tier": "mvp",
+  "title": "可逆で低costな曖昧さ"
+}

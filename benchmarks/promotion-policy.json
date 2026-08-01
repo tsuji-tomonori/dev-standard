@@ -1,0 +1,16 @@
+{
+  "agent_smoke_initial_mode": "advisory",
+  "blocking_promotion_requires": {
+    "human_annotation_agreement_min": 0.8,
+    "infrastructure_flake_rate_max": 0.01,
+    "mean_cost_usd_max": 5.0,
+    "minimum_runs": 50,
+    "oracle_leakage_incidents": 0,
+    "p95_minutes_max": 20,
+    "provider_failure_rate_max": 0.02,
+    "reproduction_rate_min": 0.98
+  },
+  "promotion_scope": "Gate単位。全agent benchmarkを一括でblockingへ昇格しない。",
+  "rollback": "閾値逸脱またはoracle leakageを検出したGateは直ちにadvisoryへ戻す。",
+  "schema_version": 1
+}

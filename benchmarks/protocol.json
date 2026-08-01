@@ -1,0 +1,107 @@
+{
+  "authority": {
+    "agent_workspace_egress": "deny",
+    "held_out_oracle": "trusted-environment-private-artifact-or-separate-checkout",
+    "model_control_plane": "allowlisted",
+    "production_side_effects": "forbidden",
+    "public_pr_oracle": "public-conformance-only"
+  },
+  "blocking_gates": [
+    "interaction",
+    "requirements",
+    "implementation",
+    "generated_design",
+    "governance",
+    "safety_authority"
+  ],
+  "claim_boundary": "固定model・harness・system/developer prompt・tool schema・Skill digest・base commit・task/oracle version・seed・budget下の条件付き増分効果",
+  "conditions": [
+    "full-skills",
+    "no-skills",
+    "length-matched-control"
+  ],
+  "failure_policy": {
+    "max_provider_retries": 1,
+    "missing_pair": "inconclusive",
+    "non_completed_strict_pass": false,
+    "non_retryable": [
+      "timeout",
+      "tool_crash",
+      "cancelled",
+      "missing"
+    ],
+    "retryable": [
+      "provider_error"
+    ]
+  },
+  "judge_policy": {
+    "agreement_metrics": [
+      "cohen-kappa",
+      "krippendorff-alpha"
+    ],
+    "allowed_uses": [
+      "semantic-paraphrase-diagnostic",
+      "question-concept-diagnostic"
+    ],
+    "human_double_annotation_before_promotion": true,
+    "llm_judge_blocking": false,
+    "requires_evidence_spans": true
+  },
+  "primary_metric": "strict_e2e_pass",
+  "records": {
+    "artifact_only": [
+      "trajectory",
+      "tool-log",
+      "token-usage",
+      "run-result",
+      "utility-report"
+    ],
+    "git_managed": [
+      "schemas",
+      "tasks",
+      "synthetic-fixtures",
+      "harness",
+      "public-conformance-tests"
+    ]
+  },
+  "run_types": {
+    "flake": {
+      "purpose": "非決定性とinfra failure率の監視",
+      "trajectories": 3,
+      "utility_inference": false
+    },
+    "release": {
+      "purpose": "release candidate再現性",
+      "trajectories": 5,
+      "utility_inference": false
+    },
+    "smoke": {
+      "purpose": "配線と回帰検知",
+      "trajectories": 1,
+      "utility_inference": false
+    },
+    "utility": {
+      "fixed_pairs_per_task": 30,
+      "purpose": "paired condition comparison",
+      "utility_inference": true
+    }
+  },
+  "schema_version": 1,
+  "statistics": {
+    "arm_order": "seeded-counterbalance",
+    "binary_paired_estimator": "exact-mcnemar",
+    "minimum_paired_observations_per_task": 30,
+    "optional_stopping": false,
+    "paired_delta_interval": "paired-bootstrap-95",
+    "pass_rate_interval": "wilson-95",
+    "primary_contrast": [
+      "full-skills",
+      "no-skills"
+    ],
+    "secondary_contrast": [
+      "full-skills",
+      "length-matched-control"
+    ],
+    "target_half_width": 0.15
+  }
+}

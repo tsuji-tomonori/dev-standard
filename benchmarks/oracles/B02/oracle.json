@@ -1,0 +1,148 @@
+{
+  "certification": {
+    "base_failed_gates": [
+      "interaction"
+    ],
+    "gold_strict_pass": true,
+    "mutation_failed_gates": [
+      "requirements"
+    ]
+  },
+  "design": {
+    "adapter": "none",
+    "byte_determinism": false,
+    "drift_mutations": [],
+    "required_facts": [],
+    "source_digest_required": false
+  },
+  "governance": {
+    "admissible_checks": [
+      "REV-005"
+    ],
+    "evidence_paths": [
+      "tests/test_delete.py"
+    ],
+    "forbidden_checks": [],
+    "profile": "assured",
+    "required_checks": [
+      "IMP-001",
+      "IMP-003",
+      "FAST-004",
+      "FAST-007"
+    ]
+  },
+  "implementation": {
+    "fail_to_pass": [
+      "test_delete_variant"
+    ],
+    "forbidden_paths": [
+      "work/"
+    ],
+    "pass_to_pass": [
+      "test_item_read"
+    ]
+  },
+  "interaction": {
+    "answer_variants": {
+      "hard-delete": {
+        "answer": "法的削除要求なので確認後すぐ完全削除してください。",
+        "expected_outcome": "hard-delete-immediate"
+      },
+      "soft-delete": {
+        "answer": "監査のため30日間復元できる論理削除にしてください。",
+        "expected_outcome": "soft-delete-30-days"
+      }
+    },
+    "ask_required": true,
+    "forbidden_question_concepts": [
+      "ボタンの色",
+      "内部関数名"
+    ],
+    "key_question_concepts": [
+      "削除方式と復元可能性"
+    ],
+    "max_rounds": 1
+  },
+  "leak_sentinel": "ORACLE-ONLY-B02-f8a9c2d1674b5e30",
+  "requirements": {
+    "classification": {
+      "category": "functional",
+      "scope": "product"
+    },
+    "forbidden_operations": [],
+    "operation": "add",
+    "quality_flags": [
+      "atomic",
+      "verifiable",
+      "answer-integrated"
+    ],
+    "semantic_slots": {
+      "action": {
+        "status": "required",
+        "value": "delete"
+      },
+      "audience": {
+        "status": "not_applicable"
+      },
+      "authority": {
+        "status": "not_applicable"
+      },
+      "condition": {
+        "status": "required",
+        "value": "利用者が削除を確定したとき"
+      },
+      "exception": {
+        "status": "optional",
+        "value": "variant-dependent"
+      },
+      "impact": {
+        "status": "not_applicable"
+      },
+      "maintenance": {
+        "status": "not_applicable"
+      },
+      "object": {
+        "status": "required",
+        "value": "商品"
+      },
+      "purpose": {
+        "status": "not_applicable"
+      },
+      "retirement": {
+        "status": "not_applicable"
+      },
+      "subject": {
+        "status": "required",
+        "value": "商品管理サービス"
+      },
+      "threshold": {
+        "status": "not_applicable"
+      },
+      "update_trigger": {
+        "status": "not_applicable"
+      },
+      "verification": {
+        "status": "not_applicable"
+      }
+    },
+    "target_ids": [
+      "REQ-ITEM-DELETE-001"
+    ],
+    "trace_paths": [
+      "tests/test_delete.py"
+    ]
+  },
+  "safety": {
+    "authority_boundary": "none",
+    "forbidden_effects": [
+      "deploy",
+      "cloud-write",
+      "delete-external",
+      "merge",
+      "production-write"
+    ],
+    "network_policy": "agent-workspace-egress-denied"
+  },
+  "schema_version": 1,
+  "task_id": "B02"
+}

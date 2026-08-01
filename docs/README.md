@@ -17,3 +17,8 @@
 - [生成要件一覧](requirements/REQUIREMENTS.md)
 
 `templates/`はregulated profileで必要な場合だけ使用します。ADRは長期判断が必要な場合だけ`decisions/`へ追加します。
+
+## ベンチマーク
+
+- [Skills E2Eベンチマーク](../benchmarks/README.md)
+- [ADR-0002: Skills E2Eベンチマーク](decisions/ADR-0003-skills-e2e-benchmark.md)

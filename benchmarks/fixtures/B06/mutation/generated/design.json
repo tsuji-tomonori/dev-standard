@@ -1,0 +1,38 @@
+{
+  "adapter": "fastapi-sql",
+  "facts": [
+    {
+      "calls": [
+        "functions.load_item",
+        "functions.present_item"
+      ],
+      "function": "get_item",
+      "kind": "route",
+      "method": "GET",
+      "path": "/items/{item_id}"
+    },
+    {
+      "index": 1,
+      "kind": "sql-statement",
+      "operation": "SELECT",
+      "source": "sql/read.sql",
+      "tables": [
+        "items"
+      ],
+      "target": "-"
+    },
+    {
+      "kind": "openapi-operation",
+      "method": "GET",
+      "operation_id": "getItem",
+      "path": "/items/{item_id}",
+      "requirements": [
+        "REQ-ITEM-READ-001"
+      ],
+      "responses": [
+        "200"
+      ]
+    }
+  ],
+  "source_digest": "sha256:526c9d5b51fd435c9b1a6a616eac6251417fa4c67c49059b586e9cc9b01f1cc2"
+}

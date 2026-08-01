@@ -827,6 +827,69 @@
     {
       "acceptance_criteria": [
         {
+          "given": "B01〜B08のsynthetic taskとcontroller-only oracleがある",
+          "id": "AC-BENCH-001-1",
+          "then": "各goldが六GateをStrict Passし、baseと最低一つのmutationが宣言したGateでFailする",
+          "when": "benchmark certificationを実行する"
+        },
+        {
+          "given": "full-skills、no-skills、length-matched-controlを比較する",
+          "id": "AC-BENCH-001-2",
+          "then": "固定したmodel、prompt、tool、repository、task、oracle、seed、budget下のpaired observationだけを用い、smokeまたは欠測を効果推定へ混入しない",
+          "when": "utility runを報告する"
+        },
+        {
+          "given": "agent workspaceとheld-out oracleを準備する",
+          "id": "AC-BENCH-001-3",
+          "then": "oracleとsimulated answerをworkspaceへmountせずworkspace toolのegressを禁止し、public PR oracleとtrusted held-out oracleを別workflowで扱う",
+          "when": "benchmark runを開始する"
+        }
+      ],
+      "action": "verify",
+      "category": "nonfunctional",
+      "id": "REQ-BENCH-001",
+      "last_changed_by": "CHG-20260724-skills-e2e-benchmark",
+      "object": "対話、永続要件、実装、生成設計、governanceおよびauthorityを横断する決定的なE2E契約",
+      "rationale": "個別validatorの成功だけでは、自然言語依頼から複数authorityを整合させるagent orchestrationの欠陥、不要質問、oracle leakage、Skillの負の効果を検出できないため。",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-07-24",
+        "issue:22",
+        "arXiv:2603.15401",
+        "arXiv:2602.12670v4"
+      ],
+      "status": "active",
+      "subject": "Skill検証基盤",
+      "title": "Skills E2E benchmarkによる開発契約の回帰検証",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0003-skills-e2e-benchmark.md",
+          "benchmarks/protocol.json"
+        ],
+        "implementation": [
+          "benchmarks/harness",
+          "benchmarks/schemas",
+          ".github/workflows/benchmark-conformance.yml"
+        ],
+        "standards": [
+          "SWEBOK-V4A"
+        ],
+        "tests": [
+          "tests/benchmark/test_scoring.py",
+          "tests/benchmark/test_isolation.py",
+          "tests/benchmark/test_statistics.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "benchmarks/repository/acceptance-matrix.jsonとtests/benchmark/",
+        "method": "自動test、schema validation、gold/base/mutation discriminationおよびActions workflow境界検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
           "given": "FastAPI operationを実装している",
           "id": "AC-DESIGN-001-1",
           "then": "router.pyが処理の流れを公開し、functions.pyが具体処理を持つ",

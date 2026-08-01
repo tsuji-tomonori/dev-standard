@@ -26,6 +26,7 @@
 | `REQ-ASBUILT-017` | 1 | 有効 | 制約 | as-built規約は、Rule IDからcatalog check IDへ接続された機械可読check定義を**維持する** | repository契約テスト |
 | `REQ-ASBUILT-018` | 1 | 有効 | 運用 | as-built規約checkは、理由付きRule ID抑制箇所の監査一覧を**生成する** | 定期repository audit |
 | `REQ-ASBUILT-019` | 1 | 有効 | 運用 | 導入先repositoryの品質検証は、testとstatic analysisと規約checkとcoverageを表示する外部report viewを**提供する** | CI契約レビュー |
+| `REQ-BENCH-001` | 1 | 有効 | 品質 | Skill検証基盤は、対話、永続要件、実装、生成設計、governanceおよびauthorityを横断する決定的なE2E契約を**検証する** | 自動test、schema validation、gold/base/mutation discriminationおよびActions workflow境界検査 |
 | `REQ-DESIGN-001` | 2 | 有効 | 制約 | FastAPI実装フレームは、router.pyのオーケストレーションとfunctions.pyの具体処理に分けたoperationを**構成する** | 自動テスト |
 | `REQ-DESIGN-002` | 2 | 有効 | 機能 | 設計生成器は、FastAPI routerの構文木から得たoperationシーケンス図を**導出する** | 自動テスト |
 | `REQ-DESIGN-003` | 2 | 有効 | インターフェース | 設計生成器は、OpenAPI文書からのAPIとインターフェースの一覧を**導出する** | 自動テスト |
@@ -306,6 +307,23 @@ as-built規約checkは、理由付きRule ID抑制箇所の監査一覧を**生�
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: workflow参照とrepository非複製確認
 トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=docs/ARTIFACTS-AND-CHECKS.md,governance/reviews/README.md; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+
+## REQ-BENCH-001: Skills E2E benchmarkによる開発契約の回帰検証
+
+Skill検証基盤は、対話、永続要件、実装、生成設計、governanceおよびauthorityを横断する決定的なE2E契約を**検証する**。
+
+根拠: 個別validatorの成功だけでは、自然言語依頼から複数authorityを整合させるagent orchestrationの欠陥、不要質問、oracle leakage、Skillの負の効果を検出できないため。
+
+分類: `project` / `nonfunctional`
+
+受入条件:
+- `AC-BENCH-001-1` 前提: B01〜B08のsynthetic taskとcontroller-only oracleがある。条件: benchmark certificationを実行する。期待結果: 各goldが六GateをStrict Passし、baseと最低一つのmutationが宣言したGateでFailする。
+- `AC-BENCH-001-2` 前提: full-skills、no-skills、length-matched-controlを比較する。条件: utility runを報告する。期待結果: 固定したmodel、prompt、tool、repository、task、oracle、seed、budget下のpaired observationだけを用い、smokeまたは欠測を効果推定へ混入しない。
+- `AC-BENCH-001-3` 前提: agent workspaceとheld-out oracleを準備する。条件: benchmark runを開始する。期待結果: oracleとsimulated answerをworkspaceへmountせずworkspace toolのegressを禁止し、public PR oracleとtrusted held-out oracleを別workflowで扱う。
+
+要求源: user:2026-07-24, issue:22, arXiv:2603.15401, arXiv:2602.12670v4
+検証証跡: benchmarks/repository/acceptance-matrix.jsonとtests/benchmark/
+トレース: 設計=docs/decisions/ADR-0003-skills-e2e-benchmark.md,benchmarks/protocol.json; 実装=benchmarks/harness,benchmarks/schemas,.github/workflows/benchmark-conformance.yml; テスト=tests/benchmark/test_scoring.py,tests/benchmark/test_isolation.py,tests/benchmark/test_statistics.py; 参照資料=SWEBOK-V4A
 
 ## REQ-DESIGN-001: FastAPI operation構成
 
