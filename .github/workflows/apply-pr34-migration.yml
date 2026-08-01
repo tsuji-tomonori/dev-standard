@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - name: Rebase, resolve the known conflict, and renumber the benchmark ADR
+      - name: Rebase, resolve the known conflict, and prepare a workflow-free migration branch
         shell: bash
         run: |
           set -euo pipefail
@@ -138,4 +138,19 @@ jobs:
           ruff check .
           python tools/validate_repo.py
 
-          git push --force-with-lease origin HEAD:refs/heads/agent/issue-22-e2e-benchmark
+          git reset --soft origin/dev
+          workflow_paths=(
+            .github/workflows/benchmark-agent-smoke.yml
+            .github/workflows/benchmark-conformance.yml
+            .github/workflows/benchmark-flake.yml
+            .github/workflows/benchmark-heldout.yml
+            .github/workflows/benchmark-utility.yml
+          )
+          for path in "${workflow_paths[@]}"; do
+            git rm --cached --ignore-unmatch "$path"
+            rm -f "$path"
+          done
+          git add -A
+          git commit -m "🧪 feat(benchmark): Skills E2E benchmarkをcurrent devへ移行する"
+
+          git push --force origin HEAD:refs/heads/agent/issue-22-e2e-benchmark-migrated
