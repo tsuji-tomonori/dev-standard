@@ -12,6 +12,7 @@
 
 - [要件分類標準](standards/REQUIREMENT-CLASSIFICATION.md)
 - [as-built設計標準](standards/AS-BUILT-DESIGN.md)
+- [AWS CDK実装・as-built設計標準](standards/AWS-CDK-AS-BUILT-DESIGN.md)
 - [参照資料一覧](standards/SOURCES.md)
 - [生成要件一覧](requirements/REQUIREMENTS.md)
 
