@@ -1,0 +1,337 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260803-skills-audit-release
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+  - pre-merge
+impact_flags:
+  external_write: true
+  irreversible_operation: true
+  auth_change: false
+  data_change: false
+  public_api_change: true
+  iac_change: false
+  dependency_change: true
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: true
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: true
+  requirements_impact: true
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: true
+  external_side_effect: true
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+    note: PR #55で是正した監査19指摘と自動生成29要件を本releaseの対象として固定した
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/decisions/ADR-0003-canonical-host-asset-generation.md
+      - path:docs/reference/skill-evidence-audit.md
+    note: host生成、危険な出力置換の禁止、監査結果を設計・文書影響として識別した
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-skills-audit-release.yaml
+    note: Skills、generator、distribution、CI、要件、文書に跨るreleaseのためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がrelease証跡PRの作成、devへのmerge、main向けPR更新を明示承認した
+
+  - id: IMP-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: devへのmerge commitとmainへのsquash mergeを不可逆操作として識別し、承認範囲内でのみ実行する
+
+  - id: IMP-008
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:tools/install_reference.py
+      - test:tests/test_install_reference.py
+    note: host選択CLIはadditiveであり、既存Codex既定値と既存profileを維持する
+
+  - id: IMP-010
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+      - workflow:Governance
+    note: 追加dependencyはversion固定され、clean setupとCIが同じmanifestを使用する
+
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_designflow.py
+      - test:tests/test_qualityflow.py
+      - workflow:Governance
+    note: 変更したgeneratorと検査CLIの構文・起動・repository testをGovernanceで検証する
+
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Run pre-commit checks
+      - workflow:Governance
+    note: release HEAD全体へpre-commitとRuffを実行する
+
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_designflow.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_audit_consistency.py
+    note: 安全境界、host生成、installer、横断監査の受入条件を回帰testへ接続した
+
+  - id: FAST-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - test:tests/test_designflow.py
+      - test:tests/test_generate_host_assets.py
+      - test:tests/test_audit_consistency.py
+    note: 任意出力削除、生成物commit、欠落trace、host driftの失敗条件を負例で固定した
+
+  - id: FAST-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_specflow.py
+      - test:tests/test_generate_host_assets.py
+      - workflow:Host assets#Generate Codex and Claude Code packages
+    note: 要件viewとhost packageを同一logicから決定的に再生成し、driftを拒否する
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: release差分全体をsecret scanとpre-commitで検査する
+
+  - id: FAST-008
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:requirements.txt
+      - workflow:Governance
+    note: Python依存はexact pinで、setupとCIが同じmanifestを使用する
+
+  - id: FAST-009
+    class: Risk-selected
+    result: pass
+    evidence:
+      - test:tests/test_install_reference.py
+      - path:docs/guides/getting-started.md
+    note: 新しいhost選択optionと出力形式を文書・実装・testで固定し、既存既定値を維持した
+
+  - id: FAST-015
+    class: Advisory
+    result: pass
+    evidence:
+      - workflow:Governance#Publish as-built quality summary
+      - workflow:Host assets#Upload generated host packages
+    note: 品質結果はjob summary、生成packageは期限付きartifactから診断できる
+
+  - id: FAST-016
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:.agents/skills/generate-implementation-design/scripts/qualityflow.py
+      - test:tests/test_qualityflow.py
+    note: handler登録、metadata、error branch、sampleの三点整合検査を実装した
+
+  - id: FAST-017
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:.agents/skills/generate-implementation-design/scripts/qualityflow.py
+      - test:tests/test_qualityflow.py
+    note: sample参照とresponse assertをASTで検査し、不足時に失敗する
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/reference/skill-evidence-audit.md
+    note: release対象をdevへ統合済みのPR #55と本release reviewに限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: topic Commit Commentとrelease squash本文へ必須節、marker、review path、Issue参照を保持する
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - path:docs/requirements/REQUIREMENTS.md
+    note: 52要件の正本と生成view、およびimplementation・test traceの整合を確認した
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/decisions/ADR-0003-canonical-host-asset-generation.md
+      - path:distribution/host-adapters.json
+    note: host adapter、生成物非追跡境界、repository固有branch契約への影響を記録した
+
+  - id: REV-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:spec/requirements/requirements.json
+      - test:tests/test_audit_consistency.py
+      - test:tests/test_specflow.py
+    note: 52要件のtraceが実在し、自動生成29要件が全件適合する
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_designflow.py
+      - test:tests/test_generate_host_assets.py
+      - test:tests/test_audit_consistency.py
+      - workflow:Governance
+      - workflow:Host assets
+    note: 受入条件をrepository testと2 workflowへ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-skills-audit-release.yaml
+    note: releaseで選択したcheckだけをcatalog v3とschema v2へ適合するYAMLに保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-skills-audit-release.yaml
+    note: 未選択checkを形式的なN/Aとして登録していない
+
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:distribution/host-adapters.json
+      - path:distribution/manifest.json
+      - test:tests/test_install_reference.py
+    note: Codex既定layoutを維持し、Claude Codeをadditiveなhost adapterとして生成する
+
+  - id: REV-014
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:.github/workflows/governance.yml
+      - path:.github/workflows/host-assets.yml
+      - path:docs/guides/getting-started.md
+    note: Actionsの生成、診断、手編集拒否、利用方法をworkflowと導入文書へ反映した
+
+  - id: REV-015
+    class: Advisory
+    result: pass
+    evidence:
+      - path:docs/decisions/ADR-0003-canonical-host-asset-generation.md
+    note: 単一正本、host adapter、生成物非追跡の長期判断をADRへ保存した
+
+  - id: MRG-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - workflow:Host assets
+    note: release PRの最新HEADで全blocking job成功後にのみmainへsquash mergeする
+
+  - id: MRG-002
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_specflow.py
+      - test:tests/test_generate_host_assets.py
+      - workflow:Host assets
+    note: 正本由来の要件viewとhost packageにdriftがないことを検証する
+
+  - id: MRG-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-skills-audit-release.yaml
+    note: selected checkに未解決blocking failを残さず、失敗時はmain merge前に停止する
+
+  - id: MRG-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: mainのsquash Commit Commentへrelease manifest、要件・設計影響、検証、互換性、残存リスクを保持する
+
+  - id: MRG-006
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がrelease証跡のdev mergeとmain向けPR更新を明示承認しており、release中は対象外変更を混入させない
+
+  - id: MRG-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-skills-audit-release.yaml
+      - path:docs/reference/skill-evidence-audit.md
+    note: 要件影響、設計影響、互換性、rollback、既知制約を確定し、unknownまたはTBDを残していない
+
+advisories: []
+residual_risks:
+  - mainへのsquash merge後はbranch契約に従いmainからdevへのreconciliationが必要である
+  - Claude Code以外のhost adapterはhost-adapters.jsonへ明示追加するまで自動生成対象外である
