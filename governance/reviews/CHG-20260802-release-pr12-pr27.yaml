@@ -1,0 +1,244 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260802-release-pr12-pr27
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+  - pre-merge
+impact_flags:
+  external_write: true
+  irreversible_operation: true
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: true
+  typed_code_change: false
+  behavior_change: true
+  bug_fix: false
+  generated_change: true
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: false
+  requirements_impact: false
+  public_contract_change: true
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: true
+  squash: true
+  external_side_effect: true
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: true
+  as_built_adoption: false
+  quality_threshold_change: false
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260721-aws-cdk-as-built-design.yaml
+      - path:governance/reviews/CHG-20260724-readme-three-pillars.yaml
+    note: PR #12と#27はいずれも永続要件を変更せず、AWS CDK標準contractとREADME公開説明をmainへ昇格する
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+      - path:README.md
+      - path:distribution/manifest.json
+    note: AWS CDK固有標準、明示配布profile、standards registry、READMEの3本柱に設計・公開contract影響がある
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260802-release-pr12-pr27.yaml
+    note: 標準、配布contract、生成台帳、公開説明、testsを同一releaseで扱うためassuredを選択した
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がrelease review追加、dev向けPR、devからmainへのPRとmerge、reconciliationを明示依頼した
+  - id: IMP-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: mainへのsquash mergeとdevへのreconciliation mergeを不可逆操作として識別し、利用者の明示承認範囲内で実行する
+  - id: FAST-001
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_standardsflow.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_reference_repository_contract.py
+      - workflow:Governance
+    note: 変更したPython testsとrepository toolsの実行可能性をGovernanceで検証する
+  - id: FAST-003
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: 現在のrelease HEADへRuffとpre-commitを実行する
+  - id: FAST-004
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_standardsflow.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_reference_repository_contract.py
+      - workflow:Governance#Run unit tests
+    note: support status、配布境界、標準hash、READMEの3本柱を回帰testで直接検証する
+  - id: FAST-006
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/standards/registry.json
+      - path:.agents/skills/verify-against-engineering-standards/assets/standards.registry.json
+      - path:docs/standards/SOURCES.md
+      - test:tests/test_standardsflow.py
+    note: standards registry、配布asset、生成SOURCESのbyte driftを拒否する
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: release差分全体をGitleaksとpre-commitで検査する
+  - id: FAST-024
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+      - path:.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md
+      - path:distribution/manifest.json
+      - test:tests/test_standardsflow.py
+      - test:tests/test_install_reference.py
+    note: AWS CDK規範、現在能力、enforcement、明示配布profile、Rule/check/test traceの整合を検証する
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260721-aws-cdk-as-built-design.yaml
+      - path:governance/reviews/CHG-20260724-readme-three-pillars.yaml
+    note: release対象をdevへ統合済みのPR #12と#27、および本release reviewに限定する
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - test:tests/test_review_contract.py
+    note: release squash Commit Commentへ必須節、release marker、review path、Issue参照を保持する
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: PR #12と#27の要件影響なし判定を維持し、requirements正本を変更しない
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+      - path:README.md
+      - path:distribution/manifest.json
+    note: 標準contract、配布profile、README公開説明への影響と、生成設計・追加ADRが対象外であることを記録する
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_standardsflow.py
+      - test:tests/test_install_reference.py
+      - test:tests/test_reference_repository_contract.py
+      - workflow:Governance
+    note: 標準、配布、生成台帳、README契約を同一HEADのtestsとGovernanceへ接続する
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260802-release-pr12-pr27.yaml
+      - test:tests/test_review_contract.py
+    note: releaseで選択したcheckだけをschema v2とcatalog v3へ適合するYAMLに保存する
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260802-release-pr12-pr27.yaml
+    note: CDK導入先でのみ必要なIaC、deploy、coverage、periodic checkを形式的なN/Aとして登録しない
+  - id: REV-011
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:distribution/manifest.json
+      - test:tests/test_install_reference.py
+      - test:tests/test_reference_repository_contract.py
+    note: aws-cdk-implementation-designをadditiveに追加し、既存profile、導入手順、既存リンクとの後方互換性を維持する
+  - id: REV-015
+    class: Advisory
+    result: pass
+    evidence:
+      - path:docs/standards/AWS-CDK-AS-BUILT-DESIGN.md
+      - path:docs/standards/AS-BUILT-DESIGN.md
+    note: 長期判断は既存の基底標準とIssue #15の責務境界に従い、release固有ADRを重複追加しない
+  - id: MRG-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: release PRの最新HEADでintegration、evidence、branch-policy、verifyの全blocking job成功後にのみsquash mergeする
+  - id: MRG-002
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/standards/registry.json
+      - path:.agents/skills/verify-against-engineering-standards/assets/standards.registry.json
+      - path:docs/standards/SOURCES.md
+      - workflow:Governance
+    note: standardsflow checkで正本、配布registry、生成SOURCESのdriftがないことを確認する
+  - id: MRG-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260802-release-pr12-pr27.yaml
+    note: selected checkに未解決blocking failを残さず、失敗時はmain merge前に停止する
+  - id: MRG-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: mainのsquash commitへrelease manifest、要件・設計影響、検証、互換性、残存リスクを保持する
+  - id: MRG-006
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がPR #12と#27のmain向けPR作成とmergeを明示承認しており、release freeze中は他のdev mergeを行わない
+  - id: MRG-007
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260802-release-pr12-pr27.yaml
+    note: 要件影響、設計影響、互換性、rollback、既知制約を確定し、unknownまたはTBDを残していない
+advisories: []
+residual_risks:
+  - multi-stack、dependency、IAM、network、stateful、external reference、rationale、destructive classifierはplannedであり、Issue #13/#15のadapter基盤とconformance実装が必要である
+  - main squash merge後のCommit Comment完全性はpush auditで事後検出するため、失敗時はfreezeを継続し、履歴rewriteではなくrevertまたはforward fixで是正する
+  - Issue #20の二層branch試行は本releaseを1回目の通常releaseとして記録し、mainからdevへのreconciliation完了までtransactionを完了扱いにしない
