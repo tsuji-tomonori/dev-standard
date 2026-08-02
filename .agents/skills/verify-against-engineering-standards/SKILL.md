@@ -1,6 +1,6 @@
 ---
 name: verify-against-engineering-standards
-description: Verify only standards and official guidance relevant to the current change. Classify controls as Invariant, Risk-selected, Advisory, or Periodic; record selected review decisions in governance/reviews/<change-id>.yaml; keep automated execution results in external CI; and do not turn all SWEBOK or vendor guidance into universal blocking requirements.
+description: Verify only standards and official guidance relevant to the change. Classify controls, record selected decisions in review YAML, keep execution results external, and avoid universalizing all guidance.
 ---
 
 # Verify Against Engineering Standards

@@ -1,7 +1,6 @@
 name = "requirements-reviewer"
 description = "要件の完全性、solution-neutrality、原子性、テスト可能性、トレーサビリティを独立レビューする。"
 sandbox_mode = "read-only"
-model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 model_verbosity = "low"
 developer_instructions = """

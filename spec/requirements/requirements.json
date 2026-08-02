@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 7,
+  "catalog_revision": 8,
   "product": "dev-standard",
   "requirements": [
     {
@@ -281,10 +281,10 @@
       ],
       "action": "derive",
       "id": "REQ-ASBUILT-007",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "正本DDLとSQLから得たtable定義とER関係と書込みAPI",
       "rationale": "DDLとSQLを一次情報にするとDB設計の二重管理を避けられる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -297,13 +297,15 @@
           "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          "governance/checks/catalog.yaml"
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
         ]
       },
       "type": "data",
@@ -323,10 +325,10 @@
       ],
       "action": "derive",
       "id": "REQ-ASBUILT-008",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "E2E testのGiven When Then構造から得たscenario設計",
       "rationale": "test codeをscenarioの正本にすると実行可能な仕様と設計表示を一致させられる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -339,13 +341,15 @@
           "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          "governance/checks/catalog.yaml"
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
         ]
       },
       "type": "functional",
@@ -365,10 +369,10 @@
       ],
       "action": "derive",
       "id": "REQ-ASBUILT-009",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "外部report基盤の結果JSONから得たtest evidence view",
       "rationale": "実行結果を外部正本から整形すればrepositoryへtest reportを複製せず追跡できる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -381,14 +385,15 @@
           "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          "docs/ARTIFACTS-AND-CHECKS.md",
-          "governance/checks/catalog.yaml"
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
         ]
       },
       "type": "operational",
@@ -408,10 +413,10 @@
       ],
       "action": "derive",
       "id": "REQ-ASBUILT-010",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "tool entrypoint ASTとdocstringから得たCLI仕様とflow",
       "rationale": "generator自身を同じ方式で可視化すると抽出可能性をdogfoodingできる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -424,13 +429,15 @@
           "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          "governance/checks/catalog.yaml"
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
         ]
       },
       "type": "functional",
@@ -450,10 +457,10 @@
       ],
       "action": "generate",
       "id": "REQ-ASBUILT-011",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "API error分岐から得た一意ID付きmachine-readable error case",
       "rationale": "error分岐を機械可読にするとE2Eとの1対1 coverageを検査できる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -466,13 +473,15 @@
           "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          "governance/checks/catalog.yaml"
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_designflow.py"
         ]
       },
       "type": "data",
@@ -492,10 +501,10 @@
       ],
       "action": "verify",
       "id": "REQ-ASBUILT-012",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "handler登録と設計metadataとerror sampleの三点整合",
       "rationale": "実装、interface情報、設計掲載sampleの片落ちを静的に検出する必要がある。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -509,13 +518,15 @@
         ],
         "implementation": [
           "governance/checks/catalog.yaml",
-          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md",
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_qualityflow.py"
         ]
       },
       "type": "quality",
@@ -535,10 +546,10 @@
       ],
       "action": "verify",
       "id": "REQ-ASBUILT-013",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "設計掲載sampleと実response assertionの対応",
       "rationale": "設計書に掲載する例をtest済みに限定すると表示と振る舞いの乖離を防げる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -552,13 +563,15 @@
         ],
         "implementation": [
           "governance/checks/catalog.yaml",
-          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md",
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_qualityflow.py"
         ]
       },
       "type": "quality",
@@ -578,10 +591,10 @@
       ],
       "action": "verify",
       "id": "REQ-ASBUILT-014",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "CUD操作を持つAPIとE2E状態assertの対応",
       "rationale": "API responseだけでなく永続状態と外部状態を検証してデータ更新の回帰を検出する必要がある。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -595,13 +608,15 @@
         ],
         "implementation": [
           "governance/checks/catalog.yaml",
-          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md",
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_qualityflow.py"
         ]
       },
       "type": "quality",
@@ -621,10 +636,10 @@
       ],
       "action": "structure",
       "id": "REQ-ASBUILT-015",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "AAAまたはGWTとdocstringと1 case 1関数を持つtest",
       "rationale": "構造化されたtest codeをscenario設計とレビュー観点の一次情報にできる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -638,13 +653,15 @@
         ],
         "implementation": [
           "governance/checks/catalog.yaml",
-          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md"
+          ".agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md",
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_qualityflow.py"
         ]
       },
       "type": "quality",
@@ -664,10 +681,10 @@
       ],
       "action": "measure",
       "id": "REQ-ASBUILT-016",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "C0命令網羅95%以上とC1分岐網羅90%以上のcoverage",
       "rationale": "高い命令・分岐網羅を測定目標にしつつ、導入直後のfalse blockerを避けて効果を実測する。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -681,13 +698,16 @@
         ],
         "implementation": [
           "governance/checks/catalog.yaml",
-          ".agents/skills/retrospect-and-improve/SKILL.md"
+          ".agents/skills/retrospect-and-improve/SKILL.md",
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py",
+          ".github/workflows/governance.yml"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_qualityflow.py"
         ]
       },
       "type": "quality",
@@ -750,10 +770,10 @@
       ],
       "action": "generate",
       "id": "REQ-ASBUILT-018",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "理由付きRule ID抑制箇所の監査一覧",
       "rationale": "例外を一覧化するとsilent suppressionと恒久化した例外を定期監査できる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -766,13 +786,15 @@
           "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          "governance/checks/catalog.yaml"
+          "governance/checks/catalog.yaml",
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_qualityflow.py"
         ]
       },
       "type": "operational",
@@ -792,10 +814,10 @@
       ],
       "action": "provide",
       "id": "REQ-ASBUILT-019",
-      "last_changed_by": "CHG-20260721-as-built-design",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "testとstatic analysisと規約checkとcoverageを表示する外部report view",
       "rationale": "品質結果を一画面で追跡しつつ生logとtest reportのrepository複製を避けられる。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-21",
         "docs/standards/AS-BUILT-DESIGN.md"
@@ -808,14 +830,16 @@
           "docs/standards/AS-BUILT-DESIGN.md"
         ],
         "implementation": [
-          "docs/ARTIFACTS-AND-CHECKS.md",
-          "governance/reviews/README.md"
+          "governance/reviews/README.md",
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py",
+          ".github/workflows/governance.yml"
         ],
         "standards": [
           "DEVSTD-AS-BUILT"
         ],
         "tests": [
-          "tests/test_review_contract.py"
+          "tests/test_review_contract.py",
+          "tests/test_qualityflow.py"
         ]
       },
       "type": "operational",
@@ -1807,10 +1831,10 @@
       ],
       "action": "separate",
       "id": "REQ-FRAME-001",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "一時的な作業記録と永続的な製品要件",
       "rationale": "work itemは実行文脈であり、暗黙に製品仕様の正本へ変わってはならない。",
-      "revision": 2,
+      "revision": 3,
       "source_refs": [
         "user:2026-07-17"
       ],
@@ -1819,7 +1843,7 @@
       "title": "workと正本の境界",
       "traces": {
         "design": [
-          "docs/FLOW.md"
+          "docs/reference/development.md"
         ],
         "implementation": [
           ".agents/skills/maintain-canonical-requirements/SKILL.md"
@@ -1848,10 +1872,10 @@
       ],
       "action": "enable",
       "id": "REQ-PORTABLE-001",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "別リポジトリへのcopy-and-chat方式の導入",
       "rationale": "本リポジトリは再利用可能な参照集であり、利用者が内部ツールを手動操作せずに使える必要がある。",
-      "revision": 2,
+      "revision": 3,
       "source_refs": [
         "user:2026-07-17"
       ],
@@ -1860,18 +1884,24 @@
       "title": "チャットだけで移植できる導入",
       "traces": {
         "design": [
-          "docs/INSTALLATION.md"
+          "docs/guides/getting-started.md",
+          "docs/decisions/ADR-0003-canonical-host-asset-generation.md"
         ],
         "implementation": [
           "distribution/manifest.json",
-          ".agents/skills/chat-first-development/SKILL.md"
+          "distribution/host-adapters.json",
+          ".agents/skills/chat-first-development/SKILL.md",
+          "tools/install_reference.py",
+          "tools/generate_host_assets.py",
+          ".github/workflows/host-assets.yml"
         ],
         "standards": [
           "SWEBOK-V4A"
         ],
         "tests": [
           "tests/test_install_reference.py",
-          "tests/test_skills.py"
+          "tests/test_skills.py",
+          "tests/test_generate_host_assets.py"
         ]
       },
       "type": "operational",
@@ -2014,10 +2044,10 @@
       ],
       "action": "maintain",
       "id": "REQ-QUALITY-003",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "一項目・一統制・一証跡で独立判定できるチェック項目",
       "rationale": "複数統制を一行へ詰め込むと部分実装を一意にPassまたはFailと判定できない。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-18",
         "SWEBOK Software Quality"
@@ -2027,7 +2057,7 @@
       "title": "原子的なチェック統制",
       "traces": {
         "design": [
-          "docs/GOVERNANCE.md"
+          "governance/reviews/README.md"
         ],
         "implementation": [
           "update_checklist.py",
@@ -2361,10 +2391,10 @@
       ],
       "action": "generate",
       "id": "REQ-WORKBOOK-001",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
+      "last_changed_by": "CHG-20260802-skills-audit-remediation",
       "object": "実データ範囲だけを集計し決定的に再現できるレビュー用ワークブック",
       "rationale": "Excel全行参照は読込時に過大なメモリを消費し、固定集計値は項目追加時に陳腐化する。",
-      "revision": 1,
+      "revision": 2,
       "source_refs": [
         "user:2026-07-18"
       ],
@@ -2373,7 +2403,7 @@
       "title": "再現可能で有界なワークブック",
       "traces": {
         "design": [
-          "docs/GOVERNANCE.md"
+          "docs/README.md"
         ],
         "implementation": [
           "update_checklist.py"
@@ -2393,5 +2423,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-07-24"
+  "updated_at": "2026-08-02"
 }

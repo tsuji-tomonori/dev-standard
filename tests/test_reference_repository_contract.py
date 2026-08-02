@@ -180,12 +180,12 @@ class ReferenceRepositoryContractTest(unittest.TestCase):
             '"$before:governance/reviews/validate.py"',
         ]:
             self.assertIn(required, workflow)
-        for document in [development, adr]:
-            self.assertIn("tamper-proof", document)
-            self.assertIn("単一operator", document)
-            self.assertIn("GitHub Actions", document)
-            self.assertIn("reconcile/hotfix-*", document)
-            self.assertIn("ours", document)
+        for required in ["tamper-proof", "単一operator", "reconcile/hotfix-*", "ours"]:
+            self.assertIn(required, adr)
+            self.assertNotIn(required, development)
+        self.assertIn("GitHub Actions", adr)
+        self.assertIn("GitHub Actions", development)
+        self.assertIn("導入先のmachine-readable policy", development)
 
     def test_user_guidance_routes_to_current_documents(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")

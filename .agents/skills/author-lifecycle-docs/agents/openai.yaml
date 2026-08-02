@@ -1,4 +1,4 @@
 interface:
   display_name: "工程文書作成"
-  short_description: "Create complete lifecycle documents and traceability"
-  default_prompt: "Use $author-lifecycle-docs to complete the current phase documents and traceability."
+  short_description: "Create required regulated lifecycle evidence"
+  default_prompt: "Use $author-lifecycle-docs only for an active regulated change, creating the minimum lifecycle documents and traceability required by its legal, production, safety, contractual, or audit boundary."

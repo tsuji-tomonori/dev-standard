@@ -110,13 +110,13 @@ class SpecflowTest(unittest.TestCase):
             "operations": [{
                 "op": "update",
                 "id": "REQ-FRAME-001",
-                "expected_revision": 2,
+                "expected_revision": 3,
                 "changes": {"rationale": "テストで更新した根拠。"},
             }],
         }
         updated = specflow.apply_change(catalog, change)
         item = next(value for value in updated["requirements"] if value["id"] == "REQ-FRAME-001")
-        self.assertEqual(item["revision"], 3)
+        self.assertEqual(item["revision"], 4)
         self.assertEqual(updated["catalog_revision"], catalog["catalog_revision"] + 1)
         self.assertEqual(catalog, original)
         stale = copy.deepcopy(change)
@@ -134,7 +134,7 @@ class SpecflowTest(unittest.TestCase):
             "operations": [{
                 "op": "retire",
                 "id": "REQ-FRAME-001",
-                "expected_revision": 2,
+                "expected_revision": 3,
                 "reason": "ライフサイクルテストで置換されたため",
             }],
         }

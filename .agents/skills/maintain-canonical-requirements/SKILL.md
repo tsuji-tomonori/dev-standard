@@ -1,6 +1,6 @@
 ---
 name: maintain-canonical-requirements
-description: Discover, classify, atomize, and persist durable software product and software project requirements through natural conversation. Use when user-visible behavior, business rules, acceptance criteria, nonfunctional constraints, documentation obligations, authority, support, or operational guarantees change. Maintain spec/requirements/requirements.json as the authority, generate human-readable docs, and record the applied requirement impact in the Commit Comment without creating a permanent work item.
+description: Discover, classify, atomize, and persist durable product or project requirements when behavior, rules, acceptance, constraints, documentation, authority, support, or operations change. Maintain the JSON authority and generated human view.
 ---
 
 # Maintain Canonical Requirements

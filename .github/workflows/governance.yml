@@ -46,15 +46,29 @@ jobs:
             cp governance/reviews/validate.py "$validator"
           fi
           python "$validator" --root . --commit HEAD
-      - name: Run unit tests
+      - name: Run unit tests with branch coverage
         id: unit-tests
         shell: bash
         run: |
           set +e
-          python -m unittest discover -s tests > unit-test.log 2>&1
+          coverage run --branch -m unittest discover -s tests > unit-test.log 2>&1
           status=$?
           cat unit-test.log
+          if [[ "$status" -eq 0 ]]; then
+            coverage json -o "$RUNNER_TEMP/coverage.json"
+          fi
           exit "$status"
+      - name: Publish as-built quality summary
+        if: success()
+        run: >-
+          python .agents/skills/generate-implementation-design/scripts/qualityflow.py report
+          --root .
+          --coverage "$RUNNER_TEMP/coverage.json"
+          --json-out "$RUNNER_TEMP/as-built-quality.json"
+          --github-summary
+      - name: Verify deterministic host generation and committed-file boundary
+        if: success()
+        run: python tools/generate_host_assets.py check
       - name: Upload unit test log on failure
         if: failure() && steps.unit-tests.outcome == 'failure'
         uses: actions/upload-artifact@v7
@@ -72,6 +86,9 @@ jobs:
           status=$?
           cat repository-validation.log
           exit "$status"
+      - name: Run cross-document consistency audit
+        if: success()
+        run: python tools/audit_consistency.py --github-summary
       - name: Upload repository validation log on failure
         if: failure() && steps.repository-validation.outcome == 'failure'
         uses: actions/upload-artifact@v7

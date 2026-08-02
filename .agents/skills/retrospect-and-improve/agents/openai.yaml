@@ -1,4 +1,4 @@
 interface:
   display_name: "振り返りと改善"
-  short_description: "Turn session evidence into pending improvement work items"
-  default_prompt: "Use $retrospect-and-improve to review this session and propose a testable future work item without auto-applying it."
+  short_description: "Turn evidenced process failure into one improvement"
+  default_prompt: "Use $retrospect-and-improve only because a regulated close, escaped defect, repeated correction, critical miss, rollback, repeated CI repair, or periodic audit triggered it; propose one testable change without auto-applying it."

@@ -146,7 +146,7 @@ class SkillContractTest(unittest.TestCase):
             "regulated",
             "Soft budget",
             ".devflow/run/",
-            "同時拡張",
+            "一回の判断では一軸だけ",
             "scope",
             "assurance",
             "compute",
@@ -330,11 +330,11 @@ class SkillContractTest(unittest.TestCase):
         ]:
             self.assertNotIn(removed, combined)
 
-    def test_custom_reviewers_use_minimal_cost_bounded_models(self) -> None:
+    def test_custom_reviewers_inherit_model_and_bound_reasoning_cost(self) -> None:
         allowed_effort = {"low", "medium", "high"}
         for path in sorted((ROOT / ".codex" / "agents").glob("*.toml")):
             value = tomllib.loads(path.read_text(encoding="utf-8"))
-            self.assertEqual(value["model"], "gpt-5.6-terra", path.name)
+            self.assertNotIn("model", value, path.name)
             self.assertIn(value["model_reasoning_effort"], allowed_effort, path.name)
             self.assertEqual(value["model_verbosity"], "low", path.name)
             self.assertLessEqual(len(value["developer_instructions"]), 900, path.name)
