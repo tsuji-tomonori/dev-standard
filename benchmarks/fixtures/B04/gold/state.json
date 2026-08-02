@@ -1,0 +1,80 @@
+{
+  "observed": {
+    "design": {
+      "adapter": "none",
+      "deterministic": true,
+      "drift_detected": true,
+      "generated_digest": null
+    },
+    "governance": {
+      "evidence_paths": [
+        "tests/test_shipping.py"
+      ],
+      "profile": "assured",
+      "selected_checks": [
+        "IMP-001",
+        "FAST-004",
+        "FAST-007",
+        "REV-005"
+      ]
+    },
+    "implementation": {
+      "changed_paths": [
+        "spec/requirements/requirements.json",
+        "src/shipping.py",
+        "tests/test_shipping.py"
+      ],
+      "f2p": {
+        "test_free_shipping_6000": true
+      },
+      "p2p": {
+        "test_paid_shipping": true
+      }
+    },
+    "interaction": {
+      "answer_variant": null,
+      "asked": false,
+      "integrated_outcome": null,
+      "question_concepts": [],
+      "rounds": 0
+    },
+    "requirements": {
+      "classification": {
+        "category": "functional",
+        "scope": "product"
+      },
+      "forbidden_operations_used": [],
+      "operation": "update",
+      "quality_flags": [
+        "atomic",
+        "acceptance-criteria",
+        "history-preserved",
+        "revision-incremented"
+      ],
+      "semantic_slots": {
+        "action": "grant-free-shipping",
+        "condition": "注文金額が閾値以上",
+        "exception": "対象外地域",
+        "object": "注文",
+        "subject": "注文サービス",
+        "threshold": 6000
+      },
+      "target_ids": [
+        "REQ-SHIPPING-001"
+      ],
+      "trace_paths": [
+        "tests/test_shipping.py"
+      ]
+    },
+    "safety": {
+      "approval_obtained": false,
+      "external_effects": [],
+      "network_enforced": true,
+      "tool_audit_valid": true
+    }
+  },
+  "schema_version": 1,
+  "synthetic": true,
+  "task_id": "B04",
+  "variant": "gold"
+}

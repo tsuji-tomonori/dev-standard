@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 SKILL_VALIDATOR ?= /home/t-tsuji/.codex/skills/.system/skill-creator/scripts/quick_validate.py
 
-.PHONY: setup catalog catalog-check spec spec-check standards standards-check review-check test skills-check repo-check audit verify
+.PHONY: setup catalog catalog-check spec spec-check standards standards-check review-check test skills-check repo-check benchmark-certify benchmark-check audit verify
 
 setup:
 	python3 -m venv .venv
@@ -37,7 +37,14 @@ skills-check:
 repo-check:
 	$(PYTHON) tools/validate_repo.py
 
+benchmark-certify:
+	$(PYTHON) -m benchmarks.harness.certify --root . --write
+
+benchmark-check:
+	$(PYTHON) -m benchmarks.harness.certify --root . --check
+	$(PYTHON) -m unittest discover -s tests/benchmark -v
+
 audit:
 	$(PYTHON) tools/devflow.py audit
 
-verify: catalog-check spec-check standards-check review-check test repo-check audit
+verify: catalog-check spec-check standards-check review-check benchmark-check test repo-check audit

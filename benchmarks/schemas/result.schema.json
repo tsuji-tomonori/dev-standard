@@ -1,0 +1,331 @@
+{
+  "$id": "https://github.com/tsuji-tomonori/dev-standard/benchmarks/schemas/result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "completed"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "execution": {
+            "properties": {
+              "phases": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "provider_error",
+              "timeout",
+              "tool_crash",
+              "cancelled",
+              "missing"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "strict_e2e_pass": {
+            "const": false
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "condition": {
+      "enum": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ]
+    },
+    "cost": {
+      "additionalProperties": false,
+      "properties": {
+        "failed_commands": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "tokens": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "tool_calls": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "user_turns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "wall_ms": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_turns",
+        "tool_calls",
+        "failed_commands",
+        "tokens",
+        "wall_ms"
+      ],
+      "type": "object"
+    },
+    "evidence": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "execution": {
+      "additionalProperties": false,
+      "properties": {
+        "phases": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "attempts": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "command_digest": {
+                "pattern": "^sha256:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "duration_ms": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "name": {
+                "enum": [
+                  "clarify",
+                  "execute",
+                  "score"
+                ]
+              },
+              "status": {
+                "enum": [
+                  "completed",
+                  "provider_error",
+                  "timeout",
+                  "tool_crash",
+                  "skipped"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "status",
+              "attempts",
+              "command_digest"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "sandbox": {
+          "additionalProperties": false,
+          "properties": {
+            "executor": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "network_enforced": {
+              "type": "boolean"
+            },
+            "tool_audit_valid": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "network_enforced",
+            "tool_audit_valid",
+            "executor"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "phases",
+        "sandbox"
+      ],
+      "type": "object"
+    },
+    "gates": {
+      "additionalProperties": false,
+      "properties": {
+        "generated_design": {
+          "type": "boolean"
+        },
+        "governance": {
+          "type": "boolean"
+        },
+        "implementation": {
+          "type": "boolean"
+        },
+        "interaction": {
+          "type": "boolean"
+        },
+        "requirements": {
+          "type": "boolean"
+        },
+        "safety_authority": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "interaction",
+        "requirements",
+        "implementation",
+        "generated_design",
+        "governance",
+        "safety_authority"
+      ],
+      "type": "object"
+    },
+    "llm_judge": {
+      "additionalProperties": false,
+      "properties": {
+        "advisory_only": {
+          "const": true
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "evidence_spans": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "model": {
+          "type": "string"
+        },
+        "used": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "used",
+        "advisory_only"
+      ],
+      "type": "object"
+    },
+    "run_type": {
+      "enum": [
+        "smoke",
+        "flake",
+        "utility",
+        "release",
+        "certification"
+      ]
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "seed": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "provider_error",
+        "timeout",
+        "tool_crash",
+        "cancelled",
+        "missing"
+      ]
+    },
+    "strict_e2e_pass": {
+      "type": "boolean"
+    },
+    "sub_scores": {
+      "additionalProperties": false,
+      "properties": {
+        "generated_design": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "governance": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "implementation": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "interaction": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "requirements": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "safety_authority": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "interaction",
+        "requirements",
+        "implementation",
+        "generated_design",
+        "governance",
+        "safety_authority"
+      ],
+      "type": "object"
+    },
+    "task_id": {
+      "pattern": "^B(0[1-9]|1[0-3])$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "task_id",
+    "condition",
+    "run_type",
+    "seed",
+    "status",
+    "execution",
+    "gates",
+    "strict_e2e_pass",
+    "sub_scores",
+    "cost",
+    "evidence",
+    "llm_judge"
+  ],
+  "type": "object"
+}

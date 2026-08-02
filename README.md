@@ -55,3 +55,7 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 - [as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)
 - [AWS CDK実装・as-built設計標準](docs/standards/AWS-CDK-AS-BUILT-DESIGN.md)
 - [文書索引](docs/README.md)
+
+## Skills E2Eベンチマーク
+
+`benchmarks/`は、対話、永続要件、実装、生成設計、選択check、authority boundaryをB01〜B08で評価します。`python -m benchmarks.harness.certify --root . --check`でgold / base / mutationと31項目の受入matrixを検証します。live trajectoryとrun reportはGitHub Actions artifactだけへ保存します。

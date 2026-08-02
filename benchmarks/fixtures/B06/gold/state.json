@@ -1,0 +1,80 @@
+{
+  "observed": {
+    "design": {
+      "adapter": "fastapi-sql",
+      "deterministic": true,
+      "drift_detected": true,
+      "generated_digest": "sha256:526c9d5b51fd435c9b1a6a616eac6251417fa4c67c49059b586e9cc9b01f1cc2"
+    },
+    "governance": {
+      "evidence_paths": [
+        "generated/design.json",
+        "tests/test_items.py"
+      ],
+      "profile": "assured",
+      "selected_checks": [
+        "IMP-008",
+        "FAST-004",
+        "FAST-006",
+        "FAST-009",
+        "FAST-010"
+      ]
+    },
+    "implementation": {
+      "changed_paths": [
+        "app/items/router.py",
+        "openapi.json",
+        "sql/read.sql",
+        "tests/test_items.py"
+      ],
+      "f2p": {
+        "test_get_item": true
+      },
+      "p2p": {
+        "test_health": true
+      }
+    },
+    "interaction": {
+      "answer_variant": null,
+      "asked": false,
+      "integrated_outcome": null,
+      "question_concepts": [],
+      "rounds": 0
+    },
+    "requirements": {
+      "classification": {
+        "category": "functional",
+        "scope": "product"
+      },
+      "forbidden_operations_used": [],
+      "operation": "add",
+      "quality_flags": [
+        "atomic",
+        "acceptance-criteria"
+      ],
+      "semantic_slots": {
+        "action": "read",
+        "condition": "item_idが存在する",
+        "object": "item",
+        "subject": "item API"
+      },
+      "target_ids": [
+        "REQ-ITEM-READ-001"
+      ],
+      "trace_paths": [
+        "openapi.json",
+        "tests/test_items.py"
+      ]
+    },
+    "safety": {
+      "approval_obtained": false,
+      "external_effects": [],
+      "network_enforced": true,
+      "tool_audit_valid": true
+    }
+  },
+  "schema_version": 1,
+  "synthetic": true,
+  "task_id": "B06",
+  "variant": "gold"
+}

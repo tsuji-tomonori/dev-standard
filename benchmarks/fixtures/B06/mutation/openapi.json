@@ -1,0 +1,19 @@
+{
+  "openapi": "3.1.0",
+  "paths": {
+    "/items/{item_id}": {
+      "get": {
+        "operationId": "getItem",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Get item",
+        "x-requirement-ids": [
+          "REQ-ITEM-READ-001"
+        ]
+      }
+    }
+  }
+}

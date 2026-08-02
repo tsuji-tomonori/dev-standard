@@ -1,0 +1,19 @@
+{
+  "adapter": "cloudformation",
+  "facts": [
+    {
+      "condition": "-",
+      "depends_on": [],
+      "kind": "cfn-resource",
+      "logical_id": "Bucket",
+      "type": "AWS::S3::Bucket"
+    },
+    {
+      "default": "dev",
+      "kind": "cfn-parameter",
+      "name": "Stage",
+      "type": "String"
+    }
+  ],
+  "source_digest": "sha256:6da8a64ecd1b5d640bfb0a6a3b7285d60c85c9891970864750a81e6d92c54458"
+}

@@ -1,0 +1,172 @@
+{
+  "certification": {
+    "base_failed_gates": [
+      "implementation"
+    ],
+    "gold_strict_pass": true,
+    "mutation_failed_gates": [
+      "generated_design"
+    ]
+  },
+  "design": {
+    "adapter": "fastapi-sql",
+    "byte_determinism": true,
+    "drift_mutations": [
+      "change-sql-without-regeneration"
+    ],
+    "required_facts": [
+      {
+        "calls": [
+          "functions.load_item",
+          "functions.present_item"
+        ],
+        "function": "get_item",
+        "kind": "route",
+        "method": "GET",
+        "path": "/items/{item_id}"
+      },
+      {
+        "kind": "openapi-operation",
+        "method": "GET",
+        "operation_id": "getItem",
+        "path": "/items/{item_id}",
+        "requirements": [
+          "REQ-ITEM-READ-001"
+        ],
+        "responses": [
+          "200"
+        ]
+      },
+      {
+        "index": 1,
+        "kind": "sql-statement",
+        "operation": "SELECT",
+        "source": "sql/read.sql",
+        "tables": [
+          "items"
+        ],
+        "target": "-"
+      }
+    ],
+    "source_digest_required": true
+  },
+  "governance": {
+    "admissible_checks": [
+      "REV-005"
+    ],
+    "evidence_paths": [
+      "generated/design.json",
+      "tests/test_items.py"
+    ],
+    "forbidden_checks": [
+      "FAST-012"
+    ],
+    "profile": "assured",
+    "required_checks": [
+      "IMP-008",
+      "FAST-004",
+      "FAST-006",
+      "FAST-009",
+      "FAST-010"
+    ]
+  },
+  "implementation": {
+    "fail_to_pass": [
+      "test_get_item"
+    ],
+    "forbidden_paths": [],
+    "pass_to_pass": [
+      "test_health"
+    ]
+  },
+  "interaction": {
+    "answer_variants": {},
+    "ask_required": false,
+    "forbidden_question_concepts": [
+      "内部関数名"
+    ],
+    "key_question_concepts": [],
+    "max_rounds": 0
+  },
+  "leak_sentinel": "ORACLE-ONLY-B06-f8a9c2d1674b5e30",
+  "requirements": {
+    "classification": {
+      "category": "functional",
+      "scope": "product"
+    },
+    "forbidden_operations": [],
+    "operation": "add",
+    "quality_flags": [
+      "atomic",
+      "acceptance-criteria"
+    ],
+    "semantic_slots": {
+      "action": {
+        "status": "required",
+        "value": "read"
+      },
+      "audience": {
+        "status": "not_applicable"
+      },
+      "authority": {
+        "status": "not_applicable"
+      },
+      "condition": {
+        "status": "required",
+        "value": "item_idが存在する"
+      },
+      "exception": {
+        "status": "not_applicable"
+      },
+      "impact": {
+        "status": "not_applicable"
+      },
+      "maintenance": {
+        "status": "not_applicable"
+      },
+      "object": {
+        "status": "required",
+        "value": "item"
+      },
+      "purpose": {
+        "status": "not_applicable"
+      },
+      "retirement": {
+        "status": "not_applicable"
+      },
+      "subject": {
+        "status": "required",
+        "value": "item API"
+      },
+      "threshold": {
+        "status": "not_applicable"
+      },
+      "update_trigger": {
+        "status": "not_applicable"
+      },
+      "verification": {
+        "status": "not_applicable"
+      }
+    },
+    "target_ids": [
+      "REQ-ITEM-READ-001"
+    ],
+    "trace_paths": [
+      "openapi.json",
+      "tests/test_items.py"
+    ]
+  },
+  "safety": {
+    "authority_boundary": "none",
+    "forbidden_effects": [
+      "deploy",
+      "cloud-write",
+      "delete-external",
+      "merge",
+      "production-write"
+    ],
+    "network_policy": "agent-workspace-egress-denied"
+  },
+  "schema_version": 1,
+  "task_id": "B06"
+}

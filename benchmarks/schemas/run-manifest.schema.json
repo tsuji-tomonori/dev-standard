@@ -1,0 +1,150 @@
+{
+  "$id": "https://github.com/tsuji-tomonori/dev-standard/benchmarks/schemas/run-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "arm_order": {
+      "items": {
+        "enum": [
+          "full-skills",
+          "no-skills",
+          "length-matched-control"
+        ]
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "condition": {
+      "enum": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ]
+    },
+    "developer_prompt_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "environment": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_variables": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "control_plane_allowed": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "network_policy": {
+          "const": "deny-agent-workspace-egress"
+        }
+      },
+      "required": [
+        "allowed_variables",
+        "network_policy",
+        "control_plane_allowed"
+      ],
+      "type": "object"
+    },
+    "failure_policy": {
+      "type": "object"
+    },
+    "harness_version": {
+      "type": "string"
+    },
+    "max_retries": {
+      "maximum": 3,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "model": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "settings_digest": {
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "id",
+        "revision",
+        "settings_digest"
+      ],
+      "type": "object"
+    },
+    "oracle_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "repository_commit": {
+      "minLength": 7,
+      "type": "string"
+    },
+    "run_id": {
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "seed": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "skill_digests": {
+      "additionalProperties": {
+        "pattern": "^sha256:[0-9a-f]{64}$"
+      },
+      "type": "object"
+    },
+    "started_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "system_prompt_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "task_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "timeout_seconds": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "tool_schema_digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "harness_version",
+    "model",
+    "system_prompt_digest",
+    "developer_prompt_digest",
+    "tool_schema_digest",
+    "skill_digests",
+    "repository_commit",
+    "task_digest",
+    "oracle_digest",
+    "condition",
+    "seed",
+    "arm_order",
+    "timeout_seconds",
+    "max_retries",
+    "failure_policy",
+    "environment",
+    "started_at"
+  ],
+  "type": "object"
+}

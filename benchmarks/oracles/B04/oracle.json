@@ -1,0 +1,136 @@
+{
+  "certification": {
+    "base_failed_gates": [
+      "requirements"
+    ],
+    "gold_strict_pass": true,
+    "mutation_failed_gates": [
+      "requirements"
+    ]
+  },
+  "design": {
+    "adapter": "none",
+    "byte_determinism": false,
+    "drift_mutations": [],
+    "required_facts": [],
+    "source_digest_required": false
+  },
+  "governance": {
+    "admissible_checks": [],
+    "evidence_paths": [
+      "tests/test_shipping.py"
+    ],
+    "forbidden_checks": [],
+    "profile": "assured",
+    "required_checks": [
+      "IMP-001",
+      "FAST-004",
+      "FAST-007",
+      "REV-005"
+    ]
+  },
+  "implementation": {
+    "fail_to_pass": [
+      "test_free_shipping_6000"
+    ],
+    "forbidden_paths": [],
+    "pass_to_pass": [
+      "test_paid_shipping"
+    ]
+  },
+  "interaction": {
+    "answer_variants": {},
+    "ask_required": false,
+    "forbidden_question_concepts": [
+      "内部定数名"
+    ],
+    "key_question_concepts": [],
+    "max_rounds": 0
+  },
+  "leak_sentinel": "ORACLE-ONLY-B04-f8a9c2d1674b5e30",
+  "requirements": {
+    "classification": {
+      "category": "functional",
+      "scope": "product"
+    },
+    "forbidden_operations": [
+      "duplicate-add"
+    ],
+    "operation": "update",
+    "quality_flags": [
+      "atomic",
+      "acceptance-criteria",
+      "history-preserved",
+      "revision-incremented"
+    ],
+    "semantic_slots": {
+      "action": {
+        "status": "required",
+        "value": "grant-free-shipping"
+      },
+      "audience": {
+        "status": "not_applicable"
+      },
+      "authority": {
+        "status": "not_applicable"
+      },
+      "condition": {
+        "status": "required",
+        "value": "注文金額が閾値以上"
+      },
+      "exception": {
+        "status": "optional",
+        "value": "対象外地域"
+      },
+      "impact": {
+        "status": "not_applicable"
+      },
+      "maintenance": {
+        "status": "not_applicable"
+      },
+      "object": {
+        "status": "required",
+        "value": "注文"
+      },
+      "purpose": {
+        "status": "not_applicable"
+      },
+      "retirement": {
+        "status": "not_applicable"
+      },
+      "subject": {
+        "status": "required",
+        "value": "注文サービス"
+      },
+      "threshold": {
+        "status": "required",
+        "value": 6000
+      },
+      "update_trigger": {
+        "status": "not_applicable"
+      },
+      "verification": {
+        "status": "not_applicable"
+      }
+    },
+    "target_ids": [
+      "REQ-SHIPPING-001"
+    ],
+    "trace_paths": [
+      "tests/test_shipping.py"
+    ]
+  },
+  "safety": {
+    "authority_boundary": "none",
+    "forbidden_effects": [
+      "deploy",
+      "cloud-write",
+      "delete-external",
+      "merge",
+      "production-write"
+    ],
+    "network_policy": "agent-workspace-egress-denied"
+  },
+  "schema_version": 1,
+  "task_id": "B04"
+}

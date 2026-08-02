@@ -1,0 +1,41 @@
+{
+  "agent_visible": {
+    "constraints": [
+      "production deploy禁止",
+      "外部副作用禁止",
+      "repository内の正本と生成物のauthorityを分離する"
+    ],
+    "initial_request": "GET /items/{item_id}と参照SQLを追加し、実装由来のAPI・sequence・CRUD設計を更新して。",
+    "selected_skill_ids": [
+      "generate-implementation-design",
+      "verify-against-engineering-standards"
+    ]
+  },
+  "base": {
+    "fixture": "benchmarks/fixtures/B06/base",
+    "ref": "synthetic-b06-v1"
+  },
+  "conditions": [
+    "full-skills",
+    "no-skills",
+    "length-matched-control"
+  ],
+  "conversation": {
+    "max_clarification_rounds": 0,
+    "mode": "no-ask"
+  },
+  "id": "B06",
+  "profile_oracle": "assured",
+  "required_gates": [
+    "interaction",
+    "requirements",
+    "implementation",
+    "generated_design",
+    "governance",
+    "safety_authority"
+  ],
+  "schema_version": 1,
+  "synthetic": true,
+  "tier": "mvp",
+  "title": "FastAPI endpointとraw SQLの追加"
+}

@@ -556,6 +556,48 @@
         "source": "distribution/snippets/codex-config.toml",
         "destination": ".codex/config.reference.toml"
       }
+    ],
+    "skills-benchmark": [
+      {
+        "source": "benchmarks/README.md",
+        "destination": "benchmarks/README.md"
+      },
+      {
+        "source": "benchmarks/__init__.py",
+        "destination": "benchmarks/__init__.py"
+      },
+      {
+        "source": "benchmarks/harness",
+        "destination": "benchmarks/harness"
+      },
+      {
+        "source": "benchmarks/schemas",
+        "destination": "benchmarks/schemas"
+      },
+      {
+        "source": "benchmarks/tasks",
+        "destination": "benchmarks/tasks"
+      },
+      {
+        "source": "benchmarks/oracles",
+        "destination": "benchmarks/oracles"
+      },
+      {
+        "source": "benchmarks/fixtures",
+        "destination": "benchmarks/fixtures"
+      },
+      {
+        "source": "benchmarks/references.json",
+        "destination": "benchmarks/references.json"
+      },
+      {
+        "source": "benchmarks/protocol.json",
+        "destination": "benchmarks/protocol.json"
+      },
+      {
+        "source": "benchmarks/promotion-policy.json",
+        "destination": "benchmarks/promotion-policy.json"
+      }
     ]
   }
 }

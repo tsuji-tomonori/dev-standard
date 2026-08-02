@@ -1,0 +1,61 @@
+{
+  "$id": "https://github.com/tsuji-tomonori/dev-standard/benchmarks/schemas/reference-registry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "references": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "adopted_claim": {
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "type": "string"
+          },
+          "limitation": {
+            "type": "string"
+          },
+          "paper_id": {
+            "type": "string"
+          },
+          "publication_status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "paper_id",
+          "title",
+          "version",
+          "date",
+          "publication_status",
+          "adopted_claim",
+          "limitation"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "reviewed_at": {
+      "format": "date",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "reviewed_at",
+    "references"
+  ],
+  "type": "object"
+}

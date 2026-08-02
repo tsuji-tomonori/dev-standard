@@ -1,0 +1,358 @@
+{
+  "$id": "https://github.com/tsuji-tomonori/dev-standard/benchmarks/schemas/oracle.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "certification": {
+      "additionalProperties": false,
+      "properties": {
+        "base_failed_gates": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "gold_strict_pass": {
+          "const": true
+        },
+        "mutation_failed_gates": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "base_failed_gates",
+        "gold_strict_pass",
+        "mutation_failed_gates"
+      ],
+      "type": "object"
+    },
+    "design": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter": {
+          "enum": [
+            "none",
+            "fastapi-sql",
+            "cloudformation",
+            "governance"
+          ]
+        },
+        "byte_determinism": {
+          "type": "boolean"
+        },
+        "drift_mutations": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "required_facts": {
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "source_digest_required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "adapter",
+        "required_facts",
+        "source_digest_required",
+        "byte_determinism",
+        "drift_mutations"
+      ],
+      "type": "object"
+    },
+    "governance": {
+      "additionalProperties": false,
+      "properties": {
+        "admissible_checks": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "evidence_paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "forbidden_checks": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "profile": {
+          "enum": [
+            "direct",
+            "assured",
+            "regulated"
+          ]
+        },
+        "required_checks": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "profile",
+        "required_checks",
+        "forbidden_checks",
+        "admissible_checks",
+        "evidence_paths"
+      ],
+      "type": "object"
+    },
+    "implementation": {
+      "additionalProperties": false,
+      "properties": {
+        "fail_to_pass": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "forbidden_paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pass_to_pass": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "fail_to_pass",
+        "pass_to_pass",
+        "forbidden_paths"
+      ],
+      "type": "object"
+    },
+    "interaction": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_variants": {
+          "additionalProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "answer": {
+                "type": "string"
+              },
+              "expected_outcome": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "answer",
+              "expected_outcome"
+            ],
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "ask_required": {
+          "type": "boolean"
+        },
+        "forbidden_question_concepts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "key_question_concepts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "max_rounds": {
+          "maximum": 3,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ask_required",
+        "key_question_concepts",
+        "forbidden_question_concepts",
+        "max_rounds",
+        "answer_variants"
+      ],
+      "type": "object"
+    },
+    "leak_sentinel": {
+      "minLength": 16,
+      "type": "string"
+    },
+    "requirements": {
+      "additionalProperties": false,
+      "properties": {
+        "classification": {
+          "additionalProperties": false,
+          "properties": {
+            "category": {
+              "enum": [
+                "none",
+                "functional",
+                "nonfunctional"
+              ]
+            },
+            "scope": {
+              "enum": [
+                "none",
+                "product",
+                "project",
+                "system",
+                "subsystem"
+              ]
+            }
+          },
+          "required": [
+            "scope",
+            "category"
+          ],
+          "type": "object"
+        },
+        "forbidden_operations": {
+          "items": {
+            "enum": [
+              "none",
+              "add",
+              "update",
+              "retire",
+              "duplicate-add"
+            ]
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "operation": {
+          "enum": [
+            "none",
+            "add",
+            "update",
+            "retire"
+          ]
+        },
+        "quality_flags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "semantic_slots": {
+          "additionalProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "enum": [
+                  "required",
+                  "optional",
+                  "not_applicable"
+                ]
+              },
+              "value": {}
+            },
+            "required": [
+              "status"
+            ],
+            "type": "object"
+          },
+          "minProperties": 1,
+          "type": "object"
+        },
+        "target_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        },
+        "trace_paths": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "operation",
+        "target_ids",
+        "semantic_slots",
+        "forbidden_operations",
+        "classification",
+        "trace_paths",
+        "quality_flags"
+      ],
+      "type": "object"
+    },
+    "safety": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_boundary": {
+          "enum": [
+            "none",
+            "explicit-approval"
+          ]
+        },
+        "forbidden_effects": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "network_policy": {
+          "const": "agent-workspace-egress-denied"
+        }
+      },
+      "required": [
+        "authority_boundary",
+        "forbidden_effects",
+        "network_policy"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "task_id": {
+      "pattern": "^B(0[1-9]|1[0-3])$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "task_id",
+    "leak_sentinel",
+    "interaction",
+    "requirements",
+    "implementation",
+    "design",
+    "governance",
+    "safety",
+    "certification"
+  ],
+  "type": "object"
+}

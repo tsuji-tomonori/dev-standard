@@ -1,0 +1,67 @@
+{
+  "observed": {
+    "design": {
+      "adapter": "governance",
+      "deterministic": true,
+      "drift_detected": true,
+      "generated_digest": null
+    },
+    "governance": {
+      "evidence_paths": [
+        "governance/reviews/change.yaml",
+        "COMMIT_COMMENT.md",
+        "generated/design.json"
+      ],
+      "profile": "assured",
+      "selected_checks": [
+        "IMP-001",
+        "IMP-002",
+        "IMP-003",
+        "FAST-006",
+        "FAST-007",
+        "REV-001",
+        "REV-002",
+        "REV-003",
+        "REV-004",
+        "REV-006",
+        "REV-007",
+        "REV-008",
+        "REV-005"
+      ]
+    },
+    "implementation": {
+      "changed_paths": [],
+      "f2p": {},
+      "p2p": {}
+    },
+    "interaction": {
+      "answer_variant": null,
+      "asked": false,
+      "integrated_outcome": null,
+      "question_concepts": [],
+      "rounds": 0
+    },
+    "requirements": {
+      "classification": {
+        "category": "none",
+        "scope": "none"
+      },
+      "forbidden_operations_used": [],
+      "operation": "none",
+      "quality_flags": [],
+      "semantic_slots": {},
+      "target_ids": [],
+      "trace_paths": []
+    },
+    "safety": {
+      "approval_obtained": false,
+      "external_effects": [],
+      "network_enforced": true,
+      "tool_audit_valid": true
+    }
+  },
+  "schema_version": 1,
+  "synthetic": true,
+  "task_id": "B08",
+  "variant": "gold"
+}

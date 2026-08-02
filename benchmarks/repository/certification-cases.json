@@ -1,0 +1,182 @@
+{
+  "acceptance": {
+    "criterion_ids": [
+      "I22-AC-01",
+      "I22-AC-02",
+      "I22-AC-03",
+      "I22-AC-04",
+      "I22-AC-05",
+      "I22-AC-06",
+      "I22-AC-07",
+      "I22-AC-08",
+      "I22-AC-09",
+      "I22-AC-10",
+      "I22-AC-11",
+      "I22-AC-12",
+      "I22-AC-13",
+      "I22-AC-14",
+      "I22-AC-15",
+      "I22-AC-16",
+      "I22-RV-01",
+      "I22-RV-02",
+      "I22-RV-03",
+      "I22-RV-04",
+      "I22-RV-05",
+      "I22-RV-06",
+      "I22-RV-07",
+      "I22-RV-08",
+      "I22-RV-09",
+      "I22-RV-10",
+      "I22-RV-11",
+      "I22-RV-12",
+      "I22-RV-13",
+      "I22-RV-14",
+      "I22-RV-15"
+    ],
+    "evidence_references": 66,
+    "test_references": 49,
+    "verified": 31
+  },
+  "inputs": {
+    "oracles": 8,
+    "tasks": 8
+  },
+  "oracle_discrimination": {
+    "base_failures": 8,
+    "gold_passes": 8,
+    "mutation_failures": 8,
+    "mutation_score": 1.0
+  },
+  "schema_version": 1,
+  "tasks": [
+    {
+      "base_failed_gates": [
+        "implementation"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "implementation"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B01"
+    },
+    {
+      "base_failed_gates": [
+        "interaction"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "interaction",
+        "requirements"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B02"
+    },
+    {
+      "base_failed_gates": [
+        "interaction"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "requirements"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B03"
+    },
+    {
+      "base_failed_gates": [
+        "requirements"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "requirements"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B04"
+    },
+    {
+      "base_failed_gates": [
+        "requirements"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "requirements"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B05"
+    },
+    {
+      "base_failed_gates": [
+        "implementation"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "generated_design"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B06"
+    },
+    {
+      "base_failed_gates": [
+        "generated_design"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "safety_authority"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B07"
+    },
+    {
+      "base_failed_gates": [
+        "governance"
+      ],
+      "conditions": [
+        "full-skills",
+        "no-skills",
+        "length-matched-control"
+      ],
+      "gold_pass": true,
+      "mutation_failed_gates": [
+        "governance"
+      ],
+      "physical_fixture_discrimination": true,
+      "task_id": "B08"
+    }
+  ]
+}

@@ -1,0 +1,431 @@
+{
+  "criteria": [
+    {
+      "evidence": [
+        "benchmarks/schemas/task.schema.json",
+        "benchmarks/schemas/result.schema.json",
+        "benchmarks/schemas/trajectory-event.schema.json"
+      ],
+      "id": "I22-AC-01",
+      "source": "issue",
+      "statement": "task、result、trajectory event schemaを追加する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_all_tasks_oracles_and_results_validate",
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_acceptance_matrix_has_its_own_schema"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/tasks",
+        "benchmarks/fixtures"
+      ],
+      "id": "I22-AC-02",
+      "source": "issue",
+      "statement": "B01〜B08の8つのhermetic synthetic taskを実装する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_all_fixtures_are_explicitly_synthetic",
+        "tests/benchmark/test_fixture_states.py::PhysicalFixtureStateTest.test_b03_to_b08_each_have_a_discriminating_physical_state"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/schemas/oracle.schema.json",
+        "benchmarks/oracles"
+      ],
+      "id": "I22-AC-03",
+      "source": "issue",
+      "statement": "各taskに必要範囲の対話、要件、実装、設計、governance oracleを定義する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_semantic_slots_and_check_oracle_are_explicit",
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_all_tasks_oracles_and_results_validate"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/harness/run.py"
+      ],
+      "id": "I22-AC-04",
+      "source": "issue",
+      "statement": "full-skillsとno-skillsを同一条件で実行できる",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_run_protocol.py::RunProtocolTest.test_paired_command_runs_each_condition_exactly_once",
+        "tests/benchmark/test_run_protocol.py::RunProtocolTest.test_paired_conditions_must_declare_all_three_arms_exactly_once"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/oracles/B02/oracle.json",
+        "benchmarks/fixtures/B02/variants"
+      ],
+      "id": "I22-AC-05",
+      "source": "issue",
+      "statement": "B02は一つのkey questionでanswer variantへ正しく収束し不要質問をFailにする",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_scoring.py::ScoringTest.test_b02_requires_one_key_question_and_integrates_variant",
+        "tests/benchmark/test_simulator.py::UserSimulatorTest.test_forbidden_reversible_question_is_rejected"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/oracles/B03/oracle.json"
+      ],
+      "id": "I22-AC-06",
+      "source": "issue",
+      "statement": "B03は質問しないことをblocking検証する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_scoring.py::ScoringTest.test_b03_no_ask_is_blocking"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/oracles/B04/oracle.json",
+        "benchmarks/oracles/B05/oracle.json"
+      ],
+      "id": "I22-AC-07",
+      "source": "issue",
+      "statement": "B04 / B05は要件operation、分類、原子性、受入条件、traceを検証する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_task_matrix.py::TaskMatrixTest.test_b04_updates_existing_id_instead_of_duplicate_add",
+        "tests/benchmark/test_task_matrix.py::TaskMatrixTest.test_b05_is_project_nonfunctional_and_path_is_trace_not_obligation"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/harness/designfacts.py",
+        "benchmarks/oracles/B06/oracle.json",
+        "benchmarks/oracles/B07/oracle.json"
+      ],
+      "id": "I22-AC-08",
+      "source": "issue",
+      "statement": "B06 / B07はsource-derived fact、digest、byte一致、driftを検証する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_designfacts.py::DesignFactsTest.test_fastapi_openapi_sql_ast_digest_determinism_and_drift",
+        "tests/benchmark/test_designfacts.py::DesignFactsTest.test_cloudformation_structured_facts_digest_determinism_and_drift"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/oracles/B08/oracle.json",
+        "benchmarks/fixtures/B08/gold/COMMIT_COMMENT.md"
+      ],
+      "id": "I22-AC-09",
+      "source": "issue",
+      "statement": "B08はprofile、check set、review、Commit Comment、evidence到達性を検証する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_task_matrix.py::TaskMatrixTest.test_b08_uses_required_forbidden_and_admissible_check_sets",
+        "tests/benchmark/test_fixture_states.py::PhysicalFixtureStateTest.test_governance_evidence_cannot_escape_fixture_and_malformed_checks_fail_closed"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/repository/certification-cases.json",
+        "benchmarks/harness/certify.py"
+      ],
+      "id": "I22-AC-10",
+      "source": "issue",
+      "statement": "goldは全GateをPassしbaseとmutationは意図したGateでFailする",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_scoring.py::ScoringTest.test_gold_base_and_mutation_discriminate_all_eight_tasks"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/harness/isolation.py",
+        "benchmarks/harness/sandbox.py"
+      ],
+      "id": "I22-AC-11",
+      "source": "issue",
+      "statement": "hidden oracleをworkspaceへmountせずagent workspace egressを禁止する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_isolation.py::IsolationTest.test_oracle_and_simulated_answers_never_enter_agent_workspace",
+        "tests/benchmark/test_sandbox_and_plan.py::SandboxAndPlanTest.test_network_namespace_fails_closed_and_denies_egress"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/schemas/result.schema.json",
+        "benchmarks/harness/scoring.py"
+      ],
+      "id": "I22-AC-12",
+      "source": "issue",
+      "statement": "Strict E2E Passと六領域のsub-scoreを出力する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_scoring.py::ScoringTest.test_strict_pass_is_logical_and_not_weighted_compensation"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/harness/scoring.py"
+      ],
+      "id": "I22-AC-13",
+      "source": "issue",
+      "statement": "LLM judgeを単独のblocking oracleにしない",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_scoring.py::ScoringTest.test_llm_judge_cannot_change_a_blocking_decision"
+      ]
+    },
+    {
+      "evidence": [
+        ".github/workflows/benchmark-agent-smoke.yml",
+        ".github/workflows/benchmark-utility.yml"
+      ],
+      "id": "I22-AC-14",
+      "source": "issue",
+      "statement": "PR smoke workflowとpaired nightly workflowを追加する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_workflow_boundaries_separate_smoke_flake_utility_and_trusted_oracle"
+      ]
+    },
+    {
+      "evidence": [
+        ".gitignore",
+        "benchmarks/protocol.json"
+      ],
+      "id": "I22-AC-15",
+      "source": "issue",
+      "statement": "live trajectory、run log、test reportをGitへコミットしない",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_no_live_run_records_or_work_directory_are_committed"
+      ]
+    },
+    {
+      "evidence": [
+        "spec/requirements/requirements.json",
+        "docs/decisions/ADR-0003-skills-e2e-benchmark.md",
+        "governance/reviews/CHG-20260724-skills-e2e-benchmark.yaml",
+        ".github/workflows/benchmark-conformance.yml"
+      ],
+      "id": "I22-AC-16",
+      "source": "issue",
+      "statement": "benchmark変更について要件、設計、selected checks、review、Commit Comment、CIをrepository契約へ接続する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_change_has_adr_review_and_canonical_requirement_trace"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/references.json",
+        "benchmarks/schemas/reference-registry.schema.json"
+      ],
+      "id": "I22-RV-01",
+      "source": "research-review",
+      "statement": "参考文献のID、版、日付、査読状態、採用claim、limitationを機械可読に固定する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_reference_registry_is_machine_readable_and_uses_deveval"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/references.json"
+      ],
+      "id": "I22-RV-02",
+      "source": "research-review",
+      "statement": "DevBench表記をDevEvalへ修正する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_reference_registry_is_machine_readable_and_uses_deveval"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/harness/isolation.py"
+      ],
+      "id": "I22-RV-03",
+      "source": "research-review",
+      "statement": "full-skills / no-skills / length-matched-controlをpilotで同条件比較する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_isolation.py::IsolationTest.test_all_three_conditions_have_equal_nonzero_control_volume",
+        "tests/benchmark/test_run_protocol.py::RunProtocolTest.test_paired_conditions_must_declare_all_three_arms_exactly_once"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/README.md"
+      ],
+      "id": "I22-RV-04",
+      "source": "research-review",
+      "statement": "効果を固定context下の条件付き増分効果として表現する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_utility_claim_is_conditioned_to_fixed_context"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/schemas/run-manifest.schema.json",
+        "benchmarks/harness/run.py"
+      ],
+      "id": "I22-RV-05",
+      "source": "research-review",
+      "statement": "run manifestにmodel、harness、prompt、tool、Skill、base、task、oracle digestを含める",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_run_manifest_and_execution_contract_capture_reproducibility_fields"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/harness/run.py"
+      ],
+      "id": "I22-RV-06",
+      "source": "research-review",
+      "statement": "arm順序、seed、retry、timeout、provider failure、欠測、打切り規則を固定する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_run_protocol.py::RunProtocolTest.test_provider_error_is_the_only_retryable_phase_failure",
+        "tests/benchmark/test_run_protocol.py::RunProtocolTest.test_tool_crash_and_timeout_are_not_retried",
+        "tests/benchmark/test_sandbox_and_plan.py::SandboxAndPlanTest.test_counterbalanced_order_is_deterministic_and_complete"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        ".github/workflows/benchmark-flake.yml",
+        ".github/workflows/benchmark-utility.yml"
+      ],
+      "id": "I22-RV-07",
+      "source": "research-review",
+      "statement": "smoke / flake detectionと統計utility reportを別run typeにする",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_statistics.py::StatisticsProtocolTest.test_smoke_results_are_rejected_for_utility_inference",
+        "tests/benchmark/test_aggregate.py::AggregateTest.test_status_mode_reports_flake_health_without_utility_inference"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/harness/statistics.py"
+      ],
+      "id": "I22-RV-08",
+      "source": "research-review",
+      "statement": "paired estimator、信頼区間、最低標本数または精度基準を事前指定する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_statistics.py::StatisticsProtocolTest.test_predeclared_fixed_plan_primary_and_length_control_are_reported",
+        "tests/benchmark/test_statistics.py::StatisticsProtocolTest.test_small_sample_methods_are_bounded"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/promotion-policy.json"
+      ],
+      "id": "I22-RV-09",
+      "source": "research-review",
+      "statement": "subjective rubricとobjective blocking oracleを分離しblocking昇格前に評価者間一致を検証する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_scoring.py::ScoringTest.test_llm_judge_cannot_change_a_blocking_decision",
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_promotion_thresholds_are_predeclared"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/schemas/oracle.schema.json",
+        "benchmarks/oracles"
+      ],
+      "id": "I22-RV-10",
+      "source": "research-review",
+      "statement": "semantic slotをtaskごとにrequired / optional / N/A指定する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_semantic_slots_and_check_oracle_are_explicit"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/schemas/oracle.schema.json",
+        "benchmarks/oracles/B08/oracle.json"
+      ],
+      "id": "I22-RV-11",
+      "source": "research-review",
+      "statement": "check oracleにrequired / forbidden / admissibleを持たせる",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_task_matrix.py::TaskMatrixTest.test_b08_uses_required_forbidden_and_admissible_check_sets"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/protocol.json",
+        "benchmarks/schemas/run-manifest.schema.json"
+      ],
+      "id": "I22-RV-12",
+      "source": "research-review",
+      "statement": "agent workspace egress禁止とmodel control plane許可範囲を区別する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_schema_contract.py::SchemaContractTest.test_run_manifest_and_execution_contract_capture_reproducibility_fields",
+        "tests/benchmark/test_sandbox_and_plan.py::SandboxAndPlanTest.test_network_namespace_fails_closed_and_denies_egress"
+      ]
+    },
+    {
+      "evidence": [
+        ".github/workflows/benchmark-conformance.yml",
+        ".github/workflows/benchmark-heldout.yml"
+      ],
+      "id": "I22-RV-13",
+      "source": "research-review",
+      "statement": "public PR oracleとtrusted held-out oracleを別workflowにする",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_workflow_boundaries_separate_smoke_flake_utility_and_trusted_oracle"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/repository/certification-cases.json",
+        "benchmarks/fixtures/B01",
+        "benchmarks/fixtures/B02",
+        "benchmarks/fixtures/B06"
+      ],
+      "id": "I22-RV-14",
+      "source": "research-review",
+      "statement": "B01・B02・B06のgold、base、最低一つのmutationを意図したGateで識別する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_fixture_states.py::PhysicalFixtureStateTest.test_b01_base_gold_and_mutation",
+        "tests/benchmark/test_fixture_states.py::PhysicalFixtureStateTest.test_b02_both_user_variants_have_distinct_valid_outcomes",
+        "tests/benchmark/test_designfacts.py::DesignFactsTest.test_fastapi_openapi_sql_ast_digest_determinism_and_drift"
+      ]
+    },
+    {
+      "evidence": [
+        "benchmarks/promotion-policy.json"
+      ],
+      "id": "I22-RV-15",
+      "source": "research-review",
+      "statement": "agent実行をblockingへ昇格する運用閾値を定義する",
+      "status": "verified",
+      "tests": [
+        "tests/benchmark/test_repository_policy.py::RepositoryPolicyTest.test_promotion_thresholds_are_predeclared"
+      ]
+    }
+  ],
+  "issue": 22,
+  "schema_version": 1
+}

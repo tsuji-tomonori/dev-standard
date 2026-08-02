@@ -1,0 +1,37 @@
+name: Benchmark Flake Monitor
+
+on:
+  schedule:
+    - cron: "17 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  flake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run three non-inferential trajectories
+        shell: bash
+        run: |
+          set -euo pipefail
+          for seed in 0 1 2; do
+            python -m benchmarks.harness.run paired \
+              --root . --task B01 --seed "$seed" --run-type flake \
+              --adapter '["python","-m","benchmarks.harness.reference_adapter"]' \
+              --output ".benchmark-runs/flake/$seed"
+          done
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: benchmark-flake
+          if-no-files-found: error
+          path: .benchmark-runs/flake
+          retention-days: 14

@@ -1,0 +1,40 @@
+{
+  "agent_visible": {
+    "constraints": [
+      "production deploy禁止",
+      "外部副作用禁止",
+      "repository内の正本と生成物のauthorityを分離する"
+    ],
+    "initial_request": "破壊的変更のたびに利用者向けmigration guideを提供し、旧版support終了時に廃止判断して。",
+    "selected_skill_ids": [
+      "maintain-canonical-requirements"
+    ]
+  },
+  "base": {
+    "fixture": "benchmarks/fixtures/B05/base",
+    "ref": "synthetic-b05-v1"
+  },
+  "conditions": [
+    "full-skills",
+    "no-skills",
+    "length-matched-control"
+  ],
+  "conversation": {
+    "max_clarification_rounds": 0,
+    "mode": "no-ask"
+  },
+  "id": "B05",
+  "profile_oracle": "assured",
+  "required_gates": [
+    "interaction",
+    "requirements",
+    "implementation",
+    "generated_design",
+    "governance",
+    "safety_authority"
+  ],
+  "schema_version": 1,
+  "synthetic": true,
+  "tier": "mvp",
+  "title": "恒久的なmigration guide義務"
+}

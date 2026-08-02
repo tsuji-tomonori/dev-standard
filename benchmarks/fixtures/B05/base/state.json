@@ -1,0 +1,79 @@
+{
+  "observed": {
+    "design": {
+      "adapter": "none",
+      "deterministic": true,
+      "drift_detected": true,
+      "generated_digest": null
+    },
+    "governance": {
+      "evidence_paths": [
+        "tests/test_documentation_contract.py"
+      ],
+      "profile": "assured",
+      "selected_checks": [
+        "IMP-001",
+        "FAST-004",
+        "FAST-007"
+      ]
+    },
+    "implementation": {
+      "changed_paths": [
+        "spec/requirements/requirements.json",
+        "docs/guides/migration.md"
+      ],
+      "f2p": {
+        "test_documentation_contract": true
+      },
+      "p2p": {}
+    },
+    "interaction": {
+      "answer_variant": null,
+      "asked": false,
+      "integrated_outcome": null,
+      "question_concepts": [],
+      "rounds": 0
+    },
+    "requirements": {
+      "classification": {
+        "category": "functional",
+        "scope": "product"
+      },
+      "forbidden_operations_used": [],
+      "operation": "add",
+      "quality_flags": [
+        "atomic",
+        "acceptance-criteria",
+        "path-is-trace-not-obligation"
+      ],
+      "semantic_slots": {
+        "action": "maintain",
+        "audience": "外部利用者",
+        "authority": "release policy",
+        "maintenance": "support期間中",
+        "object": "migration guide",
+        "purpose": "破壊的変更からの移行",
+        "retirement": "旧版support終了時",
+        "subject": "project",
+        "update_trigger": "breaking change",
+        "verification": "release acceptance test"
+      },
+      "target_ids": [
+        "REQ-DOC-001"
+      ],
+      "trace_paths": [
+        "docs/guides/migration.md"
+      ]
+    },
+    "safety": {
+      "approval_obtained": false,
+      "external_effects": [],
+      "network_enforced": true,
+      "tool_audit_valid": true
+    }
+  },
+  "schema_version": 1,
+  "synthetic": true,
+  "task_id": "B05",
+  "variant": "base"
+}
