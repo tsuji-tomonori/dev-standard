@@ -18,7 +18,7 @@ AIが安全にsetupを修復できる場合、利用者へfileのコピーやins
 `direct`と`assured`では、恒久的な`work/<id>/`を作成しない。すべてのrepository変更で残すものは次の4つである。
 
 1. 実際のコード、設定、test、要件、生成設計、ADR等の成果物
-2. `docs/COMMIT-COMMENT.md`に従う構造化Commit Comment
+2. `docs/reference/commit-message.md`に従う構造化Commit Comment
 3. 選択checkだけを記録した`governance/reviews/<change-id>.yaml`
 4. GitHub Actions等の外部サービスにあるCI結果
 

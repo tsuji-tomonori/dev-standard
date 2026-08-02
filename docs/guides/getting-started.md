@@ -11,9 +11,12 @@
 ```bash
 python tools/install_reference.py --target ../target-repository --profile default
 python tools/install_reference.py --target ../target-repository --profile default --apply
+python tools/install_reference.py --target ../target-repository --profile default --host claude-code --apply
 ```
 
-`--profile`は複数指定できます。既存ファイルと内容が異なる場合は停止し、`--force`は差分を確認した後だけ使用します。
+`--profile`は複数指定できます。`--host`は`codex`または`claude-code`を選べます。Codexでは`AGENTS.md`、Claude Codeでは`CLAUDE.md`の管理marker内だけを統合します。既存ファイルと内容が異なる場合は停止し、`--force`は差分を確認した後だけ使用します。
+
+Claude Code向け`.claude/skills/`と`.claude/agents/`は`.agents/skills/`と`.codex/agents/`からGitHub Actionsで生成します。生成packageはartifactとして配布し、`.claude/`と`.devflow/generated/hosts/`を人がcommitした場合はpre-commitとCIが拒否します。
 
 ## 既定profile
 

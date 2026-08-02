@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: Critically review requirements, designs, implementations, tests, or documents by assuming they may contain mistakes and trying to falsify their claims with contradictions, omissions, counterexamples, independent derivation, and evidence. Use when the user asks whether something is really correct, requests an adversarial or skeptical review, wants assumptions challenged, or needs a rigorous second pass. This is defect-seeking review, not security red teaming or attack simulation.
+description: Falsify claims in requirements, designs, code, tests, or documents using contradictions, omissions, counterexamples, and independent evidence. Use for adversarial, skeptical, or rigorous second-pass review; not attack simulation.
 ---
 
 # Adversarial Review
@@ -37,6 +37,7 @@ Treat “the artifact contains a mistake” as a search hypothesis. Seek decisiv
 
 ## Boundaries
 
+- This is not security red teaming or attack simulation.
 - Do not turn review into security testing unless the request independently requires it.
 - Do not invent requirements, silently change the authoritative source, or treat stylistic preference as correctness.
 - Be direct about defects without sarcasm, hostility, score-settling, or criticism of the author.

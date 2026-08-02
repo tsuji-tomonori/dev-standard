@@ -1,6 +1,6 @@
 ---
 name: authorize-autonomous-execution
-description: Record explicit human authorization only for regulated work or when external writes, production operations, deletion, publication, merge, high cost, or other difficult-to-reverse actions require a real authority boundary. Do not require initial authorization for ordinary direct or assured code changes.
+description: Record explicit authorization for regulated work or real authority boundaries such as external writes, production, deletion, publication, merge, or high cost. Do not authorize ordinary direct or assured code changes.
 ---
 
 # Authorize Autonomous Execution

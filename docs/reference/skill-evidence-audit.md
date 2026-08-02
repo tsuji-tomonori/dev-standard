@@ -1,12 +1,14 @@
 # Skills根拠資料一覧・整合性監査
 
-- 確認日: 2026-07-24
-- 対象: `distribution/manifest.json`に登録された18 Skills、各Skillの`references/`、`governance/standards/registry.json`
+- 確認日: 2026-08-02
+- 対象: `distribution/manifest.json`の現行inventoryから得たSkills、各Skillの`references/`、`governance/standards/registry.json`
 - 目的: Skillsが参照する研究・規格・公式ガイダンス・実装例を列挙し、主張、適用範囲、訂正、版、運用規則との整合を確認する
+
+現在の件数、Skill description budget、trace存在、prompt境界、host別生成、不要文書、as-built executorの構造判定は`python tools/audit_consistency.py`で毎回再計算し、GitHub Actionsを結果の正本とする。本書は外部根拠の分類と適用限界を説明するもので、固定件数の第二正本にはしない。
 
 ## 結論
 
-主要な運用規則を反転させる矛盾は確認されなかった。次の食い違いまたは追跡性の不足を修正した。
+2026-08-02の自動監査と対象テストでblockingな矛盾がないことを確認した。過去の根拠監査では次の食い違いまたは追跡性の不足を修正した。
 
 1. `maintain-canonical-requirements`が「SWEBOK V4」と記しながら旧Wiki章へリンクしていたため、IEEE Computer SocietyのVersion 4.0aへ統一した。
 2. Huang et al. (2017)の2025年訂正とGibson et al. (2019)の訂正を追記し、訂正の影響を明示した。前者は報告値の訂正後も主要結論を維持し、後者は表記・記号上の訂正である。

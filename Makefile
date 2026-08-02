@@ -1,7 +1,6 @@
 PYTHON ?= .venv/bin/python
-SKILL_VALIDATOR ?= /home/t-tsuji/.codex/skills/.system/skill-creator/scripts/quick_validate.py
 
-.PHONY: setup catalog catalog-check spec spec-check standards standards-check review-check test skills-check repo-check audit verify
+.PHONY: setup catalog catalog-check spec spec-check standards standards-check review-check test skills-check repo-check host-assets-check as-built-check consistency-check audit verify
 
 setup:
 	python3 -m venv .venv
@@ -37,7 +36,17 @@ skills-check:
 repo-check:
 	$(PYTHON) tools/validate_repo.py
 
+host-assets-check:
+	$(PYTHON) tools/generate_host_assets.py check
+
+as-built-check:
+	$(PYTHON) .agents/skills/generate-implementation-design/scripts/qualityflow.py thresholds
+	$(PYTHON) .agents/skills/generate-implementation-design/scripts/qualityflow.py suppressions --root .
+
+consistency-check:
+	$(PYTHON) tools/audit_consistency.py
+
 audit:
 	$(PYTHON) tools/devflow.py audit
 
-verify: catalog-check spec-check standards-check review-check test repo-check audit
+verify: setup catalog-check spec-check standards-check review-check test repo-check host-assets-check as-built-check consistency-check audit

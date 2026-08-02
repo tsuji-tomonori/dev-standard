@@ -1,6 +1,6 @@
 ---
 name: inspect-quality-gates
-description: Inspect only the checks selected for the current change, at impact, implementation, pre-PR, pre-merge, post-deploy, or periodic-audit timing. Record concise results in governance/reviews/<change-id>.yaml, keep CI execution results in external services, and reserve the legacy phase-gate harness for regulated work only.
+description: Inspect only checks selected for the current change and timing. Record decisions in governance/reviews/<change-id>.yaml, keep CI results external, and use legacy phase gates only for regulated work.
 ---
 
 # Inspect Quality Gates

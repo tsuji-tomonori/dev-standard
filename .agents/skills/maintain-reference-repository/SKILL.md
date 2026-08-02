@@ -1,6 +1,6 @@
 ---
 name: maintain-reference-repository
-description: Preserve dev-standard as a portable reference and sample repository when changing its skills, agents, standards, governance, distribution, tests, or documentation. Use for changes to this repository itself. Separate reusable product behavior from project nonfunctional obligations, prevent repository-specific work records from becoming samples, and keep authority, distribution, compatibility, and evidence boundaries explicit.
+description: Preserve dev-standard portability when changing its skills, agents, standards, governance, distribution, tests, or docs. Use for this repository itself; separate reusable assets from repository-specific records and policies.
 ---
 
 # Maintain Reference Repository

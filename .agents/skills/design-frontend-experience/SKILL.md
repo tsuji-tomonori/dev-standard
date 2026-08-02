@@ -1,6 +1,6 @@
 ---
 name: design-frontend-experience
-description: Define the minimum interaction, information, accessibility, responsive, and visual decisions needed before frontend implementation. Persist long-lived non-obvious decisions as ADRs, generate as-built structure from implementation, and record design impact in the Commit Comment. Do not require per-change detailed-design or test-plan documents.
+description: Define minimum interaction, information, accessibility, responsive, and visual decisions before frontend implementation. Persist only long-lived decisions; do not require per-change design or test-plan documents.
 ---
 
 # Design Frontend Experience

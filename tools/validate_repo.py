@@ -100,8 +100,8 @@ def validate_agents(failures: list[str]) -> None:
                 fail(f"{path.relative_to(ROOT)}: {key} missing", failures)
         if value.get("name") != path.stem:
             fail(f"{path.relative_to(ROOT)}: agent name must match filename", failures)
-        if value.get("model") != "gpt-5.6-terra":
-            fail(f"{path.relative_to(ROOT)}: custom reviewer must use gpt-5.6-terra", failures)
+        if "model" in value:
+            fail(f"{path.relative_to(ROOT)}: custom reviewer must inherit the host-selected model", failures)
         if value.get("model_reasoning_effort") not in {"low", "medium", "high"}:
             fail(f"{path.relative_to(ROOT)}: reasoning effort must be explicitly cost-bounded", failures)
         if value.get("model_verbosity") != "low":
@@ -270,6 +270,10 @@ def validate_repo(failures: list[str]) -> None:
             fail("portable skill standard path is invalid", failures)
         if manifest["standard_paths"].get("codex_project_agents") != ".codex/agents/<agent-name>.toml":
             fail("Codex custom agent standard path is invalid", failures)
+        if manifest["standard_paths"].get("host_adapters") != "distribution/host-adapters.json":
+            fail("host adapter standard path is invalid", failures)
+        if manifest["standard_paths"].get("generated_host_packages") != ".devflow/generated/hosts/<host>/":
+            fail("generated host package standard path is invalid", failures)
         for key, expected in {
             "canonical_requirements": "spec/requirements/requirements.json",
             "generated_requirements": "docs/requirements/REQUIREMENTS.md",

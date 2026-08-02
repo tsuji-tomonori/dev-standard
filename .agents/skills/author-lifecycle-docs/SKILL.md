@@ -1,6 +1,6 @@
 ---
 name: author-lifecycle-docs
-description: Create regulated lifecycle documents only when legal, contractual, safety, production, or audit requirements require a work item and explicit phase evidence. Do not create per-change request, plan, architecture, detailed-design, implementation-log, test-report, release, or retrospective documents for ordinary direct or assured changes.
+description: Create work-item and phase documents only for regulated legal, contractual, safety, production, or audit evidence. Do not create lifecycle documents for ordinary direct or assured changes.
 ---
 
 # Author Regulated Lifecycle Documents

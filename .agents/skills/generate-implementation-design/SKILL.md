@@ -1,6 +1,6 @@
 ---
 name: generate-implementation-design
-description: Generate deterministic detailed-design documentation that stays one-to-one with FastAPI or AWS CDK implementation artifacts. Use for FastAPI router/functions structure, router-derived sequence diagrams, OpenAPI API and interface catalogs, raw-SQL CRUD and query-object documentation, CDK synthesis, or CloudFormation resource and parameter catalogs. Run the bundled generator and reject source/design drift instead of manually rewriting derived docs.
+description: Generate deterministic as-built design and execute its static quality contracts for FastAPI or AWS CDK implementation artifacts. Use for API, SQL, DDL, E2E, tool, CloudFormation, drift, sample, coverage, or suppression checks.
 ---
 
 # Generate Implementation Design
@@ -13,15 +13,17 @@ Generate detailed design from implementation contracts while keeping canonical r
 2. Implementation artifacts define implemented structure and interfaces.
 3. Generated detailed design describes those artifacts and includes their digests.
 4. A mismatch is a defect; never edit generated docs to hide it.
-5. Markdown outputs use `.gen.md` under `docs/design/generated/` and begin with a direct-edit prohibition plus generate/check command templates.
+5. Outputs are managed bundles below `docs/design/generated/`; Markdown uses `.gen.md`, machine data uses `.gen.json`, and every output carries a direct-edit prohibition.
+6. Refuse an output path outside the generated root, a symlinked path, or replacement of a directory without this generator's complete ownership manifest.
 
 ## FastAPI contract
 
 - Organize each operation so `router.py` shows orchestration and `functions.py` contains concrete processing.
 - Keep route bodies as a readable sequence of calls. Return the final call directly; do not assign a response only to return the variable.
 - Generate sequence diagrams from route AST call order.
-- Generate API/IF catalogs from the application-produced OpenAPI document, not duplicated annotations or prose.
+- Generate API/IF catalogs and API details from the application-produced OpenAPI document, handler metadata, error branches, and `API_SAMPLES`, not duplicated prose.
 - Keep executable SQL in `.sql` files. Parse it with SQLGlot AST; generate query objects and a CRUD matrix from parsed statements. Reject unparseable SQL rather than guessing with regular expressions.
+- Optionally add authoritative DDL, E2E tests, tool sources, and external evidence references with `--ddl-root`, `--e2e-root`, `--tool-root`, and `--evidence`.
 - Read `references/fastapi-contract.md` before creating or restructuring a FastAPI project.
 - Prepare the repository-local dependencies from this skill's `requirements.txt` when YAML or SQL parsing support is absent. Do not ask the user to install them.
 
@@ -30,6 +32,8 @@ Run:
 `scripts/designflow.py fastapi --source-root <src> --openapi <openapi.json> --sql-root <sql> --out docs/design/generated/fastapi`
 
 Use `--check` in CI after generation.
+
+Run `scripts/qualityflow.py` for the selected contract: `api` (FAST-016), `samples` (FAST-017), `crud-e2e` (FAST-018), `coverage` (FAST-019), `test-structure` (FAST-020), `implementation` (FAST-021), `thresholds` (FAST-022), `report` (FAST-023), or `suppressions` (AUD-008). Advisory commands report findings without blocking unless `--enforce` is explicit; blocking contracts return nonzero on a failed fixture.
 
 ## AWS CDK contract
 

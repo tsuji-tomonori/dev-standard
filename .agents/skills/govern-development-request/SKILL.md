@@ -1,6 +1,6 @@
 ---
 name: govern-development-request
-description: Run the full work-item, authorization, hash-chain, phase-gate, release, and audit lifecycle only for regulated changes: authentication, authorization, confidential or personal data, data loss, irreversible production operations, legal or contractual controls, high-cost external actions, or an explicitly requested high-assurance workflow. Do not use for ordinary direct or assured repository changes.
+description: Run work-item, authorization, hash-chain, phase-gate, release, and audit controls only for regulated authentication, authorization, sensitive-data, data-loss, irreversible-production, legal, contractual, or high-cost changes.
 ---
 
 # Govern Development Request

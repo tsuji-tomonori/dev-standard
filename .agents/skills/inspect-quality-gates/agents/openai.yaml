@@ -1,4 +1,4 @@
 interface:
   display_name: "品質ゲート検査"
-  short_description: "Inspect evidence, initial authorization, and every preceding gate"
-  default_prompt: "Use $inspect-quality-gates to strictly inspect the active phase and list every blocker."
+  short_description: "Inspect only selected checks and current evidence"
+  default_prompt: "Use $inspect-quality-gates to inspect the checks selected for this change and timing, list evidence-backed blockers, and require regulated lifecycle evidence only when the regulated profile is active."
