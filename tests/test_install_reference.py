@@ -121,12 +121,37 @@ class InstallReferenceTest(unittest.TestCase):
 
         install_reference.install(self.target, ["full"], apply=True, force=False)
 
-        self.assertEqual(agents_file.read_text(encoding="utf-8"), "target agents\n")
+        instructions = agents_file.read_text(encoding="utf-8")
+        self.assertTrue(instructions.startswith("target agents\n"))
+        self.assertEqual(instructions.count(install_reference.INSTRUCTION_START), 1)
         self.assertEqual(config_file.read_text(encoding="utf-8"), "target config\n")
         self.assertTrue((self.target / "AGENTS.governance.reference.md").is_file())
         self.assertTrue((self.target / ".codex" / "config.reference.toml").is_file())
         self.assertTrue((self.target / "checklist.xlsx").is_file())
         self.assertTrue((self.target / "requirements.txt").is_file())
+
+    def test_claude_host_uses_generated_layout_and_updates_claude_instructions(self) -> None:
+        claude_file = self.target / "CLAUDE.md"
+        claude_file.write_text("target claude\n", encoding="utf-8")
+        install_reference.install(
+            self.target,
+            ["default"],
+            apply=True,
+            force=False,
+            host="claude-code",
+        )
+        self.assertTrue((self.target / ".claude/skills/chat-first-development/SKILL.md").is_file())
+        self.assertFalse((self.target / ".claude/skills/chat-first-development/agents/openai.yaml").exists())
+        text = claude_file.read_text(encoding="utf-8")
+        self.assertTrue(text.startswith("target claude\n"))
+        self.assertEqual(text.count(install_reference.INSTRUCTION_START), 1)
+
+    def test_incomplete_instruction_marker_fails_before_asset_writes(self) -> None:
+        agents = self.target / "AGENTS.md"
+        agents.write_text(install_reference.INSTRUCTION_START + "\n", encoding="utf-8")
+        with self.assertRaises(install_reference.InstallError):
+            install_reference.install(self.target, ["default"], apply=True, force=False)
+        self.assertFalse((self.target / ".agents").exists())
 
 
 if __name__ == "__main__":

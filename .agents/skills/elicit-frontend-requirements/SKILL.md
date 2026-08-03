@@ -1,6 +1,6 @@
 ---
 name: elicit-frontend-requirements
-description: Discover human-centred, testable frontend requirements from users who may not know design terminology. Persist only durable obligations in the canonical requirements, use temporary notes only in .devflow/run when necessary, and record requirement impact in the Commit Comment. Do not require a permanent work item or per-change lifecycle documents.
+description: Discover human-centred, testable frontend requirements without requiring design terminology. Persist only durable obligations and avoid permanent work items or per-change lifecycle documents.
 ---
 
 # Elicit Frontend Requirements

@@ -1,6 +1,6 @@
 ---
 name: japanese-git-commit-gitmoji
-description: Generate a Japanese Git commit message using Gitmoji and Conventional Commits. Use whenever creating or proposing a commit for repository changes. The commit body must replace a separate Change Manifest and separate requirement/design impact files by recording purpose, change summary, requirement impact, design impact, review-checklist path, verification contract, compatibility, and residual risk.
+description: Create or propose a Japanese Gitmoji and Conventional Commit message that records purpose, change, requirement and design impact, review path, verification, compatibility, and residual risk.
 ---
 
 # Japanese Git Commit Comment with Gitmoji

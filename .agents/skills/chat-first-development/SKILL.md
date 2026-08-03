@@ -1,11 +1,11 @@
 ---
 name: chat-first-development
-description: Start and complete repository development from ordinary natural-language conversation. Use for features, fixes, refactors, design concerns, and incomplete ideas. Select direct, assured, or regulated execution; maintain only durable requirements; generate as-built design from implementation; record selected checklist results in the repository; use structured Commit Comments as the change manifest and requirement/design impact record; and keep CI results in external services.
+description: Complete features, fixes, refactors, and design work from natural-language requests. Select the execution profile, maintain durable requirements, generate as-built design, record selected checks and a structured commit, and keep CI results external.
 ---
 
 # Chat-first Development
 
-自然言語の相談を唯一の利用者インターフェースとし、成果に必要な最小十分な経路を選ぶ。
+ordinary natural-language conversationを唯一の利用者インターフェースとし、成果に必要な最小十分な経路を選ぶ。
 
 ## 既定成果物
 

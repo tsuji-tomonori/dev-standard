@@ -1,6 +1,6 @@
 ---
 name: implement-frontend-experience
-description: Implement approved frontend requirements and decisions in production code, preserve complete states, semantics, focus, responsive behavior, and design-system intent, then generate as-built design and record selected review evidence. Do not maintain a per-change implementation log.
+description: Implement approved frontend requirements in production code with complete states, semantics, focus, responsiveness, and design-system intent. Generate as-built design and selected evidence; do not create implementation logs.
 ---
 
 # Implement Frontend Experience

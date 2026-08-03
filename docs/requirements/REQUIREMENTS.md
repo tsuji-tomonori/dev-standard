@@ -1,8 +1,8 @@
 <!-- specflow.pyによる自動生成。spec/requirements/requirements.jsonを編集すること。 -->
 # dev-standard 要件一覧
 
-- カタログ版: 7
-- 更新日: 2026-07-24
+- カタログ版: 8
+- 更新日: 2026-08-02
 - 正本: `spec/requirements/requirements.json`
 
 | ID | 版 | 状態 | 種別 | 原子的な義務 | 検証方法 |
@@ -13,19 +13,19 @@
 | `REQ-ASBUILT-004` | 1 | 有効 | 機能 | as-built設計generatorは、handler ASTとOpenAPIとsampleとSQLから得たAPI詳細設計を**導出する** | 自動テスト |
 | `REQ-ASBUILT-005` | 1 | 有効 | 機能 | as-built設計generatorは、handler metadataから得た重複のないAPI一覧を**導出する** | 自動テスト |
 | `REQ-ASBUILT-006` | 1 | 有効 | データ | as-built設計generatorは、SQLと外部client呼出から得たtableおよび外部連携先のCRUD関係を**導出する** | 自動テスト |
-| `REQ-ASBUILT-007` | 1 | 有効 | データ | as-built設計generatorは、正本DDLとSQLから得たtable定義とER関係と書込みAPIを**導出する** | 自動テスト |
-| `REQ-ASBUILT-008` | 1 | 有効 | 機能 | as-built設計generatorは、E2E testのGiven When Then構造から得たscenario設計を**導出する** | 自動テスト |
-| `REQ-ASBUILT-009` | 1 | 有効 | 運用 | as-built設計generatorは、外部report基盤の結果JSONから得たtest evidence viewを**導出する** | 契約テスト |
-| `REQ-ASBUILT-010` | 1 | 有効 | 機能 | as-built設計generatorは、tool entrypoint ASTとdocstringから得たCLI仕様とflowを**導出する** | 自動テスト |
-| `REQ-ASBUILT-011` | 1 | 有効 | データ | as-built設計generatorは、API error分岐から得た一意ID付きmachine-readable error caseを**生成する** | 自動テスト |
-| `REQ-ASBUILT-012` | 1 | 有効 | 品質 | as-built整合checkは、handler登録と設計metadataとerror sampleの三点整合を**検証する** | 静的解析 |
-| `REQ-ASBUILT-013` | 1 | 有効 | 品質 | as-built整合checkは、設計掲載sampleと実response assertionの対応を**検証する** | AST静的解析 |
-| `REQ-ASBUILT-014` | 1 | 有効 | 品質 | as-built整合checkは、CUD操作を持つAPIとE2E状態assertの対応を**検証する** | 静的解析とE2E契約テスト |
-| `REQ-ASBUILT-015` | 1 | 有効 | 品質 | 導入先repositoryのtestは、AAAまたはGWTとdocstringと1 case 1関数を持つtestを**構成する** | AST静的解析 |
-| `REQ-ASBUILT-016` | 1 | 有効 | 品質 | 導入先repositoryのunit testは、C0命令網羅95%以上とC1分岐網羅90%以上のcoverageを**計測する** | coverage toolとreview contract |
+| `REQ-ASBUILT-007` | 2 | 有効 | データ | as-built設計generatorは、正本DDLとSQLから得たtable定義とER関係と書込みAPIを**導出する** | 自動テスト |
+| `REQ-ASBUILT-008` | 2 | 有効 | 機能 | as-built設計generatorは、E2E testのGiven When Then構造から得たscenario設計を**導出する** | 自動テスト |
+| `REQ-ASBUILT-009` | 2 | 有効 | 運用 | as-built設計generatorは、外部report基盤の結果JSONから得たtest evidence viewを**導出する** | 契約テスト |
+| `REQ-ASBUILT-010` | 2 | 有効 | 機能 | as-built設計generatorは、tool entrypoint ASTとdocstringから得たCLI仕様とflowを**導出する** | 自動テスト |
+| `REQ-ASBUILT-011` | 2 | 有効 | データ | as-built設計generatorは、API error分岐から得た一意ID付きmachine-readable error caseを**生成する** | 自動テスト |
+| `REQ-ASBUILT-012` | 2 | 有効 | 品質 | as-built整合checkは、handler登録と設計metadataとerror sampleの三点整合を**検証する** | 静的解析 |
+| `REQ-ASBUILT-013` | 2 | 有効 | 品質 | as-built整合checkは、設計掲載sampleと実response assertionの対応を**検証する** | AST静的解析 |
+| `REQ-ASBUILT-014` | 2 | 有効 | 品質 | as-built整合checkは、CUD操作を持つAPIとE2E状態assertの対応を**検証する** | 静的解析とE2E契約テスト |
+| `REQ-ASBUILT-015` | 2 | 有効 | 品質 | 導入先repositoryのtestは、AAAまたはGWTとdocstringと1 case 1関数を持つtestを**構成する** | AST静的解析 |
+| `REQ-ASBUILT-016` | 2 | 有効 | 品質 | 導入先repositoryのunit testは、C0命令網羅95%以上とC1分岐網羅90%以上のcoverageを**計測する** | coverage toolとreview contract |
 | `REQ-ASBUILT-017` | 1 | 有効 | 制約 | as-built規約は、Rule IDからcatalog check IDへ接続された機械可読check定義を**維持する** | repository契約テスト |
-| `REQ-ASBUILT-018` | 1 | 有効 | 運用 | as-built規約checkは、理由付きRule ID抑制箇所の監査一覧を**生成する** | 定期repository audit |
-| `REQ-ASBUILT-019` | 1 | 有効 | 運用 | 導入先repositoryの品質検証は、testとstatic analysisと規約checkとcoverageを表示する外部report viewを**提供する** | CI契約レビュー |
+| `REQ-ASBUILT-018` | 2 | 有効 | 運用 | as-built規約checkは、理由付きRule ID抑制箇所の監査一覧を**生成する** | 定期repository audit |
+| `REQ-ASBUILT-019` | 2 | 有効 | 運用 | 導入先repositoryの品質検証は、testとstatic analysisと規約checkとcoverageを表示する外部report viewを**提供する** | CI契約レビュー |
 | `REQ-DESIGN-001` | 2 | 有効 | 制約 | FastAPI実装フレームは、router.pyのオーケストレーションとfunctions.pyの具体処理に分けたoperationを**構成する** | 自動テスト |
 | `REQ-DESIGN-002` | 2 | 有効 | 機能 | 設計生成器は、FastAPI routerの構文木から得たoperationシーケンス図を**導出する** | 自動テスト |
 | `REQ-DESIGN-003` | 2 | 有効 | インターフェース | 設計生成器は、OpenAPI文書からのAPIとインターフェースの一覧を**導出する** | 自動テスト |
@@ -48,17 +48,17 @@
 | `REQ-EXEC-008` | 1 | 有効 | 品質 | 開発実行基盤は、推定、Estimate overhead、実績、Expand、品質および停止後活動の生指標を**計測する** | 自動テストとbenchmark |
 | `REQ-EXEC-009` | 1 | 有効 | 品質 | 標準検証基盤は、version固定selectorによるチェック候補と選択漏れ監査sampleを**選択する** | 自動テストとbenchmark |
 | `REQ-EXEC-010` | 1 | 有効 | 制約 | 実行効率制御は、telemetry、shadow、soft routing、assurance enforcement、calibrationおよび限定blockingの導入順序を**段階適用する** | 自動テスト |
-| `REQ-FRAME-001` | 2 | 有効 | 制約 | リポジトリは、一時的な作業記録と永続的な製品要件を**分離する** | 自動検査 |
-| `REQ-PORTABLE-001` | 2 | 有効 | 運用 | 移植可能なSkills集は、別リポジトリへのcopy-and-chat方式の導入を**実現する** | 自動テスト |
+| `REQ-FRAME-001` | 3 | 有効 | 制約 | リポジトリは、一時的な作業記録と永続的な製品要件を**分離する** | 自動検査 |
+| `REQ-PORTABLE-001` | 3 | 有効 | 運用 | 移植可能なSkills集は、別リポジトリへのcopy-and-chat方式の導入を**実現する** | 自動テスト |
 | `REQ-QUALITY-001` | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する** | 自動検査 |
 | `REQ-QUALITY-002` | 2 | 有効 | 品質 | 品質フローは、適用可能な証拠ベースのチェックリストによる成果物検証を**検証する** | 自動監査 |
-| `REQ-QUALITY-003` | 1 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する** | 自動テストと批判的レビュー |
+| `REQ-QUALITY-003` | 2 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する** | 自動テストと批判的レビュー |
 | `REQ-REPO-001` | 1 | 有効 | 制約 | dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分離したbranch別統合契約を**強制する** | CIとGitHub ruleset監査 |
 | `REQ-REPO-002` | 1 | 有効 | 運用 | release operatorとCIは、release前後のancestor関係、tip tree条件、freezeを含むreconciliation transactionを**維持する** | branch graph回帰テストとCI |
 | `REQ-REPO-003` | 1 | 有効 | 制約 | dev-standardの二層branch試行は、2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行を**制約する** | repository contract testと試行後review |
 | `REQ-SKILL-001` | 1 | 有効 | 制約 | right-size-executionは、Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約を**提供する** | 自動検査 |
 | `REQ-SKILL-002` | 1 | 有効 | 品質 | Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠を**検証する** | 自動benchmark |
-| `REQ-WORKBOOK-001` | 1 | 有効 | 運用 | チェックリスト生成フローは、実データ範囲だけを集計し決定的に再現できるレビュー用ワークブックを**生成する** | 自動検査と描画確認 |
+| `REQ-WORKBOOK-001` | 2 | 有効 | 運用 | チェックリスト生成フローは、実データ範囲だけを集計し決定的に再現できるレビュー用ワークブックを**生成する** | 自動検査と描画確認 |
 
 ## REQ-ASBUILT-001: as-built生成の決定論性
 
@@ -149,7 +149,7 @@ as-built設計generatorは、正本DDLとSQLから得たtable定義とER関係�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: DDLおよびSQL fixtureからのDB設計assert
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/generate-implementation-design/scripts/designflow.py; テスト=tests/test_review_contract.py,tests/test_designflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-008: E2E scenario設計の導出
 
@@ -162,7 +162,7 @@ as-built設計generatorは、E2E testのGiven When Then構造から得たscenari
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: E2E fixtureからのscenario出力assert
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/generate-implementation-design/scripts/designflow.py; テスト=tests/test_review_contract.py,tests/test_designflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-009: test evidence viewの外部集約
 
@@ -175,7 +175,7 @@ as-built設計generatorは、外部report基盤の結果JSONから得たtest evi
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: report fixtureとrepository非保存規則のassert
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=docs/ARTIFACTS-AND-CHECKS.md,governance/checks/catalog.yaml; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/generate-implementation-design/scripts/designflow.py; テスト=tests/test_review_contract.py,tests/test_designflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-010: generator tool設計の導出
 
@@ -188,7 +188,7 @@ as-built設計generatorは、tool entrypoint ASTとdocstringから得たCLI仕�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: tool fixtureからのCLIおよびflow assert
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/generate-implementation-design/scripts/designflow.py; テスト=tests/test_review_contract.py,tests/test_designflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-011: error case定義の生成
 
@@ -201,7 +201,7 @@ as-built設計generatorは、API error分岐から得た一意ID付きmachine-re
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: error branch fixtureからのcase ID出力assert
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/generate-implementation-design/scripts/designflow.py; テスト=tests/test_review_contract.py,tests/test_designflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-012: 実装仕様sample三点整合
 
@@ -214,7 +214,7 @@ as-built整合checkは、handler登録と設計metadataとerror sampleの三点�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: 不整合fixtureを拒否するcheck結果
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md,.agents/skills/generate-implementation-design/scripts/qualityflow.py; テスト=tests/test_review_contract.py,tests/test_qualityflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-013: sampleとtestの整合
 
@@ -227,7 +227,7 @@ as-built整合checkは、設計掲載sampleと実response assertionの対応を*
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: 未参照sampleと未assert sampleを拒否するcheck結果
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md,.agents/skills/generate-implementation-design/scripts/qualityflow.py; テスト=tests/test_review_contract.py,tests/test_qualityflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-014: CRUDとE2E状態検証の整合
 
@@ -240,7 +240,7 @@ as-built整合checkは、CUD操作を持つAPIとE2E状態assertの対応を**�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: 状態assert欠落fixtureを拒否するcheck結果
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md,.agents/skills/generate-implementation-design/scripts/qualityflow.py; テスト=tests/test_review_contract.py,tests/test_qualityflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-015: 解析可能なtest構造
 
@@ -253,7 +253,7 @@ as-built整合checkは、CUD操作を持つAPIとE2E状態assertの対応を**�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: test構造fixtureとAdvisory結果
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/verify-against-engineering-standards/references/as-built-design-check-selection.md,.agents/skills/generate-implementation-design/scripts/qualityflow.py; テスト=tests/test_review_contract.py,tests/test_qualityflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-016: unit test coverage目標
 
@@ -266,7 +266,7 @@ as-built整合checkは、CUD操作を持つAPIとE2E状態assertの対応を**�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: C0 C1測定結果への外部CI参照とAdvisory分類
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/retrospect-and-improve/SKILL.md; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/retrospect-and-improve/SKILL.md,.agents/skills/generate-implementation-design/scripts/qualityflow.py,.github/workflows/governance.yml; テスト=tests/test_review_contract.py,tests/test_qualityflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-017: as-built check定義の単一正本
 
@@ -292,7 +292,7 @@ as-built規約checkは、理由付きRule ID抑制箇所の監査一覧を**生�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: 抑制inventoryとAUD-008結果
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/checks/catalog.yaml,.agents/skills/generate-implementation-design/scripts/qualityflow.py; テスト=tests/test_review_contract.py,tests/test_qualityflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-ASBUILT-019: 品質結果の外部集約
 
@@ -305,7 +305,7 @@ as-built規約checkは、理由付きRule ID抑制箇所の監査一覧を**生�
 
 要求源: user:2026-07-21, docs/standards/AS-BUILT-DESIGN.md
 検証証跡: workflow参照とrepository非複製確認
-トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=docs/ARTIFACTS-AND-CHECKS.md,governance/reviews/README.md; テスト=tests/test_review_contract.py; 参照資料=DEVSTD-AS-BUILT
+トレース: 設計=docs/standards/AS-BUILT-DESIGN.md; 実装=governance/reviews/README.md,.agents/skills/generate-implementation-design/scripts/qualityflow.py,.github/workflows/governance.yml; テスト=tests/test_review_contract.py,tests/test_qualityflow.py; 参照資料=DEVSTD-AS-BUILT
 
 ## REQ-DESIGN-001: FastAPI operation構成
 
@@ -609,7 +609,7 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 
 要求源: user:2026-07-17
 検証証跡: リポジトリ検証とSkill契約テスト
-トレース: 設計=docs/FLOW.md; 実装=.agents/skills/maintain-canonical-requirements/SKILL.md; テスト=tests/test_specflow.py; 参照資料=SWEBOK-V4A
+トレース: 設計=docs/reference/development.md; 実装=.agents/skills/maintain-canonical-requirements/SKILL.md; テスト=tests/test_specflow.py; 参照資料=SWEBOK-V4A
 
 ## REQ-PORTABLE-001: チャットだけで移植できる導入
 
@@ -622,7 +622,7 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 
 要求源: user:2026-07-17
 検証証跡: プロファイル導入とSkill検出テスト
-トレース: 設計=docs/INSTALLATION.md; 実装=distribution/manifest.json,.agents/skills/chat-first-development/SKILL.md; テスト=tests/test_install_reference.py,tests/test_skills.py; 参照資料=SWEBOK-V4A
+トレース: 設計=docs/guides/getting-started.md,docs/decisions/ADR-0003-canonical-host-asset-generation.md; 実装=distribution/manifest.json,distribution/host-adapters.json,.agents/skills/chat-first-development/SKILL.md,tools/install_reference.py,tools/generate_host_assets.py,.github/workflows/host-assets.yml; テスト=tests/test_install_reference.py,tests/test_skills.py,tests/test_generate_host_assets.py; 参照資料=SWEBOK-V4A
 
 ## REQ-QUALITY-001: 版管理された出典台帳
 
@@ -663,7 +663,7 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 
 要求源: user:2026-07-18, SWEBOK Software Quality
 検証証跡: 原子性回帰テストとチェック項目カタログ
-トレース: 設計=docs/GOVERNANCE.md; 実装=update_checklist.py,.agents/skills/verify-against-engineering-standards/SKILL.md; テスト=tests/test_checklist.py; 参照資料=SWEBOK-V4A
+トレース: 設計=governance/reviews/README.md; 実装=update_checklist.py,.agents/skills/verify-against-engineering-standards/SKILL.md; テスト=tests/test_checklist.py; 参照資料=SWEBOK-V4A
 
 ## REQ-REPO-001: mainとdevの役割および統合方式
 
@@ -760,4 +760,4 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 
 要求源: user:2026-07-18
 検証証跡: 数式範囲テスト、項目数照合、代表シートの描画結果
-トレース: 設計=docs/GOVERNANCE.md; 実装=update_checklist.py; テスト=tests/test_checklist.py; 参照資料=SWEBOK-V4A
+トレース: 設計=docs/README.md; 実装=update_checklist.py; テスト=tests/test_checklist.py; 参照資料=SWEBOK-V4A

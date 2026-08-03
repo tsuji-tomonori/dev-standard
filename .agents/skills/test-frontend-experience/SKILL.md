@@ -1,6 +1,6 @@
 ---
 name: test-frontend-experience
-description: Verify frontend tasks, states, accessibility, responsiveness, visual invariants, and performance according to change risk. Keep automated results in external CI, record selected manual and review decisions in governance/reviews/<change-id>.yaml, and do not create a per-change test report.
+description: Verify frontend tasks, states, accessibility, responsiveness, visual invariants, and performance by risk. Keep automated results external and selected decisions in review YAML; do not create per-change reports.
 ---
 
 # Test Frontend Experience

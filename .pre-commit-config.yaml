@@ -18,3 +18,12 @@ repos:
       - id: debug-statements
       - id: mixed-line-ending
         args: ["--fix=lf"]
+
+  - repo: local
+    hooks:
+      - id: generated-host-assets
+        name: Reject committed generated host assets
+        entry: python3 tools/generate_host_assets.py check
+        language: system
+        pass_filenames: false
+        always_run: true

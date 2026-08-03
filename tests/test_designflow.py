@@ -25,6 +25,7 @@ class DesignflowTest(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
+        (self.root / ".git").mkdir()
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -32,7 +33,7 @@ class DesignflowTest(unittest.TestCase):
     def fastapi_fixture(self) -> tuple[Path, Path, Path, Path]:
         source = self.root / "src"
         sql = self.root / "sql"
-        output = self.root / "docs"
+        output = self.root / "docs" / "design" / "generated" / "api"
         (source / "items").mkdir(parents=True)
         sql.mkdir()
         (source / "items/router.py").write_text(
@@ -68,7 +69,19 @@ class DesignflowTest(unittest.TestCase):
 
     def test_fastapi_openapi_and_sql_docs_are_generated_and_drift_checked(self) -> None:
         source, openapi, sql, output = self.fastapi_fixture()
-        args = ["fastapi", "--source-root", str(source), "--openapi", str(openapi), "--sql-root", str(sql), "--out", str(output)]
+        args = [
+            "fastapi",
+            "--source-root",
+            str(source),
+            "--openapi",
+            str(openapi),
+            "--sql-root",
+            str(sql),
+            "--out",
+            str(output),
+            "--repo-root",
+            str(self.root),
+        ]
         self.assertEqual(designflow.main(args), 0)
         sequence = (output / "SEQUENCES.gen.md").read_text(encoding="utf-8")
         self.assertTrue(sequence.startswith("<!-- AUTO-GENERATED. DO NOT EDIT DIRECTLY."))
@@ -87,7 +100,9 @@ class DesignflowTest(unittest.TestCase):
         self.assertTrue(all(not value["path"].startswith("/") for value in manifest["sources"]))
         self.assertNotIn(str(self.root), (output / "QUERY_OBJECTS.gen.md").read_text(encoding="utf-8"))
         self.assertEqual(manifest["notice"], "AUTO-GENERATED. DO NOT EDIT DIRECTLY.")
-        self.assertTrue(all(name.endswith(".gen.md") for name in manifest["generated"]))
+        self.assertTrue(all(name.endswith((".gen.md", ".gen.json")) for name in manifest["generated"]))
+        self.assertTrue((output / "API_DETAILS.gen.md").is_file())
+        self.assertEqual(json.loads((output / "ERROR_CASES.gen.json").read_text(encoding="utf-8"))["cases"], [])
         first = {path.name: path.read_bytes() for path in output.iterdir() if path.is_file()}
         self.assertEqual(designflow.main(args), 0)
         second = {path.name: path.read_bytes() for path in output.iterdir() if path.is_file()}
@@ -122,7 +137,7 @@ class DesignflowTest(unittest.TestCase):
 
     def test_cloudformation_resources_and_parameters_are_generated(self) -> None:
         template = self.root / "stack.yaml"
-        output = self.root / "cdk"
+        output = self.root / "docs" / "design" / "generated" / "cdk"
         template.write_text(
             "Parameters:\n"
             "  Stage:\n"
@@ -136,11 +151,107 @@ class DesignflowTest(unittest.TestCase):
             "      BucketName: !Ref Stage\n",
             encoding="utf-8",
         )
-        args = ["cdk", "--template", str(template), "--out", str(output)]
+        args = ["cdk", "--template", str(template), "--out", str(output), "--repo-root", str(self.root)]
         self.assertEqual(designflow.main(args), 0)
         self.assertIn("AWS::S3::Bucket", (output / "RESOURCES.gen.md").read_text(encoding="utf-8"))
         self.assertIn("Stage", (output / "PARAMETERS.gen.md").read_text(encoding="utf-8"))
         self.assertEqual(designflow.main(args + ["--check"]), 0)
+
+    def test_fastapi_optional_authorities_generate_complete_as_built_views(self) -> None:
+        source, openapi, sql, output = self.fastapi_fixture()
+        ddl = self.root / "ddl"
+        e2e = self.root / "e2e"
+        tool = self.root / "tool"
+        ddl.mkdir()
+        e2e.mkdir()
+        tool.mkdir()
+        (ddl / "schema.sql").write_text(
+            "CREATE TABLE items (id TEXT PRIMARY KEY, parent_id TEXT, "
+            "FOREIGN KEY (parent_id) REFERENCES items(id));\n",
+            encoding="utf-8",
+        )
+        (e2e / "test_items.py").write_text(
+            "def test_get_item():\n"
+            "    \"\"\"既存itemを取得できる。\"\"\"\n"
+            "    # Given: item exists\n"
+            "    item_id = '1'\n"
+            "    # When: API is called\n"
+            "    response = item_id\n"
+            "    # Then: item is returned\n"
+            "    assert response == item_id\n",
+            encoding="utf-8",
+        )
+        (tool / "tools.py").write_text(
+            "import argparse\n\n"
+            "def run():\n"
+            "    \"\"\"Generate the declared artifact.\"\"\"\n"
+            "    parser = argparse.ArgumentParser()\n"
+            "    parser.add_argument('--out')\n"
+            "    return parser.parse_args([])\n",
+            encoding="utf-8",
+        )
+        evidence = self.root / "evidence.json"
+        evidence.write_text(
+            json.dumps({"runs": [{"id": "run-1", "status": "passed", "api_response": "https://ci.example/api", "db_result": "https://ci.example/db", "mock_result": "https://ci.example/mock"}]}),
+            encoding="utf-8",
+        )
+        args = [
+            "fastapi",
+            "--source-root",
+            str(source),
+            "--openapi",
+            str(openapi),
+            "--sql-root",
+            str(sql),
+            "--ddl-root",
+            str(ddl),
+            "--e2e-root",
+            str(e2e),
+            "--tool-root",
+            str(tool),
+            "--evidence",
+            str(evidence),
+            "--out",
+            str(output),
+            "--repo-root",
+            str(self.root),
+        ]
+        self.assertEqual(designflow.main(args), 0)
+        for name in ["DB_DESIGN.gen.md", "E2E_SCENARIOS.gen.md", "TOOLS.gen.md", "TEST_EVIDENCE.gen.md"]:
+            self.assertTrue((output / name).is_file(), name)
+        self.assertIn("items", (output / "DB_DESIGN.gen.md").read_text(encoding="utf-8"))
+        self.assertIn("Given", (output / "E2E_SCENARIOS.gen.md").read_text(encoding="utf-8"))
+        self.assertIn("--out", (output / "TOOLS.gen.md").read_text(encoding="utf-8"))
+        self.assertNotIn("response body", (output / "TEST_EVIDENCE.gen.md").read_text(encoding="utf-8"))
+
+        evidence.write_text(
+            json.dumps({"runs": [{"id": "run-2", "status": "passed", "api_response": "response body", "db_result": "-", "mock_result": "-"}]}),
+            encoding="utf-8",
+        )
+        self.assertEqual(designflow.main(args), 2)
+
+    def test_output_rejects_escape_symlink_and_unmanaged_replacement(self) -> None:
+        source, openapi, sql, _ = self.fastapi_fixture()
+        base = [
+            "fastapi",
+            "--source-root",
+            str(source),
+            "--openapi",
+            str(openapi),
+            "--sql-root",
+            str(sql),
+            "--repo-root",
+            str(self.root),
+        ]
+        self.assertEqual(designflow.main(base + ["--out", str(self.root / "outside")]), 2)
+        unmanaged = self.root / "docs" / "design" / "generated" / "unmanaged"
+        unmanaged.mkdir(parents=True)
+        (unmanaged / "human.txt").write_text("preserve", encoding="utf-8")
+        self.assertEqual(designflow.main(base + ["--out", str(unmanaged)]), 2)
+        self.assertEqual((unmanaged / "human.txt").read_text(encoding="utf-8"), "preserve")
+        link = self.root / "docs" / "design" / "generated" / "linked"
+        link.symlink_to(self.root / "outside", target_is_directory=True)
+        self.assertEqual(designflow.main(base + ["--out", str(link / "bundle")]), 2)
 
 
 if __name__ == "__main__":

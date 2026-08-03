@@ -1,6 +1,6 @@
 ---
 name: right-size-execution
-description: Select the smallest sufficient direct, assured, or regulated development profile and the necessary context, verification, review, and compute. Use before repository changes, checklist selection, reviewer escalation, and efficiency audits. Keep budgets soft, expand on evidence, and do not create permanent work artifacts for direct or assured changes.
+description: Select the smallest sufficient direct, assured, or regulated profile plus context, verification, review, and compute. Use before repository changes or escalation; expand one evidence-backed axis and avoid permanent records for lighter profiles.
 ---
 
 # Right-size Execution
@@ -61,7 +61,7 @@ description: Select the smallest sufficient direct, assured, or regulated develo
 3. `governance/checks/catalog.yaml`のtrigger、timing、classからcheck IDを選ぶ。as-built標準を導入・拡張する場合は専用のcheck選択referenceを使う。
 4. 最小のcontext、tool、verificationで開始する。
 5. 検証失敗、新しい依存、契約影響、証拠不足が判明した場合だけ拡張する。
-6. 複数軸が同じ新証拠から直接必要になった場合は、理由を一つ記録して同時拡張できる。
+6. 一回の判断では一軸だけを拡張する。同じ証拠が複数軸へ関係しても、各軸の必要性と変化を別々に記録して順次評価する。
 7. 成功条件を満たしたら、Commit Comment、review YAML、PR/CI確認以外の探索を停止する。
 8. PR前に実際のprofile、selected check、残存リスクをreview YAMLへ確定する。
 

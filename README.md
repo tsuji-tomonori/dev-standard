@@ -29,9 +29,10 @@
 ```bash
 python tools/install_reference.py --target ../target-repository --profile default
 python tools/install_reference.py --target ../target-repository --profile default --apply
+python tools/install_reference.py --target ../target-repository --profile default --host claude-code --apply
 ```
 
-既存の`AGENTS.md`や`.codex/config.toml`は自動上書きせず、必要な規則だけを統合します。
+既存の指示は管理markerの外を維持し、Codexでは`AGENTS.md`、Claude Codeでは`CLAUDE.md`へ必要な規則だけを統合します。Claude Code固有配置はGitHub Actionsで正本から生成され、生成先をcommitすると検査が失敗します。
 
 ## 主な配置
 

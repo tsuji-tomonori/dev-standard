@@ -1,4 +1,4 @@
 interface:
   display_name: "統制付き開発要求"
-  short_description: "Authorize once then execute every lifecycle quality gate"
-  default_prompt: "Use $govern-development-request to define one complete execution boundary, obtain initial authorization, and finish autonomously."
+  short_description: "Run the regulated work-item and gate lifecycle"
+  default_prompt: "Use $govern-development-request only for a regulated change, bind its explicit authorization once, and execute the selected lifecycle gates within that boundary."

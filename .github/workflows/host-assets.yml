@@ -1,0 +1,34 @@
+name: Host assets
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Reject committed generated host assets
+        run: python tools/generate_host_assets.py check
+      - name: Generate Codex and Claude Code packages
+        run: >-
+          python tools/generate_host_assets.py generate
+          --host codex
+          --host claude-code
+      - name: Upload generated host packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: dev-standard-host-assets
+          path: .devflow/generated/hosts
+          include-hidden-files: true
+          retention-days: 14

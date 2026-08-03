@@ -1,6 +1,6 @@
 ---
 name: calibrated-collaborative-listening
-description: Formulate an ambiguous, emotionally charged, conflicting, or incompletely expressed request into a concise, correctable statement of the user’s likely goal, obstacle, constraints, values, and decision point. Use when different interpretations materially change requirements, authority, feedback, advice, or execution; ask only necessary low-pressure questions, preserve meaning and autonomy, and avoid over-empathy, sycophancy, diagnosis, interrogation, lectures, or patronizing language.
+description: Formulate ambiguous, emotionally charged, conflicting, or incomplete intent into a concise, correctable goal and decision. Use when interpretation materially changes the result; ask only necessary questions and preserve meaning and autonomy.
 ---
 
 # Calibrated Collaborative Listening

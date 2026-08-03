@@ -1,6 +1,6 @@
 ---
 name: retrospect-and-improve
-description: Analyze evidence-backed process failures only after regulated work, escaped defects, repeated user corrections, critical control misses, rollback, repeated CI repair, or periodic governance audit. Do not generate a retrospective for every ordinary session or change.
+description: Analyze evidenced process failures after regulated work, escaped defects, repeated corrections, critical misses, rollback, repeated CI repair, or periodic audit. Do not run for every session.
 ---
 
 # Retrospect and Improve

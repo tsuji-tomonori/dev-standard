@@ -1,7 +1,6 @@
 name = "test-reviewer"
 description = "テスト戦略、評価データ、合格閾値、証跡を独立レビューする。"
 sandbox_mode = "read-only"
-model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 model_verbosity = "low"
 developer_instructions = """
