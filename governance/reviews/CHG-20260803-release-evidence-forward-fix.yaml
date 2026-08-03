@@ -1,0 +1,212 @@
+schema_version: 2
+catalog_version: 3
+catalog_digest: sha256:a1b61465fdf7b1e98e31398ba06182d6a8fe9d7a9cacee4d17a49eabfda43a28
+change_id: CHG-20260803-release-evidence-forward-fix
+profile: assured
+source_ref: self
+completed_timings:
+  - impact
+  - implementation
+  - pre-pr
+  - pre-merge
+impact_flags:
+  external_write: true
+  irreversible_operation: true
+  auth_change: false
+  data_change: false
+  public_api_change: false
+  iac_change: false
+  dependency_change: false
+  code_change: false
+  typed_code_change: false
+  behavior_change: false
+  bug_fix: true
+  generated_change: false
+  sql_change: false
+  e2e_change: false
+  migration: false
+  ui_change: false
+  interactive_ui_change: false
+  operational_impact: true
+  requirements_impact: false
+  public_contract_change: false
+  critical_change: false
+  important_ui_change: false
+  long_term_decision: false
+  squash: true
+  external_side_effect: true
+  production_deploy: false
+  major_incident: false
+  periodic_cycle: false
+  monthly_cycle: false
+  recheck_due: false
+  as_built_standard_change: false
+  as_built_adoption: false
+  quality_threshold_change: false
+
+impact_details:
+  as_built_adoption:
+    scope: []
+    exclusions: []
+
+selected_checks:
+  - id: IMP-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 永続要件と利用者向け挙動は変えず、欠落したrelease証跡だけをforward fixする
+
+  - id: IMP-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:docs/decisions/ADR-0002-two-layer-branch-history.md
+    note: 既存branch契約の修復手順を適用し、設計判断自体は変更しない
+
+  - id: IMP-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: governance証跡、mainへのhotfix、devへのreconciliationに跨るためassuredを選択した
+
+  - id: IMP-004
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: Issue、PR、main、devへのGitHub書込みを明示し、利用者承認の範囲内で実行する
+
+  - id: IMP-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: mainとdevへのmergeを不可逆な権限境界として識別し、最新CI成功後だけ実行する
+
+  - id: FAST-005
+    class: Risk-selected
+    result: pass
+    evidence:
+      - test:tests/test_branch_policy.py
+      - workflow:Governance
+    note: Release-Type欠落をbranch policyが拒否する既存回帰テストと失敗runで再現できる
+
+  - id: FAST-007
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance#Secret scan
+    note: hotfix差分全体をsecret scanとpre-commitで検査する
+
+  - id: FAST-015
+    class: Advisory
+    result: pass
+    evidence:
+      - workflow:Governance
+    note: Actionsのjobとstepを外部証跡として追跡できる
+
+  - id: REV-001
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 差分をrelease証跡のforward fix 1件に限定した
+
+  - id: REV-002
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 目的、影響、review、検証、互換性、残存リスクをCommit Commentへ保持した
+
+  - id: REV-003
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:spec/requirements/requirements.json
+    note: 要件正本を変更せず、外部挙動と受入条件に影響しないことを確認した
+
+  - id: REV-004
+    class: Invariant
+    result: pass
+    evidence:
+      - path:docs/decisions/ADR-0002-two-layer-branch-history.md
+      - path:.github/branch-policy.json
+    note: 履歴改変を避けるforward fixとhotfix reconciliationが既存設計に一致する
+
+  - id: REV-006
+    class: Invariant
+    result: pass
+    evidence:
+      - test:tests/test_branch_policy.py
+      - workflow:Governance
+      - workflow:Host assets
+    note: branch契約、Commit Comment、repository整合を既存CIへ接続した
+
+  - id: REV-007
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-release-evidence-forward-fix.yaml
+    note: 選択したcheck結果を本review YAMLへ保存した
+
+  - id: REV-008
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-release-evidence-forward-fix.yaml
+    note: 必須・選択checkだけを記録し、未選択項目をN/Aにしていない
+
+  - id: REV-014
+    class: Risk-selected
+    result: pass
+    evidence:
+      - path:.github/workflows/governance.yml
+      - path:tools/branch_policy.py
+    note: branch運用上の失敗は既存workflowとvalidatorで診断可能である
+
+  - id: MRG-001
+    class: Invariant
+    result: pass
+    evidence:
+      - workflow:Governance
+      - workflow:Host assets
+    note: hotfix PRとreconciliation PRの現在HEADでblocking workflowを確認する
+
+  - id: MRG-003
+    class: Invariant
+    result: pass
+    evidence:
+      - path:governance/reviews/CHG-20260803-release-evidence-forward-fix.yaml
+    note: 未解決blocking failを残さず、失敗時はmergeを停止する
+
+  - id: MRG-005
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: mainのsquash commitへ完全なrelease manifestと構造化Commit Commentを保持する
+
+  - id: MRG-006
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+    note: 利用者がhotfixとreconciliationによる修復を明示承認している
+
+  - id: MRG-007
+    class: Invariant
+    result: pass
+    evidence:
+      - commit:self
+      - path:governance/reviews/CHG-20260803-release-evidence-forward-fix.yaml
+    note: 要件影響なし、設計判断変更なし、履歴非改変、reconciliation必須を確定した
+
+advisories: []
+residual_risks:
+  - hotfixをmainへ反映した後、PR #58をhotfix reconciliationへ更新してdevへ同期する必要がある
+  - PR #56の不完全なsquash commitは履歴に残るが、history rewriteせず後続hotfixを正本索引とする
