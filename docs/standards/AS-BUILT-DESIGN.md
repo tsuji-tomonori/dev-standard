@@ -4,16 +4,17 @@
 - 版: `2026-07-21.1`
 - 適用対象: このrepositoryから標準を導入するrepository
 - 機械可読checkの正本: `governance/checks/catalog.yaml`
-- 永続要件の正本: `spec/requirements/requirements.json`
+- 永続要件の正本: `spec/requirements/requirements.qnt`
+- 永続要件の機械可読view: `spec/requirements/requirements.json`
 - 判断記録: `docs/decisions/ADR-0001-as-built-design-authority-and-scope.md`
 
-本標準は、実装と1対1で対応する設計情報を実装成果物から決定論的に生成し、乖離をcheck modeとCIで検知するための実装規約・テスト規約を定める。永続要件、check定義、開発フローの第二正本にはしない。
+本標準は、実装と1対1で対応する設計情報を実装成果物から決定論的に生成し、乖離をcheck modeで検知するための実装規約・テスト規約を定める。永続要件、check定義、開発フローの第二正本にはしない。check modeはローカルで実行でき、導入先に既存CIがある場合だけそこで再利用できる。本標準はCI、required check、branch、merge ruleを要求しない。
 
 ## 1. 適用モデル
 
-この文書は人が読む標準ビューである。要件IDの意味は`spec/requirements/requirements.json`、check ID・class・timing・trigger・enforcementは`governance/checks/catalog.yaml`を参照する。
+この文書は人が読む標準ビューである。要件IDの定義は`spec/requirements/requirements.qnt`、その機械可読viewは`spec/requirements/requirements.json`、check ID・class・timing・trigger・enforcementは`governance/checks/catalog.yaml`を参照する。
 
-この標準を配布または改訂しただけでは、dev-standard自身や導入先repositoryの既存コードへ以下のレイアウト規約やテスト構造を遡及強制しない。repositoryが具体的なartifact・code scopeを採用する場合は`as_built_adoption: true`とscope・除外をreview YAMLへ記録し、Advisoryから実測を開始する。既存コードへ適用する場合は、移行範囲と互換性を別変更として定義する。
+この標準を配布または改訂しただけでは、dev-standard自身や導入先repositoryの既存コードへ以下のレイアウト規約やテスト構造を遡及強制しない。repositoryが具体的なartifact・code scopeを採用する場合はscope・除外を対象repositoryの既存方式で記録し、Advisoryから実測を開始する。既存コードへ適用する場合は、移行範囲と互換性を別変更として定義する。
 
 ### 1.1 規範語彙
 
@@ -32,8 +33,8 @@
 | 軸 | 決定するもの | 正本 |
 |---|---|---|
 | 規範強度 | 採用済みscopeで何をMUST / SHOULD / MAYとするか | 本書のRule ID付き規範行 |
-| 採用scope | どのartifact・code pathへ規範を適用するか、何を除外するか | schema v2 review YAMLの`impact_details.as_built_adoption` |
-| enforcement state | いつ、どのriskで検査し、mergeを停止するか | catalogのclass・trigger・enforcement |
+| 採用scope | どのartifact・code pathへ規範を適用するか、何を除外するか | 対象repositoryの既存方式 |
+| enforcement state | いつ、どのriskで検査するか | 選択したcommandと検査範囲 |
 
 `Invariant` / `Risk-selected` / `Advisory` / `Periodic`は規範語彙の別名ではない。MUSTに対応するcheckを段階導入中にAdvisoryとして評価しても、MUSTをSHOULDへ弱めたことにはならない。未採用scopeには規範を適用せず、採用または移行中scopeでは実測結果、欠陥予防効果、安定性、運用costを根拠にenforcementを昇格する。
 
@@ -134,7 +135,7 @@
 
 ### 5.6 定量閾値
 
-標準値を次に示す。導入先が値を採用する場合、規約文書とmachine-readable設定を一致させる。引下げは許可し、引上げはCommit CommentまたはADRへ理由を記録する。生成コードとtestコードは対象外とする。
+標準値を次に示す。導入先が値を採用する場合、規約文書とmachine-readable設定を一致させる。変更理由は対象repositoryの既存方式またはADRへ記録する。生成コードとtestコードは対象外とする。
 
 | 指標 | application層 | tool層 |
 |---|---:|---:|
@@ -203,14 +204,14 @@
 | `FLOW-DO-002` | MUST | external write、production、削除、公開、merge、高額操作、regulated条件ではauthority boundaryを明示し、実操作前に承認を得る。 | `authorize-autonomous-execution` |
 | `FLOW-DONT-002` | MUST NOT | directまたはassured変更へ日付+slug計画書、恒久work item、段階status更新を必須化しない。 | `chat-first-development` |
 | `FLOW-DO-003` | MAY | 再開用の一時計画を`.devflow/run/`へ保存し、変更完了後に削除する。 | `chat-first-development` |
-| `FLOW-DO-004` | MUST | コードから得られない長期判断をADR、変更説明をCommit Comment、selected check結果をreview YAML、実行結果を外部CIへ収束させる。 | `chat-first-development` |
+| `FLOW-DO-004` | MUST | コードから得られない長期判断をADRへ置き、変更説明とselected check結果は対象repositoryの既存方式へ簡潔に収束させる。 | `chat-first-development` |
 
 ## 9. 導入時のtrace
 
 | 受入項目 | 要件ID | Check ID |
 |---|---|---|
 | 生成設計を`docs/design/generated/`へ隔離し、手書き複製を置かない | `REQ-ASBUILT-003` | `FAST-006` |
-| 全宣言済みgeneratorがcheck modeを持ちCIでdriftを検出する | `REQ-ASBUILT-001`, `REQ-ASBUILT-002` | `FAST-006`, `MRG-002` |
+| 全宣言済みgeneratorがcheck modeを持ちローカルまたは既存CIでdriftを検出する | `REQ-ASBUILT-001`, `REQ-ASBUILT-002` | `FAST-006`, `MRG-002` |
 | 実装だけを変更して再生成しない場合にcheckが失敗する | `REQ-ASBUILT-002` | `FAST-006` |
 | 規範Rule IDとcheck定義がcatalogへ接続される | `REQ-ASBUILT-017` | `REV-007` |
 | 抑制一覧を生成し監査する | `REQ-ASBUILT-018` | `AUD-008` |
@@ -223,6 +224,6 @@
 
 本標準の要件正本、Rule ID、既定path、生成対象、check mapping、generator contract、配布定義、traceを変更する場合は`assured`を選択し、`as_built_standard_change: true`と`FAST-024`で正本間の整合を確認する。generatorの生成対象・出力も変える場合だけ`generated_change: true`と`FAST-006`を、定量閾値またはlinter delegationも変える場合だけ`quality_threshold_change: true`と`FAST-022`を追加する。
 
-repositoryが本標準を具体的なartifact・code scopeへ採用する、または適用scopeを拡張する場合は`as_built_adoption: true`とし、schema v2 review YAMLへ採用scopeと除外を記録する。標準contractを変更しただけでは`FAST-019`〜`FAST-021`、`FAST-023`を選択しない。
+repositoryが本標準を具体的なartifact・code scopeへ採用する、または適用scopeを拡張する場合は、採用scopeと除外を対象repositoryの既存方式で記録する。標準contractを変更しただけでは`FAST-019`〜`FAST-021`、`FAST-023`を選択しない。
 
-checkをblockingへ昇格する場合は、実測evidence、適用trigger、予想cost、rollback、再評価日を記録する。過去のreview YAMLは変更時点の不変証拠として保持し、現行schemaやcatalog digestへ合わせて書き換えない。
+checkをblockingへ昇格する判断は対象repositoryのauthorityに委任し、本標準のportable契約にはしない。

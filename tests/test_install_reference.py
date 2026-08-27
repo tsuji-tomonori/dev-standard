@@ -18,140 +18,71 @@ class InstallReferenceTest(unittest.TestCase):
 
     def test_dry_run_does_not_write(self) -> None:
         copied, unchanged, conflicts = install_reference.install(
-            self.target, ["communication"], apply=False, force=False
+            self.target, ["default"], apply=False, force=False
         )
         self.assertGreater(copied, 0)
         self.assertEqual((unchanged, conflicts), (0, 0))
         self.assertFalse((self.target / ".agents").exists())
 
-    def test_apply_copies_standard_skill_layout(self) -> None:
-        install_reference.install(self.target, ["communication"], apply=True, force=False)
-        installed = self.target / ".agents" / "skills" / "calibrated-collaborative-listening" / "SKILL.md"
-        source = install_reference.ROOT / ".agents" / "skills" / "calibrated-collaborative-listening" / "SKILL.md"
-        self.assertEqual(installed.read_bytes(), source.read_bytes())
+    def test_default_installs_only_entry_and_three_pillars(self) -> None:
+        install_reference.install(self.target, ["default"], apply=True, force=False)
+        installed = {
+            path.parent.name
+            for path in (self.target / ".agents" / "skills").glob("*/SKILL.md")
+        }
+        self.assertEqual(
+            installed,
+            {
+                "chat-first-development",
+                "maintain-canonical-requirements",
+                "generate-implementation-design",
+                "inspect-quality-gates",
+            },
+        )
+        self.assertFalse((self.target / "governance").exists())
+        self.assertFalse((self.target / ".github").exists())
+
+    def test_default_preserves_existing_repository_policy_byte_for_byte(self) -> None:
+        workflow = self.target / ".github" / "workflows" / "target.yml"
+        rules = self.target / ".github" / "target-rules.json"
+        workflow.parent.mkdir(parents=True)
+        workflow.write_bytes(b"name: target-owned\n")
+        rules.write_bytes(b'{"merge":"rebase"}\n')
+        before = {workflow: workflow.read_bytes(), rules: rules.read_bytes()}
+
+        install_reference.install(self.target, ["default"], apply=True, force=False)
+
+        self.assertEqual({path: path.read_bytes() for path in before}, before)
+        self.assertEqual(
+            sorted(path.relative_to(self.target).as_posix() for path in workflow.parent.iterdir()),
+            [".github/workflows/target.yml"],
+        )
+
+    def test_existing_instructions_are_merged_only_inside_managed_block(self) -> None:
+        agents = self.target / "AGENTS.md"
+        agents.write_text("target-owned instruction\n", encoding="utf-8")
+        install_reference.install(self.target, ["default"], apply=True, force=False)
+        text = agents.read_text(encoding="utf-8")
+        self.assertTrue(text.startswith("target-owned instruction\n"))
+        self.assertEqual(text.count(install_reference.INSTRUCTION_START), 1)
+        self.assertIn("3本だけ", text)
 
     def test_conflict_fails_before_other_writes_and_force_is_explicit(self) -> None:
-        conflict = self.target / ".agents" / "skills" / "calibrated-collaborative-listening" / "SKILL.md"
+        conflict = self.target / ".agents" / "skills" / "chat-first-development" / "SKILL.md"
         conflict.parent.mkdir(parents=True)
         conflict.write_text("target-owned", encoding="utf-8")
         with self.assertRaises(install_reference.InstallError):
-            install_reference.install(self.target, ["communication"], apply=True, force=False)
+            install_reference.install(self.target, ["default"], apply=True, force=False)
         self.assertEqual(conflict.read_text(encoding="utf-8"), "target-owned")
-        install_reference.install(self.target, ["communication"], apply=True, force=True)
+        install_reference.install(self.target, ["default"], apply=True, force=True)
         self.assertNotEqual(conflict.read_text(encoding="utf-8"), "target-owned")
 
-    def test_agents_profile_uses_codex_standard_directory(self) -> None:
-        install_reference.install(self.target, ["agents"], apply=True, force=False)
-        installed = sorted(path.name for path in (self.target / ".codex" / "agents").glob("*.toml"))
-        expected = sorted(path.name for path in (install_reference.ROOT / ".codex" / "agents").glob("*.toml"))
-        self.assertEqual(installed, expected)
-
-    def test_chat_first_profile_is_self_starting_adaptive_collection(self) -> None:
-        install_reference.install(self.target, ["chat-first"], apply=True, force=False)
-        for name in [
-            "chat-first-development",
-            "right-size-execution",
-            "calibrated-collaborative-listening",
-            "maintain-canonical-requirements",
-            "generate-implementation-design",
-            "verify-against-engineering-standards",
-            "inspect-quality-gates",
-            "japanese-git-commit-gitmoji",
-        ]:
-            self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
-        self.assertTrue((self.target / "governance" / "reviews" / "review-result.schema.json").is_file())
-        self.assertTrue((self.target / "governance" / "reviews" / "validate.py").is_file())
-        self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
-        self.assertFalse((self.target / "governance" / "reviews" / "CHG-20260718-artifact-governance.yaml").exists())
-        self.assertTrue((self.target / "docs" / "reference" / "commit-message.md").is_file())
-        self.assertTrue((self.target / "docs" / "reference" / "development.md").is_file())
-        self.assertTrue((self.target / "docs" / "standards" / "AS-BUILT-DESIGN.md").is_file())
-        self.assertFalse((self.target / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md").exists())
-        self.assertFalse((self.target / "tools").exists())
-        self.assertFalse((self.target / ".agents" / "skills" / "adversarial-review").exists())
-
-    def test_development_framework_profile_contains_three_guarantees(self) -> None:
-        install_reference.install(self.target, ["development-framework"], apply=True, force=False)
-        for name in [
-            "maintain-canonical-requirements",
-            "generate-implementation-design",
-            "verify-against-engineering-standards",
-            "right-size-execution",
-            "inspect-quality-gates",
-            "japanese-git-commit-gitmoji",
-        ]:
-            self.assertTrue((self.target / ".agents" / "skills" / name / "SKILL.md").is_file())
-        self.assertTrue((self.target / ".agents/skills/generate-implementation-design/requirements.txt").is_file())
-        self.assertTrue((self.target / "governance" / "reviews" / "review-result.schema.json").is_file())
-        self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
-        self.assertTrue((self.target / "docs" / "standards" / "AS-BUILT-DESIGN.md").is_file())
-
-    def test_implementation_design_profile_includes_as_built_standard(self) -> None:
-        install_reference.install(self.target, ["implementation-design"], apply=True, force=False)
-        manifest = install_reference.load_manifest()
-        self.assertEqual(
-            manifest["standard_paths"]["aws_cdk_as_built_standard"],
-            "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
-        )
-        self.assertTrue((self.target / ".agents" / "skills" / "generate-implementation-design" / "SKILL.md").is_file())
-        self.assertTrue((self.target / "docs" / "standards" / "AS-BUILT-DESIGN.md").is_file())
-        self.assertFalse((self.target / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md").exists())
-        self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
-
-    def test_aws_cdk_implementation_design_profile_is_explicit(self) -> None:
-        install_reference.install(self.target, ["aws-cdk-implementation-design"], apply=True, force=False)
-        self.assertTrue((self.target / ".agents" / "skills" / "generate-implementation-design" / "SKILL.md").is_file())
-        self.assertTrue((self.target / "docs" / "standards" / "AS-BUILT-DESIGN.md").is_file())
-        self.assertTrue((self.target / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md").is_file())
-        self.assertTrue((self.target / "governance" / "checks" / "catalog.yaml").is_file())
-
-    def test_repository_specific_review_evidence_is_never_distributed(self) -> None:
-        manifest = install_reference.load_manifest()
-        for profile in manifest["profiles"]:
-            planned = install_reference.plan(self.target, [profile], manifest)
-            copied = {item.source.name for item in planned if item.source.parent.name == "reviews"}
-            self.assertNotIn("CHG-20260718-artifact-governance.yaml", copied, profile)
-
-    def test_full_profile_preserves_target_configuration_and_installs_merge_references(self) -> None:
-        agents_file = self.target / "AGENTS.md"
-        config_file = self.target / ".codex" / "config.toml"
-        agents_file.write_text("target agents\n", encoding="utf-8")
-        config_file.parent.mkdir(parents=True)
-        config_file.write_text("target config\n", encoding="utf-8")
-
-        install_reference.install(self.target, ["full"], apply=True, force=False)
-
-        instructions = agents_file.read_text(encoding="utf-8")
-        self.assertTrue(instructions.startswith("target agents\n"))
-        self.assertEqual(instructions.count(install_reference.INSTRUCTION_START), 1)
-        self.assertEqual(config_file.read_text(encoding="utf-8"), "target config\n")
-        self.assertTrue((self.target / "AGENTS.governance.reference.md").is_file())
-        self.assertTrue((self.target / ".codex" / "config.reference.toml").is_file())
-        self.assertTrue((self.target / "checklist.xlsx").is_file())
-        self.assertTrue((self.target / "requirements.txt").is_file())
-
-    def test_claude_host_uses_generated_layout_and_updates_claude_instructions(self) -> None:
-        claude_file = self.target / "CLAUDE.md"
-        claude_file.write_text("target claude\n", encoding="utf-8")
+    def test_claude_host_uses_generated_layout(self) -> None:
         install_reference.install(
-            self.target,
-            ["default"],
-            apply=True,
-            force=False,
-            host="claude-code",
+            self.target, ["default"], apply=True, force=False, host="claude-code"
         )
         self.assertTrue((self.target / ".claude/skills/chat-first-development/SKILL.md").is_file())
         self.assertFalse((self.target / ".claude/skills/chat-first-development/agents/openai.yaml").exists())
-        text = claude_file.read_text(encoding="utf-8")
-        self.assertTrue(text.startswith("target claude\n"))
-        self.assertEqual(text.count(install_reference.INSTRUCTION_START), 1)
-
-    def test_incomplete_instruction_marker_fails_before_asset_writes(self) -> None:
-        agents = self.target / "AGENTS.md"
-        agents.write_text(install_reference.INSTRUCTION_START + "\n", encoding="utf-8")
-        with self.assertRaises(install_reference.InstallError):
-            install_reference.install(self.target, ["default"], apply=True, force=False)
-        self.assertFalse((self.target / ".agents").exists())
 
 
 if __name__ == "__main__":

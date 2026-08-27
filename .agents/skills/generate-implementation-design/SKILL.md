@@ -1,51 +1,43 @@
 ---
 name: generate-implementation-design
-description: Generate deterministic as-built design and execute its static quality contracts for FastAPI or AWS CDK implementation artifacts. Use for API, SQL, DDL, E2E, tool, CloudFormation, drift, sample, coverage, or suppression checks.
+description: Deterministically generate as-built design from implementation artifacts and check that generated documentation still matches the implementation.
 ---
 
 # Generate Implementation Design
 
-Generate detailed design from implementation contracts while keeping canonical requirements above both.
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "generate-implementation-design"` を形式契約とする。
+
+実装から現在状態の設計を決定的に生成する。これは2本目のガードレールである。
 
 ## Authority order
 
-1. `spec/requirements/requirements.json` defines intended behavior.
-2. Implementation artifacts define implemented structure and interfaces.
-3. Generated detailed design describes those artifacts and includes their digests.
-4. A mismatch is a defect; never edit generated docs to hide it.
-5. Outputs are managed bundles below `docs/design/generated/`; Markdown uses `.gen.md`, machine data uses `.gen.json`, and every output carries a direct-edit prohibition.
-6. Refuse an output path outside the generated root, a symlinked path, or replacement of a directory without this generator's complete ownership manifest.
+1. `spec/requirements/requirements.qnt`は意図した挙動を定義する。
+2. 実装artifactは実装済み構造とinterfaceを定義する。
+3. `docs/design/generated/`の生成設計は実装artifactを説明し、digestを持つ。
+4. 不一致は欠陥であり、生成文書を直接編集して隠さない。
 
-## FastAPI contract
+出力はgeneratorが完全所有するpathに限定し、symlink、directory置換、管理外pathへの出力を拒否する。
 
-- Organize each operation so `router.py` shows orchestration and `functions.py` contains concrete processing.
-- Keep route bodies as a readable sequence of calls. Return the final call directly; do not assign a response only to return the variable.
-- Generate sequence diagrams from route AST call order.
-- Generate API/IF catalogs and API details from the application-produced OpenAPI document, handler metadata, error branches, and `API_SAMPLES`, not duplicated prose.
-- Keep executable SQL in `.sql` files. Parse it with SQLGlot AST; generate query objects and a CRUD matrix from parsed statements. Reject unparseable SQL rather than guessing with regular expressions.
-- Optionally add authoritative DDL, E2E tests, tool sources, and external evidence references with `--ddl-root`, `--e2e-root`, `--tool-root`, and `--evidence`.
-- Read `references/fastapi-contract.md` before creating or restructuring a FastAPI project.
-- Prepare the repository-local dependencies from this skill's `requirements.txt` when YAML or SQL parsing support is absent. Do not ask the user to install them.
+## FastAPI
 
-Run:
+- route AST、applicationが生成するOpenAPI、handler metadata、error branch、SQL ASTから設計を生成する。
+- executable SQLを正規表現で推測せず、parseできないSQLを拒否する。
+- 作成または再編時は`references/fastapi-contract.md`を読む。
+- 実行例: `scripts/designflow.py fastapi --source-root <src> --openapi <openapi.json> --sql-root <sql> --out docs/design/generated/fastapi`
 
-`scripts/designflow.py fastapi --source-root <src> --openapi <openapi.json> --sql-root <sql> --out docs/design/generated/fastapi`
+## AWS CDK
 
-Use `--check` in CI after generation.
+- synth後のCloudFormation templateからresource、parameter、template SHA-256を生成する。
+- 作成または再編時は`references/cdk-contract.md`を読む。
+- 実行例: `scripts/designflow.py cdk --template <template.yaml> --out docs/design/generated/cdk/<stack>`
 
-Run `scripts/qualityflow.py` for the selected contract: `api` (FAST-016), `samples` (FAST-017), `crud-e2e` (FAST-018), `coverage` (FAST-019), `test-structure` (FAST-020), `implementation` (FAST-021), `thresholds` (FAST-022), `report` (FAST-023), or `suppressions` (AUD-008). Advisory commands report findings without blocking unless `--enforce` is explicit; blocking contracts return nonzero on a failed fixture.
+## Verification
 
-## AWS CDK contract
+1. generationが成功する。
+2. 同じ入力の2回目の出力がbyte一致する。
+3. `--check`が既存生成物との差を検出する。
+4. requirement IDがoperation、resource、testへtraceする。
 
-- Synthesize CDK before documentation. The deployment-level input is each generated CloudFormation YAML/JSON template.
-- Generate resource inventory and parameter details from `Resources` and `Parameters`.
-- Record template path and SHA-256. A different synthesized template requires regenerated design.
-- Read `references/cdk-contract.md` before creating or restructuring a CDK project.
-
-Run:
-
-`scripts/designflow.py cdk --template <template.yaml> --out docs/design/generated/cdk/<stack>`
-
-## Gate
-
-Generated design is complete only when generation succeeds, a second run is byte-identical, `--check` passes, requirement IDs trace to operations/resources/tests, and `$verify-against-engineering-standards` passes. Implementation-derived documentation does not prove that the implementation satisfies the requirement.
+`--check`はローカルでも対象repositoryが既に持つCIでも実行できる。このSkillはCI workflow、required check、branch protection、merge ruleを作成も要求もしない。生成設計は実装との一致を示すが、実装が要件を満たすことまでは証明しない。

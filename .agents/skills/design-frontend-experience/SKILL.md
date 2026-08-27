@@ -5,6 +5,10 @@ description: Define minimum interaction, information, accessibility, responsive,
 
 # Design Frontend Experience
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "design-frontend-experience"` を形式契約とする。
+
 approved requirementsを、実装者がproduct behaviorを発明せずに実装できる最小限のdesign decisionへ変換する。
 
 ## Inputs
@@ -91,7 +95,7 @@ local component detailやcodeから自明な構造はADRにしない。
 - 必要時のprototypeまたはreference
 - 必要時のADR
 - implementationへ渡すacceptance / verification hook
-- Commit Commentのdesign impact判定
+- 対象repositoryが採用する変更記録のdesign impact判定
 - 必要なselected check
 
 一時的な比較noteが必要な場合だけ`.devflow/run/<change-id>/frontend-design-notes.md`へ置き、decision確定後に削除する。
@@ -112,5 +116,6 @@ local component detailやcodeから自明な構造はADRにしない。
 - requirementごとに必要なdesign decisionがある。
 - codeから生成可能な情報を手書きで複製していない。
 - 長期判断だけADRへ残る。
-- design impactがCommit Commentへ記録される。
+- design impactが対象repositoryの既存方式で追跡できる。
+- このSkillのためにCI workflow、required check、branch protection、merge rule、commit形式を追加または変更していない。
 - 実装後にas-built設計を生成できる。

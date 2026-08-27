@@ -5,6 +5,10 @@ description: Run work-item, authorization, hash-chain, phase-gate, release, and 
 
 # Govern Development Request
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "govern-development-request"` を形式契約とする。
+
 このSkillは`regulated` profile専用である。
 
 通常のfeature、fix、refactor、文書変更、局所UI変更には使用しない。これらは`$chat-first-development`のdirectまたはassured workflowで処理する。
@@ -32,7 +36,7 @@ description: Run work-item, authorization, hash-chain, phase-gate, release, and 
 - selected regulated checklist result
 - release / audit evidence
 
-製品要求の正本は引き続き`spec/requirements/requirements.json`とし、work itemを製品正本にしない。
+製品要求の正本は引き続き`spec/requirements/requirements.qnt`とし、work itemを製品正本にしない。
 
 ## Workflow
 
@@ -41,10 +45,10 @@ description: Run work-item, authorization, hash-chain, phase-gate, release, and 
 3. work itemを作成し、要求、要件差分、authority boundary、不可逆操作、rollback、停止条件を記録する。
 4. `$author-lifecycle-docs`でregulated案件に必要な文書だけを作成する。
 5. `$authorize-autonomous-execution`で一度だけ明示承認を取得する。
-6. 承認範囲内で設計、実装、検証、PR、CI修正を自律実行する。
+6. 承認範囲内で設計、実装、検証を自律実行する。
 7. selected regulated checkを`tools/devflow.py`で検査する。
-8. external CIとdeployment serviceの結果を参照し、生ログをGitへ複製しない。
-9. Commit Commentへ要件影響、設計影響、review path、検証契約、残存リスクを統合する。
+8. 実行したローカル検査、既存CI、deployment serviceの結果を必要に応じて参照し、生ログをGitへ複製しない。
+9. 対象repositoryが採用する変更記録へ要件影響、設計影響、検証範囲、残存リスクを統合する。
 10. release、audit、closureを行う。
 
 ## Boundaries
@@ -54,12 +58,13 @@ description: Run work-item, authorization, hash-chain, phase-gate, release, and 
 - 結果、authority、外部副作用、不可逆性が承認境界を越える場合だけ停止する。
 - gateを通すためにcheck、test、型、security controlを弱めない。
 - raw production evidence、secret、PII、CIログをGitへ保存しない。
+- CI workflow、required check、branch protection、merge ruleをこのSkillのために追加または変更しない。
 
 ## Completion
 
 - regulated起動根拠がある。
 - authority boundaryと承認が現行である。
 - regulated blocking checkがPassする。
-- external CIが現在HEADを対象として成功する。
-- Commit Commentとreview resultに最終証跡が残る。
+- 実行範囲に対応する検証が成功する。
+- 対象repositoryが採用する変更記録に最終証跡が残る。
 - work itemは規制・監査上必要な期間だけ保持される。

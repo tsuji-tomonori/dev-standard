@@ -1,58 +1,51 @@
-# dev-standard開発参照集
+# dev-standard
 
-他のリポジトリへ移植して使う、AI開発用のSkills・agents・標準・検証部品の参照集です。
+AI開発agentが、対象repositoryの既存運用を壊さずに使える軽量なSkills集です。既定profileは会話の入口と3本のガードレールだけを配布します。
 
-## このリポジトリが担保する3本柱
+## 1. durableな原子要件
 
-### 1. 対話から原子的な永続要件を維持する
+永続要件の一次言語は[Quint](https://quint.sh/)です。`spec/requirements/requirements.qnt`を唯一の編集対象とし、型と不変条件を検査します。
 
-会話から今後も維持すべき要件だけを抽出し、`add`、`update`、`retire`として[`spec/requirements/requirements.json`](spec/requirements/requirements.json)へ反映します。外部挙動や受入条件が変わらない場合、要件正本は更新しません。
+## 2. 実装由来のas-built設計
 
-### 2. 実装と1対1のas-built設計を生成する
+現在の構造とinterfaceは実装artifactから決定的に生成します。生成文書を直接編集して実装との差を隠しません。
 
-実装成果物から詳細設計を生成し、source digestとdriftを検査します。コードから生成できる情報を手書き設計として二重管理しません。
+## 3. 変更に関係する検査だけ
 
-### 3. 必要なチェックだけを、適切な時点で行う
+変更と受入条件に対応するtest、lint、type check、build、generatorだけを選びます。CIがある場合は利用できますが、CIやmerge ruleの導入を要求しません。
 
-変更リスクとartifactに応じてcheckを選択し、実装中、PR前、CIで検証します。未選択checkを形式的なN/Aとして保存しません。
+## Quintから人向け文書まで
 
-通常の依頼は`chat-first-development`が`direct`、`assured`、`regulated`へ振り分けます。利用者がSkill名や内部コマンドを指定する必要はありません。
+```text
+requirements.qnt → requirements.json → REQUIREMENTS.md
+skills.qnt       → skills.json       → FORMAL-SPECIFICATIONS.md
+```
+
+```bash
+npm ci --ignore-scripts
+python tools/quintflow.py generate
+python tools/quintflow.py check
+python tools/quintflow.py test
+```
+
+全18 Skillは`spec/skills/skills.qnt`の形式契約と1対1で対応します。形式モデルは、既定profileが4 Skillだけであること、portable blocking guardrailが3本だけであること、すべてのSkillがCIとmerge ruleを要求しないことを検査します。
 
 ## 導入
 
-対象リポジトリをAI開発agentで開き、次のように依頼します。
-
-> dev-standardのdefault profileをこのリポジトリへ導入して、既存ルールと競合しないように統合して。
-
-手動で確認する場合は、まずdry-runを実行します。
+まずdry-runし、差分を確認してから適用します。
 
 ```bash
 python tools/install_reference.py --target ../target-repository --profile default
 python tools/install_reference.py --target ../target-repository --profile default --apply
-python tools/install_reference.py --target ../target-repository --profile default --host claude-code --apply
 ```
 
-既存の指示は管理markerの外を維持し、Codexでは`AGENTS.md`、Claude Codeでは`CLAUDE.md`へ必要な規則だけを統合します。Claude Code固有配置はGitHub Actionsで正本から生成され、生成先をcommitすると検査が失敗します。
+`default`が配布するSkillは次の4つです。
 
-## 主な配置
+- `chat-first-development`
+- `maintain-canonical-requirements`
+- `generate-implementation-design`
+- `inspect-quality-gates`
 
-| 配置 | 内容 |
-|---|---|
-| `.agents/skills/` | 移植可能なSkills |
-| `.codex/agents/` | read-only reviewer等のCodex agents |
-| `spec/requirements/` | 永続要件の正本 |
-| `docs/standards/` | 人向け標準 |
-| `governance/checks/` | check定義の正本 |
-| `governance/reviews/` | 変更ごとのselected check結果 |
-| `distribution/manifest.json` | 配布profile |
+installerは導入先の`.github/`、branch、merge設定を追加も変更もしません。既存の`AGENTS.md`または`CLAUDE.md`は管理marker内だけを更新し、その他の記述を維持します。
 
-## 文書
-
-- [導入とSkills一覧](docs/guides/getting-started.md)
-- [開発契約](docs/reference/development.md)
-- [コミットメッセージ契約](docs/reference/commit-message.md)
-- [二層branch履歴の管理された試行](docs/decisions/ADR-0002-two-layer-branch-history.md)
-- [要件分類標準](docs/standards/REQUIREMENT-CLASSIFICATION.md)
-- [as-built設計標準](docs/standards/AS-BUILT-DESIGN.md)
-- [AWS CDK実装・as-built設計標準](docs/standards/AWS-CDK-AS-BUILT-DESIGN.md)
-- [文書索引](docs/README.md)
+詳細は[導入とSkills一覧](docs/guides/getting-started.md)、[形式仕様](docs/reference/FORMAL-SPECIFICATIONS.md)、[開発契約](docs/reference/development.md)を参照してください。

@@ -5,6 +5,10 @@ description: Falsify claims in requirements, designs, code, tests, or documents 
 
 # Adversarial Review
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "adversarial-review"` を形式契約とする。
+
 Treat “the artifact contains a mistake” as a search hypothesis. Seek decisive evidence, but let the evidence determine the conclusion. Critique claims and artifacts, never people.
 
 ## Prepare the review

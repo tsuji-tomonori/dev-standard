@@ -1,9 +1,10 @@
-<!-- specflow.pyによる自動生成。spec/requirements/requirements.jsonを編集すること。 -->
+<!-- tools/quintflow.pyによる自動生成。spec/requirements/requirements.qntを編集すること。 -->
 # dev-standard 要件一覧
 
-- カタログ版: 8
-- 更新日: 2026-08-02
-- 正本: `spec/requirements/requirements.json`
+- カタログ版: 10
+- 更新日: 2026-08-27
+- 正本: `spec/requirements/requirements.qnt`
+- 機械可読view: `spec/requirements/requirements.json`
 
 | ID | 版 | 状態 | 種別 | 原子的な義務 | 検証方法 |
 |---|---:|---|---|---|---|
@@ -34,8 +35,8 @@
 | `REQ-DESIGN-006` | 3 | 有効 | 品質 | 設計フローは、実装成果物と自動生成された詳細設計の差分を**検出する** | 自動テスト |
 | `REQ-DISC-001` | 2 | 有効 | 機能 | 開発エージェントは、適切な対話を通じたユーザーの意図する成果を**探り当てる** | 契約レビュー |
 | `REQ-DISC-002` | 2 | 有効 | データ | 要件カタログは、正本要件IDごとの一つの原子的な義務を**維持する** | 自動テスト |
-| `REQ-DISC-003` | 2 | 有効 | 機能 | 仕様管理フローは、版競合を検査した追加、更新、廃止操作を**適用する** | 自動テスト |
-| `REQ-DISC-004` | 2 | 有効 | 機能 | 仕様管理フローは、正本カタログからの日本語の人間向け要件文書を**生成する** | 自動テスト |
+| `REQ-DISC-003` | 3 | 有効 | 機能 | 仕様管理フローは、版を進めて検証するQuint要件の追加、更新、廃止を**維持する** | Quint検証と自動テスト |
+| `REQ-DISC-004` | 3 | 有効 | 機能 | 仕様管理フローは、QuintからJSONを経由した日本語の人間向け要件文書を**生成する** | 自動テスト |
 | `REQ-DISC-005` | 1 | 有効 | 機能 | 要件管理Skillは、solution候補と権限ある永続要件を**分離する** | 自動テスト |
 | `REQ-DOCS-001` | 1 | 有効 | 品質 | 文書生成フローは、識別子と固有名詞を除いて日本語で統一された利用者向け文書を**提供する** | 自動検査 |
 | `REQ-EXEC-001` | 2 | 有効 | 運用 | 開発実行基盤は、相互に独立した変更範囲、保証水準、計算資源および実行方式を**推定する** | 自動テスト |
@@ -50,12 +51,17 @@
 | `REQ-EXEC-010` | 1 | 有効 | 制約 | 実行効率制御は、telemetry、shadow、soft routing、assurance enforcement、calibrationおよび限定blockingの導入順序を**段階適用する** | 自動テスト |
 | `REQ-FRAME-001` | 3 | 有効 | 制約 | リポジトリは、一時的な作業記録と永続的な製品要件を**分離する** | 自動検査 |
 | `REQ-PORTABLE-001` | 3 | 有効 | 運用 | 移植可能なSkills集は、別リポジトリへのcopy-and-chat方式の導入を**実現する** | 自動テスト |
+| `REQ-PORTABLE-002` | 1 | 有効 | 制約 | portable installerと既定profileは、導入先のbranch、merge rule、CI workflowを追加も変更もしないことを**維持する** | installer isolation test |
 | `REQ-QUALITY-001` | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する** | 自動検査 |
-| `REQ-QUALITY-002` | 2 | 有効 | 品質 | 品質フローは、適用可能な証拠ベースのチェックリストによる成果物検証を**検証する** | 自動監査 |
+| `REQ-QUALITY-002` | 3 | 有効 | 品質 | 品質フローは、変更と受入条件に関係する検査だけによる成果物検証を**検証する** | 契約テスト |
 | `REQ-QUALITY-003` | 2 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する** | 自動テストと批判的レビュー |
-| `REQ-REPO-001` | 1 | 有効 | 制約 | dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分離したbranch別統合契約を**強制する** | CIとGitHub ruleset監査 |
-| `REQ-REPO-002` | 1 | 有効 | 運用 | release operatorとCIは、release前後のancestor関係、tip tree条件、freezeを含むreconciliation transactionを**維持する** | branch graph回帰テストとCI |
-| `REQ-REPO-003` | 1 | 有効 | 制約 | dev-standardの二層branch試行は、2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行を**制約する** | repository contract testと試行後review |
+| `REQ-QUALITY-004` | 1 | 有効 | 制約 | portable blocking guardrailは、要件正本、as-built生成、選択checkの3本柱だけを対象にすることを**制約する** | Quint invariant verification |
+| `REQ-QUINT-001` | 1 | 有効 | 制約 | 永続要件は、Quint仕様を唯一の編集対象としJSONを派生物として維持することを**維持する** | Quint typecheckと生成drift検査 |
+| `REQ-QUINT-002` | 1 | 有効 | 機能 | 要件生成器は、Quintから正規化JSONを生成し、そのJSONから人向けMarkdownを生成することを**生成する** | 決定的生成テスト |
+| `REQ-QUINT-003` | 1 | 有効 | 品質 | Skill形式仕様は、すべてのSkillを一対一のQuint契約へ対応付けることを**形式化する** | Quint testとinventory集合比較 |
+| `REQ-REPO-001` | 2 | 廃止 | 制約 | dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分離したbranch別統合契約を**強制する** | CIとGitHub ruleset監査 |
+| `REQ-REPO-002` | 2 | 廃止 | 運用 | release operatorとCIは、release前後のancestor関係、tip tree条件、freezeを含むreconciliation transactionを**維持する** | branch graph回帰テストとCI |
+| `REQ-REPO-003` | 2 | 廃止 | 制約 | dev-standardの二層branch試行は、2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行を**制約する** | repository contract testと試行後review |
 | `REQ-SKILL-001` | 1 | 有効 | 制約 | right-size-executionは、Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約を**提供する** | 自動検査 |
 | `REQ-SKILL-002` | 1 | 有効 | 品質 | Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠を**検証する** | 自動benchmark |
 | `REQ-WORKBOOK-001` | 2 | 有効 | 運用 | チェックリスト生成フローは、実データ範囲だけを集計し決定的に再現できるレビュー用ワークブックを**生成する** | 自動検査と描画確認 |
@@ -413,30 +419,30 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 
 ## REQ-DISC-003: 安全な要件ライフサイクル変更
 
-仕様管理フローは、版競合を検査した追加、更新、廃止操作を**適用する**。
+仕様管理フローは、版を進めて検証するQuint要件の追加、更新、廃止を**維持する**。
 
-根拠: 楽観的同時実行制御と廃止墓標により、更新消失と履歴消去を防ぐ。
+根拠: 一次言語を一つに保ち、版更新、完全検証、廃止墓標により更新消失と履歴消去を防ぐ。
 
 受入条件:
-- `AC-DISC-003-1` 前提: 変更セットが現行カタログ版と項目版を指定している。条件: 追加、更新、廃止を適用する。期待結果: 完全な候補を検証してから正本を原子的に置換する。
+- `AC-DISC-003-1` 前提: Quint要件を追加または更新する。条件: 変更を確定する。期待結果: catalogRevisionと対象revisionを進め、typecheckと不変条件検査を通してからJSONとMarkdownを再生成する。
 - `AC-DISC-003-2` 前提: 正本だった要件の削除が要求される。条件: 変更を受け入れる。期待結果: 理由付きの廃止墓標として項目を残す。
 
-要求源: user:2026-07-17
-検証証跡: 版競合と廃止操作のテスト
-トレース: 設計=.agents/skills/maintain-canonical-requirements/SKILL.md; 実装=.agents/skills/maintain-canonical-requirements/scripts/specflow.py; テスト=tests/test_specflow.py; 参照資料=SWEBOK-V4A
+要求源: user:2026-07-17, user:2026-08-27
+検証証跡: 型検査、生成drift、廃止墓標の検査
+トレース: 設計=.agents/skills/maintain-canonical-requirements/SKILL.md; 実装=spec/requirements/requirements.qnt,tools/quintflow.py; テスト=tests/test_quintflow.py,tests/test_specflow.py; 参照資料=SWEBOK-V4A,QUINT-0.32
 
 ## REQ-DISC-004: 要件文書の自動生成
 
-仕様管理フローは、正本カタログからの日本語の人間向け要件文書を**生成する**。
+仕様管理フローは、QuintからJSONを経由した日本語の人間向け要件文書を**生成する**。
 
 根拠: 生成ビューは競合する編集可能な正本を作らずに読者へ情報を提供する。
 
 受入条件:
-- `AC-DISC-004-1` 前提: 正本カタログが有効である。条件: 文書生成と差分検査を実行する。期待結果: 日本語の要件文書を再現でき、正本とバイト単位で一致する。
+- `AC-DISC-004-1` 前提: Quint正本が有効である。条件: 文書生成と差分検査を実行する。期待結果: Quintから正規化JSONを生成し、そのJSONから日本語文書をバイト一致で再現する。
 
-要求源: user:2026-07-17
+要求源: user:2026-07-17, user:2026-08-27
 検証証跡: 生成文書の完全一致検査
-トレース: 設計=docs/requirements/REQUIREMENTS.md; 実装=.agents/skills/maintain-canonical-requirements/scripts/specflow.py; テスト=tests/test_specflow.py; 参照資料=SWEBOK-V4A
+トレース: 設計=docs/requirements/REQUIREMENTS.md; 実装=tools/quintflow.py,.agents/skills/maintain-canonical-requirements/scripts/specflow.py; テスト=tests/test_quintflow.py,tests/test_specflow.py; 参照資料=SWEBOK-V4A,QUINT-0.32
 
 ## REQ-DISC-005: solution候補と永続要件の境界
 
@@ -624,6 +630,21 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 検証証跡: プロファイル導入とSkill検出テスト
 トレース: 設計=docs/guides/getting-started.md,docs/decisions/ADR-0003-canonical-host-asset-generation.md; 実装=distribution/manifest.json,distribution/host-adapters.json,.agents/skills/chat-first-development/SKILL.md,tools/install_reference.py,tools/generate_host_assets.py,.github/workflows/host-assets.yml; テスト=tests/test_install_reference.py,tests/test_skills.py,tests/test_generate_host_assets.py; 参照資料=SWEBOK-V4A
 
+## REQ-PORTABLE-002: 導入先repository policyの非強制
+
+portable installerと既定profileは、導入先のbranch、merge rule、CI workflowを追加も変更もしないことを**維持する**。
+
+根拠: 3本柱は開発成果物の整合性を扱い、repository運用方針は導入先のauthorityへ委任する。
+
+分類: `product` / `nonfunctional`
+
+受入条件:
+- `AC-PORTABLE-002-1` 前提: 独自のbranch ruleとCI workflowを持つ導入先がある。条件: 既定profileを適用する。期待結果: 既存設定がbyte一致し、新しいworkflow、ruleset、merge方式が追加されない。
+
+要求源: user:2026-08-27, https://quint.sh/docs/what-does-quint-do, docs/decisions/ADR-0004-quint-three-pillar-portability.md
+検証証跡: 既存.github/workflowsとpolicy fixtureの適用前後byte比較
+トレース: 設計=docs/decisions/ADR-0004-quint-three-pillar-portability.md; 実装=distribution/manifest.json,tools/install_reference.py; テスト=tests/test_install_reference.py,tests/test_profile_boundaries.py; 参照資料=QUINT-0.32
+
 ## REQ-QUALITY-001: 版管理された出典台帳
 
 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する**。
@@ -638,19 +659,19 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 検証証跡: 公式host、鮮度、範囲、差分、ハッシュのテスト
 トレース: 設計=docs/standards/SOURCES.md; 実装=.agents/skills/verify-against-engineering-standards/scripts/standardsflow.py,governance/standards/registry.json; テスト=tests/test_standardsflow.py; 参照資料=SWEBOK-V4A,AWS-WAF,AWS-GENAI-LENS,AWS-RAI-LENS,AWS-ML-LENS,AWS-AGENTIC-LENS,AZURE-WAF,AZURE-AI-WAF,GCP-WAF,GCP-AIML-WAF,OCI-WAF
 
-## REQ-QUALITY-002: 証跡に裏付けられた標準検証
+## REQ-QUALITY-002: 変更範囲に対応する品質検査
 
-品質フローは、適用可能な証拠ベースのチェックリストによる成果物検証を**検証する**。
+品質フローは、変更と受入条件に関係する検査だけによる成果物検証を**検証する**。
 
-根拠: 適用判断から再確認までの完全な実施記録により、観点集を監査可能な品質ゲートへ変える。
+根拠: 関係する失敗を直接証跡で検出しつつ、無関係な全件検査と専用記録の負担を避ける。
 
 受入条件:
-- `AC-QUALITY-002-1` 前提: 要件、設計、実装、テストをレビューする。条件: 品質ゲートを評価する。期待結果: 各選択項目が案件重要度と根拠、Passと直接証跡、N/Aと範囲理由、またはFailとIssue、対応方針、期限、レビュアー、日付を記録する。
-- `AC-QUALITY-002-2` 前提: 以前の判定がFailである。条件: 是正後にPassへ変更する。期待結果: 旧Failを履歴に残し、到達可能な証跡、再確認者、再確認日を含むPassの再確認記録を持つ。
+- `AC-QUALITY-002-1` 前提: 変更内容と受入条件が分かっている。条件: 品質検査を実行する。期待結果: 関係する最小のtest、lint、type check、buildまたはgeneratorだけを選び、PassまたはFailと直接証跡を簡潔に示す。
+- `AC-QUALITY-002-2` 前提: 対象repositoryに該当する既存CIがない。条件: 選択した検査を実行する。期待結果: ローカルcommandを使い、新しいCI workflow、required check、review YAMLを要求しない。
 
-要求源: user:2026-07-17, SWEBOK V4, cloud vendor official guidance
-検証証跡: 品質ゲート監査と実施結果スキーマのテスト
-トレース: 設計=.agents/skills/verify-against-engineering-standards/SKILL.md; 実装=tools/devflow.py; テスト=tests/test_devflow.py,tests/test_standardsflow.py; 参照資料=SWEBOK-V4A,AWS-WAF,AWS-GENAI-LENS,AWS-RAI-LENS,AWS-ML-LENS,AWS-AGENTIC-LENS,AZURE-WAF,AZURE-AI-WAF,GCP-WAF,GCP-AIML-WAF,OCI-WAF
+要求源: user:2026-07-17, user:2026-08-27, SWEBOK V4, cloud vendor official guidance
+検証証跡: 選択検査とrepository policy非強制のテスト
+トレース: 設計=.agents/skills/inspect-quality-gates/SKILL.md,.agents/skills/inspect-quality-gates/references/gate-rules.md; 実装=.agents/skills/inspect-quality-gates/scripts/inspect.py; テスト=tests/test_skills.py,tests/test_review_contract.py; 参照資料=SWEBOK-V4A,AWS-WAF,AWS-GENAI-LENS,AWS-RAI-LENS,AWS-ML-LENS,AWS-AGENTIC-LENS,AZURE-WAF,AZURE-AI-WAF,GCP-WAF,GCP-AIML-WAF,OCI-WAF
 
 ## REQ-QUALITY-003: 原子的なチェック統制
 
@@ -664,6 +685,68 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 要求源: user:2026-07-18, SWEBOK Software Quality
 検証証跡: 原子性回帰テストとチェック項目カタログ
 トレース: 設計=governance/reviews/README.md; 実装=update_checklist.py,.agents/skills/verify-against-engineering-standards/SKILL.md; テスト=tests/test_checklist.py; 参照資料=SWEBOK-V4A
+
+## REQ-QUALITY-004: 3本柱だけのportable guardrail
+
+portable blocking guardrailは、要件正本、as-built生成、選択checkの3本柱だけを対象にすることを**制約する**。
+
+根拠: 導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。
+
+分類: `product` / `nonfunctional`
+
+受入条件:
+- `AC-QUALITY-004-1` 前提: 全Skillの形式契約がある。条件: Quint不変条件を検証する。期待結果: blocking guardrailは3本柱のいずれかに属し、補助Skillはblockingにならない。
+- `AC-QUALITY-004-2` 前提: portable contractを検証する。条件: merge ruleとCI requirementの属性を確認する。期待結果: すべてfalseである。
+
+要求源: user:2026-08-27, https://quint.sh/docs/what-does-quint-do, docs/decisions/ADR-0004-quint-three-pillar-portability.md
+検証証跡: threePillarsOnlyとrepositoryPolicyIsHostOwnedの検証成功
+トレース: 設計=docs/decisions/ADR-0004-quint-three-pillar-portability.md; 実装=spec/skills/skills.qnt,distribution/manifest.json; テスト=tests/test_quintflow.py,tests/test_profile_boundaries.py; 参照資料=QUINT-0.32
+
+## REQ-QUINT-001: Quint要件正本
+
+永続要件は、Quint仕様を唯一の編集対象としJSONを派生物として維持することを**維持する**。
+
+根拠: 型検査と状態不変条件を要件記述の入口へ置き、手書きJSONの構造矛盾を防ぐ。
+
+分類: `project` / `nonfunctional`
+
+受入条件:
+- `AC-QUINT-001-1` 前提: 永続要件の意味を変更する。条件: 要件正本を更新する。期待結果: Quint仕様が更新され、typecheck後に同じ内容のJSONが生成される。
+
+要求源: user:2026-08-27, https://quint.sh/docs/what-does-quint-do, docs/decisions/ADR-0004-quint-three-pillar-portability.md
+検証証跡: requirements.qntのtypecheck成功とrequirements.jsonのbyte一致
+トレース: 設計=docs/decisions/ADR-0004-quint-three-pillar-portability.md; 実装=spec/requirements/requirements.qnt,tools/quintflow.py; テスト=tests/test_quintflow.py,tests/test_specflow.py; 参照資料=QUINT-0.32
+
+## REQ-QUINT-002: 要件表示の二段生成
+
+要件生成器は、Quintから正規化JSONを生成し、そのJSONから人向けMarkdownを生成することを**生成する**。
+
+根拠: 機械検証用表現と人向け表示の責務を分離しつつ、authorityを一本化する。
+
+分類: `product` / `functional`
+
+受入条件:
+- `AC-QUINT-002-1` 前提: 同一のQuint要件仕様がある。条件: 生成を二回実行する。期待結果: JSONとMarkdownがそれぞれバイト一致する。
+- `AC-QUINT-002-2` 前提: 生成済みJSONを変更する。条件: drift検査を実行する。期待結果: Quint正本との差異として失敗する。
+
+要求源: user:2026-08-27, https://quint.sh/docs/what-does-quint-do, docs/decisions/ADR-0004-quint-three-pillar-portability.md
+検証証跡: 一時出力とcommitted JSON・Markdownのbyte比較
+トレース: 設計=docs/decisions/ADR-0004-quint-three-pillar-portability.md; 実装=tools/quintflow.py,.agents/skills/maintain-canonical-requirements/scripts/specflow.py; テスト=tests/test_quintflow.py,tests/test_specflow.py; 参照資料=QUINT-0.32
+
+## REQ-QUINT-003: 全Skillの形式契約網羅
+
+Skill形式仕様は、すべてのSkillを一対一のQuint契約へ対応付けることを**形式化する**。
+
+根拠: Skill追加時の形式仕様漏れと、削除後に残るstale契約を機械検出する。
+
+分類: `project` / `nonfunctional`
+
+受入条件:
+- `AC-QUINT-003-1` 前提: Skill directoryとQuint契約catalogがある。条件: 形式契約検査を実行する。期待結果: 双方の名前集合が完全一致し、各SKILL.mdから契約へtraceできる。
+
+要求源: user:2026-08-27, https://quint.sh/docs/what-does-quint-do, docs/decisions/ADR-0004-quint-three-pillar-portability.md
+検証証跡: skills.qntのtest成功とskill coverage検査
+トレース: 設計=docs/decisions/ADR-0004-quint-three-pillar-portability.md; 実装=spec/skills/skills.qnt,tools/quintflow.py; テスト=tests/test_quintflow.py,tests/test_skills.py; 参照資料=QUINT-0.32
 
 ## REQ-REPO-001: mainとdevの役割および統合方式
 
@@ -682,6 +765,7 @@ dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分�
 要求源: user:2026-07-24, issue:#20, docs/decisions/ADR-0002-two-layer-branch-history.md
 検証証跡: branch方向、merge parent、commit subject、protected branch設定のCI結果
 トレース: 設計=docs/decisions/ADR-0002-two-layer-branch-history.md,docs/reference/development.md; 実装=.github/branch-policy.json,.github/workflows/governance.yml,tools/branch_policy.py; テスト=tests/test_branch_policy.py,tests/test_reference_repository_contract.py; 参照資料=—
+廃止理由: 導入先へmerge方式やbranch構成を強制しない3本柱境界へ移行したため
 
 ## REQ-REPO-002: release後の祖先関係とtreeを回復するreconciliation契約
 
@@ -700,6 +784,7 @@ release operatorとCIは、release前後のancestor関係、tip tree条件、fre
 要求源: user:2026-07-24, issue:#20, Git FAQ: long-running squash merge, docs/decisions/ADR-0002-two-layer-branch-history.md
 検証証跡: 一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert
 トレース: 設計=docs/decisions/ADR-0002-two-layer-branch-history.md,docs/reference/development.md; 実装=.github/branch-policy.json,.github/workflows/governance.yml,tools/branch_policy.py; テスト=tests/test_branch_policy.py; 参照資料=—
+廃止理由: repository固有のreconciliation契約を廃止し、GitHub標準設定へ委任したため
 
 ## REQ-REPO-003: 試行範囲、非移植性、rollback
 
@@ -722,6 +807,7 @@ dev-standardの二層branch試行は、2回のrelease cycleに限定しportable 
 要求源: user:2026-07-24, issue:#20, docs/decisions/ADR-0002-two-layer-branch-history.md
 検証証跡: trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト
 トレース: 設計=docs/decisions/ADR-0002-two-layer-branch-history.md; 実装=.github/branch-policy.json,.github/workflows/governance.yml,distribution/manifest.json,tools/branch_policy.py; テスト=tests/test_reference_repository_contract.py,tests/test_branch_policy.py; 参照資料=—
+廃止理由: 二層branch試行を終了し、portable guardrailからrepository policyを除外したため
 
 ## REQ-SKILL-001: right-size-executionのSkill境界
 

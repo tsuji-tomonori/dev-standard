@@ -1,34 +1,21 @@
 # as-built設計check選択
 
-`docs/standards/AS-BUILT-DESIGN.md`のcontractを定義・変更する場合と、repositoryが同標準を具体的なscopeへ採用する場合を分けて判定する。未採用repositoryの無関係な変更へ一律適用しない。
+`docs/standards/AS-BUILT-DESIGN.md`を具体的なartifact・code scopeへ採用した場合だけ、変更対象に対応するcheckを選ぶ。AWS CDKについては`docs/standards/AWS-CDK-AS-BUILT-DESIGN.md`を併用する。未採用repositoryの無関係な変更へ一律適用しない。
 
-- 標準の要件正本、標準文書、check catalog、generator contract、配布定義、traceを変更する場合は`as_built_standard_change: true`にする。
-- repositoryが標準をartifact・code scopeへ採用する、または適用scopeを拡張する場合は`as_built_adoption: true`にし、schema v2 review YAMLへscopeとexclusionsを記録する。
-- 両方に該当する変更だけ両flagをtrueにする。
-- AWS CDK固有contractを変更または採用する場合は`docs/standards/AWS-CDK-AS-BUILT-DESIGN.md`も参照し、標準contractと現在のsupport statusを混同しない。
+| Artifact / change | 選択候補 | 目的 |
+|---|---|---|
+| as-built標準contract | `FAST-024` | 要件、標準、generator、distribution、traceの整合 |
+| generator入力または生成物 | `FAST-006` | generate/checkの決定論性とbyte一致 |
+| API handler、OpenAPI、error sample | `FAST-016`, `FAST-017` | interfaceとsampleの整合 |
+| SQL CRUD、E2E assertion | `FAST-018` | CRUDとE2E stateの対応 |
+| CDK source、context、stack | `IMP-009`, `FAST-012` | synth、replacement、IAM、network、policy |
+| coverage、test構造、実装規約 | `FAST-019`〜`FAST-021` | 採用scopeの実測。初回はAdvisory |
+| 閾値またはdelegation設定 | `FAST-022` | 文書とmachine-readable設定の一致 |
+| 品質結果とtest evidence | `FAST-023` | 実行範囲に対応する簡潔な結果 |
+| suppression inventory | `AUD-008` | 理由、重複、失効、孤児の定期確認 |
 
-| Artifact / change | 選択するcheck | Class | 選択条件 |
-|---|---|---|---|
-| as-built標準contract | `FAST-024` | Risk-selected | `as_built_standard_change: true`。要件正本、標準、catalog、generator / distribution contract、Rule・check・test traceの整合を確認する。 |
-| 宣言済みgenerator入力または生成物 | `FAST-006` | Invariant | `generated_change: true`。同一生成logicのgenerate/check、決定論性、差分pathを確認する。標準変更と独立して判定する。 |
-| API handler、OpenAPI、設計metadata、error sample | `FAST-016` | Risk-selected | `public_api_change: true`で三点整合が影響を受ける。 |
-| API sampleまたはresponse assertion | `FAST-017` | Risk-selected | `public_api_change: true`で設計掲載sampleが変わる。 |
-| SQL CRUD、E2E state assertion、error coverage | `FAST-018` | Risk-selected | `sql_change: true`または`e2e_change: true`でCRUD/E2E対応が変わる。 |
-| CDK source、context、環境設定、stack構成 | `IMP-009`, `FAST-012` | Risk-selected | `iac_change: true`。synth、template差分、replacement、IAM、network、policyを確認する。 |
-| generated CDK designまたは入力 | `FAST-006` | Invariant | `generated_change: true`。`docs/design/generated/cdk/`のgenerate/checkとbyte一致を確認する。 |
-| as-built規約の採用・scope拡張 | `FAST-019` | Advisory | `as_built_adoption: true`。C0 95% / C1 90%を測定し、採用時はblockingにしない。 |
-| as-built規約の採用・scope拡張 | `FAST-020` | Advisory | `as_built_adoption: true`。AAA/GWT、docstring、1 case 1関数を評価する。 |
-| as-built規約の採用・scope拡張 | `FAST-021` | Advisory | `as_built_adoption: true`。解析可能なlayout、layer、SQL、log、tool規約を評価する。 |
-| 定量閾値またはlinter delegation設定 | `FAST-022` | Risk-selected | `quality_threshold_change: true`。標準値、machine-readable設定、委譲設定を一致させる。標準変更と独立して判定する。 |
-| 品質結果とtest evidence | `FAST-023` | Advisory | `as_built_adoption: true`。選択した品質結果を外部workflowまたはreport viewへ集約し、repositoryへの複製を避ける。 |
-| suppression inventory | `AUD-008` | Periodic | `monthly_cycle: true`。抑制理由、重複、失効、孤児を監査する。 |
+選択条件、採用scope、除外は、会話または対象repositoryが既に採用する変更記録へ必要な分だけ残す。ローカルcommandを既定とし、既存CIがある場合だけ同じcheckを再利用する。
 
-標準変更だけでは`FAST-019`〜`FAST-021`、`FAST-023`を選択しない。採用時は`impact_details.as_built_adoption.scope`を1件以上記録し、除外がない場合も`exclusions: []`を明示する。
+MUST / SHOULDは採用済みscope内の規範強度、Risk-selected / Advisory / Periodicは検査選択の性質であり、branchやmergeのenforcement stateではない。CI workflow、required check、review YAML、branch protection、merge ruleをこの標準のために追加または要求しない。
 
-公開API変更は`assured`であり、`FAST-009`と必要な`FAST-016`/`FAST-017`を選ぶ。公開APIであることだけを承認理由にしない。
-
-MUST / SHOULDは採用済みscope内の規範強度、Invariant / Risk-selected / Advisory / Periodicはrolloutとmerge制御のenforcement stateであり、別軸である。MUST対応checkをAdvisoryから開始しても規範をSHOULDへ弱めたことにはならない。
-
-CDKのsynthへ影響する変更も`assured`とする。deploy、resource削除、production変更、課金操作等のauthority boundaryだけを承認対象とし、synth、test、設計生成、PR作成は承認待ちで停止しない。
-
-Advisoryをblockingへ昇格する場合は`retrospect-and-improve`に従い、escaped defectまたは反復cost、適用trigger、評価結果、予想cost、rollback、再評価日を記録する。
+deploy、resource削除、production変更、課金操作等の外部副作用だけをauthority boundaryとして扱う。synth、test、設計生成は対象repositoryの既存環境で実行する。

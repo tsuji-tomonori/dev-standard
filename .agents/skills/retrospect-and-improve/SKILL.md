@@ -5,6 +5,10 @@ description: Analyze evidenced process failures after regulated work, escaped de
 
 # Retrospect and Improve
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "retrospect-and-improve"` を形式契約とする。
+
 実際の品質欠陥、利用者影響、反復した非効率から、検証可能な改善候補を作る。
 
 ## 起動条件

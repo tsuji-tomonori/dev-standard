@@ -1,31 +1,26 @@
 PYTHON ?= .venv/bin/python
 
-.PHONY: setup catalog catalog-check spec spec-check standards standards-check review-check test skills-check repo-check host-assets-check as-built-check consistency-check audit verify
+.PHONY: setup spec spec-check quint-test quint-verify lint test skills-check repo-check host-assets-check verify
 
 setup:
 	python3 -m venv .venv
 	.venv/bin/pip install -r requirements.txt
-
-catalog:
-	$(PYTHON) tools/devflow.py catalog
-
-catalog-check:
-	$(PYTHON) tools/devflow.py catalog --check
+	npm ci --ignore-scripts
 
 spec:
-	$(PYTHON) .agents/skills/maintain-canonical-requirements/scripts/specflow.py generate
+	$(PYTHON) tools/quintflow.py generate
 
 spec-check:
-	$(PYTHON) .agents/skills/maintain-canonical-requirements/scripts/specflow.py check
+	$(PYTHON) tools/quintflow.py check
 
-standards:
-	$(PYTHON) .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py generate
+quint-test:
+	$(PYTHON) tools/quintflow.py test
 
-standards-check:
-	$(PYTHON) .agents/skills/verify-against-engineering-standards/scripts/standardsflow.py check
+quint-verify:
+	$(PYTHON) tools/quintflow.py verify
 
-review-check:
-	$(PYTHON) governance/reviews/validate.py --root . --commit HEAD
+lint:
+	$(PYTHON) -m ruff check .
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -39,14 +34,4 @@ repo-check:
 host-assets-check:
 	$(PYTHON) tools/generate_host_assets.py check
 
-as-built-check:
-	$(PYTHON) .agents/skills/generate-implementation-design/scripts/qualityflow.py thresholds
-	$(PYTHON) .agents/skills/generate-implementation-design/scripts/qualityflow.py suppressions --root .
-
-consistency-check:
-	$(PYTHON) tools/audit_consistency.py
-
-audit:
-	$(PYTHON) tools/devflow.py audit
-
-verify: setup catalog-check spec-check standards-check review-check test repo-check host-assets-check as-built-check consistency-check audit
+verify: quint-test lint test repo-check host-assets-check

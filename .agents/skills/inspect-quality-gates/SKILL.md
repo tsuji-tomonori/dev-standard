@@ -1,160 +1,46 @@
 ---
 name: inspect-quality-gates
-description: Inspect only checks selected for the current change and timing. Record decisions in governance/reviews/<change-id>.yaml, keep CI results external, and use legacy phase gates only for regulated work.
+description: Select and run only the checks relevant to the current change, using local evidence or an existing project check without creating CI, merge rules, or review bureaucracy.
 ---
 
 # Inspect Quality Gates
 
-選択されたcheckだけを、変更イベントに応じた時点で確認する。
+## Formal specification
 
-## 既定の証跡
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "inspect-quality-gates"` を形式契約とする。
 
-- review判断: `governance/reviews/<change-id>.yaml`
-- check定義の正本: `governance/checks/catalog.yaml`
-- automated result: GitHub Actions等の外部サービス
-- requirement / design impact: Commit Comment
-- implementation evidence: code、test、生成設計、ADR、Git diff
+変更と受入条件に関係する検査だけを選び、結果を直接確認する。これは3本目のガードレールであり、別の統制層を追加しない。
 
-変更ごとのtest report、implementation log、release reportは作らない。
+## Inputs
 
-## Check class
+- 変更差分と受入条件
+- 対象repositoryが既に持つtest、lint、type check、build、generator
+- 必要な場合だけ、既存のCI結果または人による確認結果
 
-### Invariant
+## Workflow
 
-triggerに該当した場合はPass必須。Failを残したままmergeしない。
+1. 変更した挙動、path、riskから、失敗を検出できる最小の検査を選ぶ。
+2. 未選択の検査をN/Aとして列挙しない。
+3. まず対象範囲のローカル検査を実行し、必要な場合だけ範囲を広げる。
+4. blockingとするのは、受入条件、生成物の整合、機密情報、権限境界など、その変更に直接関係する失敗だけとする。
+5. 既存CIがある場合は追加証拠として参照できる。CIがないこと自体を失敗にしない。
+6. 結果は会話、既存のPR欄、または対象repositoryが既に採用するartifactへ簡潔に記録する。専用review YAMLを要求しない。
 
-例:
+## Boundary
 
-- secretsや個人情報をGitへ入れない
-- 必要な対象test、build、type checkが実行される
-- 認可境界を迂回しない
-- 未承認の不可逆操作を行わない
-- 生成物と生成元が一致する
-- Commit Commentに要件・設計影響がある
+このSkillは次を作成、変更、要求しない。
 
-### Risk-selected
+- CI workflow、required check、status check
+- branch protection、ruleset、merge方式、merge先
+- PR template、変更ごとのreview YAML、test report、生ログ
+- 3本柱以外のportable blocking gate
 
-変更のrisk、artifact、pathから選択された場合だけblocking。
-
-例:
-
-- API compatibility
-- migration / rollback
-- IaC replacement
-- dependency integrity
-- keyboard / focus
-- independent security review
-
-### Advisory
-
-その変更で確認する価値はあるが、単独ではmergeを停止しない。
-
-- 修正する
-- Issue化する
-- residual riskへ記載する
-
-のいずれかへ収束させる。
-
-## Timing
-
-### 変更開始前: Impact Check
-
-確認するもの:
-
-- profile
-- requirement impact
-- design impact
-- authority impact
-- public contract、DB、IaC、dependency、security trigger
-- selected check
-
-この時点で全checkのPass/N/Aを記録しない。
-
-### 実装中: Fast Feedback Check
-
-自動検査を小さい変更スライスごとに実行する。
-
-- targeted test
-- build / syntax
-- lint / type check
-- generated drift
-- secret scan
-- contract diff、SQL parse、synth等の選択check
-
-結果の正本は外部CIとし、repositoryへログを複製しない。
-
-### PR作成前: Affected-scope Check
-
-- requirement / design impactの判定と差分が一致する
-- 受入条件へ対応するtestがCIで実行される
-- selected checkのresultと証拠がある
-- blocking failがない
-- advisoryの扱いが決まっている
-- review YAMLがschemaに適合する
-- Commit Commentの必須節が埋まっている
-
-### Merge前: Revision Integrity Check
-
-- CIが現在HEADを対象としている
-- 生成物が最新
-- blocking failがない
-- advisoryとresidual riskの扱いが明示されている
-- squash後のCommit Commentに証跡が残る
-- merge、release、deployが権限境界内
-
-過去の全工程を最初から再検査しない。HEAD変更で無効化された証拠だけを再確認する。
-
-### Deploy後: Operational Check
-
-production deploy、migration、外部書込みがある場合だけ実施する。
-
-- deploy status
-- smoke test
-- migration status
-- monitoring
-- rollback / roll-forward判断
-
-結果はdeployment service、monitoring service、GitHub Actions等へ残す。
-
-### 定期: Governance Audit
-
-個別PRから分離して次を確認する。
-
-- false blocker
-- escaped defect
-- selector miss
-- Skill・hookの指示競合
-- 不要成果物
-- standard registryの鮮度
-- token / tool / reviewerコスト
-- advisory滞留
-
-## Review result rules
-
-### Pass
-
-直接証拠が必要。CIの場合はworkflow名またはrequired check名と、検証対象となるtest・設定への参照を記録する。生ログは保存しない。
-
-### N/A
-
-selectorで選ばれた後、具体的事実により適用外と判明した場合だけ使用する。noteを必須とする。
-
-### Fail
-
-- Invariantとblocking Risk-selectedは修正する。
-- Advisoryは修正、Issue、residual riskのいずれかを記録する。
-- その場で修正するFailへ一律にIssue、期限、責任者を要求しない。
-
-## Regulated compatibility
-
-`regulated` profileでは、既存の`tools/devflow.py`によるphase gate、承認、hash chain、監査を追加できる。このlegacy harnessを`direct`または`assured`へ強制しない。
+対象repositoryが既に持つ規則は尊重するが、それをportable契約として複製しない。
 
 ## Completion
 
-- `python governance/reviews/validate.py --root . --commit HEAD`が成功する。
-- review YAMLがschemaに適合する。
-- trigger該当のInvariantがすべてPass。
-- 選択したblocking Risk-selectedがすべてPass。
-- Advisoryの扱いが決まっている。
-- CI結果をrepositoryへ複製していない。
-- Commit Commentの要件影響、設計影響、review path、検証契約が完成している。
+- 変更と受入条件に対応する検査が選ばれている。
+- 選んだblocking検査がPassする。
+- 未検証範囲または残存riskがあれば明示されている。
+- 証拠は実行範囲を超えて主張していない。
+- CIやmerge設定を新たに要求していない。

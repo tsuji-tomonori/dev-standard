@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 8,
+  "catalog_revision": 10,
   "product": "dev-standard",
   "requirements": [
     {
@@ -1194,10 +1194,10 @@
     {
       "acceptance_criteria": [
         {
-          "given": "変更セットが現行カタログ版と項目版を指定している",
+          "given": "Quint要件を追加または更新する",
           "id": "AC-DISC-003-1",
-          "then": "完全な候補を検証してから正本を原子的に置換する",
-          "when": "追加、更新、廃止を適用する"
+          "then": "catalogRevisionと対象revisionを進め、typecheckと不変条件検査を通してからJSONとMarkdownを再生成する",
+          "when": "変更を確定する"
         },
         {
           "given": "正本だった要件の削除が要求される",
@@ -1206,14 +1206,15 @@
           "when": "変更を受け入れる"
         }
       ],
-      "action": "apply",
+      "action": "maintain",
       "id": "REQ-DISC-003",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
-      "object": "版競合を検査した追加、更新、廃止操作",
-      "rationale": "楽観的同時実行制御と廃止墓標により、更新消失と履歴消去を防ぐ。",
-      "revision": 2,
+      "last_changed_by": "user:2026-08-27",
+      "object": "版を進めて検証するQuint要件の追加、更新、廃止",
+      "rationale": "一次言語を一つに保ち、版更新、完全検証、廃止墓標により更新消失と履歴消去を防ぐ。",
+      "revision": 3,
       "source_refs": [
-        "user:2026-07-17"
+        "user:2026-07-17",
+        "user:2026-08-27"
       ],
       "status": "active",
       "subject": "仕様管理フロー",
@@ -1223,38 +1224,42 @@
           ".agents/skills/maintain-canonical-requirements/SKILL.md"
         ],
         "implementation": [
-          ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"
+          "spec/requirements/requirements.qnt",
+          "tools/quintflow.py"
         ],
         "standards": [
-          "SWEBOK-V4A"
+          "SWEBOK-V4A",
+          "QUINT-0.32"
         ],
         "tests": [
+          "tests/test_quintflow.py",
           "tests/test_specflow.py"
         ]
       },
       "type": "functional",
       "verification": {
-        "evidence": "版競合と廃止操作のテスト",
-        "method": "自動テスト"
+        "evidence": "型検査、生成drift、廃止墓標の検査",
+        "method": "Quint検証と自動テスト"
       }
     },
     {
       "acceptance_criteria": [
         {
-          "given": "正本カタログが有効である",
+          "given": "Quint正本が有効である",
           "id": "AC-DISC-004-1",
-          "then": "日本語の要件文書を再現でき、正本とバイト単位で一致する",
+          "then": "Quintから正規化JSONを生成し、そのJSONから日本語文書をバイト一致で再現する",
           "when": "文書生成と差分検査を実行する"
         }
       ],
       "action": "generate",
       "id": "REQ-DISC-004",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
-      "object": "正本カタログからの日本語の人間向け要件文書",
+      "last_changed_by": "user:2026-08-27",
+      "object": "QuintからJSONを経由した日本語の人間向け要件文書",
       "rationale": "生成ビューは競合する編集可能な正本を作らずに読者へ情報を提供する。",
-      "revision": 2,
+      "revision": 3,
       "source_refs": [
-        "user:2026-07-17"
+        "user:2026-07-17",
+        "user:2026-08-27"
       ],
       "status": "active",
       "subject": "仕様管理フロー",
@@ -1264,12 +1269,15 @@
           "docs/requirements/REQUIREMENTS.md"
         ],
         "implementation": [
+          "tools/quintflow.py",
           ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"
         ],
         "standards": [
-          "SWEBOK-V4A"
+          "SWEBOK-V4A",
+          "QUINT-0.32"
         ],
         "tests": [
+          "tests/test_quintflow.py",
           "tests/test_specflow.py"
         ]
       },
@@ -1913,6 +1921,53 @@
     {
       "acceptance_criteria": [
         {
+          "given": "独自のbranch ruleとCI workflowを持つ導入先がある",
+          "id": "AC-PORTABLE-002-1",
+          "then": "既存設定がbyte一致し、新しいworkflow、ruleset、merge方式が追加されない",
+          "when": "既定profileを適用する"
+        }
+      ],
+      "action": "preserve",
+      "category": "nonfunctional",
+      "id": "REQ-PORTABLE-002",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
+      "object": "導入先のbranch、merge rule、CI workflowを追加も変更もしないこと",
+      "rationale": "3本柱は開発成果物の整合性を扱い、repository運用方針は導入先のauthorityへ委任する。",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "user:2026-08-27",
+        "https://quint.sh/docs/what-does-quint-do",
+        "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+      ],
+      "status": "active",
+      "subject": "portable installerと既定profile",
+      "title": "導入先repository policyの非強制",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+        ],
+        "implementation": [
+          "distribution/manifest.json",
+          "tools/install_reference.py"
+        ],
+        "standards": [
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/test_install_reference.py",
+          "tests/test_profile_boundaries.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "既存.github/workflowsとpolicy fixtureの適用前後byte比較",
+        "method": "installer isolation test"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
           "given": "品質プロファイルを選択している",
           "id": "AC-QUALITY-001-1",
           "then": "各資料が公式URL、版、参照日、更新間隔、適用範囲、変更確認日、前版との差分を持ち、固定参照物はSHA-256を持つ",
@@ -1976,38 +2031,40 @@
     {
       "acceptance_criteria": [
         {
-          "given": "要件、設計、実装、テストをレビューする",
+          "given": "変更内容と受入条件が分かっている",
           "id": "AC-QUALITY-002-1",
-          "then": "各選択項目が案件重要度と根拠、Passと直接証跡、N/Aと範囲理由、またはFailとIssue、対応方針、期限、レビュアー、日付を記録する",
-          "when": "品質ゲートを評価する"
+          "then": "関係する最小のtest、lint、type check、buildまたはgeneratorだけを選び、PassまたはFailと直接証跡を簡潔に示す",
+          "when": "品質検査を実行する"
         },
         {
-          "given": "以前の判定がFailである",
+          "given": "対象repositoryに該当する既存CIがない",
           "id": "AC-QUALITY-002-2",
-          "then": "旧Failを履歴に残し、到達可能な証跡、再確認者、再確認日を含むPassの再確認記録を持つ",
-          "when": "是正後にPassへ変更する"
+          "then": "ローカルcommandを使い、新しいCI workflow、required check、review YAMLを要求しない",
+          "when": "選択した検査を実行する"
         }
       ],
       "action": "verify",
       "id": "REQ-QUALITY-002",
-      "last_changed_by": "WI-20260718-checklist-japanese-docs",
-      "object": "適用可能な証拠ベースのチェックリストによる成果物検証",
-      "rationale": "適用判断から再確認までの完全な実施記録により、観点集を監査可能な品質ゲートへ変える。",
-      "revision": 2,
+      "last_changed_by": "user:2026-08-27",
+      "object": "変更と受入条件に関係する検査だけによる成果物検証",
+      "rationale": "関係する失敗を直接証跡で検出しつつ、無関係な全件検査と専用記録の負担を避ける。",
+      "revision": 3,
       "source_refs": [
         "user:2026-07-17",
+        "user:2026-08-27",
         "SWEBOK V4",
         "cloud vendor official guidance"
       ],
       "status": "active",
       "subject": "品質フロー",
-      "title": "証跡に裏付けられた標準検証",
+      "title": "変更範囲に対応する品質検査",
       "traces": {
         "design": [
-          ".agents/skills/verify-against-engineering-standards/SKILL.md"
+          ".agents/skills/inspect-quality-gates/SKILL.md",
+          ".agents/skills/inspect-quality-gates/references/gate-rules.md"
         ],
         "implementation": [
-          "tools/devflow.py"
+          ".agents/skills/inspect-quality-gates/scripts/inspect.py"
         ],
         "standards": [
           "SWEBOK-V4A",
@@ -2023,14 +2080,14 @@
           "OCI-WAF"
         ],
         "tests": [
-          "tests/test_devflow.py",
-          "tests/test_standardsflow.py"
+          "tests/test_skills.py",
+          "tests/test_review_contract.py"
         ]
       },
       "type": "quality",
       "verification": {
-        "evidence": "品質ゲート監査と実施結果スキーマのテスト",
-        "method": "自動監査"
+        "evidence": "選択検査とrepository policy非強制のテスト",
+        "method": "契約テスト"
       }
     },
     {
@@ -2079,6 +2136,206 @@
     {
       "acceptance_criteria": [
         {
+          "given": "全Skillの形式契約がある",
+          "id": "AC-QUALITY-004-1",
+          "then": "blocking guardrailは3本柱のいずれかに属し、補助Skillはblockingにならない",
+          "when": "Quint不変条件を検証する"
+        },
+        {
+          "given": "portable contractを検証する",
+          "id": "AC-QUALITY-004-2",
+          "then": "すべてfalseである",
+          "when": "merge ruleとCI requirementの属性を確認する"
+        }
+      ],
+      "action": "constrain",
+      "category": "nonfunctional",
+      "id": "REQ-QUALITY-004",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
+      "object": "要件正本、as-built生成、選択checkの3本柱だけを対象にすること",
+      "rationale": "導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "user:2026-08-27",
+        "https://quint.sh/docs/what-does-quint-do",
+        "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+      ],
+      "status": "active",
+      "subject": "portable blocking guardrail",
+      "title": "3本柱だけのportable guardrail",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+        ],
+        "implementation": [
+          "spec/skills/skills.qnt",
+          "distribution/manifest.json"
+        ],
+        "standards": [
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/test_quintflow.py",
+          "tests/test_profile_boundaries.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "threePillarsOnlyとrepositoryPolicyIsHostOwnedの検証成功",
+        "method": "Quint invariant verification"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "永続要件の意味を変更する",
+          "id": "AC-QUINT-001-1",
+          "then": "Quint仕様が更新され、typecheck後に同じ内容のJSONが生成される",
+          "when": "要件正本を更新する"
+        }
+      ],
+      "action": "maintain",
+      "category": "nonfunctional",
+      "id": "REQ-QUINT-001",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
+      "object": "Quint仕様を唯一の編集対象としJSONを派生物として維持すること",
+      "rationale": "型検査と状態不変条件を要件記述の入口へ置き、手書きJSONの構造矛盾を防ぐ。",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-08-27",
+        "https://quint.sh/docs/what-does-quint-do",
+        "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+      ],
+      "status": "active",
+      "subject": "永続要件",
+      "title": "Quint要件正本",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+        ],
+        "implementation": [
+          "spec/requirements/requirements.qnt",
+          "tools/quintflow.py"
+        ],
+        "standards": [
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/test_quintflow.py",
+          "tests/test_specflow.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "requirements.qntのtypecheck成功とrequirements.jsonのbyte一致",
+        "method": "Quint typecheckと生成drift検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "同一のQuint要件仕様がある",
+          "id": "AC-QUINT-002-1",
+          "then": "JSONとMarkdownがそれぞれバイト一致する",
+          "when": "生成を二回実行する"
+        },
+        {
+          "given": "生成済みJSONを変更する",
+          "id": "AC-QUINT-002-2",
+          "then": "Quint正本との差異として失敗する",
+          "when": "drift検査を実行する"
+        }
+      ],
+      "action": "generate",
+      "category": "functional",
+      "id": "REQ-QUINT-002",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
+      "object": "Quintから正規化JSONを生成し、そのJSONから人向けMarkdownを生成すること",
+      "rationale": "機械検証用表現と人向け表示の責務を分離しつつ、authorityを一本化する。",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "user:2026-08-27",
+        "https://quint.sh/docs/what-does-quint-do",
+        "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+      ],
+      "status": "active",
+      "subject": "要件生成器",
+      "title": "要件表示の二段生成",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+        ],
+        "implementation": [
+          "tools/quintflow.py",
+          ".agents/skills/maintain-canonical-requirements/scripts/specflow.py"
+        ],
+        "standards": [
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/test_quintflow.py",
+          "tests/test_specflow.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "一時出力とcommitted JSON・Markdownのbyte比較",
+        "method": "決定的生成テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "Skill directoryとQuint契約catalogがある",
+          "id": "AC-QUINT-003-1",
+          "then": "双方の名前集合が完全一致し、各SKILL.mdから契約へtraceできる",
+          "when": "形式契約検査を実行する"
+        }
+      ],
+      "action": "formalize",
+      "category": "nonfunctional",
+      "id": "REQ-QUINT-003",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
+      "object": "すべてのSkillを一対一のQuint契約へ対応付けること",
+      "rationale": "Skill追加時の形式仕様漏れと、削除後に残るstale契約を機械検出する。",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-08-27",
+        "https://quint.sh/docs/what-does-quint-do",
+        "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+      ],
+      "status": "active",
+      "subject": "Skill形式仕様",
+      "title": "全Skillの形式契約網羅",
+      "traces": {
+        "design": [
+          "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
+        ],
+        "implementation": [
+          "spec/skills/skills.qnt",
+          "tools/quintflow.py"
+        ],
+        "standards": [
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/test_quintflow.py",
+          "tests/test_skills.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "skills.qntのtest成功とskill coverage検査",
+        "method": "Quint testとinventory集合比較"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
           "given": "trial phaseでmainまたはdevをbaseとするPull Requestがある",
           "id": "AC-REPO-001-1",
           "then": "mainはrepositoryのdevまたはhotfixだけをsquashで受け入れ、devはtopic、main、またはhotfix競合を解消したreconcile branchだけをmerge commitで受け入れ、その他の方向を拒否する",
@@ -2106,17 +2363,18 @@
       "action": "enforce",
       "category": "nonfunctional",
       "id": "REQ-REPO-001",
-      "last_changed_by": "CHG-20260724-two-layer-branch-trial",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
       "object": "mainへのsquashとdevへのmerge commitを分離したbranch別統合契約",
       "rationale": "利用者向けrelease履歴と到達可能なengineering履歴のauthorityを案件ごとのmerge判断に依存させないため。",
-      "revision": 1,
+      "retirement_reason": "導入先へmerge方式やbranch構成を強制しない3本柱境界へ移行したため",
+      "revision": 2,
       "scope": "project",
       "source_refs": [
         "user:2026-07-24",
         "issue:#20",
         "docs/decisions/ADR-0002-two-layer-branch-history.md"
       ],
-      "status": "active",
+      "status": "retired",
       "subject": "dev-standardのbranch運用",
       "title": "mainとdevの役割および統合方式",
       "traces": {
@@ -2171,10 +2429,11 @@
       "action": "maintain",
       "category": "nonfunctional",
       "id": "REQ-REPO-002",
-      "last_changed_by": "CHG-20260724-two-layer-branch-trial",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
       "object": "release前後のancestor関係、tip tree条件、freezeを含むreconciliation transaction",
       "rationale": "squashで記録されない祖先関係を回復し、既出file差分とconflictの再評価を防ぎながら詳細commitを保持するため。",
-      "revision": 1,
+      "retirement_reason": "repository固有のreconciliation契約を廃止し、GitHub標準設定へ委任したため",
+      "revision": 2,
       "scope": "project",
       "source_refs": [
         "user:2026-07-24",
@@ -2182,7 +2441,7 @@
         "Git FAQ: long-running squash merge",
         "docs/decisions/ADR-0002-two-layer-branch-history.md"
       ],
-      "status": "active",
+      "status": "retired",
       "subject": "release operatorとCI",
       "title": "release後の祖先関係とtreeを回復するreconciliation契約",
       "traces": {
@@ -2260,17 +2519,18 @@
       "action": "constrain",
       "category": "nonfunctional",
       "id": "REQ-REPO-003",
-      "last_changed_by": "CHG-20260724-two-layer-branch-trial",
+      "last_changed_by": "CHG-20260827-quint-three-pillars",
       "object": "2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行",
       "rationale": "長寿命devは一般解ではなく、追加操作とGitHub上の非原子的なlock制約を受容できるrepositoryだけで評価すべきため。",
-      "revision": 1,
+      "retirement_reason": "二層branch試行を終了し、portable guardrailからrepository policyを除外したため",
+      "revision": 2,
       "scope": "project",
       "source_refs": [
         "user:2026-07-24",
         "issue:#20",
         "docs/decisions/ADR-0002-two-layer-branch-history.md"
       ],
-      "status": "active",
+      "status": "retired",
       "subject": "dev-standardの二層branch試行",
       "title": "試行範囲、非移植性、rollback",
       "traces": {
@@ -2423,5 +2683,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-08-02"
+  "updated_at": "2026-08-27"
 }

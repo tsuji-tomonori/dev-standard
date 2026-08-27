@@ -26,8 +26,9 @@ class GenerateHostAssetsTest(unittest.TestCase):
             self.assertNotIn("gpt-", reviewer.lower())
             self.assertTrue((output / "CLAUDE.snippet.md").is_file())
             snippet = (output / "CLAUDE.snippet.md").read_text(encoding="utf-8")
-            self.assertIn("`CLAUDE.md`", snippet)
-            self.assertNotIn("`AGENTS.md`", snippet)
+            self.assertIn("3本だけ", snippet)
+            self.assertIn("CI/CD workflow", snippet)
+            self.assertNotIn("required checkを必須", snippet)
             self.assertTrue((output / "manifest.json").is_file())
 
     def test_all_host_outputs_are_byte_deterministic(self) -> None:

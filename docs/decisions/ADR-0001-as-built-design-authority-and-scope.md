@@ -1,7 +1,8 @@
 # ADR-0001: as-built設計の正本・配置・適用範囲を分離する
 
-- Status: Accepted
+- Status: Accepted（要件authorityとportable workflow artifactはADR-0004で更新）
 - Date: 2026-07-21
+- Updated: 2026-08-27
 
 ## 背景
 
@@ -9,14 +10,14 @@ as-built設計の汎用要件には、永続要件、実装・テスト規約、
 
 ## 決定
 
-1. 永続義務は`spec/requirements/requirements.json`へ原子化し、人向け要件は`docs/requirements/REQUIREMENTS.md`から生成する。
+1. 永続義務は`spec/requirements/requirements.qnt`へ原子化し、JSON viewを生成してから人向け`docs/requirements/REQUIREMENTS.md`を生成する。
 2. 実装規約とテスト規約は`docs/standards/AS-BUILT-DESIGN.md`へ置く。
 3. check ID、class、timing、trigger、acceptance、enforcementの正本は`governance/checks/catalog.yaml`だけとする。標準MarkdownはRule IDとcheck IDを結ぶ人向けビューとする。
 4. 生成設計は`docs/design/generated/`へ置き、Markdownは`.gen.md`で終端し、直接編集禁止・generate/check commandを含むbannerを付ける。
 5. 本標準は導入先向けのportable standardとし、追加時点ではdev-standard自身の既存`tools/`コードへレイアウト規約を遡及強制しない。
 6. C0 95% / C1 90%、AAA/GWT、docstring、1 case 1関数、定量閾値はAdvisoryから開始する。実測で価値を確認したcheckだけをRisk-selectedまたはInvariantへ昇格する。
 7. 公開API変更は`assured`とし、公開APIであることだけを承認triggerにしない。承認はauthority boundaryまたはregulated条件に結び付ける。
-8. direct / assuredの再開用計画は`.devflow/run/`の一時状態とし、完了後に削除する。長期判断はADR、変更説明はCommit Comment、check結果はreview YAML、実行結果は外部CIへ保存する。
+8. direct / assuredの再開用計画は必要な場合だけ`.devflow/run/`の一時状態とし、完了後に削除する。長期判断はADRへ残し、変更説明とcheck結果は対象repositoryが既に採用する方式または会話へ簡潔に記録する。専用review YAMLやCIを要求しない。
 
 ## 結果
 

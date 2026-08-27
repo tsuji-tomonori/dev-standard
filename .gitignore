@@ -5,6 +5,8 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+node_modules/
+_apalache-out/
 
 # Temporary agent execution state
 .devflow/run/

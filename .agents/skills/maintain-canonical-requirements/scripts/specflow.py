@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""永続的で原子的な要件正本を検証・更新し、日本語文書を生成する。"""
+"""Quintから生成された要件JSONを検証し、人向け文書へ描画する。"""
 
 from __future__ import annotations
 
@@ -169,6 +169,8 @@ def render(catalog: dict[str, Any]) -> str:
         "measure": "計測する",
         "select": "選択する",
         "stage": "段階適用する",
+        "formalize": "形式化する",
+        "preserve": "維持する",
     }
     status_labels = {"active": "有効", "retired": "廃止"}
     type_labels = {
@@ -180,12 +182,13 @@ def render(catalog: dict[str, Any]) -> str:
         "operational": "運用",
     }
     lines = [
-        "<!-- specflow.pyによる自動生成。spec/requirements/requirements.jsonを編集すること。 -->",
+        "<!-- tools/quintflow.pyによる自動生成。spec/requirements/requirements.qntを編集すること。 -->",
         f"# {catalog['product']} 要件一覧",
         "",
         f"- カタログ版: {catalog['catalog_revision']}",
         f"- 更新日: {catalog['updated_at']}",
-        "- 正本: `spec/requirements/requirements.json`",
+        "- 正本: `spec/requirements/requirements.qnt`",
+        "- 機械可読view: `spec/requirements/requirements.json`",
         "",
         "| ID | 版 | 状態 | 種別 | 原子的な義務 | 検証方法 |",
         "|---|---:|---|---|---|---|",
@@ -317,10 +320,6 @@ def parser() -> argparse.ArgumentParser:
         cmd.add_argument("--spec", type=Path, default=Path("spec/requirements/requirements.json"))
         if name != "validate":
             cmd.add_argument("--out", type=Path, default=Path("docs/requirements/REQUIREMENTS.md"))
-    apply = sub.add_parser("apply")
-    apply.add_argument("--spec", type=Path, default=Path("spec/requirements/requirements.json"))
-    apply.add_argument("--change", required=True, type=Path)
-    apply.add_argument("--out", type=Path, default=Path("docs/requirements/REQUIREMENTS.md"))
     return root
 
 
@@ -337,11 +336,6 @@ def main(argv: list[str] | None = None) -> int:
             if not args.out.is_file() or args.out.read_text(encoding="utf-8") != render(catalog):
                 raise SpecError(f"generated requirements drift: {args.out}")
             print(f"requirements docs current: {args.out}")
-        else:
-            candidate = apply_change(catalog, read_json(args.change))
-            atomic_text(args.spec, canonical_json(candidate))
-            atomic_text(args.out, render(candidate))
-            print(f"applied revision {candidate['catalog_revision']} and generated {args.out}")
         return 0
     except SpecError as exc:
         print(f"ERROR: {exc}")

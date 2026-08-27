@@ -227,8 +227,9 @@ def audit_makefile(findings: list[dict[str, str]]) -> None:
 
     text = (ROOT / "Makefile").read_text(encoding="utf-8")
     verify = next((line for line in text.splitlines() if line.startswith("verify:")), "")
-    if "setup" not in verify:
-        findings.append(finding("AUD-VERIFY", "make verify does not bootstrap dependencies", "Makefile"))
+    for target in ["quint-test", "lint", "test", "repo-check", "host-assets-check"]:
+        if target not in verify:
+            findings.append(finding("AUD-VERIFY", f"make verify omits {target}", "Makefile"))
     if "/home/" in text or "SKILL_VALIDATOR" in text:
         findings.append(finding("AUD-VERIFY", "Makefile contains a personal absolute dependency", "Makefile"))
 

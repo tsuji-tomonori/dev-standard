@@ -1,6 +1,6 @@
 # 要求トレーサビリティ
 
-- 正本: `spec/requirements/requirements.json`
+- 正本: `spec/requirements/requirements.qnt`
 - 基準カタログ版: TBD
 - この表は承認対象差分の予定対応を示す。正本要件IDを再定義しない。
 

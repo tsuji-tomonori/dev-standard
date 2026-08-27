@@ -5,6 +5,10 @@ description: Record explicit authorization for regulated work or real authority 
 
 # Authorize Autonomous Execution
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "authorize-autonomous-execution"` を形式契約とする。
+
 人の承認は、実装方法ではなくauthority boundaryへ結び付ける。
 
 ## 承認が必要な場合
@@ -77,4 +81,5 @@ description: Record explicit authorization for regulated work or real authority 
 - 承認triggerとauthority boundaryが明確である。
 - 必要な場合だけ実在する人の判断がある。
 - 可逆な実装判断が不必要に凍結されていない。
-- Commit Commentへ外部副作用と残存リスクが記録される。
+- 対象repositoryが採用する変更記録へ外部副作用と残存リスクが記録される。
+- 承認を理由にCI workflow、required check、branch protection、merge ruleを追加または変更していない。

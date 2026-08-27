@@ -1,9 +1,13 @@
 ---
 name: test-frontend-experience
-description: Verify frontend tasks, states, accessibility, responsiveness, visual invariants, and performance by risk. Keep automated results external and selected decisions in review YAML; do not create per-change reports.
+description: Verify frontend tasks, states, accessibility, responsiveness, visual invariants, and performance by risk without imposing CI, merge policy, or per-change reports.
 ---
 
 # Test Frontend Experience
+
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "test-frontend-experience"` を形式契約とする。
 
 実装が、対象の人に対象contextでtaskを完了させるかを確認する。render成功やscanner成功だけを品質Passにしない。
 
@@ -44,17 +48,15 @@ expected outcome、user、context、acceptanceが未定義なら`$elicit-fronten
 6. automated accessibility resultはtool coverage内の結果として扱い、単独で全体Passにしない。
 7. task completion、error prevention / recovery、system status理解を確認する。
 8. supported browser、device、locale、theme、inputの宣言範囲内だけを主張する。
-9. automated resultをGitHub Actions等へ保持する。
-10. selected manual check、N/A、Advisory、residual riskだけをreview YAMLへ記録する。
+9. automated resultをローカル出力または対象repositoryの既存CIで確認する。
+10. selected manual check、N/A、Advisory、residual riskだけを会話または既存の変更記録へ簡潔に残す。
 11. failを修正し、影響するtestを再実行する。
 
 ## Repositoryに保存するもの
 
 - test code
 - test data
-- CI workflow
 - generated as-built design
-- selected check result YAML
 - 必要なscreenshot baselineまたはvisual reference
 
 ## Repositoryに保存しないもの
@@ -70,11 +72,11 @@ expected outcome、user、context、acceptanceが未定義なら`$elicit-fronten
 
 ### Automated
 
-外部CIのrequired checkを正本とする。review YAMLにはworkflow名、check名、test pathを参照する。
+実行したcommand、test path、対象範囲を直接証拠とする。既存CIがある場合は追加証拠として参照できる。
 
 ### Manual / expert
 
-判断が必要なselected checkだけをreview YAMLへ記録する。
+判断が必要なselected checkだけを簡潔に記録する。
 
 ### Fail
 
@@ -88,6 +90,6 @@ expected outcome、user、context、acceptanceが未定義なら`$elicit-fronten
 - automated resultとhuman judgmentが区別される。
 - claimが実行範囲を超えない。
 - blocking checkがPassする。
-- external CIが現在HEADを対象としている。
-- review YAMLにselected manual resultとresidual riskがある。
-- Commit Commentに検証契約がある。
+- 検証結果が対象差分と実行範囲に対応する。
+- selected manual resultとresidual riskが必要な場合だけ記録される。
+- このSkillのためにCI workflow、required check、branch protection、merge ruleを追加または変更していない。

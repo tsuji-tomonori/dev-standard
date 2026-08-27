@@ -1,13 +1,13 @@
 # 要件定義
 
-> この文書は初回承認に含める変更提案である。承認後の永続正本は`spec/requirements/requirements.json`とし、ここを正本として再利用しない。
+> この文書はregulated案件で明示的に必要な場合だけ使う変更提案である。永続正本は`spec/requirements/requirements.qnt`とし、ここを正本として再利用しない。
 
 ## 永続正本への変更差分
 
 - 基準カタログ版: TBD
 - 変更セット: `add` / `update` / `retire`の操作をID・期待項目版・理由とともに列挙する
 - 影響する既存ID: TBD
-- 生成先: `docs/requirements/REQUIREMENTS.md`（直接編集禁止）
+- 生成順: `requirements.qnt → requirements.json → REQUIREMENTS.md`（JSONとMarkdownは直接編集禁止）
 
 ## 概要
 

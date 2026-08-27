@@ -5,6 +5,10 @@ description: Formulate ambiguous, emotionally charged, conflicting, or incomplet
 
 # Calibrated Collaborative Listening
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "calibrated-collaborative-listening"` を形式契約とする。
+
 Help the user put an incompletely expressed thought into words without mind-reading, flattering, scolding, or turning listening into a delay.
 
 Use this visible loop:

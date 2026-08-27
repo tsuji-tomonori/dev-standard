@@ -18,7 +18,7 @@ class AuditConsistencyTest(unittest.TestCase):
         self.assertEqual(result["overall"], "合格", result["findings"])
         self.assertEqual(result["blocking_findings"], 0)
         self.assertEqual(result["metrics"]["skill_count"], 18)
-        self.assertEqual(result["metrics"]["requirement_count"], 52)
+        self.assertEqual(result["metrics"]["requirement_count"], 54)
         self.assertEqual(result["metrics"]["auto_generation_requirement_count"], 29)
         self.assertEqual(result["metrics"]["missing_trace_count"], 0)
         self.assertLessEqual(result["metrics"]["skill_description_characters"], 5000)

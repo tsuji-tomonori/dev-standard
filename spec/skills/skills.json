@@ -1,0 +1,411 @@
+{
+  "contracts": [
+    {
+      "authority": "artifact-authority",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "artifact",
+        "authority",
+        "review-scope"
+      ],
+      "name": "adversarial-review",
+      "outputs": [
+        "findings",
+        "residual-uncertainty"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "counterexamples and bounded findings are reported",
+      "precondition": "falsifiable claims and an authority are available",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "independent-review",
+      "sideEffect": "none"
+    },
+    {
+      "authority": "law-contract-or-user",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "regulated-duty",
+        "retention-rule"
+      ],
+      "name": "author-lifecycle-docs",
+      "outputs": [
+        "regulated-evidence"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "only required lifecycle evidence is retained",
+      "precondition": "a concrete regulated retention duty exists",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "regulated-documentation",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "explicit-user-authorization",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "requested-result",
+        "external-effects",
+        "rollback"
+      ],
+      "name": "authorize-autonomous-execution",
+      "outputs": [
+        "authorization-decision"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "authorization scope and stop conditions are explicit",
+      "precondition": "an external or irreversible authority boundary exists",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "authority-boundary",
+      "sideEffect": "external-approval"
+    },
+    {
+      "authority": "user-intent",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "request",
+        "constraints"
+      ],
+      "name": "calibrated-collaborative-listening",
+      "outputs": [
+        "correctable-goal",
+        "decision"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "a correctable goal and decision are available",
+      "precondition": "multiple interpretations materially change the result",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "intent-clarification",
+      "sideEffect": "none"
+    },
+    {
+      "authority": "user-and-target-repository",
+      "blocking": false,
+      "defaultProfile": true,
+      "guardrail": false,
+      "inputs": [
+        "request",
+        "target-repository-rules"
+      ],
+      "name": "chat-first-development",
+      "outputs": [
+        "change",
+        "verification-summary"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "only applicable pillars have been completed",
+      "precondition": "a development outcome is requested",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "orchestrator",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "approved-requirements",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "requirements",
+        "existing-design-system"
+      ],
+      "name": "design-frontend-experience",
+      "outputs": [
+        "design-decisions",
+        "verification-hooks"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "minimum implementation decisions are explicit",
+      "precondition": "frontend outcomes and constraints are known",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "frontend-design",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "user-intent",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "user-task",
+        "context",
+        "failure-impact"
+      ],
+      "name": "elicit-frontend-requirements",
+      "outputs": [
+        "requirement-candidates",
+        "design-context"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "durable observable obligations are identified",
+      "precondition": "a frontend outcome is requested",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "frontend-requirements",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "implementation",
+      "blocking": true,
+      "defaultProfile": true,
+      "guardrail": true,
+      "inputs": [
+        "implementation",
+        "generator-contract"
+      ],
+      "name": "generate-implementation-design",
+      "outputs": [
+        "generated-design",
+        "drift-result"
+      ],
+      "pillar": "design",
+      "postcondition": "generated design is deterministic and matches implementation",
+      "precondition": "a declared generator supports the changed implementation",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "as-built-design",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "law-contract-or-user",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "regulated-trigger",
+        "authority-boundary"
+      ],
+      "name": "govern-development-request",
+      "outputs": [
+        "regulated-record"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "regulated evidence is complete within that duty",
+      "precondition": "a concrete regulated lifecycle duty exists",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "regulated-orchestration",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "requirements-and-design",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "requirements",
+        "design-decisions",
+        "existing-frontend"
+      ],
+      "name": "implement-frontend-experience",
+      "outputs": [
+        "frontend-change",
+        "tests"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "the user task works in supported states",
+      "precondition": "frontend requirements and decisions are ready",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "frontend-implementation",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "target-repository-and-selected-checks",
+      "blocking": true,
+      "defaultProfile": true,
+      "guardrail": true,
+      "inputs": [
+        "change",
+        "target-checks"
+      ],
+      "name": "inspect-quality-gates",
+      "outputs": [
+        "selected-check-results",
+        "residual-risk"
+      ],
+      "pillar": "checks",
+      "postcondition": "only selected checks have a verdict",
+      "precondition": "changed artifacts and applicable risks are known",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "selected-checks",
+      "sideEffect": "none"
+    },
+    {
+      "authority": "target-repository-style",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "diff",
+        "verification-summary"
+      ],
+      "name": "japanese-git-commit-gitmoji",
+      "outputs": [
+        "commit-message"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "a Japanese structured commit message is proposed",
+      "precondition": "the target repository requests this commit style",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "commit-message",
+      "sideEffect": "none"
+    },
+    {
+      "authority": "quint-requirements",
+      "blocking": true,
+      "defaultProfile": true,
+      "guardrail": true,
+      "inputs": [
+        "durable-obligation",
+        "source",
+        "acceptance"
+      ],
+      "name": "maintain-canonical-requirements",
+      "outputs": [
+        "requirements-qnt",
+        "requirements-json",
+        "requirements-doc"
+      ],
+      "pillar": "requirements",
+      "postcondition": "Quint source, derived JSON, and generated docs agree",
+      "precondition": "a durable observable obligation changes",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "canonical-requirements",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "reference-repository",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "reference-change",
+        "distribution-boundary"
+      ],
+      "name": "maintain-reference-repository",
+      "outputs": [
+        "portable-assets",
+        "compatibility-result"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "portable and repository-specific assets remain separated",
+      "precondition": "dev-standard portable assets change",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "reference-maintenance",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "observed-defect",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "defect-evidence",
+        "impact"
+      ],
+      "name": "retrospect-and-improve",
+      "outputs": [
+        "improvement-candidate"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "a bounded evaluable improvement is proposed",
+      "precondition": "an evidenced recurring defect or cost exists",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "retrospective",
+      "sideEffect": "repository-write"
+    },
+    {
+      "authority": "change-risk",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "change-risk",
+        "available-evidence"
+      ],
+      "name": "right-size-execution",
+      "outputs": [
+        "verification-scope"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "the smallest sufficient verification scope is selected",
+      "precondition": "verification depth is not already explicit",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "execution-sizing",
+      "sideEffect": "none"
+    },
+    {
+      "authority": "frontend-requirements",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "requirements",
+        "implementation",
+        "supported-environment"
+      ],
+      "name": "test-frontend-experience",
+      "outputs": [
+        "test-results",
+        "residual-risk"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "claims are limited to executed test scope",
+      "precondition": "frontend requirements and implementation are available",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "frontend-testing",
+      "sideEffect": "none"
+    },
+    {
+      "authority": "selected-official-standards",
+      "blocking": false,
+      "defaultProfile": false,
+      "guardrail": false,
+      "inputs": [
+        "change",
+        "selected-standard"
+      ],
+      "name": "verify-against-engineering-standards",
+      "outputs": [
+        "standard-findings"
+      ],
+      "pillar": "auxiliary",
+      "postcondition": "only applicable controls have findings",
+      "precondition": "a relevant standard is selected for the change",
+      "requiresCi": false,
+      "requiresMergeRule": false,
+      "role": "standards-lens",
+      "sideEffect": "none"
+    }
+  ],
+  "invariants": [
+    "contractsAreComplete",
+    "threePillarsOnly",
+    "repositoryPolicyIsHostOwned",
+    "defaultProfileIsMinimal",
+    "workflowOrderIsConsistent",
+    "portablePolicyIsUntouched"
+  ],
+  "quint_version": "0.32.0",
+  "schema_version": 1,
+  "source": "spec/skills/skills.qnt"
+}

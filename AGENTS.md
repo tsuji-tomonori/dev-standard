@@ -1,55 +1,42 @@
-# リポジトリ指示
+# Repository instructions
 
-## 目的
+`dev-standard`は、他のrepositoryへ軽量な開発ガードレールを配布する参照repositoryです。このrepositoryを変更するときは、最初に`$maintain-reference-repository`を適用してください。
 
-このリポジトリは、他のリポジトリへ移植するSkills、agents、標準、schema、generator、check、templateの参照集である。このリポジトリ自身を変更するときは、最初に`$maintain-reference-repository`を適用する。
+## 3本柱
 
-## 既定フロー
+portableなblocking guardrailは次だけです。
 
-feature、fix、refactor、設計相談は`$chat-first-development`を入口にする。
+1. `$maintain-canonical-requirements`: durableで原子的な要件をQuint正本へ保つ
+2. `$generate-implementation-design`: 実装由来のas-built設計を決定的に生成する
+3. `$inspect-quality-gates`: 変更に関係する検査だけを実行する
 
-1. `$right-size-execution`で`direct`、`assured`、`regulated`を選ぶ。
-2. 要件、設計、配布、互換性、権限への影響を判定する。
-3. 永続要件が変わる場合だけ`$maintain-canonical-requirements`を使う。
-4. 変更に必要なcheckだけを選び、実装と対象検証を行う。
-5. 対応実装では`$generate-implementation-design`でas-built設計を生成する。
-6. `governance/reviews/<change-id>.yaml`へselected check結果を保存する。
-7. `$japanese-git-commit-gitmoji`でCommit Commentを作り、repository policyが許すbaseへPRを作成し、現在HEADのCI結果を確認する。
+通常依頼の入口は`$chat-first-development`です。その他のSkillは明示的な必要がある場合だけ使う補助機能であり、4つの既定Skillへ新しいportable gateを追加しません。
 
-詳細は`docs/reference/development.md`を参照する。
+## Authority
 
-## このリポジトリのbranch契約
+- 要件正本: `spec/requirements/requirements.qnt`
+- 要件の派生JSON: `spec/requirements/requirements.json`
+- 要件の人向け表示: `docs/requirements/REQUIREMENTS.md`
+- Skill形式契約: `spec/skills/skills.qnt`
+- Skill契約の派生JSON: `spec/skills/skills.json`
 
-machine-readableな正本は`.github/branch-policy.json`、判断理由と運用境界は`docs/decisions/ADR-0002-two-layer-branch-history.md`である。topic branchはcurrent `dev`から作り、Issueを`Refs #...`で参照して`dev`へPRを作る。具体的なphase、許可方向、release、reconciliation、rollback、GitHub設定をここへ複製せず、正本の検査結果に従う。このbranch契約をportable Skillやdistribution profileへ配布しない。
+派生JSONとMarkdownは直接編集しません。`python tools/quintflow.py generate`で生成し、`python tools/quintflow.py check`でdriftを検査します。
 
-## 正本
+## Portability boundary
 
-- 永続要件: `spec/requirements/requirements.json`
-- 人向け要件: `docs/requirements/REQUIREMENTS.md`（生成物）
-- 要件分類: `docs/standards/REQUIREMENT-CLASSIFICATION.md`
-- as-built設計標準: `docs/standards/AS-BUILT-DESIGN.md`
-- 生成設計: `docs/design/generated/`
-- 長期判断: `docs/decisions/`
-- check定義: `governance/checks/catalog.yaml`
-- review結果: `governance/reviews/<change-id>.yaml`
-- Commit Comment形式: `docs/reference/commit-message.md`
+installerとdistribution profileは、導入先の次の状態を維持します。
 
-同じ現在状態を複数の手書き文書へ複製しない。
+- branch構成、branch protection、ruleset
+- merge方式、merge先、release手順
+- CI/CD workflow、required check、status check
+- commit形式、PR template、既存のrepository指示
 
-## 実行profile
+このrepository自身のGitHub Actionsは参照repositoryを検査するためだけに存在し、導入先へ配布しません。PR作成やCI確認が依頼された場合は、GitHub上の現在設定に従います。
 
-- `direct`: 局所的、可逆、外部副作用なし。対象test、build、lint、type、driftを実行する。
-- `assured`: 公開契約、DB、IaC、dependency、共有UI、generator、要件、governance、distributionに影響する。関連するRisk-selected checkを追加する。
-- `regulated`: 認証・認可、PII、データ損失、不可逆production操作、法令・契約統制、高額操作、明示的な高保証要求に使用する。
+## Verification
 
-## 記録と境界
+変更に関係する最小のローカル検査を実行してください。repository全体の契約を変更する場合は`make verify`を使用します。外部CIは追加証拠であり、portable contractの前提ではありません。
 
-すべての変更で、実際の成果物、Commit Comment、review YAML、外部CI結果を残す。CIの生ログやreport全文をGitへ複製しない。
+再開に必要な一時状態だけを`.devflow/run/`へ置き、恒久的なwork recordとしてcommitしません。
 
-通常変更で恒久的な`work/<id>/`、実行計画、implementation log、test reportを作らない。一時状態が必要な場合だけgitignoreされた`.devflow/run/`を使い、完了後に削除する。
-
-- secrets、PII、production dump、会話transcriptをコミットしない。
-- 明示権限なしにproduction deploy、削除、公開、merge、高額操作を行わない。
-- 対象リポジトリ固有のbuild、test、ownership、security、commit規約を維持する。
-- gateを通すためにtest、型、lint、security controlを弱めない。
-- モデル名を固定せず、必要能力、コスト、read-only境界から選ぶ。
+明示権限なしにproduction deploy、削除、公開、merge、高額操作を行わないでください。secret、PII、production dump、生ログ、会話transcriptをcommitしません。

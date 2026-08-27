@@ -5,6 +5,10 @@ description: Implement approved frontend requirements in production code with co
 
 # Implement Frontend Experience
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "implement-frontend-experience"` を形式契約とする。
+
 要件と最小限のdesign decisionを、既存stackとdesign systemに適合するproduction codeへ変換する。
 
 ## Inputs
@@ -30,8 +34,8 @@ behavior、state、content、responsive、accessibility contractが不足する�
 8. stable design roleにはsemantic tokenを使い、local numberごとにtokenを増やさない。
 9. targeted type、build、lint、component / unit / browser testを小さいsliceごとに実行する。
 10. implementationからroute、component、state、token、API、test mapping等のas-built設計を生成する。
-11. selected check resultをreview YAMLへ記録する。
-12. `$japanese-git-commit-gitmoji`へ、要件影響、設計影響、review path、検証契約、残存リスクを渡す。
+11. selected check resultを会話または対象repositoryが既に採用する変更記録へ簡潔に残す。
+12. 利用者または対象repositoryが指定した場合だけ、既存のcommit形式へ要件影響、設計影響、検証範囲、残存リスクを渡す。
 
 ## Evidence
 
@@ -42,11 +46,10 @@ behavior、state、content、responsive、accessibility contractが不足する�
 - test code
 - Storybookまたはcomponent example
 - generated as-built design
-- GitHub Actions required check
-- review YAML
+- 実行したローカル検査、または既存CIへの参照
 - ADR
 
-`docs/04-implementation-log.md`を作らない。CI結果や生logをGitへ保存しない。
+`docs/04-implementation-log.md`を作らない。CI結果や生logをGitへ保存しない。このSkillのためにCI workflow、required check、branch protection、merge ruleを追加または変更しない。
 
 ## Boundaries
 
@@ -77,5 +80,5 @@ behavior、state、content、responsive、accessibility contractが不足する�
 - requirementとdecisionがcode / testへ到達できる。
 - as-built設計が実装と一致する。
 - selected blocking checkがPassする。
-- CI結果は外部サービスにある。
-- Commit Commentへdesign impactとverification contractが記録される。
+- 実行した検査の範囲と結果が明確である。
+- design impactと検証範囲が対象repositoryの既存方式で追跡できる。

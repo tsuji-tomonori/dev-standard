@@ -5,6 +5,10 @@ description: Discover human-centred, testable frontend requirements without requ
 
 # Elicit Frontend Requirements
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "elicit-frontend-requirements"` を形式契約とする。
+
 利用者のtask、context、失敗影響、制約から、実装と検証に必要なfrontend要求を明らかにする。
 
 ## Composition
@@ -28,7 +32,7 @@ description: Discover human-centred, testable frontend requirements without requ
 8. keyboard、zoom、reflow、localization、assistive technology等の必要範囲を確認する。
 9. durable obligationを原子要件へ変換し、正本へadd / update / retireする。
 10. designで決める仮説と、product requirementを区別する。
-11. 要件影響、ID、理由をCommit Commentへ記録する。
+11. 要件影響、ID、理由を会話または対象repositoryが既に採用する変更記録へ残す。
 
 一時的なinterview noteが必要な場合だけ`.devflow/run/<change-id>/frontend-notes.md`を使用し、正本適用後に削除する。
 
@@ -49,7 +53,9 @@ frontend requirementは次の場合に未完成である。
 - 永続要件のadd / update / retire
 - requirement IDとacceptance criteria
 - designへ渡すcontext、constraint、priority
-- requirement impactを含むCommit Comment
+- requirement impactを含む簡潔な変更記録
+
+このSkillはcommit形式、CI workflow、required check、branch protection、merge ruleを作成も要求もしない。
 - 必要なselected check
 
 独立した変更ごとのrequirements reportは作らない。

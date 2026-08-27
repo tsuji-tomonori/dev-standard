@@ -4,7 +4,7 @@
 
 この標準は、移植可能なSkills・agents・統制部品を扱う際に、永続要件をSWEBOKに沿って分類し、成果物と変更証跡を混同しないための判断規則を定める。
 
-要件の唯一の正本は`spec/requirements/requirements.json`である。この文書は分類方法を説明する人向け標準であり、個々の要件の第二正本ではない。
+要件の唯一の正本は`spec/requirements/requirements.qnt`である。`spec/requirements/requirements.json`はQuintから生成する機械可読viewであり、この文書は分類方法を説明する人向け標準である。どちらも個々の要件の第二正本ではない。
 
 参照資料は`governance/standards/registry.json`の`SWEBOK-V4A`を使用する。SWEBOKのSoftware Requirementsでは、software product requirementsとsoftware project requirements、functional requirementsとnonfunctional requirements、technology constraintsとquality-of-service constraintsを区別する。本repositoryでは、その区別を次の二段階判定へ適用する。
 
@@ -15,7 +15,7 @@
 | Scope | 対象 | 例 |
 |---|---|---|
 | `product` | 導入先へ提供するsoftware、Skill、agent、generator、schema、CLI等の外部挙動または品質 | 自然言語からSkillを起動できる、同一入力から同一生成物を得る、公開schemaを維持する |
-| `project` | 開発・保守・レビュー・配布・文書化の進め方、成果物、証跡、更新責任 | 文書を所定の条件で更新する、review YAMLを検証する、配布profileの互換性を確認する |
+| `project` | 開発・保守・レビュー・配布・文書化の進め方、成果物、証跡、更新責任 | 文書を所定の条件で更新する、生成driftを検証する、配布profileの互換性を確認する |
 
 「このrepositoryで作業した」という事実はproject requirementではない。今後も繰り返し守る義務だけをproject requirementとして正本化する。
 
@@ -78,12 +78,13 @@ Markdown fileの存在自体を要件にしない。満たすべき義務を正�
 
 | 情報 | 置き場所 | 扱い |
 |---|---|---|
-| 永続的なproduct / project requirement | `spec/requirements/requirements.json` | add / update / retireで現在状態を維持する |
-| 人向け要件表示 | `docs/requirements/REQUIREMENTS.md` | 正本から生成し直接編集しない |
+| 永続的なproduct / project requirement | `spec/requirements/requirements.qnt` | add / update / retireで現在状態を維持する |
+| 機械可読な要件view | `spec/requirements/requirements.json` | Quintから生成し直接編集しない |
+| 人向け要件表示 | `docs/requirements/REQUIREMENTS.md` | JSONから生成し直接編集しない |
 | documentation requirementを実現する文書 | `docs/`、README、runbook等 | 対応するproject NFRのtriggerで更新する |
 | 実装由来の現在状態 | `docs/design/generated/` | 実装から生成しdriftを検査する |
 | 長期判断の理由 | `docs/decisions/` | ADRとしてstatusを管理する |
-| 変更時点の証跡 | Commit Comment、review YAML、PR、CI | documentation requirementの正本へ昇格させない |
+| 変更時点の証跡 | Git差分、会話、対象repositoryが既に採用する変更記録またはCI | documentation requirementの正本へ昇格させない |
 | 再開用状態 | `.devflow/run/` | Git管理せず完了後に削除する |
 
 変更ごとの計画書、implementation log、test report、release report、retrospectiveを、工程が存在するという理由だけで作らない。利用者、法令、契約、安全、運用上の永続義務があり、project NFRとして検証可能な場合だけ恒久文書を作る。
@@ -103,7 +104,7 @@ regulated runtimeの実装、template、schema、validatorは移植可能なsamp
 5. documentation requirementならAudienceからRetirement conditionまでを定義する。
 6. exact choiceを永続化する場合はsource、rationale、scope、verificationを持たせ、derived requirementは親判断へtraceする。
 7. 正本へadd / update / retireを適用し、文書はtraceされた実現手段として更新する。
-8. Commit Commentへ要件影響、分類、solution specificityの判定理由を記録する。
+8. 対象repositoryが採用する変更記録へ、必要な場合だけ要件影響、分類、solution specificityの判定理由を記録する。
 
 ## 8. 例
 
@@ -111,7 +112,7 @@ regulated runtimeの実装、template、schema、validatorは移植可能なsamp
 |---|---|---|
 | OpenAPIからAPI referenceを生成しdriftを拒否する | `project / nonfunctional` | 生成、更新trigger、検証を要件化し、文書は生成表示にする |
 | UIのhelp textで利用者へ操作方法を示す | `product / functional`または`product / nonfunctional` | 利用者が得る結果と品質に応じてproduct requirementへ置く |
-| PRごとにtest logをMarkdownへ保存する | 原則として永続要件にしない | CIを正本とし、必要な検証契約だけを残す |
+| PRごとにtest logをMarkdownへ保存する | 原則として永続要件にしない | 実行した検査と対象範囲だけを簡潔に残す |
 | 重大障害時に復旧runbookを最新化する | `project / nonfunctional` | audience、trigger、verification、retirementを要件化する |
 | 今回の調査メモを残す | 一時情報 | `.devflow/run/`または会話に留め、完了後に削除する |
 | 今回の変更をFastAPIで実装する | 原則として要件にしない | current-task instructionとして従い得るが、永続理由がなければ正本へ追加しない |

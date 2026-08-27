@@ -5,6 +5,10 @@ description: Create work-item and phase documents only for regulated legal, cont
 
 # Author Regulated Lifecycle Documents
 
+## Formal specification
+
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "author-lifecycle-docs"` を形式契約とする。
+
 このSkillは`regulated` profile専用である。
 
 ## 通常変更で作らないもの
@@ -26,11 +30,8 @@ description: Create work-item and phase documents only for regulated legal, cont
 - 要件正本
 - 実装由来生成設計
 - 必要なADR
-- Commit Comment
-- `governance/reviews/<change-id>.yaml`
-- PR / Git diff
-- GitHub Actions等の外部CI
-- Issue
+- Git diffと対象repositoryが既に採用する変更記録
+- 実行したローカル検査、または既存CIへの参照
 
 ## Regulatedで作成する条件
 
@@ -43,10 +44,10 @@ description: Create work-item and phase documents only for regulated legal, cont
 1. regulated起動根拠と必要な文書を列挙する。
 2. 各文書の将来利用者、利用目的、保持期間を定義する。
 3. 要件正本、authority boundary、外部副作用、rollback、停止条件を記載する。
-4. コード、test、CI、生成設計から取得できる情報を手書きで複製しない。
-5. CI結果は外部サービスを参照し、生ログを貼り付けない。
+4. コード、test、生成設計、既存CIから取得できる情報を手書きで複製しない。
+5. 実行結果の生ログを貼り付けない。
 6. 未確定事項は結果へ影響するものだけ解消し、それ以外は明示的なassumptionまたはresidual riskとする。
-7. Commit Commentとreview resultから文書へ到達できるようにする。
+7. 対象repositoryが採用する変更記録から文書へ到達できるようにする。
 
 ## Document classes
 
@@ -67,7 +68,8 @@ description: Create work-item and phase documents only for regulated legal, cont
 - template tokenを埋めること自体を目的にしない。
 - コードから生成可能な詳細設計を手書きしない。
 - Git diffから再構成可能なimplementation logを作らない。
-- GitHub Actionsにあるtest resultを複製しない。
+- test resultの生ログを複製しない。
+- CI、branch、merge、commit形式を新たに要求しない。
 - 将来利用者と保持理由がない文書をGitへ追加しない。
 
 ## Completion
@@ -75,5 +77,5 @@ description: Create work-item and phase documents only for regulated legal, cont
 - 各文書に明確な利用目的と保持規則がある。
 - 正本、変更証跡、一時状態が混在していない。
 - 重複文書がない。
-- external CIへの参照があり、生ログを保存していない。
+- 検証証拠があり、生ログを保存していない。
 - regulated案件で必要な証跡だけが残る。
