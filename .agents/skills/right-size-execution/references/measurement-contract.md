@@ -1,8 +1,8 @@
 # 計測契約
 
-成功率と品質を制約条件とし、推定、Estimate overhead、実績、Expand、停止後活動を記録します。
+この契約は、利用者が計測、benchmark、calibrationまたはauditを明示的に必要とするときだけ適用します。通常のrepository作業に永続台帳を要求しません。適用時は成功率と品質を制約条件とし、推定、Estimate overhead、実績、Expand、停止後活動を記録します。
 
-必須指標:
+計測を選んだ場合のfield:
 
 - input_tokens / output_tokens
 - wall_clock_seconds / time_to_first_valid_patch_seconds
@@ -15,4 +15,4 @@ token telemetryがない場合もbyte、range、tool callをproxyとして残し
 
 ACRRは正確な`C_min` oracleを定義できるbenchmarkでのみ計算します。実案件では各生指標、成功、重大欠陥、overrunを併記します。
 
-導入は`telemetry → shadow → soft-routing → assurance-enforcement → calibrated → limited-blocking`の順です。shadow期間はschema破損とassurance floor違反だけをblockingにします。
+校正実験の順序は`telemetry → shadow → soft-routing → assurance-enforcement → calibrated → limited-blocking`です。いずれの段階でもright-size-executionは補助Skillであり、schema、assurance、効率の診断をportableな第四のrepository blockerにはしません。

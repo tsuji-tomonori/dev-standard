@@ -1,8 +1,9 @@
 {
-  "schema_version": 2,
-  "policy_revision": 2,
-  "selector_version": "execution-selector-v2",
+  "schema_version": 3,
+  "policy_revision": 3,
+  "selector_version": "execution-selector-v3",
   "rollout_phase": "shadow",
+  "repository_blocking": false,
   "max_metadata_probes": 1,
   "scope_order": ["local", "module", "repository"],
   "assurance_order": ["standard", "elevated", "critical"],
@@ -20,30 +21,63 @@
       "checklist", "generator", "external-side-effect"
     ]
   },
+  "artifact_assurance_floors": {
+    "critical": ["credential", "sensitive-data", "production-control"],
+    "elevated": [
+      "database", "public-api", "event-contract", "iac", "dependency",
+      "requirements", "governance", "checklist", "generator"
+    ]
+  },
   "scope_profiles": {
     "local": {
       "context_budget": {"unique_files": 4, "read_bytes": 60000, "read_ranges": 12},
       "tool_budget": {"search_calls": 2, "tool_calls": 16, "subagent_calls": 0},
-      "functional_verification": ["targeted-test", "syntax", "affected-lint"]
+      "functional_verification": []
     },
     "module": {
       "context_budget": {"unique_files": 16, "read_bytes": 240000, "read_ranges": 40},
       "tool_budget": {"search_calls": 5, "tool_calls": 40, "subagent_calls": 0},
-      "functional_verification": ["module-test", "type-check", "related-lint"]
+      "functional_verification": []
     },
     "repository": {
       "context_budget": {"unique_files": 48, "read_bytes": 900000, "read_ranges": 120},
       "tool_budget": {"search_calls": 10, "tool_calls": 96, "subagent_calls": 1},
-      "functional_verification": ["full-gate", "regression-test", "ci"]
+      "functional_verification": []
     }
   },
-  "assurance_profiles": {
-    "standard": {"verification": [], "minimum_mode": "direct-edit"},
-    "elevated": {"verification": ["acceptance-criteria", "affected-contract"], "minimum_mode": "agent"},
-    "critical": {
-      "verification": ["acceptance-criteria", "boundary-test", "invariant-check", "security-review", "independent-review"],
-      "minimum_mode": "agent-with-review"
-    }
+  "minimum_modes": {
+    "standard": "direct-edit",
+    "elevated": "agent",
+    "critical": "agent-with-review"
+  },
+  "artifact_verification": {
+    "credential": ["secret-handling-check"],
+    "database": ["migration-check"],
+    "dependency": ["dependency-resolution-check"],
+    "documentation": ["affected-document-check"],
+    "event-contract": ["affected-contract"],
+    "generator": ["determinism-check"],
+    "governance": ["governance-consistency-check"],
+    "iac": ["synthesis-check"],
+    "public-api": ["affected-contract"],
+    "requirements": ["requirements-consistency-check"],
+    "sensitive-data": ["data-boundary-check"]
+  },
+  "risk_verification": {
+    "authentication": ["authentication-boundary-test"],
+    "authorization": ["authorization-boundary-test"],
+    "data-loss": ["recovery-check"],
+    "dependency": ["dependency-resolution-check"],
+    "event-contract": ["affected-contract"],
+    "external-side-effect": ["effect-boundary-check"],
+    "iac": ["synthesis-check"],
+    "irreversible": ["recovery-or-explicit-irreversibility-check"],
+    "migration": ["migration-check"],
+    "permissions": ["least-privilege-check"],
+    "pii": ["data-boundary-check"],
+    "production-operation": ["production-authority-check"],
+    "public-api": ["affected-contract"],
+    "security": ["security-boundary-test"]
   },
   "budget_multipliers": {
     "standard": 1.0,

@@ -1,6 +1,6 @@
 # dev-standard
 
-AI開発agentが、対象repositoryの既存運用を壊さずに使える軽量なSkills集です。既定profileは会話の入口と3本のガードレールだけを配布します。
+AI開発agentが、対象repositoryの既存運用を壊さずに使える軽量なSkills集です。既定portable setは会話の入口と3本のガードレールだけを配布します。
 
 ## 1. durableな原子要件
 
@@ -26,9 +26,10 @@ npm ci --ignore-scripts
 python tools/quintflow.py generate
 python tools/quintflow.py check
 python tools/quintflow.py test
+python tools/quintflow.py verify
 ```
 
-全18 Skillは`spec/skills/skills.qnt`の形式契約と1対1で対応します。形式モデルは、既定profileが4 Skillだけであること、portable blocking guardrailが3本だけであること、すべてのSkillがCIとmerge ruleを要求しないことを検査します。
+`spec/skills/skills.qnt`は18 Skillのinventory、起動context、authority、副作用、依存関係を型付き契約として列挙します。形式モデルは、`repositoryBlocking`が3本柱だけであること、既定portable setが4 Skillだけであること、各Skillの7つのrepository policy fieldがfalseであることを検査します。`make verify`はこの参照repository自身についてunit testに加え、要件正本と配布templateを4 step、Skill契約を3 stepでApalache bounded model checkingします。検査結果とdigestは、モデル化したfield、探索範囲、byte対応の証拠であり、自然言語や外部repositoryの全状態を証明するものではありません。導入先で同じbounded検証を実行するかは任意であり、CIや同じcommandを要求する規則でもありません。
 
 ## 導入
 

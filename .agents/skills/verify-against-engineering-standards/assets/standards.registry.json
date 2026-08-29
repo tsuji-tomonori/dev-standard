@@ -191,34 +191,34 @@
       "id": "DEVSTD-AS-BUILT",
       "authority": "dev-standard maintainers",
       "title": "as-built設計標準",
-      "version": "2026-08-27",
+      "version": "2026-08-29",
       "url": "https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md",
-      "checked_at": "2026-08-27",
+      "checked_at": "2026-08-29",
       "refresh_days": 180,
       "profiles": [
         "CORE"
       ],
-      "scope": "実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約、profile連携。標準contract変更とrepository採用scopeを別flagで管理する。",
-      "change_checked_at": "2026-08-27",
-      "change_summary": "永続要件のauthorityをQuintへ統一し、checkはローカルまたは既存CIで選択実行する軽量契約へ更新。",
-      "artifact_sha256": "4904858c441a56a73042111262661bb0f372829822308a5548185789d8d8f8d6"
+      "scope": "実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約。標準contract変更とrepository採用scopeを分離し、関係するcheckだけを選択する。",
+      "change_checked_at": "2026-08-29",
+      "change_summary": "Quint要件traceと実在test nodeの照合を追加し、check結果をローカルsummaryまたは導入先が所有する既存viewへ限定。CI・branch・merge policyは要求しない。",
+      "artifact_sha256": "4cf64f761de443b4f1d6ddaa7ce36df77585c179c9ba708349d34e73e34bd6fb"
     },
     {
       "id": "DEVSTD-AWS-CDK-AS-BUILT",
       "authority": "dev-standard maintainers",
       "title": "AWS CDK実装・as-built設計標準",
-      "version": "2026-07-29",
+      "version": "2026-08-29",
       "url": "https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
-      "checked_at": "2026-07-29",
+      "checked_at": "2026-08-29",
       "refresh_days": 180,
       "profiles": [
         "CORE",
         "AWS-DELTA"
       ],
-      "scope": "AWS CDK固有の規範・採用義務と、実装済みcapabilityを区別するas-built設計標準。",
-      "change_checked_at": "2026-07-29",
-      "change_summary": "AWS CDK固有deltaを追加し、single-templateの現行能力とplanned・adopter-required・periodic能力を分離。",
-      "artifact_sha256": "957a192097f25947ef14bbefc3d3e6a0c172a21496523235bf8d255c19dcb7a5"
+      "scope": "AWS CDK固有の規範・選択可能な採用scopeと、bundled toolingが実装済みのcapabilityを区別するas-built設計標準。",
+      "change_checked_at": "2026-08-29",
+      "change_summary": "portable bundle自身で確認できるcapabilityだけをcurrently-supportedとし、変更に関係するsubcommandを選択実行する軽量契約へ更新。source repository固有IssueやCI・merge policyへ依存しない。",
+      "artifact_sha256": "6300dd4f32253286bda0775ef1d09478e5eb6b4198285a7e9bab25baa94c4780"
     }
   ]
 }

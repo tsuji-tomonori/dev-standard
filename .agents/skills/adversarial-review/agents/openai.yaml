@@ -1,4 +1,4 @@
 interface:
   display_name: "敵対的検証"
   short_description: "Assume mistakes may exist and challenge claims with independent evidence"
-  default_prompt: "Use $adversarial-review to challenge whether these requirements or implementation are really correct, find reproducible counterexamples or gaps, and distinguish defects from preferences."
+  default_prompt: "Use $adversarial-review to review without mutating the artifact and return either reproducible findings with conditional repair handoffs or an explicit scoped no-finding result with residual uncertainty."

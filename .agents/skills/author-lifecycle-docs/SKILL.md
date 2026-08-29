@@ -1,6 +1,6 @@
 ---
 name: author-lifecycle-docs
-description: Create work-item and phase documents only for regulated legal, contractual, safety, production, or audit evidence. Do not create lifecycle documents for ordinary direct or assured changes.
+description: Create lifecycle evidence only when a concrete legal, contractual, safety, production, or audit retention duty requires it. Do not create lifecycle documents for ordinary changes.
 ---
 
 # Author Regulated Lifecycle Documents
@@ -9,7 +9,9 @@ description: Create work-item and phase documents only for regulated legal, cont
 
 `spec/skills/skills.qnt` の `skillContracts` にある `name: "author-lifecycle-docs"` を形式契約とする。
 
-このSkillは`regulated` profile専用である。
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+
+このSkillは、具体的な法令、契約、安全性、production、監査上の保持義務が特定された場合だけ起動する。配布profile名や変更規模だけでは起動しない。
 
 ## 通常変更で作らないもの
 
@@ -79,3 +81,41 @@ description: Create work-item and phase documents only for regulated legal, cont
 - 重複文書がない。
 - 検証証拠があり、生ログを保存していない。
 - regulated案件で必要な証跡だけが残る。
+
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `author-lifecycle-docs`
+- 役割: regulated-documentation
+- 柱: auxiliary
+- guardrail: no
+- repository blocking: no
+- 既定portable: no
+- 適用条件: when-concrete-duty-exists
+- 起動context: `concrete-regulated-duty`
+- 外部作用capability: no
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: a concrete regulated retention duty exists
+- 事後条件: only required lifecycle evidence is retained
+- Authority: concrete-duty-or-user
+- 副作用: repository-write
+- 失敗状態: no-op-unless-triggered
+- 入力: `regulated-duty`, `retention-rule`
+- 出力: `regulated-evidence`, `retention-disposition`
+- 義務: `select-minimum-regulated-evidence`, `define-purpose-and-retention`, `separate-authority-evidence-and-temporary-state`
+- 禁止事項: `do not create lifecycle documents for ordinary changes`, `do not retain raw logs or duplicated generated facts`, `do not impose repository policy`
+- 依存Skill: なし
+- 必須asset: `assets/template-map.json`, `references/document-rules.md`
+- 要件trace: なし
+- manual digest: `ebb57e538bf756d35cf2c2422179972d8f35a2731b38c13b4e61ad8c865dc78c`
+- payload digest: `ef45fe345793aaccce17c13d1658556d6af7e926c2bed273b26f5a0edfaf3e9d`
+- interface digest: `3cd8efe2ae6065ac22af9c9bf7414b8636403dc0754994c260d7881f42eab195`
+<!-- END GENERATED QUINT CONTRACT -->

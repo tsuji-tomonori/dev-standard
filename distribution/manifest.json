@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "standard_paths": {
     "portable_skills": ".agents/skills/<skill-name>/SKILL.md",
     "formal_skill_contracts": "spec/skills/skills.qnt",
@@ -13,6 +13,73 @@
     "codex_project_agents": ".codex/agents/<agent-name>.toml",
     "host_adapters": "distribution/host-adapters.json",
     "generated_host_packages": ".devflow/generated/hosts/<host>/"
+  },
+  "protected_repository_paths": [
+    ".github/workflows/**",
+    ".github/PULL_REQUEST_TEMPLATE/**",
+    ".github/pull_request_template.md",
+    ".github/branch-protection/**",
+    ".github/rulesets/**",
+    ".gitlab-ci.yml",
+    ".circleci/**",
+    "azure-pipelines.yml",
+    "bitbucket-pipelines.yml",
+    "Jenkinsfile",
+    ".mergify.yml",
+    ".commitlintrc*",
+    "commitlint.config.*"
+  ],
+  "formal_skill_contracts": {
+    "schema_version": 1,
+    "activation": "every-profile-containing-a-skill",
+    "mappings": [
+      {
+        "source": "spec/skills/skills.qnt",
+        "destination": "spec/skills/skills.qnt"
+      },
+      {
+        "source": "spec/skills/skills.json",
+        "destination": "spec/skills/skills.json"
+      }
+    ]
+  },
+  "skill_runner_support": {
+    "schema_version": 1,
+    "activation": "derive-from-selected-skill-python-sources",
+    "module_destination": "tools/<module>.py",
+    "allowed_modules": [
+      "safe_io"
+    ],
+    "dependency_runtime": {
+      "schema_version": 1,
+      "activation": "selected-skill-has-requirements.txt",
+      "runtime_root": ".dev-standard/python/runtime",
+      "runner": {
+        "source": "tools/portable_python.py",
+        "destination": "tools/portable_python.py",
+        "local_imports": "derive-from-_load_pinned_tool-calls"
+      }
+    }
+  },
+  "portable_runtime": {
+    "schema_version": 2,
+    "quint_version": "0.32.0",
+    "activation_skill": "maintain-canonical-requirements",
+    "runner": {
+      "source": "tools/portable_quintflow.py",
+      "destination": "tools/quintflow.py",
+      "local_imports": "derive-from-_load_pinned_tool-calls"
+    },
+    "mappings": [
+      {
+        "source": "package.json",
+        "destination": ".dev-standard/quint/source/package.json"
+      },
+      {
+        "source": "package-lock.json",
+        "destination": ".dev-standard/quint/source/package-lock.json"
+      }
+    ]
   },
   "inventory": {
     "skills": [

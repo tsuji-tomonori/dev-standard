@@ -1,7 +1,7 @@
 # AWS CDK実装・as-built設計標準
 
 - 標準ID: `DEVSTD-AWS-CDK-AS-BUILT`
-- 版: `2026-07-21`
+- 版: `2026-08-29`
 - 基底標準: [`docs/standards/AS-BUILT-DESIGN.md`](AS-BUILT-DESIGN.md)
 - 適用対象: AWS CDKを使用する導入先repository。原則はCloudFormationを出力する他のIaCへ写像できる
 - 生成物path: `docs/design/generated/cdk/`
@@ -31,22 +31,23 @@
 
 ### 0.3 現在の同梱能力
 
-support statusの正本は、Issue #13で導入するversioned adapter manifest / support registryとする。本書はその導入前の移行表示として、現行`designflow.py`のbehavior testで確認できる範囲だけを`currently-supported`とする。`planned`は規範として採用済みでも、passまたは提供済みを意味しない。
+同梱能力の確認元は`references/cdk-contract.md`と`scripts/designflow.py cdk --help`である。次表は現行commandが提供する範囲だけを`currently-supported`とする。`not-provided`は規範として記載されていても、同梱commandがpassまたは提供済みであることを意味しない。
 
 | Capability | 分類 | 現在のstatus | 現在の証拠 |
 |---|---|---|---|
-| single-template resource catalog | repository capability | `currently-supported` | `tests/test_designflow.py` |
-| single-template parameter catalog | repository capability | `currently-supported` | `tests/test_designflow.py` |
-| template digest・決定論的generate/check | repository capability | `currently-supported` | `tests/test_designflow.py` |
-| `cdk.out` manifestからのmulti-stack列挙 | repository capability | `planned` | Issue #15 |
-| stack / resource dependency | repository capability | `planned` | Issue #15 |
-| IAM / network / stateful / external reference catalog | repository capability | `planned` | Issue #15 |
-| structured suppression・rationale inventory | repository capability | `planned` | Issue #15 |
-| destructive change classifier | repository capability | `planned` | Issue #15 |
+| single-template resource type・logical ID・Properties catalog | repository capability | `currently-supported` | bundled contractと`cdk --help` |
+| single-template parameter catalog | repository capability | `currently-supported` | bundled contractと`cdk --help` |
+| applicable active requirement→resource→portable pytest manifest node trace | repository capability | `currently-supported` | bundled contractと`cdk --help` |
+| template digest・決定論的generate/check | repository capability | `currently-supported` | bundled contractと`cdk --help` |
+| `cdk.out` manifestからのmulti-stack列挙 | repository capability | `not-provided` | - |
+| stack / resource dependency | repository capability | `not-provided` | - |
+| IAM / network / stateful / external reference catalog | repository capability | `not-provided` | - |
+| structured suppression・rationale inventory | repository capability | `not-provided` | - |
+| destructive change classifier | repository capability | `not-provided` | - |
 | `cdk diff`、deploy test | external operation | `adopter-selected` | 対象repositoryの既存実行環境 |
 | CloudFormation drift detection | external operation | `periodic` | 導入先運用 |
 
-`--describe-capabilities`は将来、同じadapter manifest / support registryから導出し、第二のstatus台帳を作らない。新しい能力は実装、fixture、conformance、manifestが揃うまで`supported`へ昇格しない。
+新しい能力は、同梱command、contract、failure fixture、決定論的generate/checkの証拠が揃うまで`currently-supported`へ昇格しない。導入先は`not-provided`能力を無条件に実行せず、必要な場合だけ対象repositoryが所有するadapterを選択する。
 
 ### 0.4 authorityとコメント非依存
 
@@ -67,7 +68,7 @@ current-state factのauthorityは、synthesized CloudFormation、型検証済み
 
 ## 2. 生成対象と一次情報
 
-as-built設計として最低限、次の生成物を持つ。各生成物は一次情報を1か所に定め、それ以外の手書き情報を正本として参照しない。
+次表はCDK as-builtのcapability contractを示す。同梱commandで生成を必須にできるのは0.3の`currently-supported`だけである。その他は導入先が対応adapterを所有し明示的に選択した場合だけ生成対象とし、各生成物は一次情報を1か所に定める。
 
 | 生成物 | 一次情報 | 抽出方式 | Rule ID |
 |---|---|---|---|
@@ -80,6 +81,7 @@ as-built設計として最低限、次の生成物を持つ。各生成物は一
 | stateful resource台帳 | 該当resourceの`DeletionPolicy` / `UpdateReplacePolicy`、backup、encryption property | data保持、削除保護、backup、暗号化を一覧化し、保護なしresourceを機械抽出可能にする | `CDK-DO-015` |
 | suppression一覧 | source中のcdk-nag suppression等 | rule ID、理由、箇所を静的解析して一覧化する | `CDK-DO-016` |
 | cross-stack / external reference catalog | templateの`Outputs` / `Export`、SSM parameter、Secrets参照 | 他systemとのcontract pointを1表に集約する | `CDK-DO-017` |
+| requirement trace | canonical requirements JSON、applicable ID集合、resource `Metadata.RequirementIds`、明示trace JSON、test source | applicable active requirement ID→logical ID→portable pytest collection nodeを完全照合してtest manifestと決定的な表を生成する | `GEN-DO-010` |
 
 ### 2.1 生成規則
 
@@ -96,7 +98,7 @@ as-built設計として最低限、次の生成物を持つ。各生成物は一
 | `CDK-DO-006` | MUST | template resource、parameter、output、dependency、policy statement、network ruleを安定したlogical keyで識別する。 | `FAST-006` |
 | `CDK-DO-007` | MUST | source suppression、escape hatch、明示physical nameなどtemplateだけでは理由を復元できない情報を、理由・rule ID・source位置付きで生成する。 | `AUD-008`, `FAST-021` |
 | `CDK-DO-008` | MUST | manifestと全stack templateの入力digest、generator version、生成file一覧をmachine-readable manifestへ記録する。 | `FAST-006` |
-| `CDK-DO-009` | MUST | 全stackの`Resources`からresource catalogを生成する。 | `FAST-006` |
+| `CDK-DO-009` | MUST | 全stackの`Resources`からtype、logical ID、Condition、DependsOn、Propertiesを持つresource catalogを生成する。 | `FAST-006` |
 | `CDK-DO-010` | MUST | 全対象環境の`Parameters`と型検証済み環境設定から環境差分表を生成する。 | `FAST-006`, `FAST-012` |
 | `CDK-DO-011` | MUST | `cdk.out` manifestとexport/import関係からstack構成・依存関係図を生成する。 | `FAST-006` |
 | `CDK-DO-012` | MUST | `Ref`、`Fn::GetAtt`、`DependsOn`からresource依存graphを生成する。 | `FAST-006` |
@@ -104,7 +106,7 @@ as-built設計として最低限、次の生成物を持つ。各生成物は一
 | `CDK-DO-014` | MUST | network resourceからVPC、subnet、route、security groupと通信許可表を生成する。 | `FAST-006`, `FAST-012` |
 | `CDK-DO-015` | MUST | stateful resourceの保持、削除、置換、backup、暗号化propertyを台帳化し、保護欠落をquery可能にする。 | `FAST-006`, `FAST-012` |
 | `CDK-DO-016` | MUST | cdk-nag等のsuppressionをrule ID、理由、source位置付きで一覧化する。 | `AUD-008` |
-| `CDK-DO-017` | MUST | output/export、SSM、Secrets、cross-account principal等のexternal contract pointをcatalog化する。 | `FAST-006`, `REV-011` |
+| `CDK-DO-017` | MUST | output/export、SSM、Secrets、cross-account principal等のexternal contract pointをcatalog化する。 | `FAST-006`, 対象repositoryが選択するcompatibility check |
 
 ## 3. 整合性gate
 
@@ -112,13 +114,13 @@ as-built設計として最低限、次の生成物を持つ。各生成物は一
 
 | Rule ID | Norm | gate | 合格条件 | Check ID |
 |---|---|---|---|---|
-| `CDK-DO-018` | MUST | 設計drift検知 | CDKまたは入力設定の変更後に全generatorのcheck modeを実行し、未再生成fileがあれば差分pathを出して失敗する。 | `FAST-006` |
+| `CDK-DO-018` | MUST | 設計drift検知 | CDKまたは入力設定の変更後に、変更対象として宣言したgeneratorのcheck modeを実行し、未再生成fileがあれば差分pathを出して失敗する。 | `FAST-006` |
 | `CDK-DO-019` | MUST | template snapshot | 全stackにsynthesized templateのsnapshot testがあり、意図しないlogical ID、resource、property変化を検出する。snapshot更新は差分説明と同じreview単位にする。 | `FAST-012` |
 | `CDK-DO-020` | MUST | 破壊的変更判定 | template差分からreplacementとdeletionを機械抽出し、stateful resourceが該当する場合は、明示的な移行・許可宣言なしに失敗する。 | `FAST-012` |
 | `CDK-DO-021` | MUST | policy準拠 | cdk-nag等を合成時に実行し、encryption、public access block、least privilege、deletion protection、必須tag違反を失敗させる。suppressionは理由を必須にする。 | `FAST-012`, `AUD-008` |
 | `CDK-DO-022` | MUST | deploy前diff | deploy対象環境に対する`cdk diff`または同等のchange setを取得し、対象変更へ関連付ける。生logをrepositoryへ複製しない。 | `FAST-012`, `FAST-023` |
 | `CDK-DO-023` | MUST | 実環境drift監査 | CloudFormation drift detectionを定期実行し、手作業変更を検出して是正する。個々のPRのblocking gateにはしない。 | periodic IaC audit |
-| `CDK-DO-024` | MUST | 直列quality command | format・lint・type・規約→synth→policy→snapshot/assertion→設計check→破壊的変更判定をtask runnerの1 commandへ束ねる。 | `FAST-006`, `FAST-012`, `FAST-023` |
+| `CDK-DO-024` | MUST | 選択可能なquality command | format・lint・type・規約、synth、policy、snapshot/assertion、設計check、破壊的変更判定を独立して選択できるsubcommandとして提供し、変更に関係する集合だけを順序付きで実行できるようにする。 | `FAST-006`, `FAST-012`, `FAST-023` |
 | `CDK-DONT-004` | MUST NOT | snapshotのみの品質判定 | snapshot一致だけをsecurity、data protection、intended behaviorの証拠として扱わない。 | `FAST-012` |
 | `CDK-DONT-005` | MUST NOT | PRごとの実環境drift | CloudFormation drift detectionを全PRで実行しない。定期監査または明示risk選択に限定する。 | periodic IaC audit |
 
@@ -172,7 +174,7 @@ format / lint / type / convention
 | `CDK-DO-035` | MUST | L2の`grant*` methodで表現できる権限はgrantを使用する。 | `FAST-012`, `FAST-021` |
 | `CDK-DONT-011` | MUST NOT | grantで表現できるpolicy statementをinlineで手書きしない。 | `FAST-012`, `FAST-021` |
 | `CDK-DONT-012` | MUST NOT | 理由付きsuppressionなしにwildcard resourceまたはwildcard actionを使用しない。 | `FAST-012`, `AUD-008` |
-| `CDK-DO-036` | MUST | cross-accountまたはexternal principalへの許可をexternal reference catalogへ現れる形で宣言する。 | `FAST-006`, `FAST-012`, `REV-011` |
+| `CDK-DO-036` | MUST | cross-accountまたはexternal principalへの許可をexternal reference catalogへ現れる形で宣言する。 | `FAST-006`, `FAST-012`, 対象repositoryが選択するcompatibility check |
 
 ### 4.5 抽象化levelとescape hatch
 
@@ -229,7 +231,7 @@ format / lint / type / convention
 | Rule ID | Norm | 規則 | Check ID |
 |---|---|---|---|
 | `CDK-DO-047` | MUST | 全stackにsynthesized templateのsnapshot testを持つ。 | `FAST-012` |
-| `CDK-DO-048` | MUST | snapshot更新時にlogical ID、resource、replacement、permission、network差分の説明を対象repositoryの既存方式で記録する。 | `FAST-012`, `REV-002` |
+| `CDK-DO-048` | MUST | snapshot更新時にlogical ID、resource、replacement、permission、network差分の説明を対象repositoryの既存方式で記録する。 | `FAST-012` |
 | `CDK-DONT-018` | MUST NOT | snapshot一致だけを品質passにしない。 | `FAST-012` |
 
 ### 6.2 個別property assertion
@@ -260,34 +262,35 @@ format / lint / type / convention
 
 ## 7. 開発flow
 
-IaC変更は既存のdirect / assured / regulated profileに従い、独自の承認・計画書制度を追加しない。
+IaC変更は`right-size-execution`の`scope`、`assurance`、`compute`、`mode`を独立に選び、独自の承認・計画書制度を追加しない。
 
 | Rule ID | Norm | 規則 | 接続先 |
 |---|---|---|---|
-| `CDK-DO-056` | MUST | synthへ影響するIaC変更を`assured`とする。comment等、synthへ影響しない変更だけを`direct`にできる。authentication、authorization、PII保管、不可逆なproduction操作は`regulated`とする。 | `right-size-execution` |
+| `CDK-DO-056` | MUST | synthへ影響するartifactとriskを検出し、変更stackに対応する`scope`、risk下限に対応する`assurance`、選択checkに必要な`compute`、authority boundaryに対応する`mode`を独立に選ぶ。 | `right-size-execution` |
 | `CDK-DO-057` | MUST | deploy、resource削除、課金影響の大きい作成など、実在するauthority boundaryだけで承認を得る。 | `authorize-autonomous-execution` |
 | `CDK-DONT-020` | MUST NOT | synth、test、設計生成、PR作成を、deploy承認の未取得だけを理由に停止しない。 | `authorize-autonomous-execution` |
-| `CDK-DO-058` | MUST | format/lint/type、synth、policy、test、設計再生成、破壊的変更判定を品質commandとして実行する。 | `FAST-006`, `FAST-012` |
-| `CDK-DO-059` | MUST | 変更内容、template差分要約、破壊的変更の有無、残存riskを対象repositoryの既存方式で簡潔に記録する。`cdk diff`生logをrepositoryへ複製しない。 | `REV-002`, `REV-007`, `FAST-023` |
-| `CDK-DO-060` | MUST | 再開用一時memoを`.devflow/run/`へ置き、長期判断をADRへ収束させる。 | `chat-first-development` |
-| `CDK-DONT-021` | MUST NOT | directまたはassured変更へ恒久work item、独自計画書、独自phase gateを要求しない。 | `chat-first-development` |
+| `CDK-DO-058` | MUST | format/lint/type、synth、policy、test、設計再生成、破壊的変更判定から、対象変更に関係すると選択したcheckだけを品質commandとして実行する。 | `FAST-006`, `FAST-012` |
+| `CDK-DO-059` | MUST | 変更内容、template差分要約、破壊的変更の有無、残存riskを対象repositoryの既存方式で簡潔に記録する。`cdk diff`生logをrepositoryへ複製しない。 | `FAST-023` |
+| `CDK-DO-060` | MAY | 再開が必要な場合だけ一時memoを`.devflow/run/`へ置き、長期判断をADRへ収束させる。 | `chat-first-development` |
+| `CDK-DONT-021` | MUST NOT | 通常のIaC変更へ恒久work item、独自計画書、独自phase gateを要求しない。 | `chat-first-development` |
 
 ## 8. 導入時の受入基準
 
 - [ ] 全as-built設計が`docs/design/generated/cdk/`配下にあり、同じ現在状態を複製する手書き構成図・resource表が存在しない
-- [ ] 全generatorがgenerate modeとcheck modeを同じlogicで提供し、ローカルまたは既存CIでcheck modeを実行できる
+- [ ] 選択したcurrently-supported generatorがgenerate modeとcheck modeを同じlogicで提供し、ローカルまたは既存CIでcheck modeを実行できる
 - [ ] CDK sourceだけを変更して設計書を再生成しない場合にcheck modeが失敗し、差分pathを表示する
 - [ ] 全stackにsnapshot testがあり、更新はtemplate差分説明と同じreview単位で行う
-- [ ] stateful resourceのreplacement・deletionを機械検出し、移行・許可宣言なしに通さない
-- [ ] encryption、public access block、least privilege、deletion protection、必須tagを合成時に検査する
-- [ ] suppression、escape hatch、physical name指定を理由付きで一覧生成する
-- [ ] 環境差分を`config/`正本へ集約し、全環境の差分表とsynth testを持つ
+- [ ] applicable active requirement ID集合をresource metadataと完全一致させ、resource logical IDからportable pytest collection manifestのnodeへ至るtraceを生成する
+- [ ] stateful resourceのreplacement・deletion classifierを選択した場合、移行・許可宣言なしに通さない
+- [ ] policy adapterを選択した場合、encryption、public access block、least privilege、deletion protection、必須tagを合成時に検査する
+- [ ] suppression等のinventory adapterを選択した場合、suppression、escape hatch、physical name指定を理由付きで一覧生成する
+- [ ] 環境差分adapterを選択した場合、`config/`正本とsynth testから差分表を生成する
 - [ ] CloudFormation drift detectionを定期監査として定義し、全PRの無条件gateにしない
 - [ ] deploy等のauthority boundaryだけに承認を結び付け、synth・test・設計生成・PR作成へ独自承認を追加しない
 
 ## 9. check選択
 
-導入先で本標準を採用または変更する場合、少なくとも次を選択する。CDK固有checkerの詳細は導入先catalogへ追加してよいが、既存checkと意味を重複させない。
+導入先で本標準を採用または変更する場合、次表から変更に関係するcheckだけを選択する。CDK固有checkerの詳細は導入先catalogへ追加してよいが、既存checkと意味を重複させない。
 
 | Change | Check | Class | 選択条件 |
 |---|---|---|---|
@@ -298,6 +301,6 @@ IaC変更は既存のdirect / assured / regulated profileに従い、独自の�
 | 定量閾値またはchecker delegation | `FAST-022` | Risk-selected | `quality_threshold_change: true` |
 | `cdk diff`、deploy test evidence | `FAST-023` | Advisory | 対象scopeが採用済み |
 | suppression inventory | `AUD-008` | Periodic | `monthly_cycle: true` |
-| external contract変更 | `REV-011` | Risk-selected | `public_contract_change: true` |
+| external contract変更 | 対象repositoryが選択するcompatibility check | Risk-selected | `public_contract_change: true` |
 
 本標準の追加時点では、0.3で`currently-supported`とした範囲以外のCDK generatorやcheckerを実装済みとは扱わない。導入先は受入基準に必要なtoolingとtestを実装し、証拠を得たcheckだけをpassとして記録する。

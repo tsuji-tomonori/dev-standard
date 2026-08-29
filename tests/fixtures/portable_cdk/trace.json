@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "applicable_requirement_ids": [
+    "REQ-BUCKET-001"
+  ],
+  "links": [
+    {
+      "requirement_id": "REQ-BUCKET-001",
+      "artifact": {
+        "kind": "resource",
+        "id": "Bucket"
+      },
+      "tests": [
+        "smoke/tests/test_stack.py::test_bucket"
+      ]
+    }
+  ]
+}

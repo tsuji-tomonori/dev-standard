@@ -5,9 +5,9 @@
 成功後に許可する操作:
 
 - 実績reportとdigestの確定
-- 必須audit
-- PR／CI結果の記録
-- 既定のrelease処理
+- 明示的に選ばれたauditの確定
+- 対象repositoryが選んだremote check結果の記録
+- 別途権限がある確定処理
 
 成功後に禁止する操作:
 
@@ -16,4 +16,4 @@
 - 根拠のない追加reviewまたはcompute引上げ
 - 同一digest・同一rangeの再読
 
-状態機械は成功後の正のコスト活動を`post_success_activity`として残し、shadow modeでは警告します。
+状態機械は成功後の正のコスト活動を`post_success_activity`として残し、shadow modeでは警告します。停止digestは検証projection、assurance、selector manifest、全拡張chainを結びます。

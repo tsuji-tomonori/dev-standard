@@ -9,6 +9,8 @@ description: Discover human-centred, testable frontend requirements without requ
 
 `spec/skills/skills.qnt` の `skillContracts` にある `name: "elicit-frontend-requirements"` を形式契約とする。
 
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+
 利用者のtask、context、失敗影響、制約から、実装と検証に必要なfrontend要求を明らかにする。
 
 ## Composition
@@ -50,12 +52,50 @@ frontend requirementは次の場合に未完成である。
 
 ## Output
 
-- 永続要件のadd / update / retire
+- 正本へ適用済みの永続要件add / update / retire、または変更不要という判定
 - requirement IDとacceptance criteria
 - designへ渡すcontext、constraint、priority
 - requirement impactを含む簡潔な変更記録
+- design / implementation / testへ渡すselected check
 
 このSkillはcommit形式、CI workflow、required check、branch protection、merge ruleを作成も要求もしない。
-- 必要なselected check
 
 独立した変更ごとのrequirements reportは作らない。
+
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `elicit-frontend-requirements`
+- 役割: frontend-requirements
+- 柱: auxiliary
+- guardrail: no
+- repository blocking: no
+- 既定portable: no
+- 適用条件: when-frontend-requirements-are-needed
+- 起動context: `frontend-requirements`
+- 外部作用capability: no
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: a frontend outcome is requested
+- 事後条件: durable observable obligations are maintained in canonical requirements and design context is handed forward
+- Authority: user-intent
+- 副作用: repository-write
+- 失敗状態: return-for-clarification
+- 入力: `user-task`, `context`, `failure-impact`
+- 出力: `canonical-requirement-delta`, `design-context`, `selected-check`
+- 義務: `separate-user-problem-from-solution`, `maintain-durable-obligations`, `handoff-context-and-selected-checks`
+- 禁止事項: `do not persist temporary interview notes`, `do not create per-change requirement reports`, `do not impose repository policy`
+- 依存Skill: なし
+- 必須asset: `references/evidence-map.md`
+- 要件trace: `REQ-DISC-005`
+- manual digest: `182dcaa3aa9c453416c979f33b4d7ddda3d3db66aeb530d519a4aaaa3ad8cc20`
+- payload digest: `9e4bcabfece7a6685a9cb07399e6c8a10ee7a72c760dbbd1b20f91df671f4bb4`
+- interface digest: `01653ab1c807a2841aa48a2eeea4a8da57eaf31227066664929c8dea2cfc4e1b`
+<!-- END GENERATED QUINT CONTRACT -->

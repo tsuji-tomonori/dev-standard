@@ -1,14 +1,14 @@
 # Skills根拠資料一覧・整合性監査
 
-- 確認日: 2026-08-02
+- 確認日: 2026-08-29
 - 対象: `distribution/manifest.json`の現行inventoryから得たSkills、各Skillの`references/`、`governance/standards/registry.json`
 - 目的: Skillsが参照する研究・規格・公式ガイダンス・実装例を列挙し、主張、適用範囲、訂正、版、運用規則との整合を確認する
 
-現在の件数、Skill description budget、trace存在、prompt境界、host別生成、不要文書、as-built executorの構造判定は`python tools/audit_consistency.py`で毎回再計算し、GitHub Actionsを結果の正本とする。本書は外部根拠の分類と適用限界を説明するもので、固定件数の第二正本にはしない。
+現在の件数、Skill description budget、trace存在、prompt境界、host別生成、不要文書、as-built executorの構造判定は`python tools/audit_consistency.py`で毎回再計算し、その実行結果を当該検証の証拠とする。対象repositoryが既に所有するworkflowは同じcommandの追加証拠にできるが、外部CIを結果の唯一の正本にしない。本書は外部根拠の分類と適用限界を説明するもので、固定件数の第二正本にはしない。
 
 ## 結論
 
-2026-08-02の自動監査と対象テストでblockingな矛盾がないことを確認した。過去の根拠監査では次の食い違いまたは追跡性の不足を修正した。
+2026-08-29の自動監査、Quint形式契約、Skill本文・interface・必須assetのdigest照合、policy mutation testで、機械的に検出可能なblocking矛盾がないことを確認した。自然言語の意味等、形式化していない範囲まで完全性を主張しない。過去の根拠監査では次の食い違いまたは追跡性の不足を修正した。
 
 1. `maintain-canonical-requirements`が「SWEBOK V4」と記しながら旧Wiki章へリンクしていたため、IEEE Computer SocietyのVersion 4.0aへ統一した。
 2. Huang et al. (2017)の2025年訂正とGibson et al. (2019)の訂正を追記し、訂正の影響を明示した。前者は報告値の訂正後も主要結論を維持し、後者は表記・記号上の訂正である。
@@ -146,7 +146,7 @@
 |---|---|---|---|---|---|
 | CM-01 | G | [gitmoji Specification](https://gitmoji.dev/specification) | `japanese-git-commit-gitmoji` | intention emoji、optional scope、brief messageのconvention。 | 整合 |
 | CM-02 | N | [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) | 同上 | `type(scope): description`、`!`、`BREAKING CHANGE`、footerのsyntax。 | 整合 |
-| CM-03 | L | [`docs/reference/commit-message.md`](commit-message.md) | 同上 | 日本語要約、影響節、review path、検証契約、risk、trailersはdev-standard固有extension。 | 区分を明記 |
+| CM-03 | L | [`docs/reference/commit-message.md`](commit-message.md) | 同上 | 日本語要約と簡潔な影響・検証欄は、利用者または対象repositoryが選択した場合だけ使う任意形式。portable gate、review path、merge条件にはしない。 | 適用境界を明記 |
 
 ## 7. 外部研究に直接依存しないSkills
 
@@ -175,9 +175,44 @@
 | requirementsとarchitecture | 上位のfunctional requirementはsolution-neutralを原則とし、権限あるtechnology / project constraintと親判断へtraceしたderived requirementを例外として保持する。Twin Peaksに従い反復的に再分析できるが、要件正本、ADR、生成設計、current-task contextのauthorityを混同しない。 |
 | 自動評価 | LLM judge、visual diff、automated accessibility、questionnaire、performance metricはいずれもbounded evidenceとして扱い、単独oracleにしない。 |
 | engineering standards | versioned registryが適用資料を選び、一般WAFやlocal standardを一律準拠として扱わない。 |
-| local policy | JSON shape、revision protocol、review schema、commit extensions、閾値、file layoutは`L`として明示し、研究結果と混同しない。 |
+| local policy | JSON shape、revision protocol、閾値、file layoutは`L`として明示し、研究結果と混同しない。過去のreview schemaと任意のcommit形式はportable authorityにしない。 |
 
-## 9. 保守手順
+## 9. Quint契約と実体の等価性境界
+
+各Skillの一次契約は`spec/skills/skills.qnt`であり、自然言語本文だけを形式仕様とみなさない。契約は全18 Skillについて次を型付きfieldまたは有限enumとして持つ。
+
+- `repositoryBlocking`、`defaultPortable`、`externalEffect`
+- CI workflow、required check、branch protection、ruleset、merge strategy、PR template、commit formatの7つのrepository policy boolean
+- `applicability`、`activationContexts`、`authority`、`sideEffect`、`failureState`
+- input、output、obligation、prohibition、hard dependency、required asset、requirement trace
+- manual body、payload inventory、OpenAI interfaceのSHA-256
+
+`activationContexts`は配布profileや保証levelではない。実際の依頼、変更surface、具体的義務等からSkillを起動する条件であり、非該当Skillはno-op / skipになる。補助Skillは`repositoryBlocking=false`であり、blockingなのは要件、as-built設計、change-relevant checkの3本柱だけである。
+
+| Skill | 起動根拠 | Authority | 実体との主要な照合点 |
+|---|---|---|---|
+| `adversarial-review` | 明示review依頼 | artifact authority | findingまたはscoped no-findingを返し、artifactを変更しない |
+| `author-lifecycle-docs` | concrete retention duty | concrete duty or user | dutyに必要な最小文書だけをrepositoryへ書く |
+| `authorize-autonomous-execution` | real authority boundary | explicit user authorization | current authority-owned evidenceをresult / effect / rollback / stopへ結合し、agent自身は承認証拠を発行しない |
+| `calibrated-collaborative-listening` | pathを変えるambiguity | user intent | inferenceを訂正可能にし、artifactを変更しない |
+| `chat-first-development` | development request | user and target repository | 3柱を条件付きで合成し、PR等の外部操作は種類ごとの明示依頼に限定する |
+| `design-frontend-experience` | frontend designが必要 | approved requirements | applicable decisionだけを作り、unsupported generatorを強制しない |
+| `elicit-frontend-requirements` | frontend requirementが必要 | user intent | durable obligationだけを要件正本へ渡す |
+| `generate-implementation-design` | declared generatorのsupported surface | implementation | explicit `applicable_requirement_ids`とactive requirement / artifact / real test nodeを完全一致させる |
+| `govern-development-request` | concrete lifecycle duty | concrete duty or user | 事前存在するtarget-owned exact-schema JSONを変更せず結合して`init→authorize→verify→close`をstrict replayし、外部anchorはhandoffだけにする |
+| `implement-frontend-experience` | frontend implementation依頼 | requirements and design | applicable stateを実装し、supported generatorだけを起動する |
+| `inspect-quality-gates` | change-relevant checks | target repository and selected checks | target-owned registryだけを使い、source mutationを拒否し、全commandのprocess-effect isolation不確実性を残存riskへ結ぶ |
+| `japanese-git-commit-gitmoji` | userまたはtargetがstyle選択 | explicit user or target style | 実差分からmessageを提案し、portable gateにしない |
+| `maintain-canonical-requirements` | durable deltaまたは初期化 | Quint requirements | Quint→serialized JSON→JSON再parse Markdownを維持し、future traceを捏造しない |
+| `maintain-reference-repository` | reference asset変更 | reference repository | portable setとreference-only assetを分離する |
+| `retrospect-and-improve` | escaped defect / incident / rollback / recurring cost | observed defect | bounded candidateだけを返し、自動適用しない |
+| `right-size-execution` | execution sizingが必要 | change risk | 4軸を独立選択し、diagnosticをrepository blockerにしない |
+| `test-frontend-experience` | frontend test依頼 | requirements and approved design | change riskにapplicableなtest次元だけを実行し、command effectをauthorityへ結ぶ |
+| `verify-against-engineering-standards` | relevant standard選択 | canonical / target / official standard | default assetを読み、文書生成時だけrepository-confined writeを行う |
+
+機械照合は、Quintのenum / state invariant、Skill directoryとの1対1 coverage、manual generated block、required assetの完全inventory、3 digest、requirement path trace、repository-policy mutation scanを組み合わせる。Quint抽出・文書renderの両入口は全contractのexact field / type、主要listのpairwise uniqueness、64文字lowercase hex digest、依存先の存在・self edge・cycle、18 Skill / 3 blocker / default portable / repository policy境界をfail-closedで再検証する。digestは意味の正しさを単独で証明せず、上表の動作をrunnerのpositive / negative testで反証可能にする。bounded Quint run / Apalache検証も、自然言語全体やPython実装全体の証明とは表現しない。
+
+## 10. 保守手順
 
 根拠を追加・更新するときは、次を満たす。
 

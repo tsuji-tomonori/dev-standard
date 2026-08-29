@@ -13,9 +13,38 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
+try:
+    from .generate_host_assets import inventory as host_inventory
+    from .generate_host_assets import render_claude_reviewer
+    from .render_skills import (
+        validate_manual_policy,
+        validate_policy_file,
+        without_generated_block,
+    )
+    from .validate_repo import validate_manifest_document
+except ImportError:  # Support direct execution as ``python tools/audit_consistency.py``.
+    try:
+        from tools.generate_host_assets import inventory as host_inventory
+        from tools.generate_host_assets import render_claude_reviewer
+        from tools.render_skills import (
+            validate_manual_policy,
+            validate_policy_file,
+            without_generated_block,
+        )
+        from tools.validate_repo import validate_manifest_document
+    except ImportError:
+        from generate_host_assets import inventory as host_inventory
+        from generate_host_assets import render_claude_reviewer
+        from render_skills import (
+            validate_manual_policy,
+            validate_policy_file,
+            without_generated_block,
+        )
+        from validate_repo import validate_manifest_document
+
 ROOT = Path(__file__).resolve().parents[1]
 AUTO_REQUIREMENTS = {
-    *(f"REQ-ASBUILT-{number:03d}" for number in range(1, 20)),
+    *(f"REQ-ASBUILT-{number:03d}" for number in range(1, 21)),
     *(f"REQ-DESIGN-{number:03d}" for number in range(1, 7)),
     "REQ-DISC-004",
     "REQ-DOCS-001",
@@ -30,7 +59,6 @@ QUALITY_COMMANDS = {
     "test-structure": "FAST-020",
     "implementation": "FAST-021",
     "thresholds": "FAST-022",
-    "report": "FAST-023",
     "suppressions": "AUD-008",
 }
 
@@ -81,16 +109,21 @@ def audit_descriptions(findings: list[dict[str, str]], metrics: dict[str, Any]) 
 
 
 def audit_agents(findings: list[dict[str, str]]) -> None:
-    """Require host-selected models and profile-aware gate instructions."""
+    """Require host-selected models without prescribing one reviewer topology."""
 
+    stale_profiles = (
+        "For direct or assured work",
+        "For regulated work",
+        "selected execution profile",
+    )
     for path in sorted((ROOT / ".codex/agents").glob("*.toml")):
-        value = tomllib.loads(path.read_text(encoding="utf-8"))
+        text = path.read_text(encoding="utf-8")
+        value = tomllib.loads(text)
         if "model" in value:
             findings.append(finding("AUD-AGENT-MODEL", "reviewer pins a model instead of inheriting the host choice", path.relative_to(ROOT).as_posix()))
-    gate = (ROOT / ".codex/agents/gate-auditor.toml").read_text(encoding="utf-8")
-    for phrase in ["For direct or assured work", "For regulated work"]:
-        if phrase not in gate:
-            findings.append(finding("AUD-GATE-PROFILE", f"gate auditor lacks profile boundary: {phrase}", ".codex/agents/gate-auditor.toml"))
+        for phrase in stale_profiles:
+            if phrase in text:
+                findings.append(finding("AUD-AGENT-ACTIVATION", f"reviewer uses retired execution profile wording: {phrase}", path.relative_to(ROOT).as_posix()))
 
 
 def audit_prompts(findings: list[dict[str, str]]) -> None:
@@ -109,7 +142,7 @@ def audit_prompts(findings: list[dict[str, str]]) -> None:
             if phrase in text:
                 findings.append(finding("AUD-PROMPT-BOUNDARY", f"prompt contains stale broad instruction: {phrase}", path.relative_to(ROOT).as_posix()))
     right_size = (ROOT / ".agents/skills/right-size-execution/SKILL.md").read_text(encoding="utf-8")
-    if "同時拡張" in right_size or "一回の判断では一軸だけ" not in right_size:
+    if re.search(r"一回の判断(?:では|につき).*一軸", right_size) is None:
         findings.append(finding("AUD-EXPANSION", "execution expansion is not constrained to one axis per decision", ".agents/skills/right-size-execution/SKILL.md"))
 
 
@@ -169,13 +202,28 @@ def audit_host_generation(findings: list[dict[str, str]], metrics: dict[str, Any
     process = subprocess.run(["git", "ls-files", "--", *sorted(generated_paths)], cwd=ROOT, text=True, capture_output=True, check=False)
     if process.returncode or process.stdout.strip():
         findings.append(finding("AUD-HOST-COMMIT", "generated host assets are tracked or Git inspection failed", process.stdout.strip() or process.stderr.strip()))
+    _, reviewers = host_inventory()
+    for reviewer in reviewers:
+        source = ROOT / ".codex" / "agents" / f"{reviewer}.toml"
+        for error in validate_policy_file(source, source.relative_to(ROOT).as_posix()):
+            findings.append(finding("AUD-HOST-POLICY", error, source.relative_to(ROOT).as_posix()))
+        rendered = render_claude_reviewer(source)
+        for error in validate_manual_policy(rendered, f"generated/claude-code/{reviewer}.md"):
+            findings.append(finding("AUD-HOST-POLICY", error, f"generated/claude-code/{reviewer}.md"))
+    snippet = ROOT / str(adapters["canonical"]["instruction_snippet"])
+    for error in validate_policy_file(snippet, snippet.relative_to(ROOT).as_posix()):
+        findings.append(finding("AUD-HOST-POLICY", error, snippet.relative_to(ROOT).as_posix()))
     metrics["host_count"] = len(hosts)
 
 
 def audit_portability(findings: list[dict[str, str]]) -> None:
-    """Keep repository-specific branch trial details out of portable profiles."""
+    """Expand portable mappings and reject policy paths or forcing content."""
 
     manifest = load_json(ROOT / "distribution/manifest.json")
+    manifest_failures: list[str] = []
+    validate_manifest_document(manifest, ROOT, manifest_failures)
+    for error in manifest_failures:
+        findings.append(finding("AUD-PORTABILITY", error, "distribution/manifest.json"))
     forbidden = ["Reconciliation-Type:", "Trial-Activation:", "Issue #20", "dev → main", ".github/branch-policy.json"]
     for profile in ["default", "chat-first"]:
         for entry in manifest["profiles"][profile]:
@@ -200,8 +248,20 @@ def audit_generated_design(findings: list[dict[str, str]]) -> None:
     for command, check_id in QUALITY_COMMANDS.items():
         if f'"{command}"' not in qualityflow or check_id not in qualityflow:
             findings.append(finding("AUD-QUALITY-EXECUTOR", f"quality executor missing: {check_id}/{command}", ".agents/skills/generate-implementation-design/scripts/qualityflow.py"))
-        if check_id not in tests and command not in tests:
+        if check_id not in tests and command not in tests and command.replace("-", "_") not in tests:
             findings.append(finding("AUD-QUALITY-FIXTURE", f"quality failure fixture missing: {check_id}/{command}", "tests/test_qualityflow.py"))
+    check_catalog = (ROOT / "governance/checks/catalog.yaml").read_text(encoding="utf-8")
+    match = re.search(r"(?ms)^- id: FAST-023\n(?P<body>.*?)(?=^- id: |\Z)", check_catalog)
+    if match is None or "inspect-quality-gates" not in match.group("body"):
+        findings.append(finding("AUD-QUALITY-OWNER", "FAST-023 summary ownership is not assigned to inspect-quality-gates", "governance/checks/catalog.yaml"))
+    inspect = (ROOT / ".agents/skills/inspect-quality-gates/scripts/inspect.py").read_text(encoding="utf-8")
+    inspect_tests = (ROOT / "tests/test_inspect_runner.py").read_text(encoding="utf-8")
+    for token in ["selected_count", "covered_acceptance", "residual_risk", "raw_output_persisted"]:
+        if token not in inspect:
+            findings.append(finding("AUD-QUALITY-OWNER", f"inspect summary implementation lacks token: {token}", ".agents/skills/inspect-quality-gates/scripts/inspect.py"))
+    for token in ["covered_acceptance", "residual_risk", "raw_output_persisted"]:
+        if token not in inspect_tests:
+            findings.append(finding("AUD-QUALITY-OWNER", f"inspect summary fixture lacks assertion token: {token}", "tests/test_inspect_runner.py"))
 
 
 def audit_docs(findings: list[dict[str, str]], metrics: dict[str, Any]) -> None:
@@ -211,13 +271,27 @@ def audit_docs(findings: list[dict[str, str]], metrics: dict[str, Any]) -> None:
         if len(path.read_text(encoding="utf-8").splitlines()) <= 1:
             findings.append(finding("AUD-EMPTY-DOC", "empty learned-rules placeholder", path.relative_to(ROOT).as_posix()))
     stale_tokens = ["docs/COMMIT-COMMENT.md", "docs/ARTIFACTS-AND-CHECKS.md", "docs/INSTALLATION.md", "docs/GOVERNANCE.md", "docs/FLOW.md"]
+    derived_documents = {
+        ROOT / "docs/requirements/REQUIREMENTS.md",
+        ROOT / "docs/reference/FORMAL-SPECIFICATIONS.md",
+    }
+    retired_profile = re.compile(r"\b(?:direct|assured|regulated)\s+profile\b", re.IGNORECASE)
     for path in sorted([ROOT / "AGENTS.md", ROOT / "README.md", *(ROOT / "docs").rglob("*.md"), *(ROOT / ".agents/skills").rglob("*.md")]):
         text = path.read_text(encoding="utf-8")
         for token in stale_tokens:
             if token in text:
                 findings.append(finding("AUD-STALE-PATH", f"document references removed path: {token}", path.relative_to(ROOT).as_posix()))
+        human_text = without_generated_block(text) if path.name == "SKILL.md" else text
+        if path not in derived_documents and retired_profile.search(human_text):
+            findings.append(
+                finding(
+                    "AUD-RETIRED-PROFILE",
+                    "human-authored documentation uses a retired fixed-profile trigger",
+                    path.relative_to(ROOT).as_posix(),
+                )
+            )
     audit = (ROOT / "docs/reference/skill-evidence-audit.md").read_text(encoding="utf-8")
-    if "tools/audit_consistency.py" not in audit or "2026-08-02" not in audit:
+    if "tools/audit_consistency.py" not in audit or "2026-08-29" not in audit:
         findings.append(finding("AUD-EVIDENCE-DOC", "Skill evidence audit lacks current automated audit contract", "docs/reference/skill-evidence-audit.md"))
     metrics["document_count"] = len([path for path in ROOT.rglob("*.md") if not {".git", ".venv", ".devflow"}.intersection(path.parts)])
 
@@ -227,9 +301,11 @@ def audit_makefile(findings: list[dict[str, str]]) -> None:
 
     text = (ROOT / "Makefile").read_text(encoding="utf-8")
     verify = next((line for line in text.splitlines() if line.startswith("verify:")), "")
-    for target in ["quint-test", "lint", "test", "repo-check", "host-assets-check"]:
+    for target in ["quint-verify", "lint", "test", "repo-check", "host-assets-check"]:
         if target not in verify:
             findings.append(finding("AUD-VERIFY", f"make verify omits {target}", "Makefile"))
+    if "quint-test" in verify:
+        findings.append(finding("AUD-VERIFY", "make verify repeats Quint test through quint-verify", "Makefile"))
     if "/home/" in text or "SKILL_VALIDATOR" in text:
         findings.append(finding("AUD-VERIFY", "Makefile contains a personal absolute dependency", "Makefile"))
 

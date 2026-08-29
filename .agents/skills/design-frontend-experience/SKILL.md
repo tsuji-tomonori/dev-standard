@@ -9,15 +9,19 @@ description: Define minimum interaction, information, accessibility, responsive,
 
 `spec/skills/skills.qnt` の `skillContracts` にある `name: "design-frontend-experience"` を形式契約とする。
 
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+
 approved requirementsを、実装者がproduct behaviorを発明せずに実装できる最小限のdesign decisionへ変換する。
 
 ## Inputs
 
 - user request
 - canonical requirement IDとacceptance criteria
+- elicitationから渡されたdesign context、constraint、priority
 - 既存frontend、design system、component、token、route、test
 - architecture / ADR
 - supported environment
+- selected check
 
 problem、user、context、outcomeが不足する場合だけ`$elicit-frontend-requirements`へ戻す。
 
@@ -95,6 +99,7 @@ local component detailやcodeから自明な構造はADRにしない。
 - 必要時のprototypeまたはreference
 - 必要時のADR
 - implementationへ渡すacceptance / verification hook
+- implementation / testへ渡すselected check handoff
 - 対象repositoryが採用する変更記録のdesign impact判定
 - 必要なselected check
 
@@ -118,4 +123,42 @@ local component detailやcodeから自明な構造はADRにしない。
 - 長期判断だけADRへ残る。
 - design impactが対象repositoryの既存方式で追跡できる。
 - このSkillのためにCI workflow、required check、branch protection、merge rule、commit形式を追加または変更していない。
-- 実装後にas-built設計を生成できる。
+- 実装後のartifactを既存の宣言済みgeneratorが扱える場合は、as-built設計を生成するhookがある。generator対象外の場合は未生成surfaceを明示し、このSkillだけのためにgeneratorを強制しない。
+
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `design-frontend-experience`
+- 役割: frontend-design
+- 柱: auxiliary
+- guardrail: no
+- repository blocking: no
+- 既定portable: no
+- 適用条件: when-frontend-design-is-needed
+- 起動context: `frontend-design`
+- 外部作用capability: no
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: frontend outcomes and constraints are known
+- 事後条件: minimum implementation decisions and selected-check handoff are explicit
+- Authority: approved-requirements
+- 副作用: repository-write
+- 失敗状態: return-to-requirements
+- 入力: `requirements`, `design-context`, `existing-design-system`, `selected-check`
+- 出力: `design-decisions`, `verification-hooks`, `selected-check-handoff`
+- 義務: `derive-minimum-implementation-decisions`, `cover-applicable-interaction-states`, `handoff-verification-hooks`
+- 禁止事項: `do not duplicate implementation-derived inventories`, `do not persist local design detail as ADR`, `do not require a generator for unsupported artifacts`
+- 依存Skill: なし
+- 必須asset: `references/evidence-map.md`
+- 要件trace: なし
+- manual digest: `a8732755af0954aa708c9ee64976cf6580c28e560f76af4cc6fc342ac778de32`
+- payload digest: `3a6c7028166026088e59394ecd91218e663b05a032da8a2835f9da66893ad812`
+- interface digest: `dbcd41c79681072af7015a3476e9a45f6f851dac7c1b6ec072d0abb47f46c99c`
+<!-- END GENERATED QUINT CONTRACT -->

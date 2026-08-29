@@ -9,6 +9,8 @@ description: Complete development requests through a lightweight three-pillar fl
 
 `spec/skills/skills.qnt` の `skillContracts` にある `name: "chat-first-development"` を形式契約とする。
 
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+
 自然言語の依頼を入口に、対象repositoryの規則を維持したまま成果を完成させる。portableなguardrailは次の3本柱だけである。
 
 1. 永続的な外部義務が変わる場合だけ、Quint要件正本を更新する。
@@ -37,7 +39,7 @@ description: Complete development requests through a lightweight three-pillar fl
 - Commit Commentの書式
 - PR template、review YAML、変更ごとの計画書やtest report
 
-利用者がPR作成、merge、CI修正等を依頼した場合は、対象repositoryに既にある規則と権限へ従う。CIがないrepositoryではローカル検証を正当な証拠として扱い、このSkillを理由にCIを導入しない。
+PRの作成・更新・comment・review・mergeやCI設定の修正は、それぞれが現在の依頼に明示されている場合だけ行い、対象repositoryに既にある規則と権限へ従う。code変更の依頼だけからPR操作を推測しない。CIがないrepositoryではローカル検証を正当な証拠として扱い、このSkillを理由にCIを導入しない。
 
 ## Requirement impact
 
@@ -65,9 +67,51 @@ framework、language、database、tool、path、process、成果物が依頼に�
 - gateを通す目的でtest、型、lint、security controlを弱めない。
 - 対象repositoryのownership、build、security、commit、release規則を上書きしない。
 
+repository内の可逆な実装は依頼された成果の範囲で進められる。外部または共有状態を変える操作は、利用者の明示依頼と必要な承認が現在も有効な場合だけ実行し、対象、効果、停止条件を越えない。通常の外部操作だけを理由にregulated work itemを作らない。
+
 ## Completion
 
 - 依頼された成果が実装または文書へ反映されている。
 - 該当する3本柱だけが適用されている。
 - selected checkにblocking failureが残っていない、または失敗と未完了範囲が明示されている。
 - branch、merge、CI方針を新しく強制していない。
+- 実行した外部操作がある場合は、明示依頼・承認範囲と実結果が対応している。
+- PR操作がある場合は、その種類が現在の依頼に含まれている。
+
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `chat-first-development`
+- 役割: orchestrator
+- 柱: auxiliary
+- guardrail: no
+- repository blocking: no
+- 既定portable: yes
+- 適用条件: when-development-is-requested
+- 起動context: `development-request`
+- 外部作用capability: yes
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: a development outcome is requested
+- 事後条件: the requested outcome and only applicable pillars are complete, and every external effect remains within explicit authority
+- Authority: user-and-target-repository
+- 副作用: repository-and-authorized-external-write
+- 失敗状態: report-bounded
+- 入力: `request`, `target-repository-rules`, `authority-boundary`
+- 出力: `change`, `verification-summary`, `external-operation-result`
+- 義務: `classify-durable-requirement-impact`, `generate-supported-as-built-design`, `run-only-selected-checks`, `bind-external-effects-to-authority`, `perform-pr-operation-only-when-requested`
+- 禁止事項: `do not impose CI branch or merge policy`, `do not create per-change bureaucracy`, `do not create update comment or merge a PR unless requested`
+- 依存Skill: `maintain-canonical-requirements`, `generate-implementation-design`, `inspect-quality-gates`
+- 必須asset: `references/bootstrap-and-conversation.md`
+- 要件trace: `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`
+- manual digest: `0708a9c422d1b68fc7c0a451d3b385858c32cfd5cf63743472c7e8427dd34ede`
+- payload digest: `23e2400ebf4e7aad2ff46da62f6a61ad8b0899c21a60ded4d246706395f6ff2c`
+- interface digest: `fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d`
+<!-- END GENERATED QUINT CONTRACT -->

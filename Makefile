@@ -34,4 +34,4 @@ repo-check:
 host-assets-check:
 	$(PYTHON) tools/generate_host_assets.py check
 
-verify: quint-test lint test repo-check host-assets-check
+verify: quint-verify lint test repo-check host-assets-check

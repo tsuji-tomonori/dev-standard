@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -21,6 +22,9 @@ class GenerateHostAssetsTest(unittest.TestCase):
             host_assets.populate("claude-code", output, config)
             self.assertTrue((output / ".claude/skills/chat-first-development/SKILL.md").is_file())
             self.assertFalse((output / ".claude/skills/chat-first-development/agents/openai.yaml").exists())
+            for canonical in sorted((ROOT / ".agents/skills").glob("*/SKILL.md")):
+                hosted = output / ".claude/skills" / canonical.parent.name / "SKILL.md"
+                self.assertEqual(hosted.read_bytes(), canonical.read_bytes())
             reviewer = (output / ".claude/agents/gate-auditor.md").read_text(encoding="utf-8")
             self.assertIn("tools: Read, Grep, Glob", reviewer)
             self.assertNotIn("gpt-", reviewer.lower())
@@ -30,6 +34,22 @@ class GenerateHostAssetsTest(unittest.TestCase):
             self.assertIn("CI/CD workflow", snippet)
             self.assertNotIn("required checkを必須", snippet)
             self.assertTrue((output / "manifest.json").is_file())
+            self.assertTrue((output / "tools/quintflow.py").is_file())
+            self.assertTrue((output / "tools/portable_python.py").is_file())
+            self.assertTrue((output / "tools/safe_io.py").is_file())
+            self.assertTrue((output / ".dev-standard/quint/source/package-lock.json").is_file())
+            self.assertTrue((output / "tools/spec_mapping.py").is_file())
+            self.assertTrue((output / "tools/render_requirements.py").is_file())
+            self.assertTrue((output / "tools/render_skills.py").is_file())
+            self.assertTrue((output / "spec/skills/skills.qnt").is_file())
+            self.assertTrue((output / ".dev-standard/install/commitment.json").is_file())
+            self.assertTrue((output / ".dev-standard/install/receipt.json").is_file())
+            generated_manifest = json.loads(
+                (output / "manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(generated_manifest["quint_version"], "0.32.0")
+            self.assertEqual(generated_manifest["interface_policy"], "canonical-omitted")
+            self.assertFalse((output / ".github").exists())
 
     def test_all_host_outputs_are_byte_deterministic(self) -> None:
         config = host_assets.adapters()

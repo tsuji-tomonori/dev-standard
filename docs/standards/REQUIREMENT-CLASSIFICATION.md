@@ -93,7 +93,7 @@ Markdown fileの存在自体を要件にしない。満たすべき義務を正�
 
 このrepositoryは導入先projectの稼働中workを保管する場所ではない。top-levelの`work/`へrepository固有の依頼、承認、phase記録、test reportを保存しない。
 
-regulated runtimeの実装、template、schema、validatorは移植可能なsampleとして維持できる。実行中の`work/<id>/`は、regulated profileを選択した導入先repositoryで生成する。回帰fixtureが必要な場合は`tests/fixtures/`等へsyntheticであることを明示して置く。
+regulated runtimeの実装、template、schema、validatorは移植可能なsampleとして維持できる。実行中の`work/<id>/`は、具体的な法令・契約・安全・本番運用・監査・利用者指定の義務が存在する導入先repositoryでだけ生成する。回帰fixtureが必要な場合は`tests/fixtures/`等へsyntheticであることを明示して置く。
 
 ## 7. 判定手順
 

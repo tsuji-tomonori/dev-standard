@@ -23,7 +23,6 @@
       "risk_tags": ["authorization"],
       "changed_paths": ["src/auth/policy.py"],
       "acceptance_criteria": ["権限のない主体を拒否する"],
-      "mandatory_control_ids": ["DES-021", "CON-044", "SEC-106"],
       "expected": {"scope": "local", "assurance": "critical", "model_tier": "standard", "mode": "agent-with-review"}
     },
     {
@@ -88,7 +87,7 @@
       "domains": ["requirements", "governance"],
       "artifact_tags": ["requirements", "generator"],
       "risk_tags": ["durable-requirements", "governance", "generator"],
-      "changed_paths": ["spec/requirements/requirements.qnt", "tools/devflow.py"],
+      "changed_paths": ["spec/requirements/requirements.qnt", "tools/quintflow.py"],
       "acceptance_criteria": ["正本と生成文書が一致する"],
       "expected": {"scope": "repository", "assurance": "elevated", "model_tier": "standard", "mode": "agent"}
     },

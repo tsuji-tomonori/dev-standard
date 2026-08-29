@@ -24,6 +24,28 @@ standardsflow = load_module()
 
 
 class StandardsflowTest(unittest.TestCase):
+    def test_default_registry_is_the_skill_asset(self) -> None:
+        self.assertEqual(
+            standardsflow.DEFAULT_REGISTRY,
+            ROOT / ".agents/skills/verify-against-engineering-standards/assets/standards.registry.json",
+        )
+        self.assertEqual(
+            standardsflow.main(["validate", "--root", str(ROOT), "--as-of", "2026-08-29"]),
+            0,
+        )
+
+    def test_registry_and_output_paths_are_repository_confined_and_no_follow(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "repository"
+            root.mkdir()
+            outside = Path(directory) / "outside.json"
+            outside.write_text("{}\n", encoding="utf-8")
+            (root / "registry.json").symlink_to(outside)
+            with self.assertRaises(standardsflow.StandardsError):
+                standardsflow.confined_path(root, Path("registry.json"), must_exist=True)
+            with self.assertRaises(standardsflow.StandardsError):
+                standardsflow.confined_path(root, Path("../outside.md"), must_exist=False)
+
     def test_self_hosted_registry_is_valid_fresh_and_generated(self) -> None:
         registry = standardsflow.load(ROOT / "governance/standards/registry.json")
         standardsflow.freshness(registry, date(2026, 7, 21))

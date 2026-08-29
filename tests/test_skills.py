@@ -38,10 +38,21 @@ class SkillContractTest(unittest.TestCase):
                 "inspect-quality-gates": "checks",
             },
         )
-        self.assertTrue(all(not item["blocking"] for item in self.contracts.values() if not item["guardrail"]))
+        for name, contract in self.contracts.items():
+            with self.subTest(skill=name):
+                self.assertIs(type(contract["repositoryBlocking"]), bool)
+                self.assertEqual(
+                    contract["repositoryBlocking"],
+                    contract["guardrail"],
+                )
 
     def test_default_contract_is_entry_plus_three_pillars(self) -> None:
-        defaults = {name for name, item in self.contracts.items() if item["defaultProfile"]}
+        for name, item in self.contracts.items():
+            with self.subTest(skill=name):
+                self.assertIs(type(item["defaultPortable"]), bool)
+        defaults = {
+            name for name, item in self.contracts.items() if item["defaultPortable"]
+        }
         self.assertEqual(
             defaults,
             {
@@ -53,9 +64,22 @@ class SkillContractTest(unittest.TestCase):
         )
 
     def test_repository_policy_is_host_owned_for_all_skills(self) -> None:
+        expected_fields = {
+            "ciWorkflow",
+            "requiredCheck",
+            "branchProtection",
+            "ruleset",
+            "mergeStrategy",
+            "prTemplate",
+            "commitFormat",
+        }
         for name, contract in self.contracts.items():
-            self.assertFalse(contract["requiresCi"], name)
-            self.assertFalse(contract["requiresMergeRule"], name)
+            with self.subTest(skill=name):
+                policy = contract["repositoryPolicy"]
+                self.assertEqual(set(policy), expected_fields)
+                for field in expected_fields:
+                    self.assertIs(type(policy[field]), bool, field)
+                    self.assertFalse(policy[field], field)
 
     def test_skill_catalog_matches_directories(self) -> None:
         guide = (ROOT / "docs/guides/getting-started.md").read_text(encoding="utf-8")

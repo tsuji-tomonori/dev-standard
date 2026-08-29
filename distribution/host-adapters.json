@@ -1,17 +1,24 @@
 {
-  "schema_version": 1,
+  "schema_version": 3,
   "canonical": {
     "skills": ".agents/skills",
     "reviewers": ".codex/agents",
     "instruction_snippet": "distribution/snippets/AGENTS.governance.md"
   },
   "generated_root": ".devflow/generated/hosts",
+  "portable_runtime": {
+    "manifest_key": "portable_runtime",
+    "quint_version": "0.32.0",
+    "host_independent": true,
+    "skill_contracts_manifest_key": "formal_skill_contracts"
+  },
   "hosts": {
     "codex": {
       "skills_destination": ".agents/skills",
       "reviewers_destination": ".codex/agents",
       "reviewer_format": "codex-toml",
       "instruction_name": "AGENTS.snippet.md",
+      "interface_policy": "required",
       "official_reference": "https://learn.chatgpt.com/docs/build-skills"
     },
     "claude-code": {
@@ -19,6 +26,7 @@
       "reviewers_destination": ".claude/agents",
       "reviewer_format": "claude-markdown",
       "instruction_name": "CLAUDE.snippet.md",
+      "interface_policy": "canonical-omitted",
       "official_reference": "https://code.claude.com/docs/en/skills"
     }
   }

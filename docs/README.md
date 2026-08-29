@@ -19,4 +19,4 @@
 
 要件正本は`spec/requirements/requirements.qnt`、全Skillの形式契約は`spec/skills/skills.qnt`である。JSONと本索引から参照するMarkdownは派生viewとして生成する。
 
-`templates/`はregulated profileで必要な場合だけ使用します。ADRは長期判断が必要な場合だけ`decisions/`へ追加します。
+`templates/`は具体的な法令・契約・安全・本番運用・監査・利用者指定の義務に必要な場合だけ使用します。ADRは長期判断が必要な場合だけ`decisions/`へ追加します。

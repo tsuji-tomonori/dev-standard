@@ -1,11 +1,16 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "constraints": [
     {"id": "RSE-PROFILE-001", "condition": "risk is critical but impact is local", "expected_behavior": "scope remains local and assurance becomes critical"},
+    {"id": "RSE-FLOOR-001", "condition": "risk and artifact floors differ", "expected_behavior": "assurance uses their union and selects the higher floor"},
     {"id": "RSE-CONFIDENCE-001", "condition": "an initial profile is estimated", "expected_behavior": "confidence uses deterministic evidence and has no uncalibrated score"},
     {"id": "RSE-EXPAND-001", "condition": "new evidence invalidates one axis", "expected_behavior": "exactly one axis expands without a global count cap"},
+    {"id": "RSE-STAGNATION-001", "condition": "the same stable failure identity returns with changed wording", "expected_behavior": "the repeated failure is rejected as stagnation"},
+    {"id": "RSE-PROJECTION-001", "condition": "artifact, risk, acceptance, and target-owned gates are known", "expected_behavior": "required verification is their exact minimal projection while sizing and diagnostics remain advisory"},
+    {"id": "RSE-CHAIN-001", "condition": "multiple expansions are recorded", "expected_behavior": "every expansion binds its predecessor and tampering is diagnosed"},
     {"id": "RSE-STOP-001", "condition": "decisive success is recorded", "expected_behavior": "positive-cost exploration is rejected or audited"},
-    {"id": "RSE-SELECT-001", "condition": "critical mandatory controls are curated", "expected_behavior": "selector records zero mandatory misses and audits exclusions"},
-    {"id": "RSE-ROLLOUT-001", "condition": "rollout phase is shadow", "expected_behavior": "efficiency findings remain advisory while assurance violations block"}
+    {"id": "RSE-SELECTION-001", "condition": "a selected-check manifest exists and new evidence expands the estimate", "expected_behavior": "the manifest is bound to the current estimate digest and expansion invalidates it"},
+    {"id": "RSE-ROLLOUT-001", "condition": "rollout phase is shadow", "expected_behavior": "schema, assurance, and efficiency findings remain diagnostics with repository_blocking=false"},
+    {"id": "RSE-OPTIONAL-001", "condition": "ordinary sizing is performed", "expected_behavior": "no telemetry, benchmark, calibration, or durable audit ledger is required"}
   ]
 }
