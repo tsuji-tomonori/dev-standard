@@ -31,7 +31,6 @@
 | F4 | .codex、validator、配布snippet | Minor | 未使用hooks、固定の3並列上限と推論強度 | モデル固有の評価根拠なし、Fable 5.1のeffort再評価指針 | hostの判断を固定 | 未使用設定と数値上限検査を削除。read-only reviewerは維持 | host生成、配布隔離test |
 | F5 | review、listening、frontend test | Minor | 研究資料の先行読込み、固定会話手順、別Skillへの修正引継ぎが過剰 | 明示依頼の範囲、公式Skill指針 | 作業遅延 | 必要時の参照と既存実装権限内の修正へ整理 | 指示照合、対象シナリオ |
 | F6 | CONTRIBUTING | Minor | 小変更にもmake verifyを一律要求 | AGENTS.md、3本目の柱 | 過剰な検証 | 全体契約の変更時だけmake verify | repository指示との照合 |
-
 | F7 | chat-first frontmatter、validator | Major | descriptionの未引用colonがYAML構文エラーなのに行分割parserが受理 | Skill形式契約、公式Skill仕様 | hostが入口Skillを読めない可能性 | 有効なdescriptionへ修正し、実YAML parserで検証 | 引用colon・複数行の受理、不正colon・非文字列の拒否test |
 
 ## 検証と限界
