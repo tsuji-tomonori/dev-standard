@@ -5,11 +5,7 @@ description: Discover human-centred, testable frontend requirements without requ
 
 # Elicit Frontend Requirements
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "elicit-frontend-requirements"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "elicit-frontend-requirements"`（保守・監査時に参照）。
 
 利用者のtask、context、失敗影響、制約から、実装と検証に必要なfrontend要求を明らかにする。
 
@@ -65,37 +61,18 @@ frontend requirementは次の場合に未完成である。
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `elicit-frontend-requirements`
-- 役割: frontend-requirements
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-frontend-requirements-are-needed
 - 起動context: `frontend-requirements`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: a frontend outcome is requested
-- 事後条件: durable observable obligations are maintained in canonical requirements and design context is handed forward
 - Authority: user-intent
 - 副作用: repository-write
 - 失敗状態: return-for-clarification
-- 入力: `user-task`, `context`, `failure-impact`
-- 出力: `canonical-requirement-delta`, `design-context`, `selected-check`
-- 義務: `separate-user-problem-from-solution`, `maintain-durable-obligations`, `handoff-context-and-selected-checks`
-- 禁止事項: `do not persist temporary interview notes`, `do not create per-change requirement reports`, `do not impose repository policy`
-- 依存Skill: なし
-- 必須asset: `references/evidence-map.md`
-- 要件trace: `REQ-DISC-005`
-- manual digest: `182dcaa3aa9c453416c979f33b4d7ddda3d3db66aeb530d519a4aaaa3ad8cc20`
-- payload digest: `9e4bcabfece7a6685a9cb07399e6c8a10ee7a72c760dbbd1b20f91df671f4bb4`
-- interface digest: `01653ab1c807a2841aa48a2eeea4a8da57eaf31227066664929c8dea2cfc4e1b`
 <!-- END GENERATED QUINT CONTRACT -->

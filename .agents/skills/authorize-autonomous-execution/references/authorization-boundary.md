@@ -2,7 +2,7 @@
 
 When a concrete lifecycle duty exists, authorization covers the requested result, durable requirement meaning, authority boundary, external or irreversible effects, production/cost boundary, rollback, and stop conditions required by that duty. For a standalone authority boundary, it covers only the named external write, production operation, deletion, publication, merge, high-cost action, or other difficult-to-reverse operation.
 
-The execution plan must make the following decision-ready before asking once:
+First reuse explicit authorization that is still valid for the same result and effects, including an earlier turn of the current task. Ask only when authorization is missing, expired, withdrawn, or does not cover the action. Before asking, complete independent preparation and make the following decision-ready:
 
 - repository, service, environment, account, data, and people in scope;
 - the external or irreversible effect, publication, merge, release, deletion, production target, and cost that actually cross authority;

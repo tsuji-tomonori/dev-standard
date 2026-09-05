@@ -41,7 +41,7 @@ class SpecflowTest(unittest.TestCase):
         )
         generated = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")
         self.assertEqual(generated, specflow.render(catalog))
-        self.assertEqual(catalog["catalog_revision"], 12)
+        self.assertEqual(catalog["catalog_revision"], source_catalog()["catalog_revision"])
         self.assertGreaterEqual(len(catalog["requirements"]), 59)
         self.assertEqual(sum(item["status"] == "retired" for item in catalog["requirements"]), 3)
         self.assertIn("正本: `spec/requirements/requirements.qnt`", generated)

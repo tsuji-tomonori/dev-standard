@@ -5,11 +5,7 @@ description: Verify frontend tasks, states, accessibility, responsiveness, visua
 
 # Test Frontend Experience
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "test-frontend-experience"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "test-frontend-experience"`（保守・監査時に参照）。
 
 実装が、対象の人に対象contextでtaskを完了させるかを確認する。render成功やscanner成功だけを品質Passにしない。
 
@@ -61,7 +57,7 @@ expected outcome、user、context、acceptanceが未定義なら`$elicit-fronten
 8. supported browser、device、locale、theme、inputの宣言範囲内だけを主張する。
 9. automated resultをローカル出力または対象repositoryの既存CIで確認する。
 10. selected manual check、N/A、Advisory、residual riskだけを会話または既存の変更記録へ簡潔に残す。
-11. failは、違反したauthority、最小再現、修正先、再実行するtestを含むhandoffとして返す。別途権限を持つ実装Skillが修正した後、影響するtestを再実行する。
+11. failは、違反したauthority、最小再現、修正先、再実行するtestを含むhandoffとして返す。呼出元に既存の実装依頼があれば、その権限内で修正して再検証できる。別Skillの導入や再承認は不要である。
 
 test commandがnetwork、browser service、external environment等へeffectを持ち得る場合は、その宣言effect、target、現在の明示authority、残存riskを実行前に確認して結果へ残す。test runnerがprocess isolationやexternal effect不在を証明したとは主張しない。
 
@@ -112,37 +108,18 @@ test commandがnetwork、browser service、external environment等へeffectを�
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `test-frontend-experience`
-- 役割: frontend-testing
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-frontend-testing-is-requested
 - 起動context: `frontend-testing`
 - 外部作用capability: yes
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: frontend requirements, approved design, implementation, and selected checks are available
-- 事後条件: tests selected only for applicable dimensions pass or a bounded repair handoff is returned, and claims stay within executed scope
 - Authority: frontend-requirements-and-approved-design
 - 副作用: target-command-effects
 - 失敗状態: report-bounded
-- 入力: `requirements`, `design-decisions`, `implementation`, `as-built-design`, `supported-environment`, `selected-check`, `declared-test-command-effects`, `external-authority-if-applicable`
-- 出力: `test-results`, `selected-check-result`, `declared-effect-report`, `residual-risk`, `repair-handoff`
-- 義務: `derive-tests-from-authority-order`, `select-only-applicable-test-dimensions`, `exercise-applicable-task-and-failure-states`, `bind-declared-external-effects-to-authority`, `bound-verdict-to-supported-environment`
-- 禁止事項: `do not mutate production artifacts while reviewing`, `do not let implementation override requirements`, `do not claim process isolation or unexecuted coverage`
-- 依存Skill: なし
-- 必須asset: `references/evidence-map.md`
-- 要件trace: なし
-- manual digest: `81110ef1694ce9bbf719c6c11c596413406599674e22c1f02a2b2068f9acd576`
-- payload digest: `ae93336d0c22d3524dc0615c389b1cec418b953875d59fb7ffd1f943abb2d0a6`
-- interface digest: `75a61d820c9f0f7aeca8315708801ba28ce17a3850b1372b6ec45f9962c9c6d4`
 <!-- END GENERATED QUINT CONTRACT -->

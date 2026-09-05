@@ -49,4 +49,6 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 
 installerは導入先の`.github/`、branch、merge設定を追加も変更もしません。既存の`AGENTS.md`または`CLAUDE.md`は管理marker内だけを更新し、その他の記述を維持します。
 
+最新モデル向けの構成判断と公式根拠は[フロンティアモデルと最小ハーネス](docs/reference/frontier-model-guidance.md)を参照してください。
+
 詳細は[導入とSkills一覧](docs/guides/getting-started.md)、[形式仕様](docs/reference/FORMAL-SPECIFICATIONS.md)、[開発契約](docs/reference/development.md)を参照してください。

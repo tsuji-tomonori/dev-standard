@@ -5,6 +5,7 @@
 - [導入とSkills一覧](guides/getting-started.md)
 - [開発契約](reference/development.md)
 - [Quint形式仕様](reference/FORMAL-SPECIFICATIONS.md)
+- [フロンティアモデルと最小ハーネス](reference/frontier-model-guidance.md)
 - [Skills根拠資料一覧・整合性監査](reference/skill-evidence-audit.md)
 - [Quint・3本柱・portable policyの判断](decisions/ADR-0004-quint-three-pillar-portability.md)
 - [終了した二層branch試行](decisions/ADR-0002-two-layer-branch-history.md)

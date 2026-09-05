@@ -5,11 +5,7 @@ description: Discover, classify, atomize, and maintain durable product or projec
 
 # Maintain Canonical Requirements
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "maintain-canonical-requirements"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "maintain-canonical-requirements"`（保守・監査時に参照）。
 
 会話から、今後も維持する必要がある要件だけを形式仕様へ反映する。これは1本目のガードレールである。
 
@@ -78,37 +74,18 @@ technology、architecture、tool、path、工程、成果物を名指しする�
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `maintain-canonical-requirements`
-- 役割: canonical-requirements
 - 柱: requirements
-- guardrail: yes
 - repository blocking: yes
 - 既定portable: yes
 - 適用条件: when-durable-obligation-changes-or-authority-is-initialized
 - 起動context: `durable-requirement-change`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: a requirements authority is initialized or a durable observable obligation changes
-- 事後条件: Quint source, verification, derived JSON, and generated docs agree, while only already-existing downstream artifacts require current traces and future trace work is handed downstream
 - Authority: quint-requirements
 - 副作用: repository-write
 - 失敗状態: fail-on-invalid-catalog
-- 入力: `initialization-or-delta`, `source`, `acceptance`
-- 出力: `requirements-qnt`, `requirements-json`, `requirements-doc`, `existing-requirement-trace`, `downstream-trace-handoff`
-- 義務: `maintain-quint-as-sole-requirements-authority`, `atomize-and-classify-durable-obligations`, `generate-json-then-human-documentation`, `handoff-future-downstream-trace-without-blocking-requirement-update`
-- 禁止事項: `do not edit generated requirement views`, `do not persist reversible implementation choices as requirements`, `do not require CI branch or merge policy`
-- 依存Skill: なし
-- 必須asset: `assets/documentation-project-nfr.example.json`, `assets/requirements.schema.json`, `assets/requirements.template.qnt`, `references/research-basis.md`, `scripts/specflow.py`
-- 要件trace: `REQ-DISC-001`, `REQ-DISC-002`, `REQ-DISC-003`, `REQ-DISC-004`, `REQ-DISC-005`, `REQ-DOCS-001`, `REQ-FRAME-001`, `REQ-QUINT-002`
-- manual digest: `b71bd2adb2ffc857f422147752f32ccaae35d712c3f6edefadc55980271dd103`
-- payload digest: `7f497d1fa2d81cfa91cbdab77b3aebb4e4d73bb88008579984370931661fcc43`
-- interface digest: `b01e1f0024fed3697ccf71d93c9111cd47755cf531217ecbf61dfb66ec7b6a89`
 <!-- END GENERATED QUINT CONTRACT -->

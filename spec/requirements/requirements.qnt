@@ -58,9 +58,9 @@ module requirements {
 
   pure val requirementsSource: Catalog = {
     schemaVersion: 1,
-    catalogRevision: 12,
+    catalogRevision: 13,
     product: "dev-standard",
-    updatedAt: "2026-08-29",
+    updatedAt: "2026-09-05",
     requirements: [
       {
         id: "REQ-ASBUILT-001",
@@ -1294,7 +1294,7 @@ module requirements {
       },
       {
         id: "REQ-PORTABLE-003",
-        revision: 1,
+        revision: 2,
         status: "active",
         kind: "constraint",
         title: "外部操作の明示権限境界",
@@ -1302,9 +1302,10 @@ module requirements {
         actionName: "constrain",
         objectName: "外部または不可逆な操作を利用者が明示した依頼と必要な承認の範囲だけに限定すること",
         rationale: "copy-and-chatで導入したガードレールが、要件更新や検査を理由に未依頼の公開、deploy、merge、外部記録または高額操作へ権限を広げてはならない。",
-        sourceRefs: ["user:2026-08-27", "user:2026-08-29", "AGENTS.md"],
+        sourceRefs: ["user:2026-09-05", "user:2026-08-27", "user:2026-08-29", "AGENTS.md"],
         acceptanceCriteria: [
-          { id: "AC-PORTABLE-003-1", given: "外部systemへの書込みまたは不可逆な操作が開発手順に現れる", when_: "portable Skillまたはruntimeが実行可否を判断する", expected: "利用者がその結果を明示的に依頼し、対象systemに必要な権限が確認できる場合だけ実行し、それ以外はrepository内の成果物またはhandoffに留める" }
+          { id: "AC-PORTABLE-003-1", given: "外部systemへの書込みまたは不可逆な操作が開発手順に現れる", when_: "portable Skillまたはruntimeが実行可否を判断する", expected: "利用者がその結果を明示的に依頼し、対象systemに必要な権限が確認できる場合だけ実行し、それ以外はrepository内の成果物またはhandoffに留める" },
+          { id: "AC-PORTABLE-003-2", given: "同じ対象と外部作用への明示依頼・承認が会話または対象所有記録にあり、撤回・失効していない", when_: "後続の手順で同じ権限境界を確認する", expected: "既存承認を再利用し、形式的な再承認や別Skillの導入を要求しない。範囲拡張、失効、対象側の必須承認は省略しない" }
         ],
         verification: { method: "契約テストとmutation test", evidence: "未依頼外部操作の拒否、明示依頼と権限を伴う操作の許可、外部anchor handoff境界の検査" },
         traces: {
@@ -1313,7 +1314,7 @@ module requirements {
           tests: ["tests/test_skills.py", "tests/test_profile_boundaries.py", "tests/test_install_reference.py"],
           standards: [],
         },
-        lastChangedBy: "user:2026-08-29",
+        lastChangedBy: "user:2026-09-05",
         retirementReason: "",
         supersededBy: "",
         scopeName: "product",
@@ -1489,7 +1490,7 @@ module requirements {
       },
       {
         id: "REQ-QUINT-003",
-        revision: 2,
+        revision: 3,
         status: "active",
         kind: "quality",
         title: "全Skillの形式契約網羅",
@@ -1497,10 +1498,11 @@ module requirements {
         actionName: "formalize",
         objectName: "すべてのSkillを一対一のQuint契約とactive要件の双方向traceへ対応付けること",
         rationale: "Skill追加時の形式仕様漏れ、削除後に残るstale契約、実装traceだけまたは自己申告requirement IDだけの片方向接続を機械検出する。",
-        sourceRefs: ["user:2026-08-27", "user:2026-08-29", "https://quint.sh/docs/what-does-quint-do", "docs/decisions/ADR-0004-quint-three-pillar-portability.md"],
+        sourceRefs: ["user:2026-09-05", "user:2026-08-27", "user:2026-08-29", "https://quint.sh/docs/what-does-quint-do", "docs/decisions/ADR-0004-quint-three-pillar-portability.md"],
         acceptanceCriteria: [
           { id: "AC-QUINT-003-1", given: "Skill directoryとQuint契約catalogがある", when_: "形式契約検査を実行する", expected: "双方の名前集合が完全一致し、各SKILL.mdから契約へtraceできる" },
-          { id: "AC-QUINT-003-2", given: "active要件がSkill pathをtraceするかSkill契約がrequirement IDを宣言する", when_: "trace整合検査を実行する", expected: "要件からSkill pathへの組とSkillからactive requirement IDへの組が完全一致し、未知またはretired IDを拒否する" }
+          { id: "AC-QUINT-003-2", given: "active要件がSkill pathをtraceするかSkill契約がrequirement IDを宣言する", when_: "trace整合検査を実行する", expected: "要件からSkill pathへの組とSkillからactive requirement IDへの組が完全一致し、未知またはretired IDを拒否する" },
+          { id: "AC-QUINT-003-3", given: "Skillを実行時に読み込む", when_: "Quint契約のviewを生成する", expected: "入口には起動条件と実行境界と正本参照だけを表示し、詳細field・asset一覧・digestは生成catalogで保持する。簡略表示後も全field検査、digest照合、配布先drift検知を維持する" }
         ],
         verification: { method: "Quint testと双方向集合比較", evidence: "skills.qntのtest成功、Skill inventory、requirementIdsとactive要件Skill path traceの完全一致検査" },
         traces: {
@@ -1509,7 +1511,7 @@ module requirements {
           tests: ["tests/test_quintflow.py", "tests/test_skills.py"],
           standards: ["QUINT-0.32"],
         },
-        lastChangedBy: "user:2026-08-29",
+        lastChangedBy: "user:2026-09-05",
         retirementReason: "",
         supersededBy: "",
         scopeName: "project",

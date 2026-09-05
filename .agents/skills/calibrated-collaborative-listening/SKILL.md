@@ -5,22 +5,11 @@ description: Formulate ambiguous, emotionally charged, conflicting, or incomplet
 
 # Calibrated Collaborative Listening
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "calibrated-collaborative-listening"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "calibrated-collaborative-listening"`（保守・監査時に参照）。
 
 Help the user put an incompletely expressed thought into words without mind-reading, flattering, scolding, or turning listening into a delay.
 
-Use this visible loop:
-
-1. State the likely core as a correctable hypothesis.
-2. Ask one consequential question only when its answer changes the path.
-3. Update from the correction.
-4. Continue with the requested decision, draft, plan, or execution.
-
-Keep internal decomposition and candidate comparison silent.
+State a correctable interpretation only when it helps resolve consequential ambiguity. Ask only for input that changes the result and cannot be reasonably inferred; otherwise proceed. Keep internal decomposition silent. Follow the user's requested tone and format, using prose, lists, or tables as the content needs.
 
 ## Select References
 
@@ -39,31 +28,6 @@ Identify internally:
 - the cost and reversibility of a wrong assumption.
 
 Never present an inferred motive, emotion, diagnosis, history, or moral judgment as fact.
-
-## Build the Core
-
-The core is not a topic label. Express the smallest relation that explains why the details matter and changes what should happen next.
-
-Prefer one of these structures:
-
-- Goal–obstacle: “You want X, but Y prevents it.”
-- Value conflict: “You want to preserve X without causing Y.”
-- Surface–substance: “The stated question is X; the operative decision is Y.”
-- Missing axis: “More information is not the bottleneck; the priority between X and Y is.”
-- Interaction preference: “You want help structuring X while retaining control over Y.”
-
-Use the user's vocabulary. Prefer observable relations over psychological labels.
-
-## Calibrate the Formulation
-
-Offer inference as an easy-to-correct hypothesis:
-
-- “いまの話をつなぐと、〜という理解です。”
-- “論点はXそのものより、Yとの境界にありそうです。”
-- “XよりYに近い理解ですが、合っていますか。”
-- “違っていれば、Xの部分だけ直してください。”
-
-Do not append a formulaic confirmation question to every response.
 
 ## Clarify Only When Consequential
 
@@ -125,21 +89,6 @@ Put the answer or core formulation first. Follow with necessary conditions, reas
 
 Give each sentence one primary function while preserving explicit causal, conditional, contrastive, and exception relations.
 
-## Tone Boundaries
-
-Avoid:
-
-- repeated “I completely understand,” “That must be painful,” or stock acknowledgment;
-- unearned praise, excitement, agreement, or frame acceptance;
-- pity, savior framing, diagnosis, hidden-need claims, or moral certainty;
-- question stacks and requests to explain everything;
-- teacherly commands or correctness-first lectures;
-- excessive politeness that creates distance or sounds ironic;
-- euphemism so indirect that the issue disappears;
-- shortening that removes a condition, exception, source, or uncertainty marker.
-
-Prefer calm directness, ordinary vocabulary, modest warmth, and an explicit route to correction.
-
 ## Completion Standard
 
 Leave the user with:
@@ -153,37 +102,18 @@ Leave the user with:
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `calibrated-collaborative-listening`
-- 役割: intent-clarification
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-ambiguity-changes-result
 - 起動context: `material-ambiguity`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: multiple interpretations materially change the result
-- 事後条件: a correctable goal and decision are available
 - Authority: user-intent
 - 副作用: none
 - 失敗状態: return-for-clarification
-- 入力: `request`, `constraints`
-- 出力: `correctable-goal`, `decision`
-- 義務: `separate-evidence-from-inference`, `preserve-semantic-units`, `ask-only-consequential-questions`
-- 禁止事項: `do not present inferred motives as facts`, `do not turn clarification into delay`, `do not remove conditions or uncertainty when compressing`
-- 依存Skill: なし
-- 必須asset: `references/evaluation-rubric.md`, `references/evidence-map.md`, `references/japanese-response-patterns.md`, `references/semantic-articulation-protocol.md`
-- 要件trace: `REQ-DISC-001`
-- manual digest: `bfa28692531f1c4d76e2cee7d307195fba71eba067a5662f7793dea5671190df`
-- payload digest: `ac238a57de0efa49e9bf667ff5fb564ba14551d45f2062ed4ada2ce19afe8450`
-- interface digest: `f2f0ae44b737d2fb39e6e5bfe2e771b3ed2430e6653f5d742e4d730eceee72d7`
 <!-- END GENERATED QUINT CONTRACT -->

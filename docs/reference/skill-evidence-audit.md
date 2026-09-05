@@ -177,6 +177,8 @@
 | engineering standards | versioned registryが適用資料を選び、一般WAFやlocal standardを一律準拠として扱わない。 |
 | local policy | JSON shape、revision protocol、閾値、file layoutは`L`として明示し、研究結果と混同しない。過去のreview schemaと任意のcommit形式はportable authorityにしない。 |
 
+最新モデルの指示設計との照合は[フロンティアモデルと最小ハーネス](frontier-model-guidance.md)を参照する。
+
 ## 9. Quint契約と実体の等価性境界
 
 各Skillの一次契約は`spec/skills/skills.qnt`であり、自然言語本文だけを形式仕様とみなさない。契約は全18 Skillについて次を型付きfieldまたは有限enumとして持つ。

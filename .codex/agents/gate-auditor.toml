@@ -1,7 +1,6 @@
 name = "gate-auditor"
 description = "変更へ該当する3本柱と明示的に起動した補助contextの証拠だけを監査する。"
 sandbox_mode = "read-only"
-model_reasoning_effort = "high"
 model_verbosity = "low"
 developer_instructions = """
 Independently test the completion claim against only the three pillars applicable to the current change, the selected checks, traceability, and direct evidence. Do not demand evidence for a non-applicable pillar or activate authorization, phase reports, work items, or hash chains as an extra gate. Only when a concrete regulated duty activation context is evidenced, inspect its bounded authorization and lifecycle evidence as well. Treat missing evidence for an applicable selected blocker or an unreviewed claimed scope as a finding. Cite exact artifacts. Do not edit, approve, or redefine scope.

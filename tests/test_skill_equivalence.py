@@ -11,6 +11,7 @@ import tools.quintflow as quintflow_module
 from tools.quintflow import extract_skills
 from tools.render_skills import (
     payload_sha256,
+    render_skill_manual,
     render_skills,
     validate_contract_catalog,
     without_generated_block,
@@ -87,8 +88,10 @@ class SkillEquivalenceTest(unittest.TestCase):
                 )
                 self.assertIn(f"name: {name}", body)
                 self.assertIn(f'name: "{name}"', body)
-                self.assertIn("`applicability`と`activationContexts`", body)
-                self.assertIn("no-op", body)
+                self.assertEqual(render_skill_manual(body, contract), manual)
+                self.assertIn(contract["applicability"], manual)
+                for context in contract["activationContexts"]:
+                    self.assertIn(context, manual)
                 self.assertIn(f"${name}", interface)
                 self.assertIn(f"`{name}`", evidence_audit)
                 payload_sha256(contract, SKILLS_ROOT / name)
@@ -294,7 +297,7 @@ class SkillEquivalenceTest(unittest.TestCase):
         cases = {
             "adversarial-review": ["no finding", "no-finding"],
             "authorize-autonomous-execution": [
-                "target-owned authority evidence",
+                "承認主体または対象組織が事前に所有する",
                 "自己発行",
             ],
             "chat-first-development": ["PRの作成・更新・comment・review・merge", "明示"],
@@ -317,7 +320,7 @@ class SkillEquivalenceTest(unittest.TestCase):
                 "対象repositoryが既に所有するcommand registry",
                 "target-declared-external",
                 "no_applicable_reason",
-                "process isolation",
+                "process_effect_isolation_provided",
             ],
             "japanese-git-commit-gitmoji": ["利用者または対象repository"],
             "maintain-canonical-requirements": ["未実装の下流artifactは捏造せず", "将来path"],
@@ -332,6 +335,8 @@ class SkillEquivalenceTest(unittest.TestCase):
             body = without_generated_block(
                 (SKILLS_ROOT / name / "SKILL.md").read_text(encoding="utf-8")
             )
+            if name == "inspect-quality-gates":
+                body += (SKILLS_ROOT / name / "references/runner-contract.md").read_text(encoding="utf-8")
             for marker in markers:
                 with self.subTest(skill=name, marker=marker):
                     self.assertIn(marker, body)

@@ -5,17 +5,13 @@ description: Falsify claims in requirements, designs, code, tests, or documents 
 
 # Adversarial Review
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "adversarial-review"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "adversarial-review"`（保守・監査時に参照）。
 
 Treat “the artifact contains a mistake” as a search hypothesis. Seek decisive evidence, but let the evidence determine the conclusion. Critique claims and artifacts, never people.
 
 ## Prepare the review
 
-1. Read `references/research-basis.md` for the evidence-to-rule map.
+1. Identify the artifact and its authority. Read `references/research-basis.md` only when maintaining the Skill or explaining its evidence basis.
 2. Read `references/challenge-playbook.md` and choose only the perspectives and techniques relevant to the artifact.
 3. Convert the artifact into falsifiable claims: required outcomes, forbidden outcomes, invariants, preconditions, postconditions, assumptions, and trace links.
 4. Establish the authoritative source for each claim. Derive expected behavior from that source, not from the artifact's rationale or implementation.
@@ -46,7 +42,7 @@ If no claim is falsified, return an explicit scoped `no finding` conclusion, the
 ## Boundaries
 
 - This is not security red teaming or attack simulation.
-- This is a review-only Skill. Do not modify the reviewed artifact; an independently authorized implementation Skill owns any repair and returns the result for re-review.
+- This is a review-only Skill. Do not modify the reviewed artifact; the caller may repair under an existing implementation request, then return for re-review; a review-only request does not authorize edits.
 - Do not turn review into security testing unless the request independently requires it.
 - Do not invent requirements, silently change the authoritative source, or treat stylistic preference as correctness.
 - Be direct about defects without sarcasm, hostility, score-settling, or criticism of the author.
@@ -61,37 +57,18 @@ If no claim is falsified, return an explicit scoped `no finding` conclusion, the
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `adversarial-review`
-- 役割: independent-review
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-explicitly-requested
 - 起動context: `explicit-review-request`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: falsifiable claims and an authority are available
-- 事後条件: a bounded review report, including an explicit no-finding result when appropriate, is returned without mutating the artifact
 - Authority: artifact-authority
 - 副作用: none
 - 失敗状態: report-bounded
-- 入力: `artifact`, `authority`, `review-scope`
-- 出力: `review-result`, `optional-findings`, `residual-uncertainty`, `conditional-repair-handoff`
-- 義務: `reconstruct-independent-authority`, `seek-falsifying-evidence`, `allow-evidence-supported-no-finding-result`, `report-bounded-findings`
-- 禁止事項: `do not mutate the reviewed artifact`, `do not claim proof from a finite review`, `do not invent requirements`
-- 依存Skill: なし
-- 必須asset: `references/challenge-playbook.md`, `references/report-template.md`, `references/research-basis.md`
-- 要件trace: なし
-- manual digest: `09678c3a766efe9f49c35f2fc930381e14e1465e651b3fe2135521fa847beb47`
-- payload digest: `9ad70d5f3a5dda494f0249985dfdea45c00bb217418a8be95476324f243dff99`
-- interface digest: `2a288a121591cb1bd3c950bc18615d267d1edf0f28331f2157aa7296ef9ef856`
 <!-- END GENERATED QUINT CONTRACT -->
