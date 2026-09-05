@@ -1,160 +1,100 @@
 ---
 name: inspect-quality-gates
-description: Inspect only checks selected for the current change and timing. Record decisions in governance/reviews/<change-id>.yaml, keep CI results external, and use legacy phase gates only for regulated work.
+description: Select and run only the checks relevant to the current change, using local evidence or an existing project check without creating CI, merge rules, or review bureaucracy.
 ---
 
 # Inspect Quality Gates
 
-選択されたcheckだけを、変更イベントに応じた時点で確認する。
+## Formal specification
 
-## 既定の証跡
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "inspect-quality-gates"` を形式契約とする。
 
-- review判断: `governance/reviews/<change-id>.yaml`
-- check定義の正本: `governance/checks/catalog.yaml`
-- automated result: GitHub Actions等の外部サービス
-- requirement / design impact: Commit Comment
-- implementation evidence: code、test、生成設計、ADR、Git diff
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
 
-変更ごとのtest report、implementation log、release reportは作らない。
+変更と受入条件に関係する検査だけを選び、結果を直接確認する。これは3本目のガードレールであり、別の統制層を追加しない。
 
-## Check class
+## Inputs
 
-### Invariant
+- 変更差分と受入条件
+- 対象repositoryが既に持つtest、lint、type check、build、generator
+- 必要な場合だけ、既存のCI結果または人による確認結果
 
-triggerに該当した場合はPass必須。Failを残したままmergeしない。
+## Workflow
 
-例:
+1. 変更した挙動、path、riskから、失敗を検出できる最小の検査を選ぶ。
+2. 未選択の検査をN/Aとして列挙しない。
+3. まず対象範囲のローカル検査を実行し、必要な場合だけ範囲を広げる。
+4. blockingとするのは、受入条件、生成物の整合、機密情報、権限境界など、その変更に直接関係する失敗だけとする。
+5. 既存CIがある場合は追加証拠として参照できる。CIがないこと自体を失敗にしない。
+6. 結果は会話、既存のPR欄、または対象repositoryが既に採用するartifactへ簡潔に記録する。専用review YAMLを要求しない。
 
-- secretsや個人情報をGitへ入れない
-- 必要な対象test、build、type checkが実行される
-- 認可境界を迂回しない
-- 未承認の不可逆操作を行わない
-- 生成物と生成元が一致する
-- Commit Commentに要件・設計影響がある
+このSkillは検査と判定だけを行い、失敗を隠すためのsource、test、設定変更は行わない。失敗時は、該当check、直接証拠、影響範囲、最小の修正handoffを返し、別途権限を持つ実装Skillによる修正後に再実行する。選択したcommand自身が一時fileやbuild artifactを作る場合は、その対象repository内の通常の実行効果として明示する。
 
-### Risk-selected
+複数commandを機械実行する場合だけ、対象repositoryが既に所有するcommand registryとrepository-confined planを渡し、`python <host-skill-path>/scripts/inspect.py --root . --registry <target-owned-checks.json> --plan <selected-checks.json>`を使う。`<host-skill-path>`はinstaller receiptとhost adapterが配置した、このSkillのhost-native rootへ解決する。registryがない導入先へ新しいregistryを要求せず、関連checkを通常の対象repository手順で実行する。
 
-変更のrisk、artifact、pathから選択された場合だけblocking。
+registry entryは`command_id`、shell文字列ではない`command` argv、許可する`acceptance_ids` / `risk_tags`、宣言`effect`、`authority` / `authority_reference`、`output_roots`だけを持つ。effectは`read-only`、`repository-build-artifacts`、`target-declared-external`のいずれかとする。read-onlyはoutput rootなし、build artifactは一つ以上のrepository-relative output rootを宣言する。external effectは現在の明示authority referenceがなければ実行前に拒否する。
 
-例:
+planはtop-levelにbounded `scope`、`residual_risks`、`no_applicable_reason`と選択済み`checks`だけを持つ。各checkは`command_id`、関連する`acceptance_ids` / `risk_tags`、任意のbounded `timeout_seconds`を持ち、argv、cwd、envを上書きしない。該当checkがなければ`checks: []`と具体的な`no_applicable_reason`を返すno-opとし、checkがある場合は理由をnullにする。
 
-- API compatibility
-- migration / rollback
-- IaC replacement
-- dependency integrity
-- keyboard / focus
-- independent security review
+runnerは`.git`、`.devflow/run`、宣言済みoutput root以外の全tree digestを実行前後で比較し、source、config、ignored fileを含む予期しないmutationを拒否する。registryとplanのsnapshotは全command後にも再検証し、`--json-out`のCAS read preconditionへも結合する。commandが除外領域内のregistry / planを変更してもresultを発行しない。primary executableは固定system pathへ解決してFD pinし、実行前後のidentity hashを照合する。開始不能時は`cannot-start`とし、実行していないcommandにeffectやdriftがなかったとは主張しない。
 
-### Advisory
+stdoutへraw outputを含まないbounded JSONを返し、明示した`--json-out`以外へsummaryを書かない。runner自身はGitHub APIや外部serviceを呼ばないが、任意のtarget commandが持つprocess外effectを隔離も完全検知もできない。このためeffect宣言がlocalであっても全commandへ`process-effect-not-isolated:<command_id>` residualを付ける。global resultは`process_effect_isolation_provided: false`と`process_effect_detection_provided: false`、各command resultは`process_effect_isolated: false`と`process_effect_detection: "not-provided"`を返し、宣言effect、authority、acceptance / riskとの関連、未検証範囲を伝播する。tree差分から判定できるのはrepository mutationであり、process外effectを検知したとは表現しない。
 
-その変更で確認する価値はあるが、単独ではmergeを停止しない。
+## Boundary
 
-- 修正する
-- Issue化する
-- residual riskへ記載する
+このSkillは次を作成、変更、要求しない。
 
-のいずれかへ収束させる。
+- CI workflow、required check、status check
+- branch protection、ruleset、merge方式、merge先
+- PR template、変更ごとのreview YAML、test report、生ログ
+- 3本柱以外のportable blocking gate
 
-## Timing
-
-### 変更開始前: Impact Check
-
-確認するもの:
-
-- profile
-- requirement impact
-- design impact
-- authority impact
-- public contract、DB、IaC、dependency、security trigger
-- selected check
-
-この時点で全checkのPass/N/Aを記録しない。
-
-### 実装中: Fast Feedback Check
-
-自動検査を小さい変更スライスごとに実行する。
-
-- targeted test
-- build / syntax
-- lint / type check
-- generated drift
-- secret scan
-- contract diff、SQL parse、synth等の選択check
-
-結果の正本は外部CIとし、repositoryへログを複製しない。
-
-### PR作成前: Affected-scope Check
-
-- requirement / design impactの判定と差分が一致する
-- 受入条件へ対応するtestがCIで実行される
-- selected checkのresultと証拠がある
-- blocking failがない
-- advisoryの扱いが決まっている
-- review YAMLがschemaに適合する
-- Commit Commentの必須節が埋まっている
-
-### Merge前: Revision Integrity Check
-
-- CIが現在HEADを対象としている
-- 生成物が最新
-- blocking failがない
-- advisoryとresidual riskの扱いが明示されている
-- squash後のCommit Commentに証跡が残る
-- merge、release、deployが権限境界内
-
-過去の全工程を最初から再検査しない。HEAD変更で無効化された証拠だけを再確認する。
-
-### Deploy後: Operational Check
-
-production deploy、migration、外部書込みがある場合だけ実施する。
-
-- deploy status
-- smoke test
-- migration status
-- monitoring
-- rollback / roll-forward判断
-
-結果はdeployment service、monitoring service、GitHub Actions等へ残す。
-
-### 定期: Governance Audit
-
-個別PRから分離して次を確認する。
-
-- false blocker
-- escaped defect
-- selector miss
-- Skill・hookの指示競合
-- 不要成果物
-- standard registryの鮮度
-- token / tool / reviewerコスト
-- advisory滞留
-
-## Review result rules
-
-### Pass
-
-直接証拠が必要。CIの場合はworkflow名またはrequired check名と、検証対象となるtest・設定への参照を記録する。生ログは保存しない。
-
-### N/A
-
-selectorで選ばれた後、具体的事実により適用外と判明した場合だけ使用する。noteを必須とする。
-
-### Fail
-
-- Invariantとblocking Risk-selectedは修正する。
-- Advisoryは修正、Issue、residual riskのいずれかを記録する。
-- その場で修正するFailへ一律にIssue、期限、責任者を要求しない。
-
-## Regulated compatibility
-
-`regulated` profileでは、既存の`tools/devflow.py`によるphase gate、承認、hash chain、監査を追加できる。このlegacy harnessを`direct`または`assured`へ強制しない。
+対象repositoryが既に持つ規則は尊重するが、それをportable契約として複製しない。
 
 ## Completion
 
-- `python governance/reviews/validate.py --root . --commit HEAD`が成功する。
-- review YAMLがschemaに適合する。
-- trigger該当のInvariantがすべてPass。
-- 選択したblocking Risk-selectedがすべてPass。
-- Advisoryの扱いが決まっている。
-- CI結果をrepositoryへ複製していない。
-- Commit Commentの要件影響、設計影響、review path、検証契約が完成している。
+- 変更と受入条件に対応する検査が選ばれている。
+- 非該当の場合は具体的なno-op理由があり、blocking failureを作っていない。
+- 選んだblocking検査がPassする。
+- 未検証範囲または残存riskがあれば明示されている。
+- 証拠は実行範囲を超えて主張していない。
+- CIやmerge設定を新たに要求していない。
+- target commandの宣言effectとauthorityを報告し、全commandについてprocess isolationやexternal-effect不在を過大主張していない。
+
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `inspect-quality-gates`
+- 役割: selected-checks
+- 柱: checks
+- guardrail: yes
+- repository blocking: yes
+- 既定portable: yes
+- 適用条件: when-change-relevant-checks-exist
+- 起動context: `selected-checks`
+- 外部作用capability: yes
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: changed artifacts, applicable risks, target-owned checks, declared command effects, and any required external authority are known
+- 事後条件: selected blockers pass or a bounded failure is reported with declared command effects and a process-effect-not-isolated residual for every command, without claiming unselected coverage or isolation
+- Authority: target-repository-and-selected-checks
+- 副作用: target-command-effects
+- 失敗状態: report-bounded
+- 入力: `change`, `acceptance`, `target-owned-checks`, `optional-target-owned-command-registry`, `declared-command-effects`, `external-authority-if-applicable`
+- 出力: `selected-check-results`, `declared-effect-report`, `residual-risk`, `repair-handoff`
+- 義務: `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
+- 禁止事項: `do not modify source to hide failures`, `do not claim external-effect absence process isolation or unselected coverage`, `do not execute a declared external effect without explicit authority`, `do not create CI or merge policy`
+- 依存Skill: なし
+- 必須asset: `references/gate-rules.md`, `scripts/inspect.py`
+- 要件trace: `REQ-ASBUILT-019`, `REQ-QUALITY-002`
+- manual digest: `c1c6fe623b543c243f7661cba7d384dda773d9ace416d380e1e248fe039857f8`
+- payload digest: `c8b9782e79e3b5e8cc46c4f4459e06b8fe19854f2365ed8fe73f07562d82a4ab`
+- interface digest: `dd6b82dde5da4e1f6860fa7cb229cdaec7009d68b9b998d277844b174692994c`
+<!-- END GENERATED QUINT CONTRACT -->

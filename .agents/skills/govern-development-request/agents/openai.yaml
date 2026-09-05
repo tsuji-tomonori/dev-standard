@@ -1,4 +1,4 @@
 interface:
   display_name: "統制付き開発要求"
-  short_description: "Run the regulated work-item and gate lifecycle"
-  default_prompt: "Use $govern-development-request only for a regulated change, bind its explicit authorization once, and execute the selected lifecycle gates within that boundary."
+  short_description: "Run a concrete-duty authorization and evidence lifecycle"
+  default_prompt: "Use $govern-development-request only when a concrete legal, contractual, safety, production, audit, or explicitly requested duty requires lifecycle evidence; use the installed host-native sibling runner, consume but never self-mint the pre-existing target-owned authority JSON, strictly replay local events, and hand off any external anchor without writing it."

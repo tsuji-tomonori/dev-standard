@@ -1,119 +1,88 @@
 ---
 name: right-size-execution
-description: Select the smallest sufficient direct, assured, or regulated profile plus context, verification, review, and compute. Use before repository changes or escalation; expand one evidence-backed axis and avoid permanent records for lighter profiles.
+description: Select the smallest sufficient context, verification, review, and compute for a change, expanding only when evidence shows that another axis is needed.
 ---
 
 # Right-size Execution
 
-成功条件と重大リスクを満たす最小十分な経路を選ぶ。
+## Formal specification
 
-## 出力
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "right-size-execution"` を形式契約とする。
 
-通常は内部判断として次を保持し、PR前にreview YAMLへ必要部分だけ確定する。
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
 
-- `profile`: direct / assured / regulated
-- 変更成果物とrisk tag
-- selected check ID
-- required verification
-- authority boundary
-- expansion理由
+成功条件と重大riskを満たす最小十分な経路を選ぶ。通常は会話内の短い判断に留め、専用artifact、telemetry、benchmark、calibration、audit台帳を作らない。
 
-`direct`と`assured`では恒久的なexecution profileファイル、日付+slug計画書、固定template、段階status logを作らない。再開用状態が必要な場合だけ`.devflow/run/`へ保存し、完了後に削除する。
+## Inputs and outputs
 
-`regulated`では既存の`work/<id>/execution-profile.json`を使用できる。
+- 入力: 依頼、既知path、成果物tag、risk tag、受入条件、利用可能な証拠、対象repositoryが既に選んだgate
+- 出力: `scope`、`assurance`、`compute`、`mode`の根拠付き選択と、選択された検証集合
+- 任意出力: 明示的に計測または再開が必要な場合だけ、診断、実績、展開chain、停止digest
 
-## Profile selection
-
-### direct
-
-- 局所的
-- 可逆
-- 外部副作用なし
-- critical riskなし
-- 公開契約、DB、IaC、依存への重大影響なし
-
-### assured
-
-- 複数module
-- 公開API・event。公開契約であることだけでは承認を要求しない
-- DB・migration
-- IaC・network
-- dependency・lockfile
-- 共有UI・重要flow
-- 永続要件、generator、governance
-
-### regulated
-
-- security、authentication、authorization
-- permissions、data loss
-- confidential、PII
-- irreversible production operation
-- 法令・契約上の統制
-- 高額外部操作
-- 利用者が明示的に高保証工程を要求
-
-高リスクはまずverificationとreviewを強める。影響範囲の証拠がない限り、repository全体へscopeを広げない。
+四軸を一つの段階へ畳み込まない。局所的だが重大な変更は`local + critical`、広範囲だが機械的な変更は`repository + standard`になり得る。値と決定特徴は[execution-dimensions.md](references/execution-dimensions.md)を参照する。
 
 ## Workflow
 
-1. 要求、changed path、repository metadataからprofileを選ぶ。
-2. 要件影響、設計影響、authority impactを仮判定する。public API変更は`assured`、external write・不可逆操作・production・公開・merge・高額操作・regulated条件は承認対象として区別する。
-3. `governance/checks/catalog.yaml`のtrigger、timing、classからcheck IDを選ぶ。as-built標準を導入・拡張する場合は専用のcheck選択referenceを使う。
-4. 最小のcontext、tool、verificationで開始する。
-5. 検証失敗、新しい依存、契約影響、証拠不足が判明した場合だけ拡張する。
-6. 一回の判断では一軸だけを拡張する。同じ証拠が複数軸へ関係しても、各軸の必要性と変化を別々に記録して順次評価する。
-7. 成功条件を満たしたら、Commit Comment、review YAML、PR/CI確認以外の探索を停止する。
-8. PR前に実際のprofile、selected check、残存リスクをreview YAMLへ確定する。
+1. 通常ルートの依頼情報と決定的metadataから四軸を独立に推定する。結果を変える不明点だけmetadata probeを最大一回使う。
+2. assurance下限はrisk tagと成果物tagの和集合から導出する。重大riskだけを理由にscopeを広げない。
+3. confidenceは観測特徴による`low / medium / high`と根拠を記録し、校正済みrouterがない間はscoreを`null`にする。
+4. blocking検証は、scope、assurance、成果物、risk、受入条件、対象repositoryが明示したgateの決定的な和集合と完全一致させる。追加探索は別の任意diagnosticとして扱う。
+5. 初期判断を覆す新証拠がある場合だけ、一回の判断につき一軸を拡張する。同一のstable failure identityが戻った場合は回数ではなくstagnationとして止める。
+6. 拡張は直前eventのdigestを含むchainにする。成功時は選択検証、assurance、selection、全拡張chainを結ぶ停止digestを作る。
+7. stateまたは出力を明示的に保存するときは、観測したbyte digestを使うatomic compare-and-swapで競合を拒否する。
+8. 成功条件と選択検証を満たしたら、確定処理以外の正のコスト活動を止める。
 
-## Planning depth
+一時状態は再開が必要な場合だけ`.devflow/run/`へ置く。計測機能を明示的に使う場合のfield定義は[measurement-contract.md](references/measurement-contract.md)に限定し、通常依頼の前提にしない。
 
-- `direct`: 依頼が具体的で局所的なら別計画を作らず、変更・検証・Commit Commentへ進む。
-- `assured`: 複数artifactの順序とrollbackを内部で段階化する。再開が必要な場合だけ`.devflow/run/`へ一時保存する。
-- `regulated`: 規制・監査・不可逆性の根拠があるlifecycle文書と承認記録を使用できる。
+## Boundary
 
-計画の有無を承認の代用にしない。承認はauthority boundaryへ結び付ける。
-
-## Soft budget
-
-context、tool call、search、reviewer、computeの予算は観測用のsoft limitとする。
-
-- 固定上限をhard gateにしない。
-- repository規模、monorepo、生成コード、間接依存を考慮する。
-- 同一digestの無目的な反復は警告する。
-- 変更後確認、再生成後確認、文脈回復のための再読は禁止しない。
-- 情報不足を強いmodelだけで補おうとしない。
-
-## Expansion
-
-許可理由の例:
-
-- verification-failed
-- impact-surface-exceeded
-- dependency-discovered
-- contract-impact-discovered
-- assurance-insufficient
-- requirements-conflict
-- evidence-insufficient
-- compute-insufficient
-- independent-review-required
-
-原則として必要な軸だけを広げる。一律の回数上限は設けない。
-
-## Check selection
-
-- ID、class、timing、trigger、合格条件は`governance/checks/catalog.yaml`だけを正本とする。
-- 全checklistをpromptへ入れない。
-- `trigger`、changed path、risk、profileから選択する。
-- 未選択をN/Aへ変換しない。
-- `Invariant`はtrigger該当時に必須。
-- `Risk-selected`は選択された場合だけblocking。
-- `Advisory`は修正、Issue、残存リスクへ収束させる。
+- CI、PR、branch、merge方式、commit形式の導入をprofile選択の結果にしない。
+- 対象repositoryが既に選んだ検査は利用できるが、特定のhost、CI、branch保護、merge ruleがないことを不足としない。
+- 全checkをN/A付きで列挙しない。
+- shadow、schema、assurance、効率の診断はこの補助Skill自身を第四のrepository blockerにせず、`repository_blocking=false`で報告する。
+- 外部書込み、削除、公開、merge、production、高額操作は明示権限の範囲だけ実行する。
 
 ## Completion
 
-- profileが実際の変更と一致する。
-- 要件影響と設計影響がCommit Commentへ記録される。
-- selected checkがreview YAMLへ記録される。
-- required verificationがGitHub Actions等で実行される。
-- blocking failが残っていない。
-- 成功後の無目的な追加探索がない。
+- 四軸と完全一致する検証projectionが実際のriskと成果物に対応する。
+- 選択された検証に未解決の失敗が残っていないか、有界な失敗として報告される。
+- 必要なauthority boundaryと残存riskが明確である。
+- 成功後の無目的な追加作業がない。
+
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `right-size-execution`
+- 役割: execution-sizing
+- 柱: auxiliary
+- guardrail: no
+- repository blocking: no
+- 既定portable: no
+- 適用条件: when-execution-sizing-is-needed
+- 起動context: `execution-sizing`
+- 外部作用capability: no
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: execution context can provide sizing, adjustment, verification observation, and stopping evidence
+- 事後条件: the selected or adjusted minimum profile has an exact verification projection, bounded diagnostics, and tamper-evident stopping evidence
+- Authority: change-risk
+- 副作用: repository-confined-temporary-write
+- 失敗状態: report-bounded
+- 入力: `execution-context`, `change-risk`, `artifacts`, `acceptance`, `target-owned-gates`, `available-evidence`
+- 出力: `execution-profile`, `selected-verification`, `optional-diagnostics`, `stopping-evidence`
+- 義務: `assess-independent-execution-axes`, `derive-exact-verification-projection`, `expand-one-evidence-backed-axis`, `stop-after-decisive-success`, `preserve-tamper-evident-state`
+- 禁止事項: `do not infer repository policy from execution sizing`, `do not fabricate evidence or bypass a risk floor`, `do not continue unbounded exploration after success`
+- 依存Skill: なし
+- 必須asset: `assets/behavior-constraints.json`, `assets/benchmark-cases.json`, `assets/execution-policy.json`, `assets/execution-policy.schema.json`, `assets/execution-profile.schema.json`, `references/execution-dimensions.md`, `references/expansion-contract.md`, `references/measurement-contract.md`, `references/stopping-contract.md`, `scripts/executionflow.py`
+- 要件trace: `REQ-EXEC-001`, `REQ-EXEC-002`, `REQ-EXEC-003`, `REQ-EXEC-004`, `REQ-EXEC-005`, `REQ-EXEC-006`, `REQ-EXEC-007`, `REQ-EXEC-008`, `REQ-EXEC-009`, `REQ-EXEC-010`, `REQ-SKILL-001`, `REQ-SKILL-002`
+- manual digest: `c69584254c09ea7fe305d81281217534ed45524f683d205b5eb9b32dd92ac409`
+- payload digest: `bf7266038bd097f19a95bbaf4c8a9b08130b42980920f2c87e106fdf0c90e803`
+- interface digest: `c06abbf5b7ca484f5e2e33335928375624c069cb6d4a7393cda10acc52451211`
+<!-- END GENERATED QUINT CONTRACT -->

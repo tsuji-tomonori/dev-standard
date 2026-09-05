@@ -1,4 +1,4 @@
-<!-- standardsflow.pyによる自動生成。governance/standards/registry.jsonを編集すること。 -->
+<!-- standardsflow.pyによる自動生成。選択したregistry（既定はSkill asset）を編集すること。 -->
 # 参照資料一覧
 
 この一覧は品質検証で参照する知識体系・公式ガイダンスの版と適用範囲を固定する。各資料は案件条件に応じて適用性を判断する参照情報であり、一律適用や完全準拠を表明しない。
@@ -16,8 +16,8 @@
 | `GCP-WAF` | Google Cloud | [Google Cloud Well-Architected Framework](https://docs.cloud.google.com/docs/get-started/well-architected-framework) | 継続更新 | Google Cloudおよびクラウド共通の設計原則、柱、運用上のトレードオフ。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, GCP-DELTA | — |
 | `GCP-AIML-WAF` | Google Cloud | [Google Cloud Well-Architected Framework: AI and ML perspective](https://cloud.google.com/architecture/framework/perspectives/ai-ml) | 継続更新 | Google Cloud上のAI/MLデータ、モデル、運用、責任あるAIの設計観点。 | 2026-07-18 | 2026-07-18 | 90日 | AI-CONDITIONAL, GCP-DELTA | — |
 | `OCI-WAF` | Oracle | [Best practices framework for Oracle Cloud Infrastructure](https://docs.oracle.com/en/solutions/oci-best-practices/) | F29550-09 / 2025-05 | OCIおよびクラウド共通の設計原則とベンダー固有差分。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, OCI-DELTA | — |
-| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-07-21.1 | 実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約、profile連携。標準contract変更とrepository採用scopeを別flagで管理する。 | 2026-07-21 | 2026-07-21 | 180日 | CORE | `5eae0d50abea38bd8c612d85ce791e99209b53744860fb8333fa3b9a0bb5d9aa` |
-| `DEVSTD-AWS-CDK-AS-BUILT` | dev-standard maintainers | [AWS CDK実装・as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md) | 2026-07-29 | AWS CDK固有の規範・採用義務と、実装済みcapabilityを区別するas-built設計標準。 | 2026-07-29 | 2026-07-29 | 180日 | CORE, AWS-DELTA | `60c80483cfdbc132ea5c0daddd0e5ca3fc51eb1488341406b4794fc66f634cae` |
+| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-08-29 | 実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約。標準contract変更とrepository採用scopeを分離し、関係するcheckだけを選択する。 | 2026-08-29 | 2026-08-29 | 180日 | CORE | `4cf64f761de443b4f1d6ddaa7ce36df77585c179c9ba708349d34e73e34bd6fb` |
+| `DEVSTD-AWS-CDK-AS-BUILT` | dev-standard maintainers | [AWS CDK実装・as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md) | 2026-08-29 | AWS CDK固有の規範・選択可能な採用scopeと、bundled toolingが実装済みのcapabilityを区別するas-built設計標準。 | 2026-08-29 | 2026-08-29 | 180日 | CORE, AWS-DELTA | `6300dd4f32253286bda0775ef1d09478e5eb6b4198285a7e9bab25baa94c4780` |
 
 ## 前版との差分・変更確認
 
@@ -32,5 +32,5 @@
 - `GCP-WAF`: 継続更新型資料として変更確認日を固定し、Cloud CommonとGCP固有差分の重複規則を適用。
 - `GCP-AIML-WAF`: AI/ML perspectiveを一般WAFから分離し、AI-CONDITIONALとGCP差分に対応付け。
 - `OCI-WAF`: 文書版F29550-09を維持し、Cloud Common評価後にOCI固有差分だけを追加する。
-- `DEVSTD-AS-BUILT`: as_built_standard_changeとas_built_adoptionを分離し、規範強度・採用scope・enforcement stateを独立した軸として明文化。
-- `DEVSTD-AWS-CDK-AS-BUILT`: AWS CDK固有deltaを追加し、single-templateの現行能力とplanned・adopter-required・periodic能力を分離。
+- `DEVSTD-AS-BUILT`: Quint要件traceと実在test nodeの照合を追加し、check結果をローカルsummaryまたは導入先が所有する既存viewへ限定。CI・branch・merge policyは要求しない。
+- `DEVSTD-AWS-CDK-AS-BUILT`: portable bundle自身で確認できるcapabilityだけをcurrently-supportedとし、変更に関係するsubcommandを選択実行する軽量契約へ更新。source repository固有IssueやCI・merge policyへ依存しない。

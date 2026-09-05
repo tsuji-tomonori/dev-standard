@@ -1,276 +1,111 @@
 from __future__ import annotations
 
-import importlib.util
 import json
-import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
 import yaml
-from jsonschema import Draft202012Validator
+
+import tools.validate_repo as validate_repo_module
 
 ROOT = Path(__file__).resolve().parents[1]
-MODULE_PATH = ROOT / "governance" / "reviews" / "validate.py"
-SPEC = importlib.util.spec_from_file_location("review_contract", MODULE_PATH)
-assert SPEC and SPEC.loader
-review_contract = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(review_contract)
 
 
-class ReviewContractTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.catalog, cls.checks = review_contract.load_catalog(ROOT / "governance" / "checks" / "catalog.yaml")
-        cls.schema = json.loads(
-            (ROOT / "governance" / "reviews" / "review-result.schema.json").read_text(encoding="utf-8")
-        )
-        cls.current = review_contract.load_yaml(
-            ROOT / "governance" / "reviews" / "CHG-20260721-as-built-impact-flags.yaml"
-        )
-        cls.legacy = review_contract.load_yaml(
-            ROOT / "governance" / "reviews" / "CHG-20260721-as-built-design.yaml"
-        )
+class ReviewContractBoundaryTest(unittest.TestCase):
+    def test_gate_auditor_uses_activation_context_not_retired_profiles(self) -> None:
+        text = (ROOT / ".codex/agents/gate-auditor.toml").read_text(encoding="utf-8")
+        for retired in [
+            "For direct or assured work",
+            "For regulated work",
+            "selected execution profile",
+        ]:
+            self.assertNotIn(retired, text)
+        self.assertIn("three pillars applicable to the current change", text)
+        self.assertIn("concrete regulated duty activation context", text)
+        self.assertIn("extra gate", text)
 
-    def validate_copy(self, value: dict[str, object]) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            path = Path(temporary) / "CHG-20260721-test.yaml"
-            path.write_text(yaml.safe_dump(value, allow_unicode=True, sort_keys=False), encoding="utf-8")
-            review_contract.validate_review(ROOT, path, self.schema, self.catalog, self.checks, "HEAD")
+    def test_current_documentation_uses_concrete_duty_not_retired_profile_trigger(self) -> None:
+        for relative in [
+            "docs/README.md",
+            "docs/standards/REQUIREMENT-CLASSIFICATION.md",
+        ]:
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(path=relative):
+                self.assertNotIn("regulated profile", text)
+                self.assertIn("具体的", text)
 
-    def legacy_active_copy(self) -> dict[str, object]:
-        value = yaml.safe_load(yaml.safe_dump(self.legacy))
-        value["catalog_version"] = self.catalog["catalog_version"]
-        value["catalog_digest"] = review_contract.digest_file(ROOT / "governance" / "checks" / "catalog.yaml")
-        replacements = {
-            "path:CONTRIBUTING.md": "path:.github/CONTRIBUTING.md",
-            "path:docs/ARTIFACTS-AND-CHECKS.md": "path:docs/reference/development.md",
+    def test_legacy_review_harness_is_not_a_portable_guardrail(self) -> None:
+        manifest = json.loads((ROOT / "distribution/manifest.json").read_text(encoding="utf-8"))
+        sources = {
+            entry["source"]
+            for entries in manifest["profiles"].values()
+            for entry in entries
         }
-        for item in value["selected_checks"]:
-            item["evidence"] = [replacements.get(entry, entry) for entry in item["evidence"]]
-        return value
+        self.assertNotIn("governance/reviews", sources)
+        self.assertNotIn("governance/checks", sources)
 
-    def test_catalog_is_unique_and_contains_all_restructured_checks(self) -> None:
-        self.assertEqual(self.catalog["item_count"], 69)
-        self.assertEqual(len(self.checks), 69)
-        self.assertEqual(self.checks["REV-007"]["class"], "Invariant")
-        self.assertEqual(self.checks["AUD-007"]["class"], "Periodic")
-        self.assertEqual(self.checks["FAST-016"]["class"], "Risk-selected")
-        self.assertEqual(self.checks["FAST-019"]["class"], "Advisory")
-        self.assertEqual(self.checks["FAST-022"]["trigger"], "定量閾値変更時")
-        self.assertEqual(self.checks["FAST-023"]["class"], "Advisory")
-        self.assertEqual(self.checks["FAST-024"]["class"], "Risk-selected")
-        self.assertEqual(self.checks["FAST-024"]["trigger"], "as-built標準変更時")
-        self.assertEqual(self.checks["AUD-008"]["class"], "Periodic")
+    def test_pr_template_does_not_require_review_yaml_or_ci(self) -> None:
+        template = (ROOT / ".github/PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
+        self.assertNotIn("Review YAML", template)
+        self.assertNotIn("required check", template)
+        self.assertIn("実行したcommand", template)
 
-    def test_standard_change_and_adoption_select_independent_controls(self) -> None:
-        value = yaml.safe_load(yaml.safe_dump(self.current))
-        value["completed_timings"] = ["implementation"]
-        value["impact_flags"] = {key: False for key in value["impact_flags"]}
-        value["impact_flags"]["as_built_standard_change"] = True
-        required = review_contract.required_check_ids(value, self.checks)
-        self.assertEqual({"FAST-007", "FAST-024"}, required)
-        self.assertTrue({"FAST-019", "FAST-020", "FAST-021", "FAST-023"}.isdisjoint(required))
+    def test_current_check_catalog_has_no_default_selection_or_ci_only_evidence(self) -> None:
+        catalog = yaml.safe_load((ROOT / "governance/checks/catalog.yaml").read_text(encoding="utf-8"))
+        self.assertEqual(catalog["portable_default_selection"], [])
+        self.assertEqual(catalog["current_namespaces"], ["IMP", "FAST", "AUD"])
+        self.assertEqual(catalog["historical_namespaces"], ["REV", "MRG", "DEP"])
+        self.assertEqual(
+            {item["id"].split("-", 1)[0] for item in catalog["items"]},
+            set(catalog["current_namespaces"]),
+        )
+        current = [
+            item
+            for item in catalog["items"]
+            if item["id"].split("-", 1)[0] in catalog["current_namespaces"]
+        ]
+        for item in current:
+            evidence = str(item.get("required_evidence", ""))
+            self.assertNotEqual(evidence, "GitHub Actions", item["id"])
+            self.assertNotEqual(evidence, "CI外部サービス", item["id"])
+        report = next(item for item in current if item["id"] == "FAST-023")
+        self.assertIn("ローカルsummary", report["acceptance"])
+        self.assertIn("新しいCIや外部report基盤を要求せず", report["acceptance"])
 
-        value["impact_flags"] = {key: False for key in value["impact_flags"]}
-        value["impact_flags"]["as_built_adoption"] = True
-        required = review_contract.required_check_ids(value, self.checks)
-        self.assertEqual({"FAST-007", "FAST-019", "FAST-020", "FAST-021", "FAST-023"}, required)
-        self.assertNotIn("FAST-024", required)
+    def test_legacy_review_files_are_explicitly_historical(self) -> None:
+        text = (ROOT / "governance/reviews/README.md").read_text(encoding="utf-8")
+        for required in [
+            "過去のレビュー証跡",
+            "現行のportable guardrail",
+            "新しい変更に`governance/reviews/<change-id>.yaml`を作成しません",
+            "installerと`distribution/manifest.json`は、このdirectoryをどの配布collectionにも含めません",
+        ]:
+            self.assertIn(required, text)
 
-        value["impact_flags"]["quality_threshold_change"] = True
-        required = review_contract.required_check_ids(value, self.checks)
-        self.assertIn("FAST-022", required)
-        self.assertNotIn("FAST-016", required)
-        self.assertNotIn("FAST-018", required)
-
-        value["impact_flags"] = {key: False for key in value["impact_flags"]}
-        value["impact_flags"]["e2e_change"] = True
-        required = review_contract.required_check_ids(value, self.checks)
-        self.assertEqual({"FAST-007", "FAST-018"}, required)
-
-    def test_schema_v2_requires_structured_adoption_scope(self) -> None:
-        value = yaml.safe_load(yaml.safe_dump(self.current))
-        value["impact_flags"]["as_built_adoption"] = True
-        value["impact_flags"]["as_built_standard_change"] = False
-        value["impact_details"]["as_built_adoption"] = {"scope": [], "exclusions": []}
-        errors = list(Draft202012Validator(self.schema).iter_errors(value))
-        self.assertTrue(errors)
-        self.assertTrue(any(list(error.path)[-1:] == ["scope"] for error in errors))
-        with self.assertRaisesRegex(review_contract.ContractError, "schema validation failed"):
-            self.validate_copy(value)
-
-        value["impact_details"]["as_built_adoption"]["scope"] = ["app/api"]
-        value["impact_details"]["as_built_adoption"]["exclusions"] = ["legacy/jobs: 別変更で移行"]
-        self.assertEqual([], list(Draft202012Validator(self.schema).iter_errors(value)))
-        review_contract.validate_impact_details(Path("review.yaml"), value)
-
-        value["impact_flags"]["as_built_adoption"] = False
-        with self.assertRaisesRegex(review_contract.ContractError, "scope and exclusions require"):
-            review_contract.validate_impact_details(Path("review.yaml"), value)
-
-    def test_schema_v1_review_remains_readable_without_new_flag(self) -> None:
-        self.assertEqual(self.legacy["schema_version"], 1)
-        self.assertNotIn("as_built_standard_change", self.legacy["impact_flags"])
-        errors = list(Draft202012Validator(self.schema).iter_errors(self.legacy))
-        self.assertEqual([], errors)
-
-        value = self.legacy_active_copy()
-        value["completed_timings"] = ["implementation"]
-        required = review_contract.required_check_ids(value, self.checks)
-        self.assertIn("FAST-019", required)
-        self.assertNotIn("FAST-024", required)
-
-    def test_schema_template_readme_validator_and_catalog_use_same_flags(self) -> None:
-        template = review_contract.load_yaml(ROOT / "governance" / "reviews" / "review-result.template.yaml")
-        readme = (ROOT / "governance" / "reviews" / "README.md").read_text(encoding="utf-8")
-        selection = (
-            ROOT
-            / ".agents"
-            / "skills"
-            / "verify-against-engineering-standards"
-            / "references"
-            / "as-built-design-check-selection.md"
+    def test_source_repository_verify_includes_bounded_model_checking(self) -> None:
+        makefile = (ROOT / "Makefile").read_text(encoding="utf-8")
+        verify = next(line for line in makefile.splitlines() if line.startswith("verify:"))
+        self.assertIn("quint-verify", verify)
+        self.assertNotIn("quint-test", verify)
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        adr = (
+            ROOT / "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
         ).read_text(encoding="utf-8")
-        self.assertEqual(template["schema_version"], 2)
-        self.assertIn("as_built_standard_change", template["impact_flags"])
-        self.assertIn("impact_details", template)
-        self.assertEqual(review_contract.TRIGGER_FLAGS["as-built標準変更時"], "as_built_standard_change")
-        self.assertEqual(review_contract.TRIGGER_FLAGS["as-built規約適用時"], "as_built_adoption")
-        for text in [readme, selection]:
-            self.assertIn("as_built_standard_change", text)
-            self.assertIn("as_built_adoption", text)
-            self.assertIn("FAST-024", text)
+        for text in [readme, adr]:
+            self.assertIn("4 step", text)
+            self.assertIn("3 step", text)
 
-    def test_current_repository_contract_is_valid(self) -> None:
-        parent_count = len(review_contract.git_text(ROOT, "show", "-s", "--format=%P", "HEAD").split())
-        if parent_count > 1:
-            self.skipTest("merge checkouts validate the PR head in the dedicated evidence job")
-        review_contract.validate_repository(ROOT, "HEAD")
-
-    def test_release_review_can_be_validated_without_a_commit_comment(self) -> None:
-        review_contract.validate_review_file(
-            ROOT,
-            Path("governance/reviews/CHG-20260723-skill-evidence-audit.yaml"),
-            "HEAD",
-        )
-
-    def test_release_review_requires_squash_impact(self) -> None:
-        review_path = Path("governance/reviews/CHG-20260723-skill-evidence-audit.yaml")
-        with mock.patch.object(review_contract, "validate_review", return_value={"impact_flags": {"squash": False}}):
-            with self.assertRaisesRegex(review_contract.ContractError, "squash"):
-                review_contract.validate_review_file(ROOT, review_path, "HEAD", require_squash=True)
-
-    def test_release_review_must_match_the_blob_at_its_source_commit(self) -> None:
-        review_path = ROOT / "governance" / "reviews" / "CHG-20260723-skill-evidence-audit.yaml"
-        original = review_path.read_bytes()
-        try:
-            review_path.write_bytes(original + b"\n# uncommitted tamper\n")
-            with self.assertRaisesRegex(review_contract.ContractError, "differs from the review blob"):
-                review_contract.validate_review_file(
-                    ROOT,
-                    review_path.relative_to(ROOT),
-                    "HEAD",
-                )
-        finally:
-            review_path.write_bytes(original)
-
-    def test_only_active_review_is_revalidated(self) -> None:
-        parent_count = len(review_contract.git_text(ROOT, "show", "-s", "--format=%P", "HEAD").split())
-        if parent_count > 1:
-            self.skipTest("merge checkouts validate the PR head in the dedicated evidence job")
-        active_review = review_contract.validate_commit(ROOT, "HEAD")
+    def test_repository_validator_invokes_complete_typed_catalog_validator(self) -> None:
+        failures: list[str] = []
         with mock.patch.object(
-            review_contract, "validate_review", wraps=review_contract.validate_review
-        ) as validate_review:
-            review_contract.validate_repository(ROOT, "HEAD")
-        validate_review.assert_called_once()
-        self.assertEqual(validate_review.call_args.args[1], active_review)
-
-    def test_catalog_digest_and_self_bound_workflow_step_are_validated(self) -> None:
-        stale = yaml.safe_load(yaml.safe_dump(self.current))
-        stale["catalog_digest"] = "sha256:" + ("0" * 64)
-        with self.assertRaisesRegex(review_contract.ContractError, "catalog_digest"):
-            self.validate_copy(stale)
-
-        review_contract.validate_evidence(ROOT, "commit:self", "HEAD")
-        review_contract.validate_evidence(ROOT, "workflow:Governance#Secret scan", "HEAD")
-        with self.assertRaisesRegex(review_contract.ContractError, "workflow step"):
-            review_contract.validate_evidence(ROOT, "workflow:Governance#Missing", "HEAD")
-
-    def test_required_check_omission_is_rejected(self) -> None:
-        value = yaml.safe_load(yaml.safe_dump(self.current))
-        value["selected_checks"] = [item for item in value["selected_checks"] if item["id"] != "FAST-024"]
-        with self.assertRaisesRegex(review_contract.ContractError, "missing required checks: FAST-024"):
-            self.validate_copy(value)
-
-    def test_fix_commit_requires_bug_fix_flag(self) -> None:
-        self.assertEqual(
-            review_contract.conventional_commit_type("🛡️ fix(governance): 契約の選択漏れを防ぐ"),
-            "fix",
-        )
-        self.assertEqual(
-            review_contract.conventional_commit_type("✨ feat(governance): 契約を追加する"),
-            "feat",
-        )
-
-        value = yaml.safe_load(yaml.safe_dump(self.current))
-        value["impact_flags"]["bug_fix"] = False
-        with self.assertRaisesRegex(review_contract.ContractError, "fix commit requires"):
-            review_contract.validate_commit_type_flags("fix(governance): 回帰を修正する", value)
-
-    def test_unknown_check_and_class_mismatch_are_rejected(self) -> None:
-        unknown = yaml.safe_load(yaml.safe_dump(self.current))
-        unknown["selected_checks"][0]["id"] = "REV-999"
-        with self.assertRaisesRegex(review_contract.ContractError, "unknown check id"):
-            self.validate_copy(unknown)
-
-        mismatch = yaml.safe_load(yaml.safe_dump(self.current))
-        mismatch["selected_checks"][0]["class"] = "Advisory"
-        with self.assertRaisesRegex(review_contract.ContractError, "class must be"):
-            self.validate_copy(mismatch)
-
-    def test_blocking_fail_is_rejected(self) -> None:
-        value = yaml.safe_load(yaml.safe_dump(self.current))
-        value["selected_checks"][0]["result"] = "fail"
-        value["selected_checks"][0]["evidence"] = []
-        with self.assertRaisesRegex(review_contract.ContractError, "blocking check"):
-            self.validate_copy(value)
-
-    def test_advisory_issue_and_residual_risk_require_linkage(self) -> None:
-        value = self.legacy_active_copy()
-        value["advisories"] = [
-            {"id": "FAST-019", "disposition": "issue", "note": "Issueで追跡"},
-            *[item for item in value["advisories"] if item["id"] != "FAST-019"],
-        ]
-        with self.assertRaisesRegex(review_contract.ContractError, "schema validation failed"):
-            self.validate_copy(value)
-
-        value = self.legacy_active_copy()
-        value["advisories"] = [
-            {
-                "id": "FAST-019",
-                "disposition": "residual-risk",
-                "note": "残存リスクとして受容",
-                "risk": "未登録のcoverage risk",
-            },
-            *[item for item in value["advisories"] if item["id"] != "FAST-019"],
-        ]
-        with self.assertRaisesRegex(review_contract.ContractError, "absent from residual_risks"):
-            self.validate_copy(value)
-
-    def test_pass_and_na_require_direct_evidence_or_note(self) -> None:
-        no_evidence = yaml.safe_load(yaml.safe_dump(self.current))
-        no_evidence["selected_checks"][0]["evidence"] = []
-        with self.assertRaisesRegex(review_contract.ContractError, "schema validation failed"):
-            self.validate_copy(no_evidence)
-
-        no_note = yaml.safe_load(yaml.safe_dump(self.current))
-        no_note["selected_checks"][0]["result"] = "na"
-        no_note["selected_checks"][0]["evidence"] = []
-        no_note["selected_checks"][0].pop("note")
-        with self.assertRaisesRegex(review_contract.ContractError, "schema validation failed"):
-            self.validate_copy(no_note)
+            validate_repo_module,
+            "validate_contract_catalog",
+            side_effect=ValueError("typed-catalog-sentinel"),
+        ) as validator:
+            validate_repo_module.validate_skills(failures)
+        validator.assert_called_once()
+        self.assertTrue(any("typed-catalog-sentinel" in failure for failure in failures))
 
 
 if __name__ == "__main__":

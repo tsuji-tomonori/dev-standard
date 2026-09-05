@@ -42,6 +42,38 @@ OFFICIAL_HOST_SUFFIXES = (
 )
 REPOSITORY_STANDARD_AUTHORITY = "dev-standard maintainers"
 REPOSITORY_STANDARD_URL_PREFIX = "https://github.com/tsuji-tomonori/dev-standard/blob/"
+SKILL_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_REGISTRY = SKILL_ROOT / "assets" / "standards.registry.json"
+
+
+def confined_path(root: Path, value: Path, *, must_exist: bool) -> Path:
+    """Resolve a repository-confined path without traversing symlinks."""
+
+    try:
+        resolved_root = root.resolve(strict=True)
+    except OSError as exc:
+        raise StandardsError(f"cannot resolve repository root: {exc}") from exc
+    if not resolved_root.is_dir():
+        raise StandardsError("repository root must be a directory")
+
+    candidate = value if value.is_absolute() else resolved_root / value
+    try:
+        relative = candidate.relative_to(resolved_root)
+    except ValueError as exc:
+        raise StandardsError(f"path escapes repository root: {value}") from exc
+    current = resolved_root
+    for part in relative.parts:
+        if part in {"", ".", ".."}:
+            raise StandardsError(f"path is not normalized: {value}")
+        current = current / part
+        if current.is_symlink():
+            raise StandardsError(f"path must not traverse a symlink: {value}")
+    try:
+        resolved = current.resolve(strict=must_exist)
+        resolved.relative_to(resolved_root)
+    except (OSError, ValueError) as exc:
+        raise StandardsError(f"path is unavailable or escapes repository root: {value}") from exc
+    return resolved
 
 
 def load(path: Path) -> dict[str, Any]:
@@ -111,7 +143,7 @@ def freshness(registry: dict[str, Any], as_of: date) -> None:
 
 def render(registry: dict[str, Any]) -> str:
     lines = [
-        "<!-- standardsflow.pyによる自動生成。governance/standards/registry.jsonを編集すること。 -->",
+        "<!-- standardsflow.pyによる自動生成。選択したregistry（既定はSkill asset）を編集すること。 -->",
         "# 参照資料一覧",
         "",
         "この一覧は品質検証で参照する知識体系・公式ガイダンスの版と適用範囲を固定する。各資料は案件条件に応じて適用性を判断する参照情報であり、一律適用や完全準拠を表明しない。",
@@ -132,8 +164,10 @@ def render(registry: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def atomic_write(path: Path, content: str) -> None:
+def atomic_write(root: Path, path: Path, content: str) -> None:
+    path = confined_path(root, path, must_exist=False)
     path.parent.mkdir(parents=True, exist_ok=True)
+    path = confined_path(root, path, must_exist=False)
     fd, temporary = tempfile.mkstemp(prefix=path.name + ".", dir=path.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
@@ -147,7 +181,8 @@ def atomic_write(path: Path, content: str) -> None:
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     root.add_argument("command", choices=["validate", "generate", "check"])
-    root.add_argument("--registry", type=Path, default=Path("governance/standards/registry.json"))
+    root.add_argument("--root", type=Path, default=Path("."))
+    root.add_argument("--registry", type=Path, default=DEFAULT_REGISTRY)
     root.add_argument("--out", type=Path, default=Path("docs/standards/SOURCES.md"))
     root.add_argument("--as-of", type=date.fromisoformat, default=date.today())
     return root
@@ -156,14 +191,17 @@ def parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
-        registry = load(args.registry)
+        repository_root = args.root.resolve(strict=True)
+        registry = load(confined_path(repository_root, args.registry, must_exist=True))
         freshness(registry, args.as_of)
         if args.command == "generate":
-            atomic_write(args.out, render(registry))
-            print(f"generated {args.out}")
+            output = confined_path(repository_root, args.out, must_exist=False)
+            atomic_write(repository_root, output, render(registry))
+            print(f"generated {output.relative_to(repository_root)}")
         elif args.command == "check":
-            if not args.out.is_file() or args.out.read_text(encoding="utf-8") != render(registry):
-                raise StandardsError(f"generated standards docs drift: {args.out}")
+            output = confined_path(repository_root, args.out, must_exist=True)
+            if not output.is_file() or output.read_text(encoding="utf-8") != render(registry):
+                raise StandardsError(f"generated standards docs drift: {output.relative_to(repository_root)}")
             print(f"standards current and fresh: {len(registry['sources'])} sources")
         else:
             print(f"standards valid and fresh: {len(registry['sources'])} sources")

@@ -1,53 +1,27 @@
-# コミットメッセージ契約
+# 日本語Gitmoji commit形式（任意）
 
-このリポジトリでは`Commit Comment`と呼びますが、Gitの正式名称はcommit messageです。変更ごとの別manifestや実装reportを作らず、最終コミットへ影響判定と検証契約を集約します。
-
-## 形式
+この形式は、利用者または対象repositoryが明示的に選択した場合だけ使用します。dev-standardの既定profile、portable gate、merge条件ではありません。対象repositoryが別の形式を持つ場合はそちらを優先します。
 
 ```text
 <gitmoji> <type>(<scope>): <日本語の要約>
 
 目的:
-- <得られる結果>
+- <達成する結果>
 
 変更内容:
 - <主要変更>
 
 要件影響:
-- あり | なし
-- 要件ID: <REQ IDs | none>
-- 理由: <判定根拠>
+- <あり / なし、Quint要件ID、理由>
 
 設計影響:
-- あり | なし
-- 対象: <生成設計、ADR、公開契約、構成 | none>
-- 生成設計: <path | 対象外>
-- ADR: <ADR ID | 不要とした理由>
+- <あり / なし、生成設計またはADR、理由>
 
-チェックリスト:
-- governance/reviews/<change-id>.yaml
-
-検証契約:
-- GitHub Actions: <workflowまたはrequired check>
-- ローカル: <必要時だけ>
-- 結果の正本: GitHub Actions等
+検証:
+- <実行したローカル検査、または既存CIへの参照>
 
 互換性・残存リスク:
-- <互換性、移行、未検証範囲、既知制約>
-
-Requirements: <REQ IDs | none>
-Design-Impact: <none | generated | adr | contract | governance | mixed>
-Review-Checklist: governance/reviews/<change-id>.yaml
-Refs: <Issue / ADR。該当時だけ>
+- <既知事項>
 ```
 
-## 規則
-
-- 1行目は一つの主目的を表す。
-- 要件影響と設計影響は必ず判定し、`なし`でも理由を書く。
-- 変更内容は意味単位に絞り、ファイル一覧や作業ログを貼らない。
-- CIが完了する前にPassと書かず、実行されるworkflowまたはrequired checkを記載する。
-- 生ログ、coverage全文、scanner出力を貼らない。
-- `fixup!`、`squash!`、WIP、tmp等の一時subjectをprotected branchへ残さない。
-- 通常topic commitのsubjectはGitmoji、Conventional Commit、日本語要約を使用する。
-- Issueのclose、release、reconciliation等のrepository固有markerは、導入先のmachine-readable branch policyとPR templateを正本とする。このportable文書では定義しない。
+実行していない検査をPassと書かず、生ログを貼り付けません。review YAML、required check、特定CI、特定branchまたはmerge方式を必須項目にしません。

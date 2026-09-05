@@ -13,6 +13,7 @@
   "last_changed_by": "example",
   "object": "audience, purpose, authority, update trigger, verification, maintenance rule, and retirement condition for each persistent document",
   "rationale": "A document is maintainable only when its intended outcome and lifecycle are explicit rather than implied by the file's existence.",
+  "retirement_reason": "",
   "revision": 1,
   "scope": "project",
   "source_refs": [
@@ -21,20 +22,15 @@
   ],
   "status": "active",
   "subject": "project documentation process",
+  "superseded_by": "",
   "title": "Persistent documentation lifecycle",
   "traces": {
-    "design": [
-      "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-    ],
-    "implementation": [
-      ".agents/skills/maintain-reference-repository/SKILL.md"
-    ],
+    "design": [],
+    "implementation": [],
     "standards": [
       "SWEBOK-V4A"
     ],
-    "tests": [
-      "tests/test_reference_repository_contract.py"
-    ]
+    "tests": []
   },
   "type": "quality",
   "verification": {

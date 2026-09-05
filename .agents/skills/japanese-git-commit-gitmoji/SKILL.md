@@ -1,149 +1,92 @@
 ---
 name: japanese-git-commit-gitmoji
-description: Create or propose a Japanese Gitmoji and Conventional Commit message that records purpose, change, requirement and design impact, review path, verification, compatibility, and residual risk.
+description: Create a concise Japanese Gitmoji Conventional Commit message when the user or target repository has selected that commit style.
 ---
 
-# Japanese Git Commit Comment with Gitmoji
+# Japanese Git Commit with Gitmoji
 
-このSkillでは利用者の呼称に合わせて`Commit Comment`と表現する。Gitの正式名称はcommit messageである。
+## Formal specification
 
-## 目的
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "japanese-git-commit-gitmoji"` を形式契約とする。
 
-Commit Commentだけで、その変更について次を追跡できるようにする。
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
 
-- 何を達成する変更か
-- 何を変更したか
-- 永続要件へ影響するか
-- as-built設計、ADR、公開契約へ影響するか
-- どのチェック結果をレビューしたか
-- どのCIが検証するか
-- 互換性と残存リスク
+利用者または対象repositoryがこの形式を選択している場合だけ使用する。portable default、commit gate、merge条件にはしない。
 
-独立したChange Manifest、Requirement Impact Result、Design Impact Result、implementation logは作らない。
-
-## 必須形式
+## Format
 
 ```text
 <gitmoji> <type>(<scope>): <日本語の要約>
 
 目的:
-- <結果>
+- <達成する結果>
 
 変更内容:
 - <主要変更>
 
 要件影響:
-- あり | なし
-- 要件ID: <REQ IDs | none>
-- 理由: <判定根拠>
+- <あり / なし、ID、理由>
 
 設計影響:
-- あり | なし
-- 対象: <生成設計、ADR、公開契約、構成 | none>
-- 生成設計: <path | 対象外>
-- ADR: <ADR ID | 不要とした理由>
+- <あり / なし、対象、理由>
 
-チェックリスト:
-- governance/reviews/<change-id>.yaml
-
-検証契約:
-- GitHub Actions: <workflowまたはrequired check>
-- ローカル: <必要時だけ>
-- 結果の正本: GitHub Actions等
+検証:
+- <実行したローカル検査、または既存CIへの参照>
 
 互換性・残存リスク:
-- <互換性、移行、未検証範囲、既知制約>
-
-Requirements: <REQ IDs | none>
-Design-Impact: <none | generated | adr | contract | governance | mixed>
-Review-Checklist: governance/reviews/<change-id>.yaml
-Refs: <Issue / ADR。該当時だけ>
+- <既知事項>
 ```
 
-本文はrepository変更で必須とする。単なるコミット候補の例示で、差分・要件・レビュー結果が与えられていない場合だけ、明示的なplaceholderを使用できる。
+代表typeは`feat`、`fix`、`refactor`、`docs`、`test`、`build`、`ci`、`chore`、`revert`、`release`とする。破壊的変更では`!`または`BREAKING CHANGE:`を使用する。
 
-## 作成手順
+## Rules
 
-1. staged diffまたは対象差分を確認する。
-2. 変更の主目的を一つ決める。
-3. type、scope、Gitmojiを選ぶ。
-4. Commit Comment本文を、差分、要件正本、生成設計差分、ADR、review YAMLから生成する。
-5. 要件影響と設計影響を必ず`あり`または`なし`で判定する。
-6. `なし`の場合も、なぜ外部挙動または設計契約が変わらないかを書く。
-7. 検証契約にはworkflowまたはrequired check名を書く。まだ実行されていないCIをPassと書かない。
-8. 生テストログ、coverage全文、scanner全文を貼り付けない。
-9. squash mergeではPR全体の内容へ統合し、中間コミットだけに証跡を残さない。
+- staged diffまたは対象差分から、一つの主目的を選ぶ。
+- 実行していない検査をPassと書かない。
+- 生ログ、coverage全文、scanner全文を貼り付けない。
+- review YAML、required check、特定CI、特定merge方式を必須項目にしない。
+- 対象repositoryが別形式を採用している場合は、その形式を優先する。
 
-## 1行目
-
-```text
-<emoji> <type>(<scope>): <日本語の要約>
-```
-
-代表的なtype:
-
-| type | 用途 | 代表Gitmoji |
-|---|---|---|
-| `feat` | 利用者に見える機能追加 | ✨ |
-| `fix` | 不具合修正 | 🐛 |
-| `refactor` | 外部挙動を変えない構造改善 | ♻️ |
-| `perf` | 性能改善 | ⚡️ |
-| `docs` | 文書変更 | 📝 |
-| `test` | テスト追加・修正 | ✅ |
-| `build` | build・package設定 | 🔨 |
-| `ci` | CI変更 | 👷 |
-| `chore` | 設定・定型保守 | 🔧 |
-| `revert` | 既存変更の取消 | ⏪️ |
-| `release` | release・tag | 🚀 |
-
-破壊的変更では`!`または`BREAKING CHANGE:`を使用する。
-
-## 要件影響の判定
-
-次が変わる場合は`あり`とする。
-
-- 利用者向け挙動
-- 業務ルール
-- 受入条件
-- 非機能閾値
-- 権限・security要求
-- support対象
-- 運用上の保証
-
-内部リファクタリング、テスト追加、既存仕様に戻すバグ修正は通常`なし`だが、根拠を記載する。
-
-## 設計影響の判定
-
-次が変わる場合は`あり`とする。
-
-- 実装由来の生成設計
-- API・event・file format等の公開契約
-- data modelまたはmigration
-- infrastructure resource
-- component・state・route等のas-built構造
-- 将来の実装を制約する設計判断
-- 開発・運用統制の恒久構成
-
-コードから自明でない長期判断がある場合だけADRを作る。
-
-## 検証結果の扱い
-
-単体テスト、build、lint、type check、security scan、coverageの実行結果はGitHub Actions等の外部サービスを正本とする。
-
-Commit Commentへ残すのは次だけである。
-
-- 実行されるworkflowまたはrequired check
-- 必要なローカル決定的検査の要約
-- 結果の正本が存在する外部サービス
-
-## 完成条件
+## Completion
 
 - 1行目が一つの主目的を表す。
-- 7つの必須節が存在する。
-- 要件影響と設計影響に判定と理由がある。
-- review YAMLへのpathがある。
-- CI結果を捏造していない。
-- 互換性と残存リスクが隠されていない。
-- squash後も証跡が最終コミットに残る。
+- 要件・設計への影響と検証範囲が誤解なく読める。
+- 互換性と残存riskを隠していない。
 
-詳細は`docs/reference/commit-message.md`を参照する。
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `japanese-git-commit-gitmoji`
+- 役割: commit-message
+- 柱: auxiliary
+- guardrail: no
+- repository blocking: no
+- 既定portable: no
+- 適用条件: when-user-or-target-selects-style
+- 起動context: `target-commit-style`
+- 外部作用capability: no
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: the user explicitly requests this style or the target repository already selects it
+- 事後条件: a Japanese structured commit message is proposed
+- Authority: explicit-user-or-target-repository-style
+- 副作用: none
+- 失敗状態: no-op-unless-selected
+- 入力: `diff`, `verification-summary`
+- 出力: `commit-message`
+- 義務: `derive-message-from-actual-diff`, `report-verification-truthfully`, `prefer-target-repository-style`
+- 禁止事項: `do not make this style a portable gate`, `do not report unexecuted checks as passing`, `do not require a particular merge method`
+- 依存Skill: なし
+- 必須asset: なし
+- 要件trace: なし
+- manual digest: `30135076a592066597be1518d0b2fce03690b729e6069c32ef767e46139cf454`
+- payload digest: `74dea666a7d9914d3c92f5bf16d74ae0b6ae1207a68d4da377e74541ed0ff08c`
+- interface digest: `3cd81796135cb9dceb62bfdd67ea29d90f7114d9c2e9458e1d848abbbcc82423`
+<!-- END GENERATED QUINT CONTRACT -->

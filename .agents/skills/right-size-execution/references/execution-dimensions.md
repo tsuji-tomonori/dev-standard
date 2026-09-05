@@ -18,8 +18,8 @@
 - compute: 機械的変更か意味判断か、制約間相互作用、失敗した試行の具体的証拠
 - mode: assurance floor、独立reviewの必要性、作業の分割可能性
 
-検証集合は`scopeの機能検証 ∪ assuranceの追加検証 ∪ 受入条件 ∪ repository必須gate`として決定的に導出します。
+検証集合は`scopeの機能検証 ∪ assuranceの追加検証 ∪ 成果物固有検証 ∪ risk固有検証 ∪ 受入条件 ∪ 対象repositoryが明示したgate`として決定的に導出します。特定のhost、CI、branch、merge設定を暗黙のgateとして追加しません。追加探索はblocking集合へ混ぜず、任意diagnosticとして分離します。
 
 confidenceはモデルの自己申告値ではありません。`deterministic-features-v1`が観測できた特徴をlow／medium／highへ分類し、校正済みrouterを導入するまでは`score=null`とします。
 
-この四軸は初期profileを表します。実行中の拡張では、初期`mode`を`review`へ分解し、初期profileから導出された`verification`を独立に追跡するため、`scope`、`assurance`、`verification`、`review`、`compute`の五つを拡張controlとして扱います。軸体系の矛盾ではなく、初期選択と実行中制御の粒度差です。
+この四軸は初期profileを表します。実行中の拡張では、初期`mode`を`review`へ分解し、任意diagnosticを`verification`として独立に追跡するため、`scope`、`assurance`、`verification`、`review`、`compute`の五つを拡張controlとして扱います。scopeまたはassuranceの変更に伴う検証projectionの再導出は従属計算であり、別軸を暗黙に引き上げる判断ではありません。

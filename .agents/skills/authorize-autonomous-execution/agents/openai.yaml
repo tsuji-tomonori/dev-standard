@@ -1,4 +1,4 @@
 interface:
   display_name: "権限境界の承認"
   short_description: "Bind an explicit decision to a real authority boundary"
-  default_prompt: "Use $authorize-autonomous-execution only for regulated work or a real external-write, production, deletion, publication, merge, or high-cost boundary; record the explicit decision once."
+  default_prompt: "Use $authorize-autonomous-execution only for a concrete lifecycle duty or a real external-write, production, deletion, publication, merge, or high-cost boundary; bind current authority-owned evidence to result, effects, rollback, and stop conditions, and never self-mint approval evidence."

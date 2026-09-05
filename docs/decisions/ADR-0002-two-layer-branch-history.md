@@ -1,8 +1,10 @@
 # ADR-0002: mainのrelease履歴とdevのengineering履歴を二層で試行する
 
-- 状態: Bootstrap承認済み
+- 状態: Superseded by ADR-0004
 - Date: 2026-07-24
 - Issue: #20
+
+> 2026-08-27に試行を終了した。branch topology、merge方式、required checkをガードレールとして強制せず、repository host側の設定へ委任する。以下は当時の判断を保存する履歴であり、現行policyではない。
 
 ## 背景
 

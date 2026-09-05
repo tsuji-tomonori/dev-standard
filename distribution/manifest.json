@@ -1,21 +1,85 @@
 {
-  "schema_version": 2,
+  "schema_version": 4,
   "standard_paths": {
     "portable_skills": ".agents/skills/<skill-name>/SKILL.md",
+    "formal_skill_contracts": "spec/skills/skills.qnt",
+    "generated_skill_contracts": "spec/skills/skills.json",
+    "canonical_requirements": "spec/requirements/requirements.qnt",
+    "generated_requirements_json": "spec/requirements/requirements.json",
+    "generated_requirements": "docs/requirements/REQUIREMENTS.md",
+    "formal_specification_guide": "docs/reference/FORMAL-SPECIFICATIONS.md",
+    "generated_design": "docs/design/generated/",
+    "temporary_execution": ".devflow/run/",
     "codex_project_agents": ".codex/agents/<agent-name>.toml",
     "host_adapters": "distribution/host-adapters.json",
-    "generated_host_packages": ".devflow/generated/hosts/<host>/",
-    "codex_project_config": ".codex/config.toml",
-    "canonical_requirements": "spec/requirements/requirements.json",
-    "generated_requirements": "docs/requirements/REQUIREMENTS.md",
-    "requirement_classification_standard": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-    "generated_design": "docs/design/generated/",
-    "as_built_standard": "docs/standards/AS-BUILT-DESIGN.md",
-    "aws_cdk_as_built_standard": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
-    "review_catalog": "governance/checks/catalog.yaml",
-    "review_results": "governance/reviews/",
-    "temporary_execution": ".devflow/run/",
-    "standards_registry": "governance/standards/registry.json"
+    "generated_host_packages": ".devflow/generated/hosts/<host>/"
+  },
+  "protected_repository_paths": [
+    ".github/workflows/**",
+    ".github/PULL_REQUEST_TEMPLATE/**",
+    ".github/pull_request_template.md",
+    ".github/branch-protection/**",
+    ".github/rulesets/**",
+    ".gitlab-ci.yml",
+    ".circleci/**",
+    "azure-pipelines.yml",
+    "bitbucket-pipelines.yml",
+    "Jenkinsfile",
+    ".mergify.yml",
+    ".commitlintrc*",
+    "commitlint.config.*"
+  ],
+  "formal_skill_contracts": {
+    "schema_version": 1,
+    "activation": "every-profile-containing-a-skill",
+    "mappings": [
+      {
+        "source": "spec/skills/skills.qnt",
+        "destination": "spec/skills/skills.qnt"
+      },
+      {
+        "source": "spec/skills/skills.json",
+        "destination": "spec/skills/skills.json"
+      }
+    ]
+  },
+  "skill_runner_support": {
+    "schema_version": 1,
+    "activation": "derive-from-selected-skill-python-sources",
+    "module_destination": "tools/<module>.py",
+    "allowed_modules": [
+      "safe_io"
+    ],
+    "dependency_runtime": {
+      "schema_version": 1,
+      "activation": "selected-skill-has-requirements.txt",
+      "runtime_root": ".dev-standard/python/runtime",
+      "runner": {
+        "source": "tools/portable_python.py",
+        "destination": "tools/portable_python.py",
+        "local_imports": "derive-from-_load_pinned_tool-calls"
+      }
+    }
+  },
+  "portable_runtime": {
+    "schema_version": 2,
+    "quint_version": "0.32.0",
+    "activation_skill": "maintain-canonical-requirements",
+    "runner": {
+      "source": "tools/portable_quintflow.py",
+      "destination": "tools/quintflow.py",
+      "local_imports": "derive-from-_load_pinned_tool-calls"
+    },
+    "mappings": [
+      {
+        "source": "package.json",
+        "destination": ".dev-standard/quint/source/package.json"
+      },
+      {
+        "source": "package-lock.json",
+        "destination": ".dev-standard/quint/source/package-lock.json"
+      }
+    ]
   },
   "inventory": {
     "skills": [
@@ -55,14 +119,6 @@
         "destination": ".agents/skills/chat-first-development"
       },
       {
-        "source": ".agents/skills/right-size-execution",
-        "destination": ".agents/skills/right-size-execution"
-      },
-      {
-        "source": ".agents/skills/calibrated-collaborative-listening",
-        "destination": ".agents/skills/calibrated-collaborative-listening"
-      },
-      {
         "source": ".agents/skills/maintain-canonical-requirements",
         "destination": ".agents/skills/maintain-canonical-requirements"
       },
@@ -71,40 +127,8 @@
         "destination": ".agents/skills/generate-implementation-design"
       },
       {
-        "source": ".agents/skills/verify-against-engineering-standards",
-        "destination": ".agents/skills/verify-against-engineering-standards"
-      },
-      {
         "source": ".agents/skills/inspect-quality-gates",
         "destination": ".agents/skills/inspect-quality-gates"
-      },
-      {
-        "source": ".agents/skills/japanese-git-commit-gitmoji",
-        "destination": ".agents/skills/japanese-git-commit-gitmoji"
-      },
-      {
-        "source": "governance/checks",
-        "destination": "governance/checks"
-      },
-      {
-        "source": "governance/reviews",
-        "destination": "governance/reviews"
-      },
-      {
-        "source": "docs/reference/development.md",
-        "destination": "docs/reference/development.md"
-      },
-      {
-        "source": "docs/reference/commit-message.md",
-        "destination": "docs/reference/commit-message.md"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-      },
-      {
-        "source": "docs/standards/AS-BUILT-DESIGN.md",
-        "destination": "docs/standards/AS-BUILT-DESIGN.md"
       }
     ],
     "chat-first": [
@@ -113,14 +137,6 @@
         "destination": ".agents/skills/chat-first-development"
       },
       {
-        "source": ".agents/skills/right-size-execution",
-        "destination": ".agents/skills/right-size-execution"
-      },
-      {
-        "source": ".agents/skills/calibrated-collaborative-listening",
-        "destination": ".agents/skills/calibrated-collaborative-listening"
-      },
-      {
         "source": ".agents/skills/maintain-canonical-requirements",
         "destination": ".agents/skills/maintain-canonical-requirements"
       },
@@ -129,52 +145,12 @@
         "destination": ".agents/skills/generate-implementation-design"
       },
       {
-        "source": ".agents/skills/verify-against-engineering-standards",
-        "destination": ".agents/skills/verify-against-engineering-standards"
-      },
-      {
         "source": ".agents/skills/inspect-quality-gates",
         "destination": ".agents/skills/inspect-quality-gates"
-      },
-      {
-        "source": ".agents/skills/japanese-git-commit-gitmoji",
-        "destination": ".agents/skills/japanese-git-commit-gitmoji"
-      },
-      {
-        "source": "governance/checks",
-        "destination": "governance/checks"
-      },
-      {
-        "source": "governance/reviews",
-        "destination": "governance/reviews"
-      },
-      {
-        "source": "docs/reference/development.md",
-        "destination": "docs/reference/development.md"
-      },
-      {
-        "source": "docs/reference/commit-message.md",
-        "destination": "docs/reference/commit-message.md"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-      },
-      {
-        "source": "docs/standards/AS-BUILT-DESIGN.md",
-        "destination": "docs/standards/AS-BUILT-DESIGN.md"
       }
     ],
     "development-framework": [
       {
-        "source": ".agents/skills/right-size-execution",
-        "destination": ".agents/skills/right-size-execution"
-      },
-      {
-        "source": ".agents/skills/calibrated-collaborative-listening",
-        "destination": ".agents/skills/calibrated-collaborative-listening"
-      },
-      {
         "source": ".agents/skills/maintain-canonical-requirements",
         "destination": ".agents/skills/maintain-canonical-requirements"
       },
@@ -183,32 +159,8 @@
         "destination": ".agents/skills/generate-implementation-design"
       },
       {
-        "source": ".agents/skills/verify-against-engineering-standards",
-        "destination": ".agents/skills/verify-against-engineering-standards"
-      },
-      {
         "source": ".agents/skills/inspect-quality-gates",
         "destination": ".agents/skills/inspect-quality-gates"
-      },
-      {
-        "source": ".agents/skills/japanese-git-commit-gitmoji",
-        "destination": ".agents/skills/japanese-git-commit-gitmoji"
-      },
-      {
-        "source": "governance/checks",
-        "destination": "governance/checks"
-      },
-      {
-        "source": "governance/reviews",
-        "destination": "governance/reviews"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-      },
-      {
-        "source": "docs/standards/AS-BUILT-DESIGN.md",
-        "destination": "docs/standards/AS-BUILT-DESIGN.md"
       }
     ],
     "right-size-execution": [
@@ -241,16 +193,16 @@
         "destination": ".agents/skills/chat-first-development"
       },
       {
-        "source": ".agents/skills/right-size-execution",
-        "destination": ".agents/skills/right-size-execution"
-      },
-      {
-        "source": ".agents/skills/calibrated-collaborative-listening",
-        "destination": ".agents/skills/calibrated-collaborative-listening"
-      },
-      {
         "source": ".agents/skills/maintain-canonical-requirements",
         "destination": ".agents/skills/maintain-canonical-requirements"
+      },
+      {
+        "source": ".agents/skills/generate-implementation-design",
+        "destination": ".agents/skills/generate-implementation-design"
+      },
+      {
+        "source": ".agents/skills/inspect-quality-gates",
+        "destination": ".agents/skills/inspect-quality-gates"
       },
       {
         "source": ".agents/skills/elicit-frontend-requirements",
@@ -267,34 +219,6 @@
       {
         "source": ".agents/skills/test-frontend-experience",
         "destination": ".agents/skills/test-frontend-experience"
-      },
-      {
-        "source": ".agents/skills/verify-against-engineering-standards",
-        "destination": ".agents/skills/verify-against-engineering-standards"
-      },
-      {
-        "source": ".agents/skills/inspect-quality-gates",
-        "destination": ".agents/skills/inspect-quality-gates"
-      },
-      {
-        "source": ".agents/skills/japanese-git-commit-gitmoji",
-        "destination": ".agents/skills/japanese-git-commit-gitmoji"
-      },
-      {
-        "source": "governance/checks",
-        "destination": "governance/checks"
-      },
-      {
-        "source": "governance/reviews",
-        "destination": "governance/reviews"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-      },
-      {
-        "source": "docs/standards/AS-BUILT-DESIGN.md",
-        "destination": "docs/standards/AS-BUILT-DESIGN.md"
       }
     ],
     "adversarial-review": [
@@ -307,24 +231,12 @@
       {
         "source": ".agents/skills/maintain-canonical-requirements",
         "destination": ".agents/skills/maintain-canonical-requirements"
-      },
-      {
-        "source": ".agents/skills/calibrated-collaborative-listening",
-        "destination": ".agents/skills/calibrated-collaborative-listening"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
       }
     ],
     "reference-repository-maintenance": [
       {
         "source": ".agents/skills/maintain-reference-repository",
         "destination": ".agents/skills/maintain-reference-repository"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
       }
     ],
     "implementation-design": [
@@ -335,10 +247,6 @@
       {
         "source": "docs/standards/AS-BUILT-DESIGN.md",
         "destination": "docs/standards/AS-BUILT-DESIGN.md"
-      },
-      {
-        "source": "governance/checks",
-        "destination": "governance/checks"
       }
     ],
     "aws-cdk-implementation-design": [
@@ -353,32 +261,12 @@
       {
         "source": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
         "destination": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md"
-      },
-      {
-        "source": "governance/checks",
-        "destination": "governance/checks"
       }
     ],
     "standards-verification": [
       {
         "source": ".agents/skills/verify-against-engineering-standards",
         "destination": ".agents/skills/verify-against-engineering-standards"
-      },
-      {
-        "source": ".agents/skills/inspect-quality-gates",
-        "destination": ".agents/skills/inspect-quality-gates"
-      },
-      {
-        "source": "governance/checks",
-        "destination": "governance/checks"
-      },
-      {
-        "source": "governance/reviews",
-        "destination": "governance/reviews"
-      },
-      {
-        "source": "docs/standards/AS-BUILT-DESIGN.md",
-        "destination": "docs/standards/AS-BUILT-DESIGN.md"
       }
     ],
     "communication": [
@@ -391,20 +279,12 @@
       {
         "source": ".agents/skills/japanese-git-commit-gitmoji",
         "destination": ".agents/skills/japanese-git-commit-gitmoji"
-      },
-      {
-        "source": "docs/reference/commit-message.md",
-        "destination": "docs/reference/commit-message.md"
       }
     ],
     "commit-style": [
       {
         "source": ".agents/skills/japanese-git-commit-gitmoji",
         "destination": ".agents/skills/japanese-git-commit-gitmoji"
-      },
-      {
-        "source": "docs/reference/commit-message.md",
-        "destination": "docs/reference/commit-message.md"
       }
     ],
     "skills": [
@@ -421,92 +301,34 @@
     ],
     "regulated": [
       {
-        "source": ".agents/skills",
-        "destination": ".agents/skills"
+        "source": ".agents/skills/govern-development-request",
+        "destination": ".agents/skills/govern-development-request"
       },
       {
-        "source": ".codex/agents",
-        "destination": ".codex/agents"
+        "source": ".agents/skills/author-lifecycle-docs",
+        "destination": ".agents/skills/author-lifecycle-docs"
       },
       {
-        "source": "governance",
-        "destination": "governance"
+        "source": ".agents/skills/authorize-autonomous-execution",
+        "destination": ".agents/skills/authorize-autonomous-execution"
       },
       {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-      },
-      {
-        "source": "docs/templates",
-        "destination": "docs/templates"
-      },
-      {
-        "source": "tools/devflow.py",
-        "destination": "tools/devflow.py"
-      },
-      {
-        "source": "checklist.xlsx",
-        "destination": "checklist.xlsx"
-      },
-      {
-        "source": "requirements.txt",
-        "destination": "requirements.txt"
-      },
-      {
-        "source": "distribution/snippets/AGENTS.governance.md",
-        "destination": "AGENTS.governance.reference.md"
+        "source": ".agents/skills/right-size-execution",
+        "destination": ".agents/skills/right-size-execution"
       }
     ],
     "governance": [
       {
-        "source": ".agents/skills",
-        "destination": ".agents/skills"
+        "source": ".agents/skills/maintain-canonical-requirements",
+        "destination": ".agents/skills/maintain-canonical-requirements"
       },
       {
-        "source": ".codex/agents",
-        "destination": ".codex/agents"
+        "source": ".agents/skills/generate-implementation-design",
+        "destination": ".agents/skills/generate-implementation-design"
       },
       {
-        "source": "governance",
-        "destination": "governance"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-      },
-      {
-        "source": "docs/templates",
-        "destination": "docs/templates"
-      },
-      {
-        "source": "tools/devflow.py",
-        "destination": "tools/devflow.py"
-      },
-      {
-        "source": "checklist.xlsx",
-        "destination": "checklist.xlsx"
-      },
-      {
-        "source": "requirements.txt",
-        "destination": "requirements.txt"
-      },
-      {
-        "source": "distribution/snippets/AGENTS.governance.md",
-        "destination": "AGENTS.governance.reference.md"
-      }
-    ],
-    "codex-hooks": [
-      {
-        "source": ".codex/hooks",
-        "destination": ".codex/hooks"
-      },
-      {
-        "source": ".codex/hooks.json",
-        "destination": ".codex/hooks.json"
-      },
-      {
-        "source": "distribution/snippets/codex-config.toml",
-        "destination": ".codex/config.reference.toml"
+        "source": ".agents/skills/inspect-quality-gates",
+        "destination": ".agents/skills/inspect-quality-gates"
       }
     ],
     "full": [
@@ -517,46 +339,6 @@
       {
         "source": ".codex/agents",
         "destination": ".codex/agents"
-      },
-      {
-        "source": ".codex/hooks",
-        "destination": ".codex/hooks"
-      },
-      {
-        "source": ".codex/hooks.json",
-        "destination": ".codex/hooks.json"
-      },
-      {
-        "source": "governance",
-        "destination": "governance"
-      },
-      {
-        "source": "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-        "destination": "docs/standards/REQUIREMENT-CLASSIFICATION.md"
-      },
-      {
-        "source": "docs/templates",
-        "destination": "docs/templates"
-      },
-      {
-        "source": "tools/devflow.py",
-        "destination": "tools/devflow.py"
-      },
-      {
-        "source": "checklist.xlsx",
-        "destination": "checklist.xlsx"
-      },
-      {
-        "source": "requirements.txt",
-        "destination": "requirements.txt"
-      },
-      {
-        "source": "distribution/snippets/AGENTS.governance.md",
-        "destination": "AGENTS.governance.reference.md"
-      },
-      {
-        "source": "distribution/snippets/codex-config.toml",
-        "destination": ".codex/config.reference.toml"
       }
     ]
   }

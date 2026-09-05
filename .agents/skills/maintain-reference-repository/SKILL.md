@@ -1,123 +1,103 @@
 ---
 name: maintain-reference-repository
-description: Preserve dev-standard portability when changing its skills, agents, standards, governance, distribution, tests, or docs. Use for this repository itself; separate reusable assets from repository-specific records and policies.
+description: Preserve dev-standard portability when changing its formal specifications, skills, distribution, tests, or docs without exporting repository-specific policy.
 ---
 
 # Maintain Reference Repository
 
-このrepository自身を更新するとき、導入先projectの実作業と、移植可能な参照資産を混同しない。
+## Formal specification
 
-## Repository identity
+`spec/skills/skills.qnt` の `skillContracts` にある `name: "maintain-reference-repository"` を形式契約とする。
 
-`dev-standard`は、Skills、agents、generator、schema、check catalog、installer、標準文書のsample / reference collectionである。導入先productの稼働中projectではない。
+形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
 
-次をrepository固有の恒久成果物として残さない。
+`dev-standard`自身を更新するとき、導入先へ持ち出す3本柱と、このrepositoryだけの実行環境を分離する。
 
-- liveな`work/<id>/`
-- 実依頼のapproval chainやphase記録
-- 変更ごとのexecution plan、implementation log、test report、release report、retrospective
-- GitHub Actionsや外部serviceの生結果
-- 会話transcript、利用者固有情報、production evidence
+このSkillは`dev-standard`または同じportable collectionを保守するforkの仕様、Skill、distribution、検査、文書を変更するときだけ起動する。導入先product repositoryの通常開発には起動せず、導入先へこのrepository固有のrelease・branch・CI規則を持ち込まない。
 
-regulated runtimeのcode、template、schema、validatorはsampleとして維持できる。実行中のwork itemは導入先repositoryで生成する。synthetic fixtureが必要な場合は`tests/fixtures/`等へ置き、実案件と誤認できない名前と内容にする。
+## Authority
 
-## Apply this Skill
-
-次のいずれかを変更するときに使用する。
-
-- `.agents/skills/`または`.codex/agents/`
-- `distribution/manifest.json`またはinstaller
-- `governance/`、check catalog、review contract
-- `spec/requirements/`または要件生成logic
-- `docs/`、README、`.github/CONTRIBUTING.md`、AGENTS
-- sample、fixture、template、profile、repository layout
-
-導入先productの通常実装では起動しない。portableな`default`、`chat-first`、`development-framework` profileへこのSkillを自動追加しない。
-
-## Required lenses
-
-### 1. Portability
-
-- repository名、現在のPR、個人、組織、実環境へ不必要に依存していないか。
-- copyされたartifactが導入先だけで意味を持つか。
-- sample値とproduction値を区別できるか。
-- target repositoryの`AGENTS.md`、ownership、build、security ruleを上書きしないか。
-
-### 2. Requirement classification
-
-`docs/standards/REQUIREMENT-CLASSIFICATION.md`に従い、まず`product` / `project`を分け、次に`functional` / `nonfunctional`を分ける。
-
-- Skillやtoolの外部挙動・品質はproduct requirementとして扱う。
-- 開発、保守、review、配布、文書化の義務はproject requirementとして扱う。
-- documentation requirementは原則`project / nonfunctional`とする。
-- 利用者へ表示するhelp、message、帳票等、その内容自体がproduct behaviorならproduct requirementとして扱う。
-
-今回だけの作業手順をproject requirementへ昇格させない。
-
-### 3. Authority
-
-- 永続要件: `spec/requirements/requirements.json`
-- 人向け要件: 正本から生成した`docs/requirements/REQUIREMENTS.md`
+- 要件正本: `spec/requirements/requirements.qnt`
+- 要件の機械view: `spec/requirements/requirements.json`
+- 要件の人向けview: `docs/requirements/REQUIREMENTS.md`
+- 全Skillの形式契約: `spec/skills/skills.qnt`
+- Skill契約の機械view: `spec/skills/skills.json`
 - 実装由来設計: `docs/design/generated/`
 - 長期判断の理由: ADR
-- check定義: `governance/checks/catalog.yaml`
-- 変更証跡: Commit Comment、review YAML、PR、外部CI
 
-同じ現在状態を複数の手書きfileで正本化しない。
+生成viewを直接編集せず、同じ現在状態を複数の手書きfileで正本化しない。
 
-### 4. Documentation as project NFR
+## Portable boundary
 
-恒久文書を追加または更新する場合、対応するproject NFRについて次を確認する。
+default portable setが配布するガードレールは次の3本だけとする。
 
-1. audience
-2. purpose
-3. authority
-4. update trigger
-5. verification
-6. maintenance rule
-7. retirement condition
+1. durableな原子要件
+2. 実装由来のas-built設計
+3. 変更に関係する検査だけ
 
-文書が必要なのではなく、読者が達成すべき結果と維持すべき品質が必要である。要件正本へ義務を置き、文書pathはtraceにする。
+導入先へ適用するとき、installerとmanifestは次を追加も変更もしない。
 
-### 5. Distribution boundary
+- `.github/workflows/`等のCI設定とrequired check
+- branch protection、ruleset、branch構成
+- merge方式、merge先、release topology
+- PR template、commit形式、変更ごとのreview YAML
 
-- 新しいportable assetをどのprofileへ含めるかを明示する。
-- repository-maintenance専用assetをdefault profileへ混入させない。
-- manifest、installer test、Skills一覧を同時に更新する。
-- repository固有のreview YAML、work record、CI resultを配布しない。
-- profile追加は既存profileのcopy結果を破壊しない。
-
-### 6. Self-hosting
-
-このrepository自身が定義する規則を変更する場合、規則、実装、sample、test、説明を一つの変更で整合させる。ただし、変更ごとの重複文書を増やして自己証明しない。
+対象repositoryの既存file、指示、ownership、build、security ruleを維持する。
 
 ## Workflow
 
-1. 依頼をportable collectionの変更として言い換える。
-2. product / projectとfunctional / nonfunctionalを判定する。
-3. 永続要件の意味が変わる場合だけ`$maintain-canonical-requirements`を使う。
-4. 必要なartifactだけを更新し、liveな`work/`を作らない。
-5. Skill、standard、manifest、installer、test、root instructionの影響を確認する。
-6. repository固有の値、履歴、証跡がportable artifactへ混入していないかreviewする。
-7. selected check、Commit Comment、PR、現在HEADのCIで変更を確定する。
-
-## Meta review questions
-
-- この差分は導入先へ持ち出せる規則か、このrepositoryだけの一時事情か。
-- 永続要件と変更証跡を混同していないか。
-- documentの存在ではなく、project NFRを定義しているか。
-- `work/`、log、report、approvalをsampleとして残していないか。
-- default profileへrepository-maintenance専用Skillを混入させていないか。
-- distribution manifestと実際のfile treeが一致しているか。
-- 既存consumerに互換性破壊がある場合、migrationまたはversioningが明示されているか。
-- 新しい規則が防ぐ具体的な欠陥と、追加costが釣り合っているか。
+1. 変更をportable collectionの変更として言い換える。
+2. 永続要件が変わる場合は`requirements.qnt`を更新する。
+3. Skillの契約が変わる場合は`skills.qnt`と該当`SKILL.md`を同時に更新する。
+4. `python tools/quintflow.py generate`で派生viewを更新する。
+5. manifest、installer、docs、testsを最小範囲で整合させる。
+6. default portable setが3本柱と会話entry pointだけであることを確認する。
+7. repository固有のworkflow、履歴、review record、live work item、生ログが配布されないことを確認する。
+8. ローカル検査を通し、既存CIがある場合だけ追加証拠として確認する。
 
 ## Completion
 
-- top-levelの`work/`が存在しない。
-- liveなrepository固有work recordが他pathへ移動していない。
-- documentation requirementの分類とauthorityが明示されている。
-- `docs/guides/getting-started.md`と`distribution/manifest.json`がSkill treeと整合する。
-- portable profileにこのrepository専用Skillが暗黙追加されていない。
-- contract testがwork境界、分類、distributionを検証する。
-- Commit Commentとreview YAMLが現在の差分を説明する。
+- 18 SkillとQuint契約が1対1で対応する。
+- default portable setは会話entry pointと3本柱だけを含む。
+- どの配布構成も導入先のCI、branch、merge設定へ触れない。
+- Quint、JSON、Markdownの生成driftがない。
+- installer isolation testとrepository testが通る。
+- live work record、生ログ、利用者固有情報がportable assetへ混入していない。
+
+<!-- BEGIN GENERATED QUINT CONTRACT -->
+## Quint contract（自動生成）
+
+このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+
+- Skill: `maintain-reference-repository`
+- 役割: reference-maintenance
+- 柱: auxiliary
+- guardrail: no
+- repository blocking: no
+- 既定portable: no
+- 適用条件: when-reference-assets-change
+- 起動context: `reference-maintenance`
+- 外部作用capability: no
+- repository policy `ciWorkflow`: false
+- repository policy `requiredCheck`: false
+- repository policy `branchProtection`: false
+- repository policy `ruleset`: false
+- repository policy `mergeStrategy`: false
+- repository policy `prTemplate`: false
+- repository policy `commitFormat`: false
+- 前提: dev-standard or its portable-collection fork changes portable assets
+- 事後条件: portable and repository-specific assets remain separated
+- Authority: reference-repository
+- 副作用: repository-write
+- 失敗状態: report-bounded
+- 入力: `reference-change`, `distribution-boundary`
+- 出力: `portable-assets`, `compatibility-result`
+- 義務: `separate-portable-and-reference-only-assets`, `keep-default-portable-set-to-entry-and-three-pillars`, `verify-portable-dependency-closure`
+- 禁止事項: `do not invoke for ordinary target-product changes`, `do not export reference-repository policy`, `do not edit generated views directly`
+- 依存Skill: なし
+- 必須asset: なし
+- 要件trace: なし
+- manual digest: `38c711380cc19a84d24c54033bf2a97dbaaaadd70621e6efaeb5f041cab4c367`
+- payload digest: `a326bcc3756108c0dc1a8d07cb16a5bd85d63a7f4fb0aee45f7a5bed6b8656d4`
+- interface digest: `4d1d390ff78d7538d4905e2af1e09699ada5bfdc594b4466ccc117ce6c09e68e`
+<!-- END GENERATED QUINT CONTRACT -->

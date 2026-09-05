@@ -1,4 +1,4 @@
 interface:
   display_name: "振り返りと改善"
   short_description: "Turn evidenced process failure into one improvement"
-  default_prompt: "Use $retrospect-and-improve only because a regulated close, escaped defect, repeated correction, critical miss, rollback, repeated CI repair, or periodic audit triggered it; propose one testable change without auto-applying it."
+  default_prompt: "Use $retrospect-and-improve only for direct evidence of an escaped defect, incident, rollback, or recurring cost; propose one bounded, measurable change with a lighter alternative, rollback, and sunset without auto-applying it."
