@@ -668,15 +668,12 @@ def _policy_markdown(contract: Mapping[str, Any]) -> str:
 
 
 def render_skill_block(contract: Mapping[str, Any]) -> str:
-    """Render the deterministic Quint contract block embedded in ``SKILL.md``."""
+    """Render the activation boundary; keep audit detail in the catalog view."""
 
     validate_skill_contract(contract)
-    policy = _repository_policy(contract)
     fields: list[tuple[str, str]] = [
         ("Skill", f"`{contract.get('name', '')}`"),
-        ("役割", str(contract.get("role", ""))),
         ("柱", str(contract.get("pillar", ""))),
-        ("guardrail", "yes" if _typed_bool(contract, "guardrail") else "no"),
         (
             "repository blocking",
             "yes" if _typed_bool(contract, "repositoryBlocking") else "no",
@@ -688,31 +685,17 @@ def render_skill_block(contract: Mapping[str, Any]) -> str:
             "外部作用capability",
             "yes" if _typed_bool(contract, "externalEffect") else "no",
         ),
-        *[
-            (f"repository policy `{field}`", str(policy[field]).lower())
-            for field in REPOSITORY_POLICY_FIELDS
-        ],
-        ("前提", str(contract.get("precondition", ""))),
-        ("事後条件", str(contract.get("postcondition", ""))),
         ("Authority", str(contract.get("authority", ""))),
         ("副作用", str(contract.get("sideEffect", ""))),
         ("失敗状態", str(contract.get("failureState", ""))),
-        ("入力", _markdown_list(contract.get("inputs"))),
-        ("出力", _markdown_list(contract.get("outputs"))),
-        ("義務", _markdown_list(contract.get("obligationIds", contract.get("obligations")))),
-        ("禁止事項", _markdown_list(contract.get("prohibitions"))),
-        ("依存Skill", _markdown_list(contract.get("dependencies"))),
-        ("必須asset", _markdown_list(contract.get("requiredAssets"))),
-        ("要件trace", _markdown_list(contract.get("requirementIds"))),
-        ("manual digest", f"`{contract.get('manualBodySha256', '')}`"),
-        ("payload digest", f"`{contract.get('payloadSha256', '')}`"),
-        ("interface digest", f"`{contract.get('interfaceSha256', '')}`"),
     ]
     lines = [
         GENERATED_BLOCK_START,
         "## Quint contract（自動生成）",
         "",
-        "このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。",
+        "このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。",
+        "詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。",
+        "repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。",
         "",
     ]
     lines.extend(f"- {label}: {value}" for label, value in fields)
@@ -800,6 +783,9 @@ def render_skills(catalog: Mapping[str, Any]) -> str:
             f"- 依存Skill: {_markdown_list(contract.get('dependencies'))}",
             f"- 必須asset: {_markdown_list(contract.get('requiredAssets'))}",
             f"- 要件trace: {_markdown_list(contract.get('requirementIds'))}",
+            f"- manual digest: `{contract['manualBodySha256']}`",
+            f"- payload digest: `{contract['payloadSha256']}`",
+            f"- interface digest: `{contract['interfaceSha256']}`",
         ]
     return "\n".join(lines) + "\n"
 

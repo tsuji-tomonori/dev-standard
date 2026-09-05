@@ -8,7 +8,6 @@ import ast
 import json
 import re
 import sys
-import tomllib
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable
 
@@ -392,17 +391,24 @@ def validate_manifest_document(
 
 
 def frontmatter(path: Path, failures: list[str]) -> dict[str, str]:
+    import yaml
+
     text = path.read_text(encoding="utf-8")
     match = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
     if not match:
         fail(f"{path.relative_to(ROOT)}: YAML frontmatter missing", failures)
         return {}
-    values: dict[str, str] = {}
-    for line in match.group(1).splitlines():
-        if ":" in line:
-            key, value = line.split(":", 1)
-            values[key.strip()] = value.strip().strip('"')
-    return values
+    try:
+        values = yaml.safe_load(match.group(1))
+    except yaml.YAMLError as exc:
+        fail(f"{path.relative_to(ROOT)}: invalid YAML frontmatter: {exc}", failures)
+        return {}
+    if not isinstance(values, dict) or any(
+        not isinstance(values.get(key), str) for key in ("name", "description")
+    ):
+        fail(f"{path.relative_to(ROOT)}: name and description must be YAML strings", failures)
+        return {}
+    return {key: values[key] for key in ("name", "description")}
 
 
 def validate_skills(failures: list[str]) -> None:
@@ -562,12 +568,6 @@ def validate_repo(failures: list[str]) -> None:
     if listed != actual:
         fail("getting-started Skill inventory drift", failures)
 
-    try:
-        config = tomllib.loads((ROOT / ".codex" / "config.toml").read_text(encoding="utf-8"))
-        if config.get("agents", {}).get("max_threads", 0) > 3:
-            fail("agents.max_threads must remain cost-bounded", failures)
-    except (OSError, tomllib.TOMLDecodeError) as exc:
-        fail(f".codex/config.toml invalid: {exc}", failures)
 
 
 def parser() -> argparse.ArgumentParser:

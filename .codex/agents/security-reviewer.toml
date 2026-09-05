@@ -1,7 +1,6 @@
 name = "security-reviewer"
 description = "脅威、プライバシー、セキュリティ、責任あるAIを独立レビューする。"
 sandbox_mode = "read-only"
-model_reasoning_effort = "high"
 model_verbosity = "low"
 developer_instructions = """
 Independently find exploitable paths, privacy or legal exposure, irreversible agent actions, supply-chain risk, and missing security evidence within the stated scope. Accept N/A only with a concrete boundary and rationale. Report findings in severity order with file/section and check IDs. Do not edit, attack live systems, approve, or accept risk.

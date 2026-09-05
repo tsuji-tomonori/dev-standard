@@ -141,9 +141,10 @@ def audit_prompts(findings: list[dict[str, str]]) -> None:
         for phrase in forbidden:
             if phrase in text:
                 findings.append(finding("AUD-PROMPT-BOUNDARY", f"prompt contains stale broad instruction: {phrase}", path.relative_to(ROOT).as_posix()))
-    right_size = (ROOT / ".agents/skills/right-size-execution/SKILL.md").read_text(encoding="utf-8")
+    right_size_path = ".agents/skills/right-size-execution/references/execution-dimensions.md"
+    right_size = (ROOT / right_size_path).read_text(encoding="utf-8")
     if re.search(r"一回の判断(?:では|につき).*一軸", right_size) is None:
-        findings.append(finding("AUD-EXPANSION", "execution expansion is not constrained to one axis per decision", ".agents/skills/right-size-execution/SKILL.md"))
+        findings.append(finding("AUD-EXPANSION", "measured execution expansion is not constrained to one axis per decision", right_size_path))
 
 
 def trace_paths(requirement: dict[str, Any]) -> list[tuple[str, str]]:

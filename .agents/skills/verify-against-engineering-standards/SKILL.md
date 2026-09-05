@@ -5,11 +5,7 @@ description: Verify only official standards relevant to a change, preserving can
 
 # Verify Against Engineering Standards
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "verify-against-engineering-standards"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "verify-against-engineering-standards"`（保守・監査時に参照）。
 
 SWEBOK、cloud Well-Architected、security、accessibility等を、正本要件を上書きしない独立した品質レンズとして使用する。このSkillは任意の補助Skillであり、portable blocking gateではない。
 
@@ -55,37 +51,18 @@ SWEBOK、cloud Well-Architected、security、accessibility等を、正本要件�
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `verify-against-engineering-standards`
-- 役割: standards-lens
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-a-relevant-standard-is-selected
 - 起動context: `relevant-standard`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: a relevant standard is selected for the change
-- 事後条件: only applicable controls have evidence-bounded findings without overriding canonical authority, and any requested generated source document stays repository-confined
 - Authority: canonical-requirements-target-policy-and-selected-official-standards
 - 副作用: repository-write
 - 失敗状態: report-bounded
-- 入力: `change`, `requirements`, `target-policy`, `skill-default-standards-registry`, `source-context`, `optional-repository-output`
-- 出力: `selected-standards`, `selected-controls`, `standard-findings`, `residual-risk`, `requirement-handoff`, `generated-sources-doc-when-requested`
-- 義務: `select-only-relevant-official-controls`, `preserve-standard-version-and-freshness`, `derive-verdict-from-direct-evidence`, `confine-generated-output-to-target-repository`
-- 禁止事項: `do not override canonical requirements with external standards`, `do not claim certification or exhaustive compliance`, `do not write outside the target repository or create CI or merge policy`
-- 依存Skill: なし
-- 必須asset: `assets/standards.registry.json`, `references/as-built-design-check-selection.md`, `references/source-policy.md`, `scripts/standardsflow.py`
-- 要件trace: `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-DOCS-001`, `REQ-QUALITY-001`, `REQ-QUALITY-003`
-- manual digest: `c8af30668eff4b9a6f011eb7045ce7186d8946b5cc4747b984b916ad306ad90e`
-- payload digest: `1ee8c37168749ce8fb21781a9b4fcf2a794fc7d9216a8ea8c3f9f08391f18f4e`
-- interface digest: `4849946704e4fff8bf109eb0ad4eff8513f9e717cd21e00f79893f68cdb9cd89`
 <!-- END GENERATED QUINT CONTRACT -->

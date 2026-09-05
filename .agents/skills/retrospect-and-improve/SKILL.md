@@ -5,11 +5,7 @@ description: Analyze an evidenced escaped defect, incident, rollback, or recurri
 
 # Retrospect and Improve
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "retrospect-and-improve"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "retrospect-and-improve"`（保守・監査時に参照）。
 
 実際のescaped defect、incident、rollback、または複数観測で確認した反復costから、検証可能な改善候補を一つだけ作る。
 
@@ -85,37 +81,18 @@ runner inputは`trigger`、direct evidenceを持つ`consequence`、一つのSkil
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `retrospect-and-improve`
-- 役割: retrospective
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-evidenced-systemic-trigger-exists
 - 起動context: `evidenced-systemic-failure`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: an evidenced escaped defect, incident, rollback, or recurring cost exists
-- 事後条件: a bounded evaluable improvement is proposed but not automatically applied
 - Authority: observed-defect
 - 副作用: repository-confined-temporary-write
 - 失敗状態: no-op-unless-triggered
-- 入力: `defect-incident-rollback-or-recurring-cost-evidence`, `impact`
-- 出力: `bounded-candidate-or-not-triggered`, `optional-temporary-json-result`
-- 義務: `require-evidenced-systemic-trigger`, `compare-lighter-alternatives`, `define-evaluation-rollback-and-sunset`
-- 禁止事項: `do not trigger from one transient check failure`, `do not auto-promote a proposal to a blocking rule`, `do not mix unrelated improvement into the active change`
-- 依存Skill: なし
-- 必須asset: `references/improvement-policy.md`, `scripts/retrospect.py`
-- 要件trace: なし
-- manual digest: `d1b329800294b8ea06b8534e4ac958314dd1bd850e5fad0d2428474b5a00bb00`
-- payload digest: `8bddd1c183b216d2ff52bc8a016b430b202df65b8f7e1b1177fec4bbf7a1a629`
-- interface digest: `b6e41b56a6ba2fe48c3ce901f0d83eac72ad651d9bea2224946efcdacd9eece3`
 <!-- END GENERATED QUINT CONTRACT -->

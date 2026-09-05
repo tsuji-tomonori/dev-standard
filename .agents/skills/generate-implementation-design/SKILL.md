@@ -5,11 +5,7 @@ description: Deterministically generate as-built design from implementation arti
 
 # Generate Implementation Design
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "generate-implementation-design"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "generate-implementation-design"`（保守・監査時に参照）。
 
 実装から現在状態の設計を決定的に生成する。これは2本目のガードレールである。
 
@@ -55,37 +51,18 @@ description: Deterministically generate as-built design from implementation arti
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `generate-implementation-design`
-- 役割: as-built-design
 - 柱: design
-- guardrail: yes
 - repository blocking: yes
 - 既定portable: yes
 - 適用条件: when-a-declared-generator-supports-the-change
 - 起動context: `supported-as-built-surface`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: a declared generator supports the changed surface and explicit trace JSON declares applicable_requirement_ids for that supported surface
-- 事後条件: generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes
 - Authority: implementation
 - 副作用: repository-write
 - 失敗状態: fail-on-drift
-- 入力: `implementation`, `generator-contract`, `pinned-isolated-python-runtime`, `canonical-requirements-json`, `explicit-applicable-requirement-ids`, `explicit-artifact-trace`, `test-source`
-- 出力: `generated-design`, `drift-result`, `exact-requirement-artifact-test-trace`, `structured-unsupported-surface-or-bounded-fail-closed-diagnostic`
-- 義務: `run-with-pinned-isolated-runtime`, `generate-deterministic-as-built`, `verify-isolation-and-drift`, `match-explicit-applicable-active-set-exactly`, `reject-unknown-inactive-missing-or-excess-trace`
-- 禁止事項: `do not modify the target repository virtual environment`, `do not edit generated design directly`, `do not infer requirement satisfaction from implementation`, `do not require a generator or CI for unsupported artifacts`
-- 依存Skill: なし
-- 必須asset: `assets/as-built-thresholds.json`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
-- 要件trace: `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`
-- manual digest: `429d39048fee4fafa8f85558a3aa44178dd4cb2aeed73b941af1a0904569c208`
-- payload digest: `972bf2d4303a151c201084447052731f0142c1c73de031a3451c31a9f0f20c68`
-- interface digest: `2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42`
 <!-- END GENERATED QUINT CONTRACT -->

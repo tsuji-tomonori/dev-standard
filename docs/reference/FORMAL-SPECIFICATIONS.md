@@ -60,6 +60,9 @@
 - 依存Skill: なし
 - 必須asset: `references/challenge-playbook.md`, `references/report-template.md`, `references/research-basis.md`
 - 要件trace: なし
+- manual digest: `fa3eb9831cca4a171bbabce33e3b2f843e65edbaedbb1e54948e6cad4641e369`
+- payload digest: `9ad70d5f3a5dda494f0249985dfdea45c00bb217418a8be95476324f243dff99`
+- interface digest: `2a288a121591cb1bd3c950bc18615d267d1edf0f28331f2157aa7296ef9ef856`
 
 ### author-lifecycle-docs
 
@@ -80,6 +83,9 @@
 - 依存Skill: なし
 - 必須asset: `assets/template-map.json`, `references/document-rules.md`
 - 要件trace: なし
+- manual digest: `765c6dd2bef4bef23a2e6ab691664e828ba5ce6b60c8d6416aa12d1f1c0f3e4b`
+- payload digest: `ef45fe345793aaccce17c13d1658556d6af7e926c2bed273b26f5a0edfaf3e9d`
+- interface digest: `3cd8efe2ae6065ac22af9c9bf7414b8636403dc0754994c260d7881f42eab195`
 
 ### authorize-autonomous-execution
 
@@ -96,10 +102,13 @@
 - 入力: `requested-result`, `external-effects`, `rollback`, `current-explicit-authority-evidence`
 - 出力: `authorization-decision`, `authority-evidence-reference`
 - 義務: `bind-approval-to-result-and-effects`, `record-stop-and-rollback-boundary`, `reuse-current-approval-within-boundary`, `reject-self-issued-authorization`
-- 禁止事項: `do not infer approval from silence or history`, `do not self-mint or rewrite authority evidence`, `do not require a work item for ordinary external operations`, `do not freeze reversible implementation details`
+- 禁止事項: `do not infer approval from silence or unrelated history`, `do not self-mint or rewrite authority evidence`, `do not require a work item for ordinary external operations`, `do not freeze reversible implementation details`
 - 依存Skill: なし
 - 必須asset: `references/authorization-boundary.md`
 - 要件trace: `REQ-PORTABLE-003`
+- manual digest: `986d3bea3e4df940623100315b1a565a8de37fb36e36222076c569dfc04d52f1`
+- payload digest: `fe706945e0261d253d3ab98aefcacc8b5905d2bc94e7ea4b243b6f376a0d3eed`
+- interface digest: `38025d9d84a0db4183ca9f2d785e80fd3ffc4a239c0554567f99c6cae4129905`
 
 ### calibrated-collaborative-listening
 
@@ -120,6 +129,9 @@
 - 依存Skill: なし
 - 必須asset: `references/evaluation-rubric.md`, `references/evidence-map.md`, `references/japanese-response-patterns.md`, `references/semantic-articulation-protocol.md`
 - 要件trace: `REQ-DISC-001`
+- manual digest: `949651687839e31fde3609d337def4d3ad3927e7029087853db63f85f6ce4333`
+- payload digest: `ac238a57de0efa49e9bf667ff5fb564ba14551d45f2062ed4ada2ce19afe8450`
+- interface digest: `f2f0ae44b737d2fb39e6e5bfe2e771b3ed2430e6653f5d742e4d730eceee72d7`
 
 ### chat-first-development
 
@@ -140,6 +152,9 @@
 - 依存Skill: `maintain-canonical-requirements`, `generate-implementation-design`, `inspect-quality-gates`
 - 必須asset: `references/bootstrap-and-conversation.md`
 - 要件trace: `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`
+- manual digest: `0d682adbd481318858b0f8000b91ff96cec0b359d7b1fff7ab0e5ee997533796`
+- payload digest: `23e2400ebf4e7aad2ff46da62f6a61ad8b0899c21a60ded4d246706395f6ff2c`
+- interface digest: `fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d`
 
 ### design-frontend-experience
 
@@ -160,6 +175,9 @@
 - 依存Skill: なし
 - 必須asset: `references/evidence-map.md`
 - 要件trace: なし
+- manual digest: `e8424b4f8afd3b16fb9f5bf47550da8d9a4403ba0ed03c570283588d95d0e006`
+- payload digest: `3a6c7028166026088e59394ecd91218e663b05a032da8a2835f9da66893ad812`
+- interface digest: `dbcd41c79681072af7015a3476e9a45f6f851dac7c1b6ec072d0abb47f46c99c`
 
 ### elicit-frontend-requirements
 
@@ -180,6 +198,9 @@
 - 依存Skill: なし
 - 必須asset: `references/evidence-map.md`
 - 要件trace: `REQ-DISC-005`
+- manual digest: `a101def52f60a99c54016e90898a32d917e5dd8667b09be5c8c2fafd9d4b0f4b`
+- payload digest: `9e4bcabfece7a6685a9cb07399e6c8a10ee7a72c760dbbd1b20f91df671f4bb4`
+- interface digest: `01653ab1c807a2841aa48a2eeea4a8da57eaf31227066664929c8dea2cfc4e1b`
 
 ### generate-implementation-design
 
@@ -200,6 +221,9 @@
 - 依存Skill: なし
 - 必須asset: `assets/as-built-thresholds.json`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
 - 要件trace: `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`
+- manual digest: `21b5e9950c216b93732ee9e3b2dc7857978c309c5d31f9db62518c6e36650580`
+- payload digest: `972bf2d4303a151c201084447052731f0142c1c73de031a3451c31a9f0f20c68`
+- interface digest: `2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42`
 
 ### govern-development-request
 
@@ -220,6 +244,9 @@
 - 依存Skill: なし
 - 必須asset: `references/work-item-contract.md`, `scripts/regulatedflow.py`, `scripts/start.py`
 - 要件trace: なし
+- manual digest: `bf4f083149b4e0304fad22e317ed28bf8ad564a78066a1e3a4fe455f143a28fa`
+- payload digest: `c5906a3efc5407865ee4b2d825332b46a61541613fb33253d573d9d8fe10e1ae`
+- interface digest: `9bef3e4b8a30e1c39effdddb1f0101f892ce21ec8a2b468de3bf43f6af507d30`
 
 ### implement-frontend-experience
 
@@ -240,6 +267,9 @@
 - 依存Skill: なし
 - 必須asset: `references/evidence-map.md`
 - 要件trace: なし
+- manual digest: `713ec708fe88eabdb3bf0408c0e1c1a4074b71c46df9b1cab8234799f26d2b1a`
+- payload digest: `b6ac505f0c8ee8554d0ffc8d330739f636f4363265dd3d6ef23656a67236c911`
+- interface digest: `d43aeb305cf1db96d64568e1d231ad529686b1ef3b92c86d8a2c4e0df7f2bb50`
 
 ### inspect-quality-gates
 
@@ -258,8 +288,11 @@
 - 義務: `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
 - 禁止事項: `do not modify source to hide failures`, `do not claim external-effect absence process isolation or unselected coverage`, `do not execute a declared external effect without explicit authority`, `do not create CI or merge policy`
 - 依存Skill: なし
-- 必須asset: `references/gate-rules.md`, `scripts/inspect.py`
+- 必須asset: `references/gate-rules.md`, `references/runner-contract.md`, `scripts/inspect.py`
 - 要件trace: `REQ-ASBUILT-019`, `REQ-QUALITY-002`
+- manual digest: `90812190a17d4d86f3610a4a85d312e96478ccf5df930d9d262f4c383871f829`
+- payload digest: `a474c9650ac451e4cebd1d40df9a5bad8acc631c962eced70c6b828f4de77408`
+- interface digest: `073b20f8a4c4f30a38fac5fb4ae66a56ee7e97caf4cb96beeea189b26e391fd1`
 
 ### japanese-git-commit-gitmoji
 
@@ -280,6 +313,9 @@
 - 依存Skill: なし
 - 必須asset: なし
 - 要件trace: なし
+- manual digest: `740237d898f1b183deb594df8e310e271abd2e82dd841037bd4a0c62b054e802`
+- payload digest: `74dea666a7d9914d3c92f5bf16d74ae0b6ae1207a68d4da377e74541ed0ff08c`
+- interface digest: `3cd81796135cb9dceb62bfdd67ea29d90f7114d9c2e9458e1d848abbbcc82423`
 
 ### maintain-canonical-requirements
 
@@ -300,6 +336,9 @@
 - 依存Skill: なし
 - 必須asset: `assets/documentation-project-nfr.example.json`, `assets/requirements.schema.json`, `assets/requirements.template.qnt`, `references/research-basis.md`, `scripts/specflow.py`
 - 要件trace: `REQ-DISC-001`, `REQ-DISC-002`, `REQ-DISC-003`, `REQ-DISC-004`, `REQ-DISC-005`, `REQ-DOCS-001`, `REQ-FRAME-001`, `REQ-QUINT-002`
+- manual digest: `384c51bbc94169ba05caa0c5c4dc60a864c0f471a10dd10467daa9ec543151e8`
+- payload digest: `7f497d1fa2d81cfa91cbdab77b3aebb4e4d73bb88008579984370931661fcc43`
+- interface digest: `b01e1f0024fed3697ccf71d93c9111cd47755cf531217ecbf61dfb66ec7b6a89`
 
 ### maintain-reference-repository
 
@@ -320,6 +359,9 @@
 - 依存Skill: なし
 - 必須asset: なし
 - 要件trace: なし
+- manual digest: `bc32c8ece88b4d744bc8395f421d2b3e06f3c6e751223815e69d185c706d27ca`
+- payload digest: `a326bcc3756108c0dc1a8d07cb16a5bd85d63a7f4fb0aee45f7a5bed6b8656d4`
+- interface digest: `3d060df2a991b7e9c891bcc86678132f72fdae5435b644b3c9a8c8b242f72f6c`
 
 ### retrospect-and-improve
 
@@ -340,11 +382,14 @@
 - 依存Skill: なし
 - 必須asset: `references/improvement-policy.md`, `scripts/retrospect.py`
 - 要件trace: なし
+- manual digest: `0cb999de00126d6fcee37d346a91cd58c2ce3965552f3d394fbc34793052f428`
+- payload digest: `8bddd1c183b216d2ff52bc8a016b430b202df65b8f7e1b1177fec4bbf7a1a629`
+- interface digest: `b6e41b56a6ba2fe48c3ce901f0d83eac72ad651d9bea2224946efcdacd9eece3`
 
 ### right-size-execution
 
-- 前提: execution context can provide sizing, adjustment, verification observation, and stopping evidence
-- 事後条件: the selected or adjusted minimum profile has an exact verification projection, bounded diagnostics, and tamper-evident stopping evidence
+- 前提: execution sizing is needed; exact profile and stopping evidence apply only when measured execution is selected
+- 事後条件: minimum sufficient checks are selected; measured execution additionally has an exact verification projection, bounded diagnostics, and tamper-evident stopping evidence
 - 適用条件: `when-execution-sizing-is-needed`
 - 起動context: `execution-sizing`
 - Authority: `change-risk`
@@ -360,6 +405,9 @@
 - 依存Skill: なし
 - 必須asset: `assets/behavior-constraints.json`, `assets/benchmark-cases.json`, `assets/execution-policy.json`, `assets/execution-policy.schema.json`, `assets/execution-profile.schema.json`, `references/execution-dimensions.md`, `references/expansion-contract.md`, `references/measurement-contract.md`, `references/stopping-contract.md`, `scripts/executionflow.py`
 - 要件trace: `REQ-EXEC-001`, `REQ-EXEC-002`, `REQ-EXEC-003`, `REQ-EXEC-004`, `REQ-EXEC-005`, `REQ-EXEC-006`, `REQ-EXEC-007`, `REQ-EXEC-008`, `REQ-EXEC-009`, `REQ-EXEC-010`, `REQ-SKILL-001`, `REQ-SKILL-002`
+- manual digest: `f5d3ddb338b6fea71326b34c8cc9468d3df92a175b1b2ff88755478a5d494c3a`
+- payload digest: `4c1b2d00f7d4597070f1d8bd6c8d032f3712e64ccaa8b08f86a32afd02bb3ea5`
+- interface digest: `0da8298df4216322130c6c5eed94f9b98fa68557b8e2a24378f84e572a1b20a8`
 
 ### test-frontend-experience
 
@@ -380,6 +428,9 @@
 - 依存Skill: なし
 - 必須asset: `references/evidence-map.md`
 - 要件trace: なし
+- manual digest: `0df812138601c4432c5d650acb027955b5146aa75dd76413b175188f63619a6e`
+- payload digest: `ae93336d0c22d3524dc0615c389b1cec418b953875d59fb7ffd1f943abb2d0a6`
+- interface digest: `75a61d820c9f0f7aeca8315708801ba28ce17a3850b1372b6ec45f9962c9c6d4`
 
 ### verify-against-engineering-standards
 
@@ -400,3 +451,6 @@
 - 依存Skill: なし
 - 必須asset: `assets/standards.registry.json`, `references/as-built-design-check-selection.md`, `references/source-policy.md`, `scripts/standardsflow.py`
 - 要件trace: `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-DOCS-001`, `REQ-QUALITY-001`, `REQ-QUALITY-003`
+- manual digest: `e9dca0bd1c9c450fe0aba6cffa4621b85037ab06e32ebbd7058b7ab7b98398f9`
+- payload digest: `1ee8c37168749ce8fb21781a9b4fcf2a794fc7d9216a8ea8c3f9f08391f18f4e`
+- interface digest: `4849946704e4fff8bf109eb0ad4eff8513f9e717cd21e00f79893f68cdb9cd89`

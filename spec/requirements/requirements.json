@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 12,
+  "catalog_revision": 13,
   "product": "dev-standard",
   "requirements": [
     {
@@ -2277,18 +2277,25 @@
           "id": "AC-PORTABLE-003-1",
           "then": "利用者がその結果を明示的に依頼し、対象systemに必要な権限が確認できる場合だけ実行し、それ以外はrepository内の成果物またはhandoffに留める",
           "when": "portable Skillまたはruntimeが実行可否を判断する"
+        },
+        {
+          "given": "同じ対象と外部作用への明示依頼・承認が会話または対象所有記録にあり、撤回・失効していない",
+          "id": "AC-PORTABLE-003-2",
+          "then": "既存承認を再利用し、形式的な再承認や別Skillの導入を要求しない。範囲拡張、失効、対象側の必須承認は省略しない",
+          "when": "後続の手順で同じ権限境界を確認する"
         }
       ],
       "action": "constrain",
       "category": "nonfunctional",
       "id": "REQ-PORTABLE-003",
-      "last_changed_by": "user:2026-08-29",
+      "last_changed_by": "user:2026-09-05",
       "object": "外部または不可逆な操作を利用者が明示した依頼と必要な承認の範囲だけに限定すること",
       "rationale": "copy-and-chatで導入したガードレールが、要件更新や検査を理由に未依頼の公開、deploy、merge、外部記録または高額操作へ権限を広げてはならない。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
+        "user:2026-09-05",
         "user:2026-08-27",
         "user:2026-08-29",
         "AGENTS.md"
@@ -2689,18 +2696,25 @@
           "id": "AC-QUINT-003-2",
           "then": "要件からSkill pathへの組とSkillからactive requirement IDへの組が完全一致し、未知またはretired IDを拒否する",
           "when": "trace整合検査を実行する"
+        },
+        {
+          "given": "Skillを実行時に読み込む",
+          "id": "AC-QUINT-003-3",
+          "then": "入口には起動条件と実行境界と正本参照だけを表示し、詳細field・asset一覧・digestは生成catalogで保持する。簡略表示後も全field検査、digest照合、配布先drift検知を維持する",
+          "when": "Quint契約のviewを生成する"
         }
       ],
       "action": "formalize",
       "category": "nonfunctional",
       "id": "REQ-QUINT-003",
-      "last_changed_by": "user:2026-08-29",
+      "last_changed_by": "user:2026-09-05",
       "object": "すべてのSkillを一対一のQuint契約とactive要件の双方向traceへ対応付けること",
       "rationale": "Skill追加時の形式仕様漏れ、削除後に残るstale契約、実装traceだけまたは自己申告requirement IDだけの片方向接続を機械検出する。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "project",
       "source_refs": [
+        "user:2026-09-05",
         "user:2026-08-27",
         "user:2026-08-29",
         "https://quint.sh/docs/what-does-quint-do",
@@ -3076,5 +3090,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-08-29"
+  "updated_at": "2026-09-05"
 }

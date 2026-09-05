@@ -5,99 +5,40 @@ description: Preserve dev-standard portability when changing its formal specific
 
 # Maintain Reference Repository
 
-## Formal specification
+形式契約: `spec/skills/skills.qnt`の`name: "maintain-reference-repository"`（保守・監査時に参照）。
 
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "maintain-reference-repository"` を形式契約とする。
+`dev-standard`またはportable collectionを保守するforkの仕様、Skill、配布、検査、文書を変更するときに使う。導入先productの通常開発には使わない。
 
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+## Authorityと配布境界
 
-`dev-standard`自身を更新するとき、導入先へ持ち出す3本柱と、このrepositoryだけの実行環境を分離する。
+- 永続要件は`spec/requirements/requirements.qnt`、Skill契約は`spec/skills/skills.qnt`を編集する。
+- `python tools/quintflow.py generate`でJSONとMarkdownを生成する。生成viewを直接編集せず、同じ現在状態を複数の手書きfileで正本化しない。
+- 既定portable setは`chat-first-development`と要件・実装由来設計・関係する検査の3本柱だけとする。
+- 導入先のbranch、merge、CI workflow、required check、PR template、commit形式、既存の指示とownershipを維持する。参照repository固有のworkflow、履歴、review recordを配布しない。
 
-このSkillは`dev-standard`または同じportable collectionを保守するforkの仕様、Skill、distribution、検査、文書を変更するときだけ起動する。導入先product repositoryの通常開発には起動せず、導入先へこのrepository固有のrelease・branch・CI規則を持ち込まない。
+## 変更と検証
 
-## Authority
+変更した契約、Skill本文、manifest、installer、docs、testsを整合させる。本文は非自明な判断・実行境界・必要時に読む参照に絞り、常時読む指示へ全schema、digest、固定のモデル設定や一般的な手順を複製しない。
 
-- 要件正本: `spec/requirements/requirements.qnt`
-- 要件の機械view: `spec/requirements/requirements.json`
-- 要件の人向けview: `docs/requirements/REQUIREMENTS.md`
-- 全Skillの形式契約: `spec/skills/skills.qnt`
-- Skill契約の機械view: `spec/skills/skills.json`
-- 実装由来設計: `docs/design/generated/`
-- 長期判断の理由: ADR
+ローカル検査は変更に関係する範囲で行い、全体の契約変更には`make verify`を使う。SkillとQuint契約の1対1対応、生成drift、default set、依存assetの配布完結性、導入先設定の不変性を確認する。既存CIは追加証拠にする。
 
-生成viewを直接編集せず、同じ現在状態を複数の手書きfileで正本化しない。
-
-## Portable boundary
-
-default portable setが配布するガードレールは次の3本だけとする。
-
-1. durableな原子要件
-2. 実装由来のas-built設計
-3. 変更に関係する検査だけ
-
-導入先へ適用するとき、installerとmanifestは次を追加も変更もしない。
-
-- `.github/workflows/`等のCI設定とrequired check
-- branch protection、ruleset、branch構成
-- merge方式、merge先、release topology
-- PR template、commit形式、変更ごとのreview YAML
-
-対象repositoryの既存file、指示、ownership、build、security ruleを維持する。
-
-## Workflow
-
-1. 変更をportable collectionの変更として言い換える。
-2. 永続要件が変わる場合は`requirements.qnt`を更新する。
-3. Skillの契約が変わる場合は`skills.qnt`と該当`SKILL.md`を同時に更新する。
-4. `python tools/quintflow.py generate`で派生viewを更新する。
-5. manifest、installer、docs、testsを最小範囲で整合させる。
-6. default portable setが3本柱と会話entry pointだけであることを確認する。
-7. repository固有のworkflow、履歴、review record、live work item、生ログが配布されないことを確認する。
-8. ローカル検査を通し、既存CIがある場合だけ追加証拠として確認する。
-
-## Completion
-
-- 18 SkillとQuint契約が1対1で対応する。
-- default portable setは会話entry pointと3本柱だけを含む。
-- どの配布構成も導入先のCI、branch、merge設定へ触れない。
-- Quint、JSON、Markdownの生成driftがない。
-- installer isolation testとrepository testが通る。
-- live work record、生ログ、利用者固有情報がportable assetへ混入していない。
+モデル更新時は公式ガイドと実際の失敗を根拠に指示を削減・修正する。文字量や静的testの成功だけでモデルの品質向上を断言せず、モデル固有の調整は対象環境で評価する。live work record、生ログ、利用者固有情報をportable assetへ含めない。
 
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `maintain-reference-repository`
-- 役割: reference-maintenance
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-reference-assets-change
 - 起動context: `reference-maintenance`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: dev-standard or its portable-collection fork changes portable assets
-- 事後条件: portable and repository-specific assets remain separated
 - Authority: reference-repository
 - 副作用: repository-write
 - 失敗状態: report-bounded
-- 入力: `reference-change`, `distribution-boundary`
-- 出力: `portable-assets`, `compatibility-result`
-- 義務: `separate-portable-and-reference-only-assets`, `keep-default-portable-set-to-entry-and-three-pillars`, `verify-portable-dependency-closure`
-- 禁止事項: `do not invoke for ordinary target-product changes`, `do not export reference-repository policy`, `do not edit generated views directly`
-- 依存Skill: なし
-- 必須asset: なし
-- 要件trace: なし
-- manual digest: `38c711380cc19a84d24c54033bf2a97dbaaaadd70621e6efaeb5f041cab4c367`
-- payload digest: `a326bcc3756108c0dc1a8d07cb16a5bd85d63a7f4fb0aee45f7a5bed6b8656d4`
-- interface digest: `4d1d390ff78d7538d4905e2af1e09699ada5bfdc594b4466ccc117ce6c09e68e`
 <!-- END GENERATED QUINT CONTRACT -->

@@ -1,7 +1,6 @@
 name = "test-reviewer"
 description = "テスト戦略、評価データ、合格閾値、証跡を独立レビューする。"
 sandbox_mode = "read-only"
-model_reasoning_effort = "medium"
 model_verbosity = "low"
 developer_instructions = """
 Independently determine whether tests and evidence prove each applicable requirement and material risk, including failure and boundary behavior. Require reachable evidence for Pass and a concrete rationale for N/A. Report gaps with file/section, requirement/test, and check IDs. Do not edit or seek a later approval for repairable findings.

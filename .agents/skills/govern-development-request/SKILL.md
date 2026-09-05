@@ -5,11 +5,7 @@ description: Run a local hash-chained authorization and verification record only
 
 # Govern Development Request
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "govern-development-request"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "govern-development-request"`（保守・監査時に参照）。
 
 このSkillは、具体的な法令、契約、安全性、不可逆production、監査上の義務、または利用者が明示したlifecycle dutyが存在する場合だけ起動する。配布profile、変更規模、technology、security labelだけでは起動しない。
 
@@ -92,37 +88,18 @@ runnerはhost-nativeなsibling scriptと`tools/safe_io.py`をno-followで固定�
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `govern-development-request`
-- 役割: regulated-orchestration
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-concrete-duty-exists
 - 起動context: `concrete-regulated-duty`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: a concrete regulated lifecycle duty exists
-- 事後条件: regulated evidence strictly binds unchanged pre-existing target-owned authority evidence within that duty and any required external anchor is returned as a handoff
 - Authority: concrete-duty-or-user
 - 副作用: repository-write
 - 失敗状態: stop-at-authority-boundary
-- 入力: `concrete-duty-kind`, `concrete-duty-reference`, `bounded-obligation`, `authority-boundary`, `retention-rule`, `pre-existing-target-owned-authority-evidence`
-- 出力: `strict-replay-regulated-record`, `local-anchor`, `external-anchor-handoff`
-- 義務: `bind-regulated-work-to-concrete-duty`, `consume-and-bind-pre-existing-target-owned-authority-evidence`, `bind-authorization-to-authority-result-effects-rollback-and-stop`, `strictly-replay-init-authorize-verify-close`, `handoff-required-external-anchor`
-- 禁止事項: `do not activate from a technology or risk label alone`, `do not apply lifecycle evidence to ordinary work`, `do not self-mint or rewrite authority evidence`, `do not write external audit records`, `do not retain secrets PII or raw production logs`
-- 依存Skill: なし
-- 必須asset: `references/work-item-contract.md`, `scripts/regulatedflow.py`, `scripts/start.py`
-- 要件trace: なし
-- manual digest: `8f45357d0b44a87af2bb87661679c6f8c80377ab1dad0982ba79b71d78957210`
-- payload digest: `c5906a3efc5407865ee4b2d825332b46a61541613fb33253d573d9d8fe10e1ae`
-- interface digest: `9bef3e4b8a30e1c39effdddb1f0101f892ce21ec8a2b468de3bf43f6af507d30`
 <!-- END GENERATED QUINT CONTRACT -->

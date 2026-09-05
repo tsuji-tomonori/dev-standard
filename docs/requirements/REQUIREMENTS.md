@@ -2,9 +2,9 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 12
+- カタログ版: 13
 - Product(JSON): <code>"dev-standard"</code>
-- 更新日(JSON): <code>"2026-08-29"</code>
+- 更新日(JSON): <code>"2026-09-05"</code>
 - 正本: `spec/requirements/requirements.qnt`
 - 機械可読view: `spec/requirements/requirements.json`
 
@@ -55,14 +55,14 @@
 | <code>"REQ-FRAME-001"</code> | 3 | 有効 | 制約 | リポジトリは、一時的な作業記録と永続的な製品要件を**分離する**（<code>"separate"</code>） | 自動検査 |
 | <code>"REQ-PORTABLE-001"</code> | 5 | 有効 | 運用 | 移植可能なSkills集は、別リポジトリへのcopy-and-chat方式の導入を**実現する**（<code>"enable"</code>） | 自動E2Eテスト |
 | <code>"REQ-PORTABLE-002"</code> | 1 | 有効 | 制約 | portable installerと既定profileは、導入先のbranch、merge rule、CI workflowを追加も変更もしないことを**維持する**（<code>"preserve"</code>） | installer isolation test |
-| <code>"REQ-PORTABLE-003"</code> | 1 | 有効 | 制約 | portable Skillとruntimeは、外部または不可逆な操作を利用者が明示した依頼と必要な承認の範囲だけに限定することを**制約する**（<code>"constrain"</code>） | 契約テストとmutation test |
+| <code>"REQ-PORTABLE-003"</code> | 2 | 有効 | 制約 | portable Skillとruntimeは、外部または不可逆な操作を利用者が明示した依頼と必要な承認の範囲だけに限定することを**制約する**（<code>"constrain"</code>） | 契約テストとmutation test |
 | <code>"REQ-QUALITY-001"</code> | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する**（<code>"maintain"</code>） | 自動検査 |
 | <code>"REQ-QUALITY-002"</code> | 5 | 有効 | 品質 | 品質フローは、変更と受入条件に関係する検査だけによる成果物検証を**検証する**（<code>"verify"</code>） | 契約テスト |
 | <code>"REQ-QUALITY-003"</code> | 3 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する**（<code>"maintain"</code>） | 自動テストと批判的レビュー |
 | <code>"REQ-QUALITY-004"</code> | 1 | 有効 | 制約 | portable blocking guardrailは、要件正本、as-built生成、選択checkの3本柱だけを対象にすることを**制約する**（<code>"constrain"</code>） | Quint invariant verification |
 | <code>"REQ-QUINT-001"</code> | 3 | 有効 | 制約 | 永続要件は、Quint仕様を唯一の編集対象としJSONを派生物として維持することを**維持する**（<code>"maintain"</code>） | Quint typecheckと生成drift検査 |
 | <code>"REQ-QUINT-002"</code> | 3 | 有効 | 機能 | 要件生成器は、Quintから全fieldとList順を保持するJSONを生成し、そのserialized JSONから人向けMarkdownを生成することを**生成する**（<code>"generate"</code>） | 決定的生成とgolden mappingテスト |
-| <code>"REQ-QUINT-003"</code> | 2 | 有効 | 品質 | Skill形式仕様は、すべてのSkillを一対一のQuint契約とactive要件の双方向traceへ対応付けることを**形式化する**（<code>"formalize"</code>） | Quint testと双方向集合比較 |
+| <code>"REQ-QUINT-003"</code> | 3 | 有効 | 品質 | Skill形式仕様は、すべてのSkillを一対一のQuint契約とactive要件の双方向traceへ対応付けることを**形式化する**（<code>"formalize"</code>） | Quint testと双方向集合比較 |
 | <code>"REQ-REPO-001"</code> | 3 | 廃止 | 制約 | dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分離したbranch別統合契約を**強制する**（<code>"enforce"</code>） | CIとGitHub ruleset監査 |
 | <code>"REQ-REPO-002"</code> | 3 | 廃止 | 運用 | release operatorとCIは、release前後のancestor関係、tip tree条件、freezeを含むreconciliation transactionを**維持する**（<code>"maintain"</code>） | branch graph回帰テストとCI |
 | <code>"REQ-REPO-003"</code> | 3 | 廃止 | 制約 | dev-standardの二層branch試行は、2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行を**制約する**（<code>"constrain"</code>） | repository contract testと試行後review |
@@ -1552,15 +1552,17 @@ portable Skillとruntimeは、外部または不可逆な操作を利用者が�
 根拠: copy-and-chatで導入したガードレールが、要件更新や検査を理由に未依頼の公開、deploy、merge、外部記録または高額操作へ権限を広げてはならない。
 根拠(JSON): <code>"copy-and-chatで導入したガードレールが、要件更新や検査を理由に未依頼の公開、deploy、merge、外部記録または高額操作へ権限を広げてはならない。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"user:2026-08-29"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"user:2026-09-05"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-PORTABLE-003-1"</code> 前提: 外部systemへの書込みまたは不可逆な操作が開発手順に現れる。条件: portable Skillまたはruntimeが実行可否を判断する。期待結果: 利用者がその結果を明示的に依頼し、対象systemに必要な権限が確認できる場合だけ実行し、それ以外はrepository内の成果物またはhandoffに留める。
   - criterion(JSON Object): <code>{"given":"外部systemへの書込みまたは不可逆な操作が開発手順に現れる","id":"AC-PORTABLE-003-1","then":"利用者がその結果を明示的に依頼し、対象systemに必要な権限が確認できる場合だけ実行し、それ以外はrepository内の成果物またはhandoffに留める","when":"portable Skillまたはruntimeが実行可否を判断する"}</code>
+- <code>"AC-PORTABLE-003-2"</code> 前提: 同じ対象と外部作用への明示依頼・承認が会話または対象所有記録にあり、撤回・失効していない。条件: 後続の手順で同じ権限境界を確認する。期待結果: 既存承認を再利用し、形式的な再承認や別Skillの導入を要求しない。範囲拡張、失効、対象側の必須承認は省略しない。
+  - criterion(JSON Object): <code>{"given":"同じ対象と外部作用への明示依頼・承認が会話または対象所有記録にあり、撤回・失効していない","id":"AC-PORTABLE-003-2","then":"既存承認を再利用し、形式的な再承認や別Skillの導入を要求しない。範囲拡張、失効、対象側の必須承認は省略しない","when":"後続の手順で同じ権限境界を確認する"}</code>
 
-要求源(JSON List): <code>["user:2026-08-27","user:2026-08-29","AGENTS.md"]</code>
+要求源(JSON List): <code>["user:2026-09-05","user:2026-08-27","user:2026-08-29","AGENTS.md"]</code>
 検証方法: 契約テストとmutation test
 検証証跡: 未依頼外部操作の拒否、明示依頼と権限を伴う操作の許可、外部anchor handoff境界の検査
 検証(JSON Object): <code>{"evidence":"未依頼外部操作の拒否、明示依頼と権限を伴う操作の許可、外部anchor handoff境界の検査","method":"契約テストとmutation test"}</code>
@@ -1788,8 +1790,8 @@ Skill形式仕様は、すべてのSkillを一対一のQuint契約とactive要�
 根拠: Skill追加時の形式仕様漏れ、削除後に残るstale契約、実装traceだけまたは自己申告requirement IDだけの片方向接続を機械検出する。
 根拠(JSON): <code>"Skill追加時の形式仕様漏れ、削除後に残るstale契約、実装traceだけまたは自己申告requirement IDだけの片方向接続を機械検出する。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `quality`
-変更識別子: <code>"user:2026-08-29"</code>
+項目版: 3 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"user:2026-09-05"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1797,8 +1799,10 @@ Skill形式仕様は、すべてのSkillを一対一のQuint契約とactive要�
   - criterion(JSON Object): <code>{"given":"Skill directoryとQuint契約catalogがある","id":"AC-QUINT-003-1","then":"双方の名前集合が完全一致し、各SKILL.mdから契約へtraceできる","when":"形式契約検査を実行する"}</code>
 - <code>"AC-QUINT-003-2"</code> 前提: active要件がSkill pathをtraceするかSkill契約がrequirement IDを宣言する。条件: trace整合検査を実行する。期待結果: 要件からSkill pathへの組とSkillからactive requirement IDへの組が完全一致し、未知またはretired IDを拒否する。
   - criterion(JSON Object): <code>{"given":"active要件がSkill pathをtraceするかSkill契約がrequirement IDを宣言する","id":"AC-QUINT-003-2","then":"要件からSkill pathへの組とSkillからactive requirement IDへの組が完全一致し、未知またはretired IDを拒否する","when":"trace整合検査を実行する"}</code>
+- <code>"AC-QUINT-003-3"</code> 前提: Skillを実行時に読み込む。条件: Quint契約のviewを生成する。期待結果: 入口には起動条件と実行境界と正本参照だけを表示し、詳細field・asset一覧・digestは生成catalogで保持する。簡略表示後も全field検査、digest照合、配布先drift検知を維持する。
+  - criterion(JSON Object): <code>{"given":"Skillを実行時に読み込む","id":"AC-QUINT-003-3","then":"入口には起動条件と実行境界と正本参照だけを表示し、詳細field・asset一覧・digestは生成catalogで保持する。簡略表示後も全field検査、digest照合、配布先drift検知を維持する","when":"Quint契約のviewを生成する"}</code>
 
-要求源(JSON List): <code>["user:2026-08-27","user:2026-08-29","https://quint.sh/docs/what-does-quint-do","docs/decisions/ADR-0004-quint-three-pillar-portability.md"]</code>
+要求源(JSON List): <code>["user:2026-09-05","user:2026-08-27","user:2026-08-29","https://quint.sh/docs/what-does-quint-do","docs/decisions/ADR-0004-quint-three-pillar-portability.md"]</code>
 検証方法: Quint testと双方向集合比較
 検証証跡: skills.qntのtest成功、Skill inventory、requirementIdsとactive要件Skill path traceの完全一致検査
 検証(JSON Object): <code>{"evidence":"skills.qntのtest成功、Skill inventory、requirementIdsとactive要件Skill path traceの完全一致検査","method":"Quint testと双方向集合比較"}</code>

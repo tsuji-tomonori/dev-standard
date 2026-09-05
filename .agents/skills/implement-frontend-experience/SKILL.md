@@ -5,11 +5,7 @@ description: Implement approved frontend requirements in production code with co
 
 # Implement Frontend Experience
 
-## Formal specification
-
-`spec/skills/skills.qnt` の `skillContracts` にある `name: "implement-frontend-experience"` を形式契約とする。
-
-形式契約の`applicability`と`activationContexts`に該当しない場合は起動せず、artifactやblocking判定を作らないno-opとする。
+形式契約: `spec/skills/skills.qnt`の`name: "implement-frontend-experience"`（保守・監査時に参照）。
 
 要件と最小限のdesign decisionを、既存stackとdesign systemに適合するproduction codeへ変換する。
 
@@ -89,37 +85,18 @@ behavior、state、content、responsive、accessibility contractが不足する�
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）
 
-このblockは`spec/skills/skills.qnt`から生成するviewです。直接編集しません。
+このblockは`spec/skills/skills.qnt`から自動生成し、直接編集しません。
+詳細・要件trace・digestは`spec/skills/skills.json`の同名契約を、契約の保守・監査時だけ参照します。
+repository policyは導入先が所有します。非該当ならartifactやblocking判定を作りません。
 
 - Skill: `implement-frontend-experience`
-- 役割: frontend-implementation
 - 柱: auxiliary
-- guardrail: no
 - repository blocking: no
 - 既定portable: no
 - 適用条件: when-frontend-implementation-is-requested
 - 起動context: `frontend-implementation`
 - 外部作用capability: no
-- repository policy `ciWorkflow`: false
-- repository policy `requiredCheck`: false
-- repository policy `branchProtection`: false
-- repository policy `ruleset`: false
-- repository policy `mergeStrategy`: false
-- repository policy `prTemplate`: false
-- repository policy `commitFormat`: false
-- 前提: frontend requirements and decisions are ready
-- 事後条件: the user task works in supported states and implementation evidence is handed to testing
 - Authority: requirements-and-design
 - 副作用: repository-write
 - 失敗状態: return-to-design
-- 入力: `requirements`, `design-decisions`, `existing-frontend`, `selected-check`
-- 出力: `frontend-change`, `tests`, `as-built-design`, `selected-check-result`
-- 義務: `implement-complete-user-task-states`, `preserve-semantics-and-supported-context`, `handoff-as-built-and-check-evidence`
-- 禁止事項: `do not invent product requirements during implementation`, `do not weaken type test or accessibility constraints`, `do not force an unsupported generator`
-- 依存Skill: なし
-- 必須asset: `references/evidence-map.md`
-- 要件trace: なし
-- manual digest: `594ea2760c6b4f0ddcc897dee65fac87a05219f2c1bc13a70c2c86bf48d572d1`
-- payload digest: `b6ac505f0c8ee8554d0ffc8d330739f636f4363265dd3d6ef23656a67236c911`
-- interface digest: `d43aeb305cf1db96d64568e1d231ad529686b1ef3b92c86d8a2c4e0df7f2bb50`
 <!-- END GENERATED QUINT CONTRACT -->

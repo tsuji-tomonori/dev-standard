@@ -23,7 +23,6 @@ from tools.render_requirements import RequirementsRenderError, render_serialized
 from tools.render_skills import (
     GENERATED_BLOCK_END,
     GENERATED_BLOCK_START,
-    REPOSITORY_POLICY_FIELDS,
     manual_body_sha256,
     payload_sha256,
     render_skill_block,
@@ -86,7 +85,7 @@ class QuintFlowContractTest(unittest.TestCase):
         with self.assertRaises(QuintFlowError):
             verify_requirement_skill_traces(requirements, skills)
 
-    def test_skill_contract_golden_renders_every_semantic_and_digest_field(self) -> None:
+    def test_skill_entrypoint_routes_audit_detail_without_losing_activation_boundary(self) -> None:
         contract = {
             "name": "golden-skill",
             "role": "golden-role",
@@ -126,29 +125,27 @@ class QuintFlowContractTest(unittest.TestCase):
         for expected in [
             GENERATED_BLOCK_START,
             GENERATED_BLOCK_END,
-            "golden-role",
             "artifact-authority",
             "report-bounded",
-            "golden-input",
-            "golden-output",
-            "golden-obligation",
-            "do not invent golden evidence",
-            "references/golden.md",
-            "golden-dependency",
             "when-explicitly-requested",
             "explicit-review-request",
-            "REQ-GOLDEN-001",
-            "1" * 64,
-            "2" * 64,
-            "3" * 64,
+            "golden-skill",
+            "spec/skills/skills.json",
         ]:
             self.assertIn(expected, rendered)
-        for field in REPOSITORY_POLICY_FIELDS:
-            self.assertIn(f"repository policy `{field}`: false", rendered)
+        for detail in ["golden-input", "references/golden.md", "1" * 64]:
+            self.assertNotIn(detail, rendered)
         self.assertIn("外部作用capability: no", rendered)
         self.assertNotIn("適用profile", rendered)
 
-        aggregate = render_skills(extract_skills())
+        catalog = extract_skills()
+        aggregate = render_skills(catalog)
+        for item in catalog["contracts"]:
+            for field in ["manualBodySha256", "payloadSha256", "interfaceSha256"]:
+                self.assertIn(item[field], aggregate)
+            for field in ["inputs", "outputs", "obligationIds", "prohibitions", "requiredAssets", "dependencies", "requirementIds"]:
+                for value in item[field]:
+                    self.assertIn(value, aggregate)
         self.assertIn("起動context: `explicit-review-request`", aggregate)
         self.assertIn("Repository policy: `ciWorkflow=false`", aggregate)
         self.assertIn("falseは未モデル化の外部作用", aggregate)

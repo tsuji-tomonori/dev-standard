@@ -1,4 +1,4 @@
 interface:
   display_name: "品質ゲート検査"
   short_description: "Inspect only selected checks and current evidence"
-  default_prompt: "Use $inspect-quality-gates to run only change-relevant checks, return an explicit no-op when none apply, use the optional runner only with a target-owned registry, and report declared effects, authority, and process-effect isolation uncertainty for every command without changing repository policy."
+  default_prompt: "Use $inspect-quality-gates to run change-relevant checks, report actual results and unverified scope, and preserve existing policy and authority. Read the optional runner contract only when using a target-owned command registry."
