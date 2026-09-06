@@ -2,7 +2,7 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 16
+- カタログ版: 17
 - Product(JSON): <code>"dev-standard"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -43,7 +43,8 @@
 | <code>"REQ-DISC-002"</code> | 4 | 有効 | データ | 要件カタログは、正本要件IDごとの一つの原子的な義務を**維持する**（<code>"maintain"</code>） | 構造自動テストとhuman semantic review |
 | <code>"REQ-DISC-003"</code> | 6 | 有効 | 機能 | 仕様管理フローは、版と同時更新安全性を保つQuint要件の追加、更新、廃止を**維持する**（<code>"maintain"</code>） | Quint検証と自動テスト |
 | <code>"REQ-DISC-004"</code> | 5 | 有効 | 機能 | 仕様管理フローは、QuintからJSONを経由した日本語の人間向け要件文書を**生成する**（<code>"generate"</code>） | 自動テスト |
-| <code>"REQ-DISC-005"</code> | 2 | 有効 | 機能 | 要件管理Skillは、solution候補と権限ある永続要件を**分離する**（<code>"separate"</code>） | 自動テスト |
+| <code>"REQ-DISC-005"</code> | 3 | 有効 | 機能 | 要件管理Skillは、solution候補と権限ある永続要件を**分離する**（<code>"separate"</code>） | 自動テスト |
+| <code>"REQ-DOCS-003"</code> | 1 | 有効 | 品質 | 参照repositoryの文書保守は、現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離することを**維持する**（<code>"maintain"</code>） | 自動検査と利用経路レビュー |
 | <code>"REQ-DOCS-001"</code> | 1 | 有効 | 品質 | 文書生成フローは、識別子と固有名詞を除いて日本語で統一された利用者向け文書を**提供する**（<code>"provide"</code>） | 自動検査 |
 | <code>"REQ-EXEC-001"</code> | 3 | 有効 | 運用 | 開発実行基盤は、相互に独立した変更範囲、保証水準、計算資源および実行方式を**推定する**（<code>"estimate"</code>） | 自動テスト |
 | <code>"REQ-EXEC-002"</code> | 3 | 有効 | 品質 | 開発実行基盤は、risk tag、成果物、外部副作用および不可逆性から導出したassurance下限を**強制する**（<code>"enforce"</code>） | 自動テスト |
@@ -62,7 +63,7 @@
 | <code>"REQ-QUALITY-001"</code> | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する**（<code>"maintain"</code>） | 自動検査 |
 | <code>"REQ-QUALITY-002"</code> | 5 | 有効 | 品質 | 品質フローは、変更と受入条件に関係する検査だけによる成果物検証を**検証する**（<code>"verify"</code>） | 契約テスト |
 | <code>"REQ-QUALITY-003"</code> | 3 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する**（<code>"maintain"</code>） | 自動テストと批判的レビュー |
-| <code>"REQ-QUALITY-004"</code> | 1 | 有効 | 制約 | portable blocking guardrailは、要件正本、as-built生成、選択checkの3本柱だけを対象にすることを**制約する**（<code>"constrain"</code>） | Quint invariant verification |
+| <code>"REQ-QUALITY-004"</code> | 2 | 有効 | 制約 | portable blocking guardrailは、要件正本、as-built生成、選択checkの3本柱だけを対象にすることを**制約する**（<code>"constrain"</code>） | Quint invariant verification |
 | <code>"REQ-QUINT-001"</code> | 3 | 有効 | 制約 | 永続要件は、Quint仕様を唯一の編集対象としJSONを派生物として維持することを**維持する**（<code>"maintain"</code>） | Quint typecheckと生成drift検査 |
 | <code>"REQ-QUINT-002"</code> | 3 | 有効 | 機能 | 要件生成器は、Quintから全fieldとList順を保持するJSONを生成し、そのserialized JSONから人向けMarkdownを生成することを**生成する**（<code>"generate"</code>） | 決定的生成とgolden mappingテスト |
 | <code>"REQ-QUINT-003"</code> | 3 | 有効 | 品質 | Skill形式仕様は、すべてのSkillを一対一のQuint契約とactive要件の双方向traceへ対応付けることを**形式化する**（<code>"formalize"</code>） | Quint testと双方向集合比較 |
@@ -1178,8 +1179,8 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 根拠: 結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。
 根拠(JSON): <code>"結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260829-review-remediation"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1195,10 +1196,46 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 検証証跡: solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test
 検証(JSON Object): <code>{"evidence":"solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test","method":"自動テスト"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/standards/REQUIREMENT-CLASSIFICATION.md","docs/reference/development.md",".agents/skills/maintain-canonical-requirements/references/research-basis.md"]</code>
+- 設計: <code>["docs/standards/REQUIREMENT-CLASSIFICATION.md","docs/guides/getting-started.md",".agents/skills/maintain-canonical-requirements/references/research-basis.md"]</code>
 - 実装: <code>[".agents/skills/maintain-canonical-requirements/SKILL.md",".agents/skills/chat-first-development/SKILL.md",".agents/skills/elicit-frontend-requirements/SKILL.md",".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"]</code>
 - テスト: <code>["tests/test_skills.py","tests/test_specflow.py"]</code>
 - 参照資料: <code>["SWEBOK-V4A"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DOCS-003: 利用目的に基づく文書の最小保守
+
+要件ID(JSON): <code>"REQ-DOCS-003"</code>
+タイトル(JSON): <code>"利用目的に基づく文書の最小保守"</code>
+主体(JSON): <code>"参照repositoryの文書保守"</code>
+対象(JSON): <code>"現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離すること"</code>
+参照repositoryの文書保守は、現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離することを**維持する**。
+行為enum: <code>"maintain"</code>
+
+根拠: 使われない文書と重複した指示の維持負担を減らし、要件だけの依頼から対象projectへ3本柱を導入できる入口を保つ。
+根拠(JSON): <code>"使われない文書と重複した指示の維持負担を減らし、要件だけの依頼から対象projectへ3本柱を導入できる入口を保つ。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"user:2026-09-06"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-DOCS-003-1"</code> 前提: 文書を維持または追加する。条件: 文書索引を確認する。期待結果: 利用者・目的・更新条件が明示され、現行文書への参照が解決する。
+  - criterion(JSON Object): <code>{"given":"文書を維持または追加する","id":"AC-DOCS-003-1","then":"利用者・目的・更新条件が明示され、現行文書への参照が解決する","when":"文書索引を確認する"}</code>
+- <code>"AC-DOCS-003-2"</code> 前提: 機能・Skill・配布の変更がある。条件: 保守Skillを実行する。期待結果: 関連する現行文書と正本・生成器を更新し、不要文書は呼出元ごと削除する。履歴は日付と更新対象外を表示し当時の内容を維持する。
+  - criterion(JSON Object): <code>{"given":"機能・Skill・配布の変更がある","id":"AC-DOCS-003-2","then":"関連する現行文書と正本・生成器を更新し、不要文書は呼出元ごと削除する。履歴は日付と更新対象外を表示し当時の内容を維持する","when":"保守Skillを実行する"}</code>
+- <code>"AC-DOCS-003-3"</code> 前提: 利用者が参照URLと開発要件を依頼する。条件: 既定導入を行う。期待結果: 対象projectの構成に合わせて要件初期化・設計生成・関連検査を実行し、文書保守のための追加Skill・承認工程・定型報告書を要求しない。
+  - criterion(JSON Object): <code>{"given":"利用者が参照URLと開発要件を依頼する","id":"AC-DOCS-003-3","then":"対象projectの構成に合わせて要件初期化・設計生成・関連検査を実行し、文書保守のための追加Skill・承認工程・定型報告書を要求しない","when":"既定導入を行う"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06"]</code>
+検証方法: 自動検査と利用経路レビュー
+検証証跡: 現行リンクと索引網羅の検査、既定4 Skillとhost配布の回帰検査、要件初期化・設計生成・検査経路の確認
+検証(JSON Object): <code>{"evidence":"現行リンクと索引網羅の検査、既定4 Skillとhost配布の回帰検査、要件初期化・設計生成・検査経路の確認","method":"自動検査と利用経路レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/README.md","docs/guides/getting-started.md"]</code>
+- 実装: <code>[".agents/skills/maintain-reference-repository/SKILL.md",".agents/skills/chat-first-development/SKILL.md","tools/audit_consistency.py"]</code>
+- テスト: <code>["tests/test_audit_consistency.py","tests/test_install_reference.py","tests/test_design_adoption.py"]</code>
+- 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
 
@@ -1579,7 +1616,7 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 検証証跡: リポジトリ検証とSkill契約テスト
 検証(JSON Object): <code>{"evidence":"リポジトリ検証とSkill契約テスト","method":"自動検査"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/reference/development.md"]</code>
+- 設計: <code>["docs/guides/getting-started.md"]</code>
 - 実装: <code>[".agents/skills/maintain-canonical-requirements/SKILL.md"]</code>
 - テスト: <code>["tests/test_specflow.py"]</code>
 - 参照資料: <code>["SWEBOK-V4A"]</code>
@@ -1798,8 +1835,8 @@ portable blocking guardrailは、要件正本、as-built生成、選択checkの3
 根拠: 導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。
 根拠(JSON): <code>"導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260827-quint-three-pillars"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"user:2026-09-06"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:

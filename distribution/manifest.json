@@ -7,7 +7,6 @@
     "canonical_requirements": "spec/requirements/requirements.qnt",
     "generated_requirements_json": "spec/requirements/requirements.json",
     "generated_requirements": "docs/requirements/REQUIREMENTS.md",
-    "formal_specification_guide": "docs/reference/FORMAL-SPECIFICATIONS.md",
     "generated_design": "docs/design/generated/",
     "temporary_execution": ".devflow/run/",
     "codex_project_agents": ".codex/agents/<agent-name>.toml",
@@ -94,7 +93,6 @@
       "govern-development-request",
       "implement-frontend-experience",
       "inspect-quality-gates",
-      "japanese-git-commit-gitmoji",
       "maintain-canonical-requirements",
       "maintain-reference-repository",
       "retrospect-and-improve",
@@ -273,18 +271,6 @@
       {
         "source": ".agents/skills/calibrated-collaborative-listening",
         "destination": ".agents/skills/calibrated-collaborative-listening"
-      }
-    ],
-    "commit-comment": [
-      {
-        "source": ".agents/skills/japanese-git-commit-gitmoji",
-        "destination": ".agents/skills/japanese-git-commit-gitmoji"
-      }
-    ],
-    "commit-style": [
-      {
-        "source": ".agents/skills/japanese-git-commit-gitmoji",
-        "destination": ".agents/skills/japanese-git-commit-gitmoji"
       }
     ],
     "skills": [

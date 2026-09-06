@@ -31,7 +31,7 @@ behavior、state、content、responsive、accessibility contractが不足する�
 7. long content、localization、zoom、reflow、supported viewportでresponsive ruleを確認する。
 8. stable design roleにはsemantic tokenを使い、local numberごとにtokenを増やさない。
 9. targeted type、build、lint、component / unit / browser testを小さいsliceごとに実行する。
-10. 宣言済みgeneratorが変更artifactを扱う場合だけ、implementationからroute、component、state、token、API、test mapping等のas-built設計を生成し、driftを確認する。対象外なら未生成surfaceを明示し、このSkillだけのためにgeneratorを追加しない。
+10. Dev標準の導入・実装では、route、component、state、token、API、test mapping等の必要なas-built設計を生成し、driftを確認する。generator未接続なら設計Skillの導入手順でadapterを補い、未生成の必要領域を残して完了にしない。frontend Skillだけを単独で利用する場合は、対象projectが採用した設計契約に従う。
 11. selected check resultを会話または対象repositoryが既に採用する変更記録へ簡潔に残す。
 12. 利用者または対象repositoryが指定した場合だけ、既存のcommit形式へ要件影響、設計影響、検証範囲、残存リスクを渡す。
 
@@ -70,7 +70,7 @@ behavior、state、content、responsive、accessibility contractが不足する�
 - responsive behaviorがrepresentative contentで失敗する
 - approved decisionとの差異が未解決
 - testがCSS詳細だけを確認し、user-visible outcomeを検証しない
-- 宣言済みgeneratorが変更artifactを扱うのに、as-built設計が生成されていない
+- 採用した設計契約で必要なas-built設計が生成されていない
 
 ## Completion
 

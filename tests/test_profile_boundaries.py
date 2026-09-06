@@ -106,7 +106,7 @@ class ProfileBoundaryContractTest(unittest.TestCase):
         paths = [
             ROOT / "README.md",
             ROOT / "AGENTS.md",
-            ROOT / "docs/reference/development.md",
+            ROOT / "docs/guides/getting-started.md",
             ROOT / "distribution/snippets/AGENTS.governance.md",
         ]
         combined = "\n".join(path.read_text(encoding="utf-8") for path in paths)
@@ -115,7 +115,7 @@ class ProfileBoundaryContractTest(unittest.TestCase):
         self.assertIn("追加も変更もしません", combined)
 
     def test_branch_trial_is_historical_and_enforcer_is_removed(self) -> None:
-        adr = (ROOT / "docs/decisions/ADR-0002-two-layer-branch-history.md").read_text(
+        adr = (ROOT / "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("Superseded by ADR-0004", adr)

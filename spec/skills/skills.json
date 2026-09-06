@@ -31,7 +31,7 @@
         "residual-uncertainty",
         "conditional-repair-handoff"
       ],
-      "payloadSha256": "9ad70d5f3a5dda494f0249985dfdea45c00bb217418a8be95476324f243dff99",
+      "payloadSha256": "a7f168c4592f5c3737ce08aa8753b2ebfd0dad055c19a6cd6de0200cbd983de5",
       "pillar": "auxiliary",
       "postcondition": "a bounded review report, including an explicit no-finding result when appropriate, is returned without mutating the artifact",
       "precondition": "falsifiable claims and an authority are available",
@@ -75,7 +75,7 @@
         "retention-rule"
       ],
       "interfaceSha256": "3cd8efe2ae6065ac22af9c9bf7414b8636403dc0754994c260d7881f42eab195",
-      "manualBodySha256": "765c6dd2bef4bef23a2e6ab691664e828ba5ce6b60c8d6416aa12d1f1c0f3e4b",
+      "manualBodySha256": "30d697d35142a46fbf3201a795b04270cb31a7322f01e8f0aef5fab4426c6a63",
       "name": "author-lifecycle-docs",
       "obligationIds": [
         "select-minimum-regulated-evidence",
@@ -86,7 +86,7 @@
         "regulated-evidence",
         "retention-disposition"
       ],
-      "payloadSha256": "ef45fe345793aaccce17c13d1658556d6af7e926c2bed273b26f5a0edfaf3e9d",
+      "payloadSha256": "78296332b6fdc0b37febc94302519333274acfc1ba31a82deaee57ba9211b417",
       "pillar": "auxiliary",
       "postcondition": "only required lifecycle evidence is retained",
       "precondition": "a concrete regulated retention duty exists",
@@ -105,10 +105,7 @@
         "requiredCheck": false,
         "ruleset": false
       },
-      "requiredAssets": [
-        "assets/template-map.json",
-        "references/document-rules.md"
-      ],
+      "requiredAssets": [],
       "requirementIds": [],
       "role": "regulated-documentation",
       "sideEffect": "repository-write"
@@ -200,7 +197,7 @@
         "correctable-goal",
         "decision"
       ],
-      "payloadSha256": "ac238a57de0efa49e9bf667ff5fb564ba14551d45f2062ed4ada2ce19afe8450",
+      "payloadSha256": "858b11bed28451796953febdf9bb6e557be3ffa55d62ddd089454dbab20e4439",
       "pillar": "auxiliary",
       "postcondition": "a correctable goal and decision are available",
       "precondition": "multiple interpretations materially change the result",
@@ -252,9 +249,10 @@
         "authority-boundary"
       ],
       "interfaceSha256": "fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d",
-      "manualBodySha256": "d833a541c5a4faca6c782caa0bce2d8da772c0c7d93909551060dc18fd2ee8fd",
+      "manualBodySha256": "80dd11738b74cd564578987d7a665d118b9d615e5c034ebe9df8910a0f1a917b",
       "name": "chat-first-development",
       "obligationIds": [
+        "maintain-related-current-docs-and-separate-dated-history",
         "verify-operation-sql-and-typed-query-generation",
         "verify-japanese-explanations-at-generator-source",
         "classify-durable-requirement-impact",
@@ -268,7 +266,7 @@
         "verification-summary",
         "external-operation-result"
       ],
-      "payloadSha256": "e3f954a85f0d9c33a7c5ad846747f01ba02a42d0cbe7730386bf7e4c4ee6a3c0",
+      "payloadSha256": "02240dad4439a411f83007fe5e71bbc3e1cfc463e4e56210d0348d1362302092",
       "pillar": "auxiliary",
       "postcondition": "the requested outcome and only applicable pillars are complete, and every external effect remains within explicit authority",
       "precondition": "a development outcome is requested",
@@ -296,7 +294,8 @@
         "REQ-PORTABLE-003",
         "REQ-ASBUILT-021",
         "REQ-DESIGN-007",
-        "REQ-DOCS-002"
+        "REQ-DOCS-002",
+        "REQ-DOCS-003"
       ],
       "role": "orchestrator",
       "sideEffect": "repository-and-authorized-external-write"
@@ -319,7 +318,7 @@
         "selected-check"
       ],
       "interfaceSha256": "dbcd41c79681072af7015a3476e9a45f6f851dac7c1b6ec072d0abb47f46c99c",
-      "manualBodySha256": "e8424b4f8afd3b16fb9f5bf47550da8d9a4403ba0ed03c570283588d95d0e006",
+      "manualBodySha256": "76364a15ea36f0d6c75a9a2aebc5aee4c73bb087bf2dfb9f12ae17e25b90e786",
       "name": "design-frontend-experience",
       "obligationIds": [
         "derive-minimum-implementation-decisions",
@@ -331,7 +330,7 @@
         "verification-hooks",
         "selected-check-handoff"
       ],
-      "payloadSha256": "3a6c7028166026088e59394ecd91218e663b05a032da8a2835f9da66893ad812",
+      "payloadSha256": "7ec878e03e7f29f34dbde7812229ed9e3d46f77cd0ba9f7c5ab492bdb53c311f",
       "pillar": "auxiliary",
       "postcondition": "minimum implementation decisions and selected-check handoff are explicit",
       "precondition": "frontend outcomes and constraints are known",
@@ -386,7 +385,7 @@
         "design-context",
         "selected-check"
       ],
-      "payloadSha256": "9e4bcabfece7a6685a9cb07399e6c8a10ee7a72c760dbbd1b20f91df671f4bb4",
+      "payloadSha256": "e1fd227d3f3d91a4460fe420a5887b0ea305bfea9279fab343b67dd94640b3e9",
       "pillar": "auxiliary",
       "postcondition": "durable observable obligations are maintained in canonical requirements and design context is handed forward",
       "precondition": "a frontend outcome is requested",
@@ -457,7 +456,7 @@
         "exact-requirement-artifact-test-trace",
         "structured-unsupported-surface-or-bounded-fail-closed-diagnostic"
       ],
-      "payloadSha256": "fbfcc331fd8f8c2a436ee37e0ab5d9f851a3df57fd500b1098257575d97e2b30",
+      "payloadSha256": "e89adb372bd357a6fc6468135c1ff597e3efd23a815dd8217172fcafeaf18da3",
       "pillar": "design",
       "postcondition": "generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes",
       "precondition": "adoption or implementation change requires an as-built inventory and generator connection, including first-time setup",
@@ -604,7 +603,7 @@
         "selected-check"
       ],
       "interfaceSha256": "d43aeb305cf1db96d64568e1d231ad529686b1ef3b92c86d8a2c4e0df7f2bb50",
-      "manualBodySha256": "713ec708fe88eabdb3bf0408c0e1c1a4074b71c46df9b1cab8234799f26d2b1a",
+      "manualBodySha256": "5e4fedc36222b691b0f8dcc686f63b16fd8b9694aaec1b53d0e6215159232d6b",
       "name": "implement-frontend-experience",
       "obligationIds": [
         "implement-complete-user-task-states",
@@ -617,7 +616,7 @@
         "as-built-design",
         "selected-check-result"
       ],
-      "payloadSha256": "b6ac505f0c8ee8554d0ffc8d330739f636f4363265dd3d6ef23656a67236c911",
+      "payloadSha256": "16c21b468c8cf0aceec5d8c55c0c61318ee617621ab08e1e6dd231a3345bb63c",
       "pillar": "auxiliary",
       "postcondition": "the user task works in supported states and implementation evidence is handed to testing",
       "precondition": "frontend requirements and decisions are ready",
@@ -716,56 +715,6 @@
     },
     {
       "activationContexts": [
-        "target-commit-style"
-      ],
-      "applicability": "when-user-or-target-selects-style",
-      "authority": "explicit-user-or-target-repository-style",
-      "defaultPortable": false,
-      "dependencies": [],
-      "externalEffect": false,
-      "failureState": "no-op-unless-selected",
-      "guardrail": false,
-      "inputs": [
-        "diff",
-        "verification-summary"
-      ],
-      "interfaceSha256": "3cd81796135cb9dceb62bfdd67ea29d90f7114d9c2e9458e1d848abbbcc82423",
-      "manualBodySha256": "740237d898f1b183deb594df8e310e271abd2e82dd841037bd4a0c62b054e802",
-      "name": "japanese-git-commit-gitmoji",
-      "obligationIds": [
-        "derive-message-from-actual-diff",
-        "report-verification-truthfully",
-        "prefer-target-repository-style"
-      ],
-      "outputs": [
-        "commit-message"
-      ],
-      "payloadSha256": "74dea666a7d9914d3c92f5bf16d74ae0b6ae1207a68d4da377e74541ed0ff08c",
-      "pillar": "auxiliary",
-      "postcondition": "a Japanese structured commit message is proposed",
-      "precondition": "the user explicitly requests this style or the target repository already selects it",
-      "prohibitions": [
-        "do not make this style a portable gate",
-        "do not report unexecuted checks as passing",
-        "do not require a particular merge method"
-      ],
-      "repositoryBlocking": false,
-      "repositoryPolicy": {
-        "branchProtection": false,
-        "ciWorkflow": false,
-        "commitFormat": false,
-        "mergeStrategy": false,
-        "prTemplate": false,
-        "requiredCheck": false,
-        "ruleset": false
-      },
-      "requiredAssets": [],
-      "requirementIds": [],
-      "role": "commit-message",
-      "sideEffect": "none"
-    },
-    {
-      "activationContexts": [
         "durable-requirement-change"
       ],
       "applicability": "when-durable-obligation-changes-or-authority-is-initialized",
@@ -796,7 +745,7 @@
         "existing-requirement-trace",
         "downstream-trace-handoff"
       ],
-      "payloadSha256": "7f497d1fa2d81cfa91cbdab77b3aebb4e4d73bb88008579984370931661fcc43",
+      "payloadSha256": "cd80bffd23a82ef3d2b21bcee8a7c1dcd0ec3d46c259b60158a98000be7cb86f",
       "pillar": "requirements",
       "postcondition": "Quint source, verification, derived JSON, and generated docs agree, while only already-existing downstream artifacts require current traces and future trace work is handed downstream",
       "precondition": "a requirements authority is initialized or a durable observable obligation changes",
@@ -848,12 +797,14 @@
       "guardrail": false,
       "inputs": [
         "reference-change",
-        "distribution-boundary"
+        "distribution-boundary",
+        "documentation-purpose-and-update-index"
       ],
       "interfaceSha256": "3d060df2a991b7e9c891bcc86678132f72fdae5435b644b3c9a8c8b242f72f6c",
-      "manualBodySha256": "bc32c8ece88b4d744bc8395f421d2b3e06f3c6e751223815e69d185c706d27ca",
+      "manualBodySha256": "d0a201185ba96cea2b3640d629f29e922cf2a19d27eb558390dde5ac1054f451",
       "name": "maintain-reference-repository",
       "obligationIds": [
+        "maintain-related-current-docs-and-separate-dated-history",
         "separate-portable-and-reference-only-assets",
         "keep-default-portable-set-to-entry-and-three-pillars",
         "verify-portable-dependency-closure"
@@ -864,7 +815,7 @@
       ],
       "payloadSha256": "a326bcc3756108c0dc1a8d07cb16a5bd85d63a7f4fb0aee45f7a5bed6b8656d4",
       "pillar": "auxiliary",
-      "postcondition": "portable and repository-specific assets remain separated",
+      "postcondition": "portable assets, related current documentation, and generated views agree; dated history remains separate",
       "precondition": "dev-standard or its portable-collection fork changes portable assets",
       "prohibitions": [
         "do not invoke for ordinary target-product changes",
@@ -882,7 +833,9 @@
         "ruleset": false
       },
       "requiredAssets": [],
-      "requirementIds": [],
+      "requirementIds": [
+        "REQ-DOCS-003"
+      ],
       "role": "reference-maintenance",
       "sideEffect": "repository-write"
     },
@@ -913,7 +866,7 @@
         "bounded-candidate-or-not-triggered",
         "optional-temporary-json-result"
       ],
-      "payloadSha256": "8bddd1c183b216d2ff52bc8a016b430b202df65b8f7e1b1177fec4bbf7a1a629",
+      "payloadSha256": "4e12c9592a7615c27c5fc79c93feed8b43bf1f78c55f9d1ab1c57e06a3f0c9b0",
       "pillar": "auxiliary",
       "postcondition": "a bounded evaluable improvement is proposed but not automatically applied",
       "precondition": "an evidenced escaped defect, incident, rollback, or recurring cost exists",
@@ -1061,7 +1014,7 @@
         "residual-risk",
         "repair-handoff"
       ],
-      "payloadSha256": "ae93336d0c22d3524dc0615c389b1cec418b953875d59fb7ffd1f943abb2d0a6",
+      "payloadSha256": "7aa98a22c515d4499a781adf58c77ffc4c45b5b0c47653079f35373c7a9b9562",
       "pillar": "auxiliary",
       "postcondition": "tests selected only for applicable dimensions pass or a bounded repair handoff is returned, and claims stay within executed scope",
       "precondition": "frontend requirements, approved design, implementation, and selected checks are available",
@@ -1123,7 +1076,7 @@
         "requirement-handoff",
         "generated-sources-doc-when-requested"
       ],
-      "payloadSha256": "84be2d7241beb24847ea3d0c784601805c30eb6c7e90cf00ea70fd764f5a2e89",
+      "payloadSha256": "700026cf71179dab24317d96b254748f93cc92970695ec6ee889fead9c44a21a",
       "pillar": "auxiliary",
       "postcondition": "only applicable controls have evidence-bounded findings without overriding canonical authority, and any requested generated source document stays repository-confined",
       "precondition": "a relevant standard is selected for the change",

@@ -265,8 +265,23 @@ def audit_generated_design(findings: list[dict[str, str]]) -> None:
             findings.append(finding("AUD-QUALITY-OWNER", f"inspect summary fixture lacks assertion token: {token}", "tests/test_inspect_runner.py"))
 
 
+def local_markdown_targets(path: Path) -> set[Path]:
+    """コード例と外部URLを除いた本文のローカルリンクを返す。"""
+
+    from urllib.parse import unquote, urlsplit
+
+    text = re.sub(r"(?ms)^```.*?^```[^\n]*$", "", path.read_text(encoding="utf-8"))
+    targets: set[Path] = set()
+    for match in re.finditer(r"\[[^\]\n]*\]\(([^\s)]+)(?:\s+\"[^\"]*\")?\)", text):
+        url = urlsplit(match[1].strip("<>"))
+        if url.scheme or url.netloc or not url.path:
+            continue
+        targets.add((path.parent / unquote(url.path)).resolve())
+    return targets
+
+
 def audit_docs(findings: list[dict[str, str]], metrics: dict[str, Any]) -> None:
-    """Reject known stale paths, empty placeholders, and stale audit scope."""
+    """Reject stale current paths and empty placeholders; preserve dated history."""
 
     for path in sorted((ROOT / ".agents/skills").glob("*/references/learned-rules.md")):
         if len(path.read_text(encoding="utf-8").splitlines()) <= 1:
@@ -274,11 +289,15 @@ def audit_docs(findings: list[dict[str, str]], metrics: dict[str, Any]) -> None:
     stale_tokens = ["docs/COMMIT-COMMENT.md", "docs/ARTIFACTS-AND-CHECKS.md", "docs/INSTALLATION.md", "docs/GOVERNANCE.md", "docs/FLOW.md"]
     derived_documents = {
         ROOT / "docs/requirements/REQUIREMENTS.md",
-        ROOT / "docs/reference/FORMAL-SPECIFICATIONS.md",
     }
     retired_profile = re.compile(r"\b(?:direct|assured|regulated)\s+profile\b", re.IGNORECASE)
     for path in sorted([ROOT / "AGENTS.md", ROOT / "README.md", *(ROOT / "docs").rglob("*.md"), *(ROOT / ".agents/skills").rglob("*.md")]):
+        if (ROOT / "docs/archive") in path.parents:
+            continue
         text = path.read_text(encoding="utf-8")
+        for target in sorted(local_markdown_targets(path)):
+            if not target.exists():
+                findings.append(finding("AUD-DOC-LINK", f"local link target missing: {target}", path.relative_to(ROOT).as_posix()))
         for token in stale_tokens:
             if token in text:
                 findings.append(finding("AUD-STALE-PATH", f"document references removed path: {token}", path.relative_to(ROOT).as_posix()))
@@ -291,10 +310,13 @@ def audit_docs(findings: list[dict[str, str]], metrics: dict[str, Any]) -> None:
                     path.relative_to(ROOT).as_posix(),
                 )
             )
-    audit = (ROOT / "docs/reference/skill-evidence-audit.md").read_text(encoding="utf-8")
-    if "tools/audit_consistency.py" not in audit or "2026-08-29" not in audit:
-        findings.append(finding("AUD-EVIDENCE-DOC", "Skill evidence audit lacks current automated audit contract", "docs/reference/skill-evidence-audit.md"))
-    metrics["document_count"] = len([path for path in ROOT.rglob("*.md") if not {".git", ".venv", ".devflow"}.intersection(path.parts)])
+    index = ROOT / "docs/README.md"
+    if index.is_file():
+        indexed = local_markdown_targets(index) | {index.resolve()}
+        for path in sorted((ROOT / "docs").rglob("*.md")):
+            if (ROOT / "docs/archive") not in path.parents and path.resolve() not in indexed:
+                findings.append(finding("AUD-DOC-INDEX", "current document lacks a purpose/update entry in docs/README.md", path.relative_to(ROOT).as_posix()))
+    metrics["document_count"] = len([path for path in ROOT.rglob("*.md") if not {".git", ".venv", ".devflow", "node_modules"}.intersection(path.parts)])
 
 
 def audit_makefile(findings: list[dict[str, str]]) -> None:

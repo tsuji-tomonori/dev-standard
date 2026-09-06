@@ -41,7 +41,6 @@ SKILL_NAMES = {
     "govern-development-request",
     "implement-frontend-experience",
     "inspect-quality-gates",
-    "japanese-git-commit-gitmoji",
     "maintain-canonical-requirements",
     "maintain-reference-repository",
     "retrospect-and-improve",

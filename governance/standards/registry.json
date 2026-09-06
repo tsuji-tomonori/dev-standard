@@ -200,25 +200,25 @@
       ],
       "scope": "実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約。標準contract変更とrepository採用scopeを分離し、関係するcheckだけを選択する。",
       "change_checked_at": "2026-09-06",
-      "change_summary": "APIの6帳票の内容と全operationの生成、要因・要素から実在単体テストへの対応、adapterによる実装由来の抽出と欠落検査を必須化。",
-      "artifact_sha256": "5b74d1e45ed7d91e3f372f71367b07230ad7da83e24b3fedb54f6804945e994f"
+      "change_summary": "導入時の必要設計は未接続generator・未同梱capabilityを省略理由にせずadapterで補完し、補助Skillや追加記録を一律必須化しない。",
+      "artifact_sha256": "602281bd69a153700c4059ce954c8b5415c2e4eaee96b62f57f86f567633732d"
     },
     {
       "id": "DEVSTD-AWS-CDK-AS-BUILT",
       "authority": "dev-standard maintainers",
       "title": "AWS CDK実装・as-built設計標準",
-      "version": "2026-08-29",
+      "version": "2026-09-06",
       "url": "https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
-      "checked_at": "2026-08-29",
+      "checked_at": "2026-09-06",
       "refresh_days": 180,
       "profiles": [
         "CORE",
         "AWS-DELTA"
       ],
       "scope": "AWS CDK固有の規範・選択可能な採用scopeと、bundled toolingが実装済みのcapabilityを区別するas-built設計標準。",
-      "change_checked_at": "2026-08-29",
-      "change_summary": "portable bundle自身で確認できるcapabilityだけをcurrently-supportedとし、変更に関係するsubcommandを選択実行する軽量契約へ更新。source repository固有IssueやCI・merge policyへ依存しない。",
-      "artifact_sha256": "6300dd4f32253286bda0775ef1d09478e5eb6b4198285a7e9bab25baa94c4780"
+      "change_checked_at": "2026-09-06",
+      "change_summary": "導入時の必要設計は未接続generator・未同梱capabilityを省略理由にせずadapterで補完し、補助Skillや追加記録を一律必須化しない。",
+      "artifact_sha256": "031b6afd367df36ee73fe506fb81084838798f6f8e6f22f024d40883308076ff"
     }
   ]
 }

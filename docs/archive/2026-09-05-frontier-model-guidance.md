@@ -1,5 +1,7 @@
 # フロンティアモデルと最小ハーネス
 
+> 履歴資料（更新対象外）。記載日の調査・判断を保存しています。現在の仕様・件数・パス・推奨を示すものではありません。現行の入口は[文書索引](../README.md)です。
+
 確認日: 2026-09-05。比較対象はGPT-6 Astra、Claude Fable 5.1とClaude Codeの公式ガイド。正本はこのrepositoryの`spec/requirements/requirements.qnt`と`spec/skills/skills.qnt`であり、外部ガイドは改善根拠として扱う。
 
 ## 構成の判断

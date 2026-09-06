@@ -1,6 +1,6 @@
 # Evidence map
 
-This map supports `design-frontend-experience`. Project requirements and a versioned source registry remain authoritative over generic design guidance. Source classes and the full audit are defined in [`docs/reference/skill-evidence-audit.md`](../../../../docs/reference/skill-evidence-audit.md).
+This map supports `design-frontend-experience`. Project requirements and a versioned source registry remain authoritative over generic design guidance. Source classes and the full audit are defined in [`docs/archive/2026-08-29-skill-evidence-audit.md`](../../../../docs/archive/2026-08-29-skill-evidence-audit.md).
 
 | Class | Source | Finding or authority used | Operational rule |
 |---|---|---|---|

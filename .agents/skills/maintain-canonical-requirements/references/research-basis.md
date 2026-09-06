@@ -1,6 +1,6 @@
 # Evidence-to-rule map
 
-Source classes and the cross-skill verification record are defined in [`docs/reference/skill-evidence-audit.md`](../../../../docs/reference/skill-evidence-audit.md).
+Source classes and the cross-skill verification record are defined in [`docs/archive/2026-08-29-skill-evidence-audit.md`](../../../../docs/archive/2026-08-29-skill-evidence-audit.md).
 
 | Class | Source | Finding or authority used | Operational rule |
 |---|---|---|---|

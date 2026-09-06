@@ -58,7 +58,7 @@ module requirements {
 
   pure val requirementsSource: Catalog = {
     schemaVersion: 1,
-    catalogRevision: 16,
+    catalogRevision: 17,
     product: "dev-standard",
     updatedAt: "2026-09-06",
     requirements: [
@@ -973,7 +973,7 @@ module requirements {
       },
       {
         id: "REQ-DISC-005",
-        revision: 2,
+        revision: 3,
         status: "active",
         kind: "functional",
         title: "solution候補と永続要件の境界",
@@ -989,16 +989,45 @@ module requirements {
         ],
         verification: { method: "自動テスト", evidence: "solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test" },
         traces: {
-          design: ["docs/standards/REQUIREMENT-CLASSIFICATION.md", "docs/reference/development.md", ".agents/skills/maintain-canonical-requirements/references/research-basis.md"],
+          design: ["docs/standards/REQUIREMENT-CLASSIFICATION.md", "docs/guides/getting-started.md", ".agents/skills/maintain-canonical-requirements/references/research-basis.md"],
           implementation: [".agents/skills/maintain-canonical-requirements/SKILL.md", ".agents/skills/chat-first-development/SKILL.md", ".agents/skills/elicit-frontend-requirements/SKILL.md", ".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"],
           tests: ["tests/test_skills.py", "tests/test_specflow.py"],
           standards: ["SWEBOK-V4A"],
         },
-        lastChangedBy: "CHG-20260829-review-remediation",
+        lastChangedBy: "user:2026-09-06",
         retirementReason: "",
         supersededBy: "",
         scopeName: "product",
         categoryName: "functional",
+      },
+      {
+        id: "REQ-DOCS-003",
+        revision: 1,
+        status: "active",
+        kind: "quality",
+        title: "利用目的に基づく文書の最小保守",
+        subject: "参照repositoryの文書保守",
+        actionName: "maintain",
+        objectName: "現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離すること",
+        rationale: "使われない文書と重複した指示の維持負担を減らし、要件だけの依頼から対象projectへ3本柱を導入できる入口を保つ。",
+        sourceRefs: ["user:2026-09-06"],
+        acceptanceCriteria: [
+          { id: "AC-DOCS-003-1", given: "文書を維持または追加する", when_: "文書索引を確認する", expected: "利用者・目的・更新条件が明示され、現行文書への参照が解決する" },
+          { id: "AC-DOCS-003-2", given: "機能・Skill・配布の変更がある", when_: "保守Skillを実行する", expected: "関連する現行文書と正本・生成器を更新し、不要文書は呼出元ごと削除する。履歴は日付と更新対象外を表示し当時の内容を維持する" },
+          { id: "AC-DOCS-003-3", given: "利用者が参照URLと開発要件を依頼する", when_: "既定導入を行う", expected: "対象projectの構成に合わせて要件初期化・設計生成・関連検査を実行し、文書保守のための追加Skill・承認工程・定型報告書を要求しない" }
+        ],
+        verification: { method: "自動検査と利用経路レビュー", evidence: "現行リンクと索引網羅の検査、既定4 Skillとhost配布の回帰検査、要件初期化・設計生成・検査経路の確認" },
+        traces: {
+          design: ["docs/README.md", "docs/guides/getting-started.md"],
+          implementation: [".agents/skills/maintain-reference-repository/SKILL.md", ".agents/skills/chat-first-development/SKILL.md", "tools/audit_consistency.py"],
+          tests: ["tests/test_audit_consistency.py", "tests/test_install_reference.py", "tests/test_design_adoption.py"],
+          standards: [],
+        },
+        lastChangedBy: "user:2026-09-06",
+        retirementReason: "",
+        supersededBy: "",
+        scopeName: "project",
+        categoryName: "nonfunctional",
       },
       {
         id: "REQ-DOCS-001",
@@ -1313,7 +1342,7 @@ module requirements {
         ],
         verification: { method: "自動検査", evidence: "リポジトリ検証とSkill契約テスト" },
         traces: {
-          design: ["docs/reference/development.md"],
+          design: ["docs/guides/getting-started.md"],
           implementation: [".agents/skills/maintain-canonical-requirements/SKILL.md"],
           tests: ["tests/test_specflow.py"],
           standards: ["SWEBOK-V4A"],
@@ -1492,7 +1521,7 @@ module requirements {
       },
       {
         id: "REQ-QUALITY-004",
-        revision: 1,
+        revision: 2,
         status: "active",
         kind: "constraint",
         title: "3本柱だけのportable guardrail",
@@ -1512,7 +1541,7 @@ module requirements {
           tests: ["tests/test_quintflow.py", "tests/test_profile_boundaries.py"],
           standards: ["QUINT-0.32"],
         },
-        lastChangedBy: "CHG-20260827-quint-three-pillars",
+        lastChangedBy: "user:2026-09-06",
         retirementReason: "",
         supersededBy: "",
         scopeName: "product",

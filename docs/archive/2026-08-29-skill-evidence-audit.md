@@ -1,5 +1,7 @@
 # Skills根拠資料一覧・整合性監査
 
+> 履歴資料（更新対象外）。記載日の調査・判断を保存しています。現在の仕様・件数・パス・推奨を示すものではありません。現行の入口は[文書索引](../README.md)です。
+
 - 確認日: 2026-08-29
 - 対象: `distribution/manifest.json`の現行inventoryから得たSkills、各Skillの`references/`、`governance/standards/registry.json`
 - 目的: Skillsが参照する研究・規格・公式ガイダンス・実装例を列挙し、主張、適用範囲、訂正、版、運用規則との整合を確認する

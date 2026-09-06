@@ -1,6 +1,6 @@
 # Evidence map
 
-This map supports `implement-frontend-experience`. Repository conventions and approved design decisions take precedence over generic framework advice. Source classes and the full audit are defined in [`docs/reference/skill-evidence-audit.md`](../../../../docs/reference/skill-evidence-audit.md).
+This map supports `implement-frontend-experience`. Repository conventions and approved design decisions take precedence over generic framework advice. Source classes and the full audit are defined in [`docs/archive/2026-08-29-skill-evidence-audit.md`](../../../../docs/archive/2026-08-29-skill-evidence-audit.md).
 
 | Class | Source | Finding or authority used | Operational rule |
 |---|---|---|---|

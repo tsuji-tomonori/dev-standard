@@ -141,7 +141,6 @@ _ALLOWED_ACTIVATION_CONTEXTS = frozenset(
         "frontend-testing",
         "as-built-adoption-or-change",
         "selected-checks",
-        "target-commit-style",
         "durable-requirement-change",
         "reference-maintenance",
         "evidenced-systemic-failure",
@@ -205,7 +204,6 @@ EXPECTED_SKILL_NAMES = frozenset(
         "govern-development-request",
         "implement-frontend-experience",
         "inspect-quality-gates",
-        "japanese-git-commit-gitmoji",
         "maintain-canonical-requirements",
         "maintain-reference-repository",
         "retrospect-and-improve",
@@ -606,7 +604,7 @@ def _dependency_cycle(graph: Mapping[str, list[str]]) -> list[str] | None:
 
 
 def validate_contract_catalog(contracts: Any) -> None:
-    """Validate the complete 18-Skill catalog before extraction or rendering."""
+    """Validate the complete 17-Skill catalog before extraction or rendering."""
 
     if type(contracts) is not list:
         raise ValueError("Skill catalog contracts must be a list")
@@ -617,9 +615,9 @@ def validate_contract_catalog(contracts: Any) -> None:
     if len(names) != len(set(names)):
         raise ValueError("Skill catalog names must be unique")
     actual_names = set(names)
-    if len(names) != 18 or actual_names != EXPECTED_SKILL_NAMES:
+    if len(names) != 17 or actual_names != EXPECTED_SKILL_NAMES:
         raise ValueError(
-            "Skill catalog must contain exactly the expected 18 Skills: "
+            "Skill catalog must contain exactly the expected 17 Skills: "
             f"missing={sorted(EXPECTED_SKILL_NAMES - actual_names)} "
             f"unknown={sorted(actual_names - EXPECTED_SKILL_NAMES)}"
         )
@@ -659,12 +657,6 @@ def validate_contract_catalog(contracts: Any) -> None:
     if sum(bool(contract["externalEffect"]) for contract in contracts) != 3:
         raise ValueError("exactly three contracts must declare external-effect capability")
 
-
-def _policy_markdown(contract: Mapping[str, Any]) -> str:
-    policy = _repository_policy(contract)
-    return ", ".join(
-        f"`{field}={str(policy[field]).lower()}`" for field in REPOSITORY_POLICY_FIELDS
-    )
 
 
 def render_skill_block(contract: Mapping[str, Any]) -> str:
@@ -709,85 +701,6 @@ def render_skill_manual(text: str, contract: Mapping[str, Any]) -> str:
     body = without_generated_block(text).rstrip("\n")
     return f"{body}\n\n{render_skill_block(contract)}"
 
-
-def render_skills(catalog: Mapping[str, Any]) -> str:
-    """Render the human-readable aggregate view from generated Skills JSON."""
-
-    contracts = catalog.get("contracts")
-    validate_contract_catalog(contracts)
-    lines = [
-        "<!-- tools/quintflow.pyによる自動生成。spec/skills/skills.qntを編集すること。 -->",
-        "# Skills形式仕様",
-        "",
-        "全Skillの機械可読契約と、モデル化した3本柱の不変条件を人向けに表示した派生文書です。",
-        "",
-        "- 正本: `spec/skills/skills.qnt`",
-        f"- Quint: `{catalog.get('quint_version', '')}`",
-        f"- Skill数: {len(contracts)}",
-        "",
-        "| Skill | 役割 | 柱 | Guardrail | 既定portable | 起動context |",
-        "|---|---|---|---|---|---|",
-    ]
-    pillar_labels = {
-        "requirements": "要件正本",
-        "design": "as-built設計",
-        "checks": "選択check",
-        "auxiliary": "補助",
-    }
-    for contract in contracts:
-        _repository_policy(contract)
-        lines.append(
-            f"| `{contract['name']}` | {contract['role']} | "
-            f"{pillar_labels[contract['pillar']]} | "
-            f"{'blocking' if _typed_bool(contract, 'guardrail') else 'なし'} | "
-            f"{'含む' if _typed_bool(contract, 'defaultPortable') else '含めない'} | "
-            f"{_markdown_list(contract.get('activationContexts'))} |"
-        )
-    lines += [
-        "",
-        "## 検証する不変条件",
-        "",
-        "- 全Skill directoryと形式契約が1対1で対応する。",
-        "- blocking guardrailは要件正本、as-built設計、選択checkの3本柱だけに属する。",
-        "- portable契約はCI workflow、branch rule、merge方式、commit規約を要求しない。",
-        "- 既定portable setは入口Skillと3本柱の4 Skillだけである。",
-        "- 各柱は現在の変更へ非該当なら明示的にskipし、該当する柱の順序を飛び越えない。",
-        "- 各Skillの7つのrepository policy fieldはfalseで、導入先の所有権を維持する。",
-        "- `externalEffect` は外部作用が生じ得るrunner capabilityを追跡し、falseは未モデル化の外部作用が存在しないことまで保証しない。",
-        "- Skill本文、必須asset、interfaceのdigestが形式契約と一致する。",
-        "",
-        "## 各Skillの契約",
-    ]
-    for contract in contracts:
-        lines += [
-            "",
-            f"### {contract['name']}",
-            "",
-            f"- 前提: {contract['precondition']}",
-            f"- 事後条件: {contract['postcondition']}",
-            f"- 適用条件: `{contract.get('applicability', '')}`",
-            f"- 起動context: {_markdown_list(contract.get('activationContexts'))}",
-            f"- Authority: `{contract['authority']}`",
-            f"- 副作用: `{contract['sideEffect']}`",
-            f"- 外部作用capability: `{str(_typed_bool(contract, 'externalEffect')).lower()}`",
-            f"- Guardrail / repository blocking / 既定portable: "
-            f"`{str(_typed_bool(contract, 'guardrail')).lower()}` / "
-            f"`{str(_typed_bool(contract, 'repositoryBlocking')).lower()}` / "
-            f"`{str(_typed_bool(contract, 'defaultPortable')).lower()}`",
-            f"- Repository policy: {_policy_markdown(contract)}",
-            f"- 失敗状態: `{contract.get('failureState', '')}`",
-            f"- 入力: {_markdown_list(contract['inputs'])}",
-            f"- 出力: {_markdown_list(contract['outputs'])}",
-            f"- 義務: {_markdown_list(contract.get('obligationIds', contract.get('obligations')))}",
-            f"- 禁止事項: {_markdown_list(contract.get('prohibitions'))}",
-            f"- 依存Skill: {_markdown_list(contract.get('dependencies'))}",
-            f"- 必須asset: {_markdown_list(contract.get('requiredAssets'))}",
-            f"- 要件trace: {_markdown_list(contract.get('requirementIds'))}",
-            f"- manual digest: `{contract['manualBodySha256']}`",
-            f"- payload digest: `{contract['payloadSha256']}`",
-            f"- interface digest: `{contract['interfaceSha256']}`",
-        ]
-    return "\n".join(lines) + "\n"
 
 
 def _policy_clauses(text: str) -> Iterable[tuple[int, str]]:

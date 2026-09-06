@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 16,
+  "catalog_revision": 17,
   "product": "dev-standard",
   "requirements": [
     {
@@ -1723,11 +1723,11 @@
       "action": "separate",
       "category": "functional",
       "id": "REQ-DISC-005",
-      "last_changed_by": "CHG-20260829-review-remediation",
+      "last_changed_by": "user:2026-09-06",
       "object": "solution候補と権限ある永続要件",
       "rationale": "結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "product",
       "source_refs": [
         "user:2026-07-24",
@@ -1745,7 +1745,7 @@
       "traces": {
         "design": [
           "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-          "docs/reference/development.md",
+          "docs/guides/getting-started.md",
           ".agents/skills/maintain-canonical-requirements/references/research-basis.md"
         ],
         "implementation": [
@@ -1766,6 +1766,66 @@
       "verification": {
         "evidence": "solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test",
         "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "文書を維持または追加する",
+          "id": "AC-DOCS-003-1",
+          "then": "利用者・目的・更新条件が明示され、現行文書への参照が解決する",
+          "when": "文書索引を確認する"
+        },
+        {
+          "given": "機能・Skill・配布の変更がある",
+          "id": "AC-DOCS-003-2",
+          "then": "関連する現行文書と正本・生成器を更新し、不要文書は呼出元ごと削除する。履歴は日付と更新対象外を表示し当時の内容を維持する",
+          "when": "保守Skillを実行する"
+        },
+        {
+          "given": "利用者が参照URLと開発要件を依頼する",
+          "id": "AC-DOCS-003-3",
+          "then": "対象projectの構成に合わせて要件初期化・設計生成・関連検査を実行し、文書保守のための追加Skill・承認工程・定型報告書を要求しない",
+          "when": "既定導入を行う"
+        }
+      ],
+      "action": "maintain",
+      "category": "nonfunctional",
+      "id": "REQ-DOCS-003",
+      "last_changed_by": "user:2026-09-06",
+      "object": "現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離すること",
+      "rationale": "使われない文書と重複した指示の維持負担を減らし、要件だけの依頼から対象projectへ3本柱を導入できる入口を保つ。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-06"
+      ],
+      "status": "active",
+      "subject": "参照repositoryの文書保守",
+      "superseded_by": "",
+      "title": "利用目的に基づく文書の最小保守",
+      "traces": {
+        "design": [
+          "docs/README.md",
+          "docs/guides/getting-started.md"
+        ],
+        "implementation": [
+          ".agents/skills/maintain-reference-repository/SKILL.md",
+          ".agents/skills/chat-first-development/SKILL.md",
+          "tools/audit_consistency.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_audit_consistency.py",
+          "tests/test_install_reference.py",
+          "tests/test_design_adoption.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "現行リンクと索引網羅の検査、既定4 Skillとhost配布の回帰検査、要件初期化・設計生成・検査経路の確認",
+        "method": "自動検査と利用経路レビュー"
       }
     },
     {
@@ -2319,7 +2379,7 @@
       "title": "workと正本の境界",
       "traces": {
         "design": [
-          "docs/reference/development.md"
+          "docs/guides/getting-started.md"
         ],
         "implementation": [
           ".agents/skills/maintain-canonical-requirements/SKILL.md"
@@ -2704,11 +2764,11 @@
       "action": "constrain",
       "category": "nonfunctional",
       "id": "REQ-QUALITY-004",
-      "last_changed_by": "CHG-20260827-quint-three-pillars",
+      "last_changed_by": "user:2026-09-06",
       "object": "要件正本、as-built生成、選択checkの3本柱だけを対象にすること",
       "rationale": "導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-08-27",

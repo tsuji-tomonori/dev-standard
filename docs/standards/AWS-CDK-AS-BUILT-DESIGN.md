@@ -1,13 +1,13 @@
 # AWS CDK実装・as-built設計標準
 
 - 標準ID: `DEVSTD-AWS-CDK-AS-BUILT`
-- 版: `2026-08-29`
+- 版: `2026-09-06`
 - 基底標準: [`docs/standards/AS-BUILT-DESIGN.md`](AS-BUILT-DESIGN.md)
 - 適用対象: AWS CDKを使用する導入先repository。原則はCloudFormationを出力する他のIaCへ写像できる
 - 生成物path: `docs/design/generated/cdk/`
 - 機械可読checkの正本: `governance/checks/catalog.yaml`
-- 実行profileの正本: `right-size-execution`
-- authority boundaryの正本: `authorize-autonomous-execution`
+- 実行の入口: `chat-first-development`（`right-size-execution` は選択時の補助）
+- authority boundary: 利用者の有効な依頼・承認と対象repositoryの規則
 
 本標準は、AWS CDKによるインフラ実装から、実装と1対1で対応するas-built設計をコードから自動生成し、乖離をcheck modeで機械的に検知するためのAWS CDK固有規範を定める。check modeはローカルで実行でき、既存CIがある場合だけ再利用できる。本標準はCI、required check、branch、merge ruleを要求しない。
 
@@ -47,7 +47,7 @@
 | `cdk diff`、deploy test | external operation | `adopter-selected` | 対象repositoryの既存実行環境 |
 | CloudFormation drift detection | external operation | `periodic` | 導入先運用 |
 
-新しい能力は、同梱command、contract、failure fixture、決定論的generate/checkの証拠が揃うまで`currently-supported`へ昇格しない。導入先は`not-provided`能力を無条件に実行せず、必要な場合だけ対象repositoryが所有するadapterを選択する。
+新しい能力は、同梱command、contract、failure fixture、決定論的generate/checkの証拠が揃うまで`currently-supported`へ昇格しない。Dev標準の導入では [導入・復旧手順](../../.agents/skills/generate-implementation-design/references/adoption.md) で必要領域を棚卸しし、必要な未同梱設計は対象repositoryのadapterで補う。同梱能力が足りないことを生成省略の理由にせず、補完できなければ導入未完了とする。実AWSへの操作は別の権限境界に従う。
 
 ### 0.4 authorityとコメント非依存
 
@@ -262,7 +262,7 @@ format / lint / type / convention
 
 ## 7. 開発flow
 
-IaC変更は`right-size-execution`の`scope`、`assurance`、`compute`、`mode`を独立に選び、独自の承認・計画書制度を追加しない。
+IaC変更では変更範囲・risk・計算資源・権限境界を区別して必要な検査を選ぶ。`right-size-execution` 等の補助Skill起動や独自の承認・計画書制度は追加しない。既存の有効な承認は再利用する。
 
 | Rule ID | Norm | 規則 | 接続先 |
 |---|---|---|---|

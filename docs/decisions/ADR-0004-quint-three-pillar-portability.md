@@ -11,7 +11,7 @@
 
 1. 永続要件の唯一の編集対象を`spec/requirements/requirements.qnt`とする。
 2. 要件JSONをQuintから生成し、人向けMarkdownをそのJSONから生成する。
-3. 全18 Skillを`spec/skills/skills.qnt`の契約と1対1で対応させる。
+3. 全Skillを`spec/skills/skills.qnt`の契約と1対1で対応させる。
 4. portable blocking guardrailを次の3本だけにする。
    - durableな原子要件
    - 実装由来のas-built設計

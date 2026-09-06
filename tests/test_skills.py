@@ -18,7 +18,7 @@ class SkillContractTest(unittest.TestCase):
 
     def test_every_skill_has_exactly_one_quint_contract_and_trace(self) -> None:
         self.assertEqual(set(self.contracts), self.actual)
-        self.assertEqual(len(self.actual), 18)
+        self.assertEqual(len(self.actual), 17)
         for name in self.actual:
             text = (SKILLS / name / "SKILL.md").read_text(encoding="utf-8")
             self.assertIn("spec/skills/skills.qnt", text, name)
@@ -81,10 +81,10 @@ class SkillContractTest(unittest.TestCase):
                     self.assertIs(type(policy[field]), bool, field)
                     self.assertFalse(policy[field], field)
 
-    def test_skill_catalog_matches_directories(self) -> None:
+    def test_guide_lists_only_the_default_entry_and_three_pillars(self) -> None:
         guide = (ROOT / "docs/guides/getting-started.md").read_text(encoding="utf-8")
         listed = set(re.findall(r"^\| `([a-z0-9-]+)` \|", guide, re.MULTILINE))
-        self.assertEqual(listed, self.actual)
+        self.assertEqual(listed, {name for name, contract in self.contracts.items() if contract["defaultPortable"]})
 
     def test_three_pillar_human_contracts_match_formal_authority(self) -> None:
         requirements = (SKILLS / "maintain-canonical-requirements/SKILL.md").read_text(encoding="utf-8")
@@ -97,11 +97,6 @@ class SkillContractTest(unittest.TestCase):
         for text in [requirements, design, checks]:
             self.assertIn("merge rule", text)
 
-    def test_optional_commit_style_is_not_a_gate(self) -> None:
-        text = (SKILLS / "japanese-git-commit-gitmoji/SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("場合だけ使用", text)
-        self.assertIn("portable default", text)
-        self.assertFalse(self.contracts["japanese-git-commit-gitmoji"]["guardrail"])
 
 
 if __name__ == "__main__":

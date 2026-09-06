@@ -1,6 +1,6 @@
 # Evidence map
 
-This map supports the skill design; it is not a claim of clinical validation. Source classes and the full cross-skill audit are defined in [`docs/reference/skill-evidence-audit.md`](../../../../docs/reference/skill-evidence-audit.md).
+This map supports the skill design; it is not a claim of clinical validation. Source classes and the full cross-skill audit are defined in [`docs/archive/2026-08-29-skill-evidence-audit.md`](../../../../docs/archive/2026-08-29-skill-evidence-audit.md).
 
 - `R`: peer-reviewed research
 - `N`: normative standard or official assurance guidance

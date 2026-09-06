@@ -119,7 +119,7 @@ local component detailやcodeから自明な構造はADRにしない。
 - 長期判断だけADRへ残る。
 - design impactが対象repositoryの既存方式で追跡できる。
 - このSkillのためにCI workflow、required check、branch protection、merge rule、commit形式を追加または変更していない。
-- 実装後のartifactを既存の宣言済みgeneratorが扱える場合は、as-built設計を生成するhookがある。generator対象外の場合は未生成surfaceを明示し、このSkillだけのためにgeneratorを強制しない。
+- Dev標準の導入・実装では必要なfrontend設計を生成・検査する入口を用意し、未接続なら設計Skillの導入手順でadapterを補う。設計相談だけの場合は未実装のfactを生成せず、実装時の接続へ引き継ぐ。
 
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）

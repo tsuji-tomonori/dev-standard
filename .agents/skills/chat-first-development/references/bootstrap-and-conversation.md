@@ -4,6 +4,8 @@
 
 利用者は自然言語で結果を依頼する。Skill名、内部command、branch構成、CI設定を指定する必要はない。agentは対象repositoryの既存規則と利用可能なtoolを調べ、安全に不足を補う。
 
+URL参照からの初回導入では、対象の要件、言語・framework、実装領域、既存の検証入口を先に確認する。installerのdry-run差分を確認して既定4 Skillを適用し、各柱の初回実行まで進める。要件が未初期化ならQuint正本と派生viewを作り、実装のある領域にはgenerator/adapterを接続する。
+
 ## 3本柱
 
 1. 永続義務が変わる場合だけQuint要件正本を更新する。

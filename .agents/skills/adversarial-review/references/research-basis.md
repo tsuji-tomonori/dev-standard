@@ -1,6 +1,6 @@
 # Research basis and operational rules
 
-This map records the evidence used to design the skill. It distinguishes peer-reviewed techniques, official assurance guidance, versioned preprints, and local workflow choices. The cross-skill verification record is [`docs/reference/skill-evidence-audit.md`](../../../../docs/reference/skill-evidence-audit.md).
+This map records the evidence used to design the skill. It distinguishes peer-reviewed techniques, official assurance guidance, versioned preprints, and local workflow choices. The cross-skill verification record is [`docs/archive/2026-08-29-skill-evidence-audit.md`](../../../../docs/archive/2026-08-29-skill-evidence-audit.md).
 
 | Class | Source | Finding or authority used | Operational rule |
 |---|---|---|---|
