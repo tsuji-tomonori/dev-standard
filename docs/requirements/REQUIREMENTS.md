@@ -2,7 +2,7 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 15
+- カタログ版: 16
 - Product(JSON): <code>"dev-standard"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -72,6 +72,7 @@
 | <code>"REQ-SKILL-001"</code> | 1 | 有効 | 制約 | right-size-executionは、Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約を**提供する**（<code>"provide"</code>） | 自動検査 |
 | <code>"REQ-SKILL-002"</code> | 1 | 有効 | 品質 | Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠を**検証する**（<code>"verify"</code>） | 自動benchmark |
 | <code>"REQ-WORKBOOK-001"</code> | 2 | 有効 | 運用 | チェックリスト生成フローは、実データ範囲だけを集計し決定的に再現できるレビュー用ワークブックを**生成する**（<code>"generate"</code>） | 自動検査と描画確認 |
+| <code>"REQ-ASBUILT-022"</code> | 1 | 有効 | 品質 | API設計generatorと導入完了検査は、全operationの詳細設計・interface・ログmessage・query・sequence・unit-test詳細を**生成する**（<code>"generate"</code>） | 自動テストとadapter内容レビュー |
 
 ## REQ-ASBUILT-001: as-built生成の決定論性
 
@@ -2140,5 +2141,43 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 - 実装: <code>["update_checklist.py"]</code>
 - テスト: <code>["tests/test_checklist.py"]</code>
 - 参照資料: <code>["SWEBOK-V4A"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ASBUILT-022: APIの6帳票と要因別単体テストの完全対応
+
+要件ID(JSON): <code>"REQ-ASBUILT-022"</code>
+タイトル(JSON): <code>"APIの6帳票と要因別単体テストの完全対応"</code>
+主体(JSON): <code>"API設計generatorと導入完了検査"</code>
+対象(JSON): <code>"全operationの詳細設計・interface・ログmessage・query・sequence・unit-test詳細"</code>
+API設計generatorと導入完了検査は、全operationの詳細設計・interface・ログmessage・query・sequence・unit-test詳細を**生成する**。
+行為enum: <code>"generate"</code>
+
+根拠: ファイル存在や関数一覧だけではDB入出力・ログ・テスト要因が欠落しても完了になる。
+根拠(JSON): <code>"ファイル存在や関数一覧だけではDB入出力・ログ・テスト要因が欠落しても完了になる。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260906-api-six-documents"</code>
+分類: scope=<code>""</code> / category=<code>""</code>
+
+受入条件:
+- <code>"AC-ASBUILT-022-1"</code> 前提: API実装とOpenAPIが存在する。条件: 生成と導入完了検査を実行する。期待結果: 全operationに6帳票があり、欠落・余剰operation・driftを拒否する。
+  - criterion(JSON Object): <code>{"given":"API実装とOpenAPIが存在する","id":"AC-ASBUILT-022-1","then":"全operationに6帳票があり、欠落・余剰operation・driftを拒否する","when":"生成と導入完了検査を実行する"}</code>
+- <code>"AC-ASBUILT-022-2"</code> 前提: DBアクセス・ログを持つAPI。条件: 詳細設計・query・messagesを生成する。期待結果: DB/tableの操作と入出力、SQL種別・概要・引数・戻り値・条件、ログlevel・本文・出力条件・項目が実装由来であり、未対応を非該当に偽装しない。
+  - criterion(JSON Object): <code>{"given":"DBアクセス・ログを持つAPI","id":"AC-ASBUILT-022-2","then":"DB/tableの操作と入出力、SQL種別・概要・引数・戻り値・条件、ログlevel・本文・出力条件・項目が実装由来であり、未対応を非該当に偽装しない","when":"詳細設計・query・messagesを生成する"}</code>
+- <code>"AC-ASBUILT-022-3"</code> 前提: 認証・入力制約・分岐・例外から導出した必須要因と要素。条件: unit-test詳細を生成する。期待結果: 具体的Given/When/Thenと期待ログ・DB状態を示し、全要因要素がケースと実在単体テストに対応する。欠落を拒否し、実行成功とassert妥当性は別途検証する。
+  - criterion(JSON Object): <code>{"given":"認証・入力制約・分岐・例外から導出した必須要因と要素","id":"AC-ASBUILT-022-3","then":"具体的Given/When/Thenと期待ログ・DB状態を示し、全要因要素がケースと実在単体テストに対応する。欠落を拒否し、実行成功とassert妥当性は別途検証する","when":"unit-test詳細を生成する"}</code>
+- <code>"AC-ASBUILT-022-4"</code> 前提: 分岐と例外を持つAPI。条件: interfaceとsequenceを生成する。期待結果: Swagger互換OpenAPIと参照schemaを保持し、呼出元・API・DB等のMermaid図で実際の条件分岐・例外順序を示す。未対応構文はadapterで補完するまで未完了にする。
+  - criterion(JSON Object): <code>{"given":"分岐と例外を持つAPI","id":"AC-ASBUILT-022-4","then":"Swagger互換OpenAPIと参照schemaを保持し、呼出元・API・DB等のMermaid図で実際の条件分岐・例外順序を示す。未対応構文はadapterで補完するまで未完了にする","when":"interfaceとsequenceを生成する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06-api-six-documents","https://github.com/tsuji-tomonori/rag-sample/tree/main/docs/spec/40.apis"]</code>
+検証方法: 自動テストとadapter内容レビュー
+検証証跡: 6帳票生成、削除・source変更・要因欠落・test node欠落・operation追加の失敗fixture
+検証(JSON Object): <code>{"evidence":"6帳票生成、削除・source変更・要因欠落・test node欠落・operation追加の失敗fixture","method":"自動テストとadapter内容レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/standards/AS-BUILT-DESIGN.md",".agents/skills/generate-implementation-design/references/api-documents.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/designflow.py",".agents/skills/generate-implementation-design/scripts/check_design.py"]</code>
+- テスト: <code>["tests/test_api_documents.py","tests/test_design_adoption.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

@@ -13,6 +13,8 @@ import subprocess
 from pathlib import Path
 
 SURFACES = {"api", "data", "infra", "frontend"}
+API_DOCUMENTS = {"detail-design", "interface", "messages", "query", "sequence", "unit-test"}
+HTTP_METHODS = {"get", "put", "post", "delete", "options", "head", "patch", "trace"}
 
 
 def confined(root: Path, value: str) -> Path:
@@ -52,6 +54,41 @@ def snapshot(root: Path, outputs: list[str]) -> dict[str, bytes]:
     return result
 
 
+def api_outputs(root: Path, surface: dict) -> list[str]:
+    """全OpenAPI operationについて6帳票の宣言漏れを拒否する。"""
+    path = confined(root, surface.get("openapi"))
+    document = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(document, dict) or not isinstance(document.get("paths"), dict):
+        raise ValueError("api: exported OpenAPI paths are required")
+    ids = []
+    for item in document["paths"].values():
+        if not isinstance(item, dict) or "$ref" in item:
+            raise ValueError("api: resolve OpenAPI path references before inventory")
+        for method, operation in item.items():
+            if method.lower() not in HTTP_METHODS:
+                continue
+            identity = operation.get("operationId") if isinstance(operation, dict) else None
+            if not isinstance(identity, str) or not identity.strip():
+                raise ValueError("api: every operation requires operationId")
+            ids.append(identity)
+    if not ids or len(ids) != len(set(ids)):
+        raise ValueError("api: empty or duplicate operation inventory")
+    mapping = surface.get("operation_documents")
+    if not isinstance(mapping, dict) or set(mapping) != set(ids):
+        raise ValueError("api: operation_documents must exactly match OpenAPI operations")
+    outputs = []
+    for identity, documents in mapping.items():
+        if not isinstance(documents, dict) or set(documents) != API_DOCUMENTS:
+            raise ValueError(f"api {identity}: all six document kinds are required")
+        paths = strings(list(documents.values()), f"api {identity}.documents")
+        if len(set(paths)) != len(API_DOCUMENTS):
+            raise ValueError(f"api {identity}: six distinct documents are required")
+        outputs.extend(paths)
+    if not set(outputs).issubset(strings(surface.get("markdown"), "api.markdown")):
+        raise ValueError("api: operation documents are absent from Markdown drift inventory")
+    return outputs
+
+
 def check(root: Path, contract: str) -> None:
     root = root.resolve(strict=True)
     data = json.loads(confined(root, contract).read_text(encoding="utf-8"))
@@ -76,6 +113,8 @@ def check(root: Path, contract: str) -> None:
         for source in strings(surface.get("sources"), f"{name}.sources"):
             if not confined(root, source).exists():
                 raise ValueError(f"{name}: missing implementation source {source}")
+        if name == "api":
+            api_outputs(root, surface)
         outputs.extend(strings(surface.get("markdown"), f"{name}.markdown"))
         strings(surface.get("generate"), f"{name}.generate")
         argv = strings(surface.get("check"), f"{name}.check")

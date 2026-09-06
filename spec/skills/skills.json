@@ -435,7 +435,7 @@
         "test-source"
       ],
       "interfaceSha256": "2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42",
-      "manualBodySha256": "5129ffad0ba1f2037df03a771b80da3d0d6c4d58322f2cf567a177bd980219a5",
+      "manualBodySha256": "2959ea23c39f6ecad7ba12edf956ed22c60fcc05d7e12c4608c4fd881be35d37",
       "name": "generate-implementation-design",
       "obligationIds": [
         "verify-operation-sql-and-typed-query-generation",
@@ -443,6 +443,7 @@
         "inventory-required-design-surfaces",
         "connect-missing-generators",
         "require-human-readable-markdown",
+        "generate-six-api-documents-and-cover-test-factors",
         "reject-missing-design",
         "run-with-pinned-isolated-runtime",
         "generate-deterministic-as-built",
@@ -456,7 +457,7 @@
         "exact-requirement-artifact-test-trace",
         "structured-unsupported-surface-or-bounded-fail-closed-diagnostic"
       ],
-      "payloadSha256": "39610f20062364120d6b19791f5bb749914a9afacdd6a4b7eb47398cc7db78de",
+      "payloadSha256": "fbfcc331fd8f8c2a436ee37e0ab5d9f851a3df57fd500b1098257575d97e2b30",
       "pillar": "design",
       "postcondition": "generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes",
       "precondition": "adoption or implementation change requires an as-built inventory and generator connection, including first-time setup",
@@ -477,6 +478,7 @@
         "ruleset": false
       },
       "requiredAssets": [
+        "references/api-documents.md",
         "references/sql-and-language.md",
         "assets/as-built-thresholds.json",
         "references/adoption.md",
@@ -507,6 +509,7 @@
         "REQ-ASBUILT-018",
         "REQ-ASBUILT-020",
         "REQ-ASBUILT-021",
+        "REQ-ASBUILT-022",
         "REQ-DESIGN-001",
         "REQ-DESIGN-002",
         "REQ-DESIGN-003",
@@ -1120,7 +1123,7 @@
         "requirement-handoff",
         "generated-sources-doc-when-requested"
       ],
-      "payloadSha256": "43e8ae228716003160d8796993fb6387c9f3310ec98e9017cf3f50dd4da5cd16",
+      "payloadSha256": "84be2d7241beb24847ea3d0c784601805c30eb6c7e90cf00ea70fd764f5a2e89",
       "pillar": "auxiliary",
       "postcondition": "only applicable controls have evidence-bounded findings without overriding canonical authority, and any requested generated source document stays repository-confined",
       "precondition": "a relevant standard is selected for the change",

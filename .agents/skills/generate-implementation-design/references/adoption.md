@@ -11,6 +11,8 @@ SQLを使うAPIでは[SQLと説明コメントの契約](sql-and-language.md)も
 5. 導入先の既存verify/build入口にこの検査または同等の検査を接続する。CIを利用する開発依頼では既存CIからも同じ入口を呼ぶよう、そのprojectの規則・権限内で接続する。installer自体はCI設定を配布しない。CIがない場合はローカルで実行する。
 6. 完了報告は対象revision、生成Markdownへのpath、実行commandと結果、非該当理由・未完了領域を示す。再開時はこの永続契約と実ファイルから再検査し、会話の「完了」やinstall receiptだけを信用しない。
 
+APIは[6帳票契約](api-documents.md)に従い、全operationの6種類と`operation_documents`の対応を追加する。APIの説明が1ファイル存在するだけでは完了にしない。
+
 ## 必要な内容
 
 固定の枚数を満たすために文書を分割しない。次の内容を実装から導出し、operation/table/stack等の実inventoryと生成対象集合の一致をadapterで検査する。

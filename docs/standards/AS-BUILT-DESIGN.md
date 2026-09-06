@@ -232,3 +232,7 @@ SQLを使うAPIへのDev標準導入・新規作成・再編では、[SQLと説�
 repositoryが本標準を具体的なartifact・code scopeへ採用する、または適用scopeを拡張する場合は、採用scopeと除外を対象repositoryの既存方式で記録する。標準contractを変更しただけでは`FAST-019`〜`FAST-021`、`FAST-023`を選択しない。
 
 checkをblockingへ昇格する判断は対象repositoryのauthorityに委任し、本標準のportable契約にはしない。
+
+## APIの6帳票と単体テスト対応
+
+APIの各operationには、詳細設計、OpenAPI interface、ログmessage、query、Mermaid sequence、要因別unit-test詳細の6帳票を生成する。内容・authority・adapterモデル・導入完了検査は[APIの6帳票契約](../../.agents/skills/generate-implementation-design/references/api-documents.md)に定める。関数呼出し一覧を詳細設計、HTTPエラー一覧をログ台帳、test node一覧を要因別テスト詳細の代わりにしない。

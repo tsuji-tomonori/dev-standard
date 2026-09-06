@@ -45,6 +45,43 @@ class DesignAdoptionTest(unittest.TestCase):
         (self.root / "contract.json").write_text(json.dumps(self.contract))
         design.check(self.root, "contract.json")
 
+    def api_surface(self) -> None:
+        self.contract["surfaces"]["api"] = self.surface
+        self.contract["surfaces"]["frontend"] = {"status": "not-applicable", "reason": "API only"}
+        (self.root / "openapi.json").write_text(json.dumps({
+            "openapi": "3.1.0", "paths": {"/items": {"get": {"operationId": "getItems"}}}
+        }))
+        self.surface["openapi"] = "openapi.json"
+        paths = {kind: kind + ".md" for kind in design.API_DOCUMENTS}
+        for path in paths.values():
+            (self.root / path).write_text("Generated semantic design")
+        self.surface["markdown"] = list(paths.values())
+        self.surface["operation_documents"] = {"getItems": paths}
+
+    def test_api_requires_all_six_documents_for_every_operation(self) -> None:
+        self.api_surface()
+        self.check()
+        for kind in design.API_DOCUMENTS:
+            path = self.surface["operation_documents"]["getItems"].pop(kind)
+            with self.assertRaisesRegex(ValueError, "six document"):
+                self.check()
+            self.surface["operation_documents"]["getItems"][kind] = path
+        self.surface["operation_documents"]["unknown"] = self.surface["operation_documents"]["getItems"]
+        with self.assertRaisesRegex(ValueError, "exactly match"):
+            self.check()
+
+    def test_api_cannot_reuse_one_file_for_six_kinds(self) -> None:
+        self.api_surface()
+        self.surface["operation_documents"]["getItems"] = dict.fromkeys(design.API_DOCUMENTS, "design.md")
+        with self.assertRaisesRegex(ValueError, "distinct"):
+            self.check()
+
+    def test_api_cannot_omit_document_from_drift_inventory(self) -> None:
+        self.api_surface()
+        self.surface["markdown"].pop()
+        with self.assertRaisesRegex(ValueError, "drift inventory"):
+            self.check()
+
     def test_connected_current_design_passes_without_writing(self) -> None:
         before = (self.root / "design.md").read_bytes()
         self.check()

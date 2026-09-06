@@ -153,12 +153,12 @@ class DesignflowTest(unittest.TestCase):
         sequence = (output / "SEQUENCES.gen.md").read_text(encoding="utf-8")
         self.assertTrue(sequence.startswith("<!-- AUTO-GENERATED. DO NOT EDIT DIRECTLY."))
         self.assertIn(
-            "Generate: `python tools/portable_python.py run "
+            "生成: `python tools/portable_python.py run "
             "<host-skill-path>/scripts/designflow.py -- fastapi",
             sequence,
         )
         self.assertIn(
-            "Check: `python tools/portable_python.py run "
+            "検査: `python tools/portable_python.py run "
             "<host-skill-path>/scripts/designflow.py -- fastapi",
             sequence,
         )
