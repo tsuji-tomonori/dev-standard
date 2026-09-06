@@ -25,6 +25,7 @@ Dev標準の導入時と、現在状態の設計に影響する実装変更時�
 - route AST、applicationが生成するOpenAPI、handler metadata、error branch、SQL ASTから設計を生成する。
 - executable SQLを正規表現で推測せず、parseできないSQLを拒否する。
 - 作成または再編時は`references/fastapi-contract.md`を読む。
+- SQLがある導入・実装変更では[sql-and-language.md](references/sql-and-language.md)に従い、API別SQL、DDL/SQL由来の型付きquery生成と境界検査を接続する。説明コメントと生成ヘッダーは原則日本語とし、英語が残る生成物は生成元から修正する。
 - 実行例: `python tools/portable_python.py run <host-skill-path>/scripts/designflow.py -- fastapi --source-root <src> --openapi <openapi.json> --sql-root <sql> --requirements <requirements.json> --trace <trace.json> --test-root <tests> --out docs/design/generated/fastapi`
 
 ## AWS CDK

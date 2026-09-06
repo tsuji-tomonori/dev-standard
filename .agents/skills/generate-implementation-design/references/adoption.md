@@ -2,6 +2,8 @@
 
 Skillをコピーしただけでは導入完了ではない。実装を伴う導入依頼には生成器の接続と初回Markdown生成を含める。継続開発で未接続が判明した場合も、この手順で補う。
 
+SQLを使うAPIでは[SQLと説明コメントの契約](sql-and-language.md)も適用する。API別SQLと型付きquery生成、SQL lint・境界・生成差分・関連DBテストを接続し、説明コメントと生成ヘッダーの日本語を生成元から検査する。
+
 1. 実際のsource treeとbuild設定からAPI、data、infra、frontendおよび固有領域を棚卸しする。各領域の入力、必要なMarkdown、generate/check commandを導入先所有の`.dev-standard/design.json`へ記載する。既存の同等契約があれば変換して検査でき、二重管理しない。
 2. 既存generatorを優先する。不足は配布generatorまたはproject adapterで実装する。SQL非採用はSQL出力の非該当理由であり、DynamoDB等のdata設計全体を省く理由ではない。対象が存在しない場合だけ`not-applicable`と理由を使う。技術的に生成できない対象は`blocked`とし、理由と残作業を報告して導入未完了を維持する。
 3. 実装のbuild/export/synthを含む再実行可能なgenerate commandでMarkdownを生成する。同一入力の2回生成でbyte一致を確認する。JSONやdigest、ファイル一覧のみを人向け設計書の代わりにしない。

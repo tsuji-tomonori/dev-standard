@@ -12,6 +12,7 @@ description: Select and run only the checks relevant to the current change, usin
 ## 検証
 
 - 導入時・設計に影響する実装変更時は、必要なas-built Markdownの欠落・drift検査を必ず選ぶ。generator未接続は検査対象なしではなく導入未完了である。
+- SQLを含む導入・実装変更では設計Skillの`references/sql-and-language.md`に従い、SQL lint、API別配置・呼出境界、型付きquery生成差分、関連DBテストを選ぶ。説明コメントの変更では日本語指定を生成元と生成物の両方で確認する。Python/SQLは同Skillの`qualityflow.py source-conventions`を使い、他言語・動的SQL・型の意味は対象adapter/型検査/レビューで補う。
 - 既存のtest、lint、type check、build、generatorから変更に関係するものを実行し、結果を直接確認する。CIがないこと自体を失敗にしない。
 - 挙動を変えない低影響の文書修正等に、新しいtestや全suiteの反復を一律要求しない。恒久testは実際の回帰riskと既存の運用に応じて残す。
 - 受入条件、生成drift、機密情報、権限境界に関する失敗を隠さない。失敗、新しい依存、未解決risk、既存の必須gateに根拠がある場合だけ検査を広げる。

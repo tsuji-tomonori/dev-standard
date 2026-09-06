@@ -8,4 +8,6 @@ portableなblocking guardrailは次の3本だけです。
 
 通常の入口は`$chat-first-development`です。Quint正本からJSONを生成し、そのJSONから人向けMarkdownを生成します。生成viewは直接編集しません。
 
+SQLを使うAPIでは設計Skillの`references/sql-and-language.md`に従い、API別SQL正本・型付きquery生成・関連検査まで行います。別言語の明示指示がなければ説明コメント、docstring、生成ヘッダーは日本語にし、生成物の英語は生成元から修正します。
+
 dev-standardは、このrepositoryのbranch、merge方式、CI/CD workflow、required check、PR template、commit形式を追加も変更もしません。既存のrepository指示と権限境界を優先してください。

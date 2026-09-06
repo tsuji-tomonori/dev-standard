@@ -2,6 +2,8 @@
 
 ## Operation layout
 
+SQLを含む導入・実装では[SQLと説明コメントの契約](sql-and-language.md)を必ず適用する。API別SQLを正本に型付き`generated/queries.py`を生成し、共通repositoryへSQL本文を戻さない。説明コメント・docstring・生成ヘッダーは別言語の明示指示がなければ日本語にする。
+
 - `router.py`: path-operation declaration and ordered orchestration only. It may validate/construct narrow typed inputs and call named functions, but must not contain domain algorithms or persistence details.
 - `functions.py`: concrete application/domain operations. Prefer three or fewer arguments; introduce a narrowly scoped Pydantic input model beyond that and explain the grouping in its docstring.
 - Return the final response-producing call directly. A route ending with `response = ...; return response` is a contract violation.

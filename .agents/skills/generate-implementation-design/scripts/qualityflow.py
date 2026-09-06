@@ -976,32 +976,157 @@ def implementation_structure(root: Path) -> list[str]:
         repository_root,
         suffix=".sql",
     ):
-        text = read_text_nofollow(sql)
+        failures.extend(sql_file_findings(sql))
+    return failures
+
+
+def sql_file_findings(sql: Path) -> list[str]:
+    """業務SQL一件の構文と説明の存在を検査する。"""
+
+    failures: list[str] = []
+    text = read_text_nofollow(sql)
+    try:
+        statements = [
+            item
+            for item in load_designflow().sqlglot.parse(text, error_level="RAISE")
+            if item is not None
+        ]
+    except Exception as exc:
+        failures.append(f"{sql}: invalid SQL: {type(exc).__name__}: {exc}")
+        return failures
+    if len(statements) != 1:
+        failures.append(f"{sql}: expected one SQL statement")
+    elif not isinstance(
+        statements[0],
+        (
+            load_designflow().exp.Delete,
+            load_designflow().exp.Insert,
+            load_designflow().exp.Select,
+            load_designflow().exp.Update,
+        ),
+    ):
+        failures.append(
+            f"{sql}: unsupported SQL statement: {type(statements[0]).__name__}"
+        )
+    if not text.lstrip().startswith("--"):
+        failures.append(f"{sql}: natural-language summary comment missing")
+    return failures
+
+
+JAPANESE_TEXT = re.compile(r"[\u3041-\u3096\u30a1-\u30fa\u3400-\u4dbf\u4e00-\u9fff]")
+COMMENT_DIRECTIVE = re.compile(
+    r"^(?:!.*|(?:-\*-\s*)?coding[:=]\s*[-\w.]+(?:\s*-\*-)?|noqa(?::\s*[A-Z0-9, ]+)?|"
+    r"(?:type|pyright):\s*ignore(?:\[[\w, -]+\])?|(?:ruff|fmt|isort):\s*(?:skip|off|on)|"
+    r"pragma:\s*no (?:cover|branch)|SPDX-License-Identifier:\s*\S+)$"
+)
+
+
+def japanese_comment_findings(path: Path) -> list[str]:
+    """説明用コメントとdocstringの英語のみの段落を検出する。"""
+
+    source = read_text_nofollow(path)
+    segments: list[tuple[int, str]] = []
+    if path.suffix == ".py":
+        for token in tokenize.generate_tokens(io.StringIO(source).readline):
+            if token.type == tokenize.COMMENT:
+                value = token.string.lstrip("# ").strip()
+                if not COMMENT_DIRECTIVE.fullmatch(value):
+                    segments.append((token.start[0], value))
+        tree = parse_python(path)
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+                docstring = ast.get_docstring(node)
+                if docstring:
+                    segments.append((node.body[0].lineno, docstring))
+    elif path.suffix == ".sql":
+        # SQL文字列中の -- や /* を説明コメントと誤認しない。
         try:
-            statements = [
-                item
-                for item in load_designflow().sqlglot.parse(text, error_level="RAISE")
-                if item is not None
-            ]
+            tokens = load_designflow().sqlglot.tokenize(source)
         except Exception as exc:
-            failures.append(f"{sql}: invalid SQL: {type(exc).__name__}: {exc}")
-            continue
-        if len(statements) != 1:
-            failures.append(f"{sql}: expected one SQL statement")
-        elif not isinstance(
-            statements[0],
-            (
-                load_designflow().exp.Delete,
-                load_designflow().exp.Insert,
-                load_designflow().exp.Select,
-                load_designflow().exp.Update,
-            ),
+            raise QualityError(f"{path}: SQLコメントを解析できない: {type(exc).__name__}: {exc}") from exc
+        for token in tokens:
+            for comment in token.comments:
+                segments.append((token.line, comment))
+    return [
+        f"{path}:{line}: 説明コメント/docstringに日本語がない: {value[:80]!r}"
+        for line, value in segments
+        if value.strip() and not JAPANESE_TEXT.search(value)
+        and re.search(r"[A-Za-z]", value)
+    ]
+
+
+def operation_sql_findings(root: Path, migration_runners: list[Path] | None = None) -> list[str]:
+    """API別SQLの配置と生成wrapper欠落、静的に見える直書きSQLを検査する。"""
+
+    designflow = load_designflow()
+    repository_root = designflow.find_repository_root(root)
+    failures: list[str] = []
+    python_files = designflow.regular_files(root, repository_root, suffix=".py")
+    excluded: set[Path] = set()
+    for runner in migration_runners or []:
+        path = Path(os.path.abspath(runner))
+        if path not in python_files:
+            raise QualityError(f"{runner}: migration runnerはapplication内の実在Python fileを指定する")
+        excluded.add(path)
+    for sql in designflow.regular_files(root, repository_root, suffix=".sql"):
+        failures.extend(sql_file_findings(sql))
+        operation = sql.parent.parent
+        if (
+            sql.parent.name != "sql"
+            or not re.fullmatch(r"\d{3}_[a-z][a-z0-9_]*\.sql", sql.name)
+            or not operation.joinpath("router.py").is_file()
+            or not operation.joinpath("functions.py").is_file()
         ):
-            failures.append(
-                f"{sql}: unsupported SQL statement: {type(statements[0]).__name__}"
-            )
-        if not text.lstrip().startswith("--"):
-            failures.append(f"{sql}: natural-language summary comment missing")
+            failures.append(f"{sql}: API別の sql/NNN_name.sql 配置が必要")
+        wrapper = operation / "generated/queries.py"
+        if not wrapper.is_file() or not read_text_nofollow(wrapper).strip():
+            failures.append(f"{sql}: 型付きクエリの生成物 generated/queries.py がない")
+    for path in python_files:
+        if path in excluded or (path.name == "queries.py" and path.parent.name == "generated"):
+            continue
+        tree = parse_python(path)
+        docstrings = {
+            id(node.body[0].value)
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+            and ast.get_docstring(node) is not None
+        }
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Constant) or not isinstance(node.value, str) or id(node) in docstrings:
+                continue
+            # 候補の絞り込みだけに正規表現を使い、SQLの判定はASTで行う。
+            candidate = node.value.lstrip()
+            if not re.match(r"(?is)^(?:select|insert|update|delete|merge|with)\b", candidate):
+                continue
+            try:
+                statements = designflow.sqlglot.parse(candidate, error_level="RAISE")
+            except designflow.sqlglot.errors.ParseError:
+                failures.append(f"{path}:{node.lineno}: 直書きSQL候補を解析できない。SQL fileへ分離して検証する")
+                continue
+            if any(isinstance(statement, (designflow.exp.Query, designflow.exp.DML)) for statement in statements):
+                failures.append(f"{path}:{node.lineno}: 直書きSQLをAPI別 sql/NNN_name.sql へ移す")
+    return failures
+
+
+def source_conventions(
+    roots: list[Path], sql_application_root: Path | None, migration_runners: list[Path] | None = None,
+) -> list[str]:
+    """指定された自作sourceの日本語説明とSQL境界を読み取り専用で検査する。"""
+
+    failures: list[str] = []
+    designflow = load_designflow()
+    paths: set[Path] = set()
+    for root in roots:
+        repository_root = designflow.find_repository_root(root)
+        for path in designflow.regular_files(root, repository_root):
+            if path.suffix in {".py", ".sql"}:
+                paths.add(path)
+    if not paths:
+        failures.append("説明コメント検査のPython/SQL sourceがない")
+    for path in sorted(paths):
+        failures.extend(japanese_comment_findings(path))
+    if sql_application_root is not None:
+        failures.extend(operation_sql_findings(sql_application_root, migration_runners))
     return failures
 
 
@@ -1133,6 +1258,10 @@ def build_parser() -> argparse.ArgumentParser:
     implementation = sub.add_parser("implementation")
     implementation.add_argument("--root", required=True, type=Path)
     implementation.add_argument("--enforce", action="store_true")
+    conventions = sub.add_parser("source-conventions")
+    conventions.add_argument("--root", required=True, action="append", type=Path)
+    conventions.add_argument("--sql-application-root", type=Path)
+    conventions.add_argument("--migration-runner", action="append", type=Path, default=[])
     thresholds = sub.add_parser("thresholds")
     thresholds.add_argument("--config", type=Path, default=DEFAULT_THRESHOLDS)
     suppressions = sub.add_parser("suppressions")
@@ -1161,6 +1290,16 @@ def main(argv: list[str] | None = None) -> int:
             return print_findings("FAST-020", test_structure(args.root, args.mode), advisory=not args.enforce)
         if args.command == "implementation":
             return print_findings("FAST-021", implementation_structure(args.root), advisory=not args.enforce)
+        if args.command == "source-conventions":
+            if args.migration_runner and args.sql_application_root is None:
+                raise QualityError("--migration-runnerは--sql-application-rootと併用する")
+            for runner in args.migration_runner:
+                print(f"業務SQL検査から除外するmigration runner: {runner}")
+            return print_findings(
+                "SOURCE-CONVENTIONS",
+                source_conventions(args.root, args.sql_application_root, args.migration_runner),
+                advisory=False,
+            )
         if args.command == "thresholds":
             return print_findings("FAST-022", threshold_consistency(args.config), advisory=False)
         if args.command == "suppressions":
@@ -1176,6 +1315,7 @@ def main(argv: list[str] | None = None) -> int:
         KeyError,
         TypeError,
         ValueError,
+        tokenize.TokenError,
     ) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

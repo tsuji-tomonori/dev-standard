@@ -2,7 +2,7 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 14
+- カタログ版: 15
 - Product(JSON): <code>"dev-standard"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -31,6 +31,8 @@
 | <code>"REQ-ASBUILT-019"</code> | 4 | 有効 | 運用 | inspect-quality-gates runnerは、選択したtest・static analysis・規約check・coverageの結果と未検証範囲を示す一つのlocal summaryまたは対象所有viewを**提供する**（<code>"provide"</code>） | 契約テスト |
 | <code>"REQ-ASBUILT-020"</code> | 2 | 有効 | 品質 | as-built設計generatorは、schema version 2 trace JSONが適用対象として宣言したactive canonical requirement IDからartifactを経てportable pytest static nodeへ至る完全な明示traceを**妥当性確認する**（<code>"validate"</code>） | 自動テスト |
 | <code>"REQ-ASBUILT-021"</code> | 1 | 有効 | 品質 | Dev標準を導入する開発agentは、必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査を**検証する**（<code>"verify"</code>） | 回帰テストと導入検査 |
+| <code>"REQ-DESIGN-007"</code> | 1 | 有効 | 品質 | SQLを使うAPIの導入・実装agentは、API別SQL正本、DDL/SQL AST由来の型付きquery生成と関連検査を**検証する**（<code>"verify"</code>） | 回帰テストと導入検査・差分レビュー |
+| <code>"REQ-DOCS-002"</code> | 1 | 有効 | 品質 | 導入・実装agentは、利用者指定に従う日本語の説明コメントとdocstringと生成ヘッダーを**検証する**（<code>"verify"</code>） | 回帰テストと導入検査・差分レビュー |
 | <code>"REQ-DESIGN-001"</code> | 3 | 有効 | 制約 | FastAPI実装フレームは、router.pyのオーケストレーションとfunctions.pyの具体処理に分けたoperationを**構成する**（<code>"structure"</code>） | 自動テスト |
 | <code>"REQ-DESIGN-002"</code> | 2 | 有効 | 機能 | 設計生成器は、FastAPI routerの構文木から得たoperationシーケンス図を**導出する**（<code>"derive"</code>） | 自動テスト |
 | <code>"REQ-DESIGN-003"</code> | 2 | 有効 | インターフェース | 設計生成器は、OpenAPI文書からのAPIとインターフェースの一覧を**導出する**（<code>"derive"</code>） | 自動テスト |
@@ -743,6 +745,78 @@ Dev標準を導入する開発agentは、必要な実装領域のgenerator接続
 - 設計: <code>[".agents/skills/generate-implementation-design/references/adoption.md"]</code>
 - 実装: <code>[".agents/skills/generate-implementation-design/scripts/check_design.py",".agents/skills/chat-first-development/SKILL.md","distribution/snippets/AGENTS.governance.md"]</code>
 - テスト: <code>["tests/test_design_adoption.py","tests/test_portable_distribution.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DESIGN-007: SQLのAPI別正本と型付きquery生成
+
+要件ID(JSON): <code>"REQ-DESIGN-007"</code>
+タイトル(JSON): <code>"SQLのAPI別正本と型付きquery生成"</code>
+主体(JSON): <code>"SQLを使うAPIの導入・実装agent"</code>
+対象(JSON): <code>"API別SQL正本、DDL/SQL AST由来の型付きquery生成と関連検査"</code>
+SQLを使うAPIの導入・実装agentは、API別SQL正本、DDL/SQL AST由来の型付きquery生成と関連検査を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 共通repositoryへのSQL集約や手書き型によってSQL配置・生成契約が省略される再発を防ぐ。
+根拠(JSON): <code>"共通repositoryへのSQL集約や手書き型によってSQL配置・生成契約が省略される再発を防ぐ。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260906-sql-japanese-comments"</code>
+分類: scope=<code>""</code> / category=<code>""</code>
+
+受入条件:
+- <code>"AC-DESIGN-007-1"</code> 前提: SQLを使うAPIを新規作成・再編またはDev標準へ導入する。条件: 実装完了を判定する。期待結果: API別sql/NNN_name.sqlを正本としてDDL/SQL ASTから引数・結果行型とgenerated/queries.pyを生成する。functionsがDB port経由で呼び、業務判定とtransactionを管理する。
+  - criterion(JSON Object): <code>{"given":"SQLを使うAPIを新規作成・再編またはDev標準へ導入する","id":"AC-DESIGN-007-1","then":"API別sql/NNN_name.sqlを正本としてDDL/SQL ASTから引数・結果行型とgenerated/queries.pyを生成する。functionsがDB port経由で呼び、業務判定とtransactionを管理する","when":"実装完了を判定する"}</code>
+- <code>"AC-DESIGN-007-2"</code> 前提: API別SQLと生成queryがある。条件: 関係する検査を選ぶ。期待結果: SQL lint、配置・直書き・呼出境界、型生成の決定性と欠落/drift、関連DBテスト、query台帳・CRUD・table/ER Markdown生成を検証する。未接続の必要な検査を完了扱いにしない。
+  - criterion(JSON Object): <code>{"given":"API別SQLと生成queryがある","id":"AC-DESIGN-007-2","then":"SQL lint、配置・直書き・呼出境界、型生成の決定性と欠落/drift、関連DBテスト、query台帳・CRUD・table/ER Markdown生成を検証する。未接続の必要な検査を完了扱いにしない","when":"関係する検査を選ぶ"}</code>
+- <code>"AC-DESIGN-007-3"</code> 前提: 既存SQL配置を修正する。条件: SQLを移す。期待結果: parameter binding、NULL/行数/戻り型、transaction/rollbackと適用済みmigration本文・checksumを維持する。SQLを使わない実装にはSQL層を要求しない。
+  - criterion(JSON Object): <code>{"given":"既存SQL配置を修正する","id":"AC-DESIGN-007-3","then":"parameter binding、NULL/行数/戻り型、transaction/rollbackと適用済みmigration本文・checksumを維持する。SQLを使わない実装にはSQL層を要求しない","when":"SQLを移す"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06"]</code>
+検証方法: 回帰テストと導入検査・差分レビュー
+検証証跡: SQL配置・直書きSQL・生成物欠落・英語説明・日本語説明・機械用指示の検査結果と導入先の生成差分・型検査・DBテスト
+検証(JSON Object): <code>{"evidence":"SQL配置・直書きSQL・生成物欠落・英語説明・日本語説明・機械用指示の検査結果と導入先の生成差分・型検査・DBテスト","method":"回帰テストと導入検査・差分レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/sql-and-language.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/qualityflow.py",".agents/skills/chat-first-development/SKILL.md",".agents/skills/inspect-quality-gates/SKILL.md"]</code>
+- テスト: <code>["tests/test_source_conventions.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DOCS-002: 説明コメントと生成ヘッダーの日本語
+
+要件ID(JSON): <code>"REQ-DOCS-002"</code>
+タイトル(JSON): <code>"説明コメントと生成ヘッダーの日本語"</code>
+主体(JSON): <code>"導入・実装agent"</code>
+対象(JSON): <code>"利用者指定に従う日本語の説明コメントとdocstringと生成ヘッダー"</code>
+導入・実装agentは、利用者指定に従う日本語の説明コメントとdocstringと生成ヘッダーを**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: コメントの存在検査だけでは英語を検出できず、生成元が英語なら再生成で戻るため、言語指定と生成元修正を完了条件に含める。
+根拠(JSON): <code>"コメントの存在検査だけでは英語を検出できず、生成元が英語なら再生成で戻るため、言語指定と生成元修正を完了条件に含める。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260906-sql-japanese-comments"</code>
+分類: scope=<code>""</code> / category=<code>""</code>
+
+受入条件:
+- <code>"AC-DOCS-002-1"</code> 前提: 説明コメント・docstring・SQL説明・生成コードの説明を新規作成または変更する。条件: 説明言語を選ぶ。期待結果: 別言語の明示指示がなければ日本語にする。識別子・固有名詞・機械用指示・ライセンス原文・実行時文字列を誤って翻訳しない。
+  - criterion(JSON Object): <code>{"given":"説明コメント・docstring・SQL説明・生成コードの説明を新規作成または変更する","id":"AC-DOCS-002-1","then":"別言語の明示指示がなければ日本語にする。識別子・固有名詞・機械用指示・ライセンス原文・実行時文字列を誤って翻訳しない","when":"説明言語を選ぶ"}</code>
+- <code>"AC-DOCS-002-2"</code> 前提: 生成物の説明が英語である。条件: 修正する。期待結果: generator/templateを修正して再生成し、生成物を手修正したり生成directory全体を言語検査から除外したりしない。
+  - criterion(JSON Object): <code>{"given":"生成物の説明が英語である","id":"AC-DOCS-002-2","then":"generator/templateを修正して再生成し、生成物を手修正したり生成directory全体を言語検査から除外したりしない","when":"修正する"}</code>
+- <code>"AC-DOCS-002-3"</code> 前提: 言語検査を実行する。条件: 完了を報告する。期待結果: 対象とcommandと結果を示す。Python/SQLの英語のみの説明は非0終了で検出し、日本語文字の存在を意味の品質保証に代用しない。他言語は対応parser/linterまたは差分レビューで補完する。
+  - criterion(JSON Object): <code>{"given":"言語検査を実行する","id":"AC-DOCS-002-3","then":"対象とcommandと結果を示す。Python/SQLの英語のみの説明は非0終了で検出し、日本語文字の存在を意味の品質保証に代用しない。他言語は対応parser/linterまたは差分レビューで補完する","when":"完了を報告する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06"]</code>
+検証方法: 回帰テストと導入検査・差分レビュー
+検証証跡: SQL配置・直書きSQL・生成物欠落・英語説明・日本語説明・機械用指示の検査結果と導入先の生成差分・型検査・DBテスト
+検証(JSON Object): <code>{"evidence":"SQL配置・直書きSQL・生成物欠落・英語説明・日本語説明・機械用指示の検査結果と導入先の生成差分・型検査・DBテスト","method":"回帰テストと導入検査・差分レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/sql-and-language.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/qualityflow.py",".agents/skills/chat-first-development/SKILL.md",".agents/skills/inspect-quality-gates/SKILL.md"]</code>
+- テスト: <code>["tests/test_source_conventions.py"]</code>
 - 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

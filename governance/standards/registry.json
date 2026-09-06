@@ -201,7 +201,7 @@
       "scope": "実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約。標準contract変更とrepository採用scopeを分離し、関係するcheckだけを選択する。",
       "change_checked_at": "2026-08-29",
       "change_summary": "Quint要件traceと実在test nodeの照合を追加し、check結果をローカルsummaryまたは導入先が所有する既存viewへ限定。CI・branch・merge policyは要求しない。",
-      "artifact_sha256": "4cf64f761de443b4f1d6ddaa7ce36df77585c179c9ba708349d34e73e34bd6fb"
+      "artifact_sha256": "1b8be6f5122715b6b8b5934aba7abc91a11f09e29164a01eb9c0f022240b0ffe"
     },
     {
       "id": "DEVSTD-AWS-CDK-AS-BUILT",
