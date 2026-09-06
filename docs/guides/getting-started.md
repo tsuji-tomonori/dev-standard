@@ -1,4 +1,4 @@
-# 導入とSkills一覧
+# 導入と開発のガイド
 
 ## 導入方法
 
@@ -25,30 +25,11 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 
 導入先のCI workflow、required check、branch protection、ruleset、merge方式、PR template、commit形式は追加も変更もしません。CIがないrepositoryではローカル検査を使います。
 
-## 全Skills
+## 必要時だけ追加する機能
 
-| Skill | 用途 |
-|---|---|
-| `adversarial-review` | 反証可能な主張の独立review |
-| `author-lifecycle-docs` | 明示的なregulated証拠の文書化 |
-| `authorize-autonomous-execution` | 外部副作用と権限境界の確認 |
-| `calibrated-collaborative-listening` | 結果を変える曖昧さの確認 |
-| `chat-first-development` | 通常依頼の入口 |
-| `design-frontend-experience` | UI interaction設計 |
-| `elicit-frontend-requirements` | UI要求の獲得 |
-| `generate-implementation-design` | 実装由来設計の生成 |
-| `govern-development-request` | 明示的なregulated work |
-| `implement-frontend-experience` | UI実装 |
-| `inspect-quality-gates` | 関係する検査の選択 |
-| `japanese-git-commit-gitmoji` | opt-inの日本語commit形式 |
-| `maintain-canonical-requirements` | Quint要件のadd・update・retire |
-| `maintain-reference-repository` | この参照repositoryの保守 |
-| `retrospect-and-improve` | 重大失敗時の改善 |
-| `right-size-execution` | 実行範囲の調整 |
-| `test-frontend-experience` | UI検証 |
-| `verify-against-engineering-standards` | 関連標準の任意review |
+UIの要求・設計・実装・検証には `frontend`、具体的な証跡保持義務には `regulated`、関連標準の照合には `standards-verification` 等のprofileを選べます。全Skill一覧と配布内容の正本は [manifest](../../distribution/manifest.json)、実行手順は[各Skill](../../.agents/skills/)です。`full`は全機能が必要な場合だけ使います。
 
-全Skillのmachine-readableな役割、事前条件、事後条件、authority、side effectは[`spec/skills/skills.qnt`](../../spec/skills/skills.qnt)で形式化され、[形式仕様](../reference/FORMAL-SPECIFICATIONS.md)へ生成されます。配布内容の正本は[`distribution/manifest.json`](../../distribution/manifest.json)です。
+Skillの機械可読な起動条件・authority・依存関係は `spec/skills/skills.qnt` で検査し、詳細は同名の `skills.json` に生成します。保守・監査時に必要な契約だけ参照してください。
 
 ## 導入完了の条件
 
@@ -59,3 +40,9 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 完了報告には生成物へのpath、対象revision、生成・検査commandと結果を含めます。installer成功やアプリのtest成功だけでは導入完了になりません。CIとの接続は導入先の既存運用と権限に従います。
 
 SQLを使うAPIでは[SQLと説明コメントの契約](../../.agents/skills/generate-implementation-design/references/sql-and-language.md)も適用します。API別SQLを正本に、DDL/SQLから型付き`generated/queries.py`を生成し、SQL lint・配置/呼出境界・生成差分・関連DBテストを完了させます。適用済みmigrationは書き換えません。説明コメント・docstring・生成ヘッダーは別言語の明示指示がなければ日本語とし、英語が残る生成物はテンプレートから直して再生成します。
+
+## 変更時の文書更新
+
+永続要件はQuint正本、実装済み構造は生成設計へ反映します。手書きの利用手順・運用説明は利用者や操作が変わった場合だけ更新し、導入先の既存索引に利用目的・更新条件を記します。変更ごとの計画書・実装ログ・テスト報告書を増やしません。作業の一時状態は `.devflow/run/`、保持が必要な過去の結果は日付付きの履歴へ分けます。
+
+導入先の要件・言語・framework・既存verify入口を調べ、3本柱をその構成へ接続します。Quintの初期化は `maintain-canonical-requirements`、API/data/infra/frontendの生成と適用外の根拠は設計Skillに従います。既存の指示や有効な承認を再利用し、承認不足の外部操作がある場合も独立して進められる準備は完了します。

@@ -20,7 +20,6 @@ try:
         manual_body_sha256,
         payload_sha256,
         render_skill_manual,
-        render_skills,
         validate_contract_catalog,
         validate_skill_tree,
     )
@@ -40,7 +39,6 @@ except ImportError:  # Support direct execution as ``python tools/quintflow.py``
         manual_body_sha256,
         payload_sha256,
         render_skill_manual,
-        render_skills,
         validate_contract_catalog,
         validate_skill_tree,
     )
@@ -61,7 +59,6 @@ REQUIREMENTS_JSON = ROOT / "spec" / "requirements" / "requirements.json"
 REQUIREMENTS_DOC = ROOT / "docs" / "requirements" / "REQUIREMENTS.md"
 SKILLS_QNT = ROOT / "spec" / "skills" / "skills.qnt"
 SKILLS_JSON = ROOT / "spec" / "skills" / "skills.json"
-SKILLS_DOC = ROOT / "docs" / "reference" / "FORMAL-SPECIFICATIONS.md"
 SKILLS_ROOT = ROOT / ".agents" / "skills"
 REQUIREMENTS_TEMPLATE_QNT = (
     SKILLS_ROOT
@@ -218,7 +215,6 @@ def generated_output_paths() -> list[Path]:
         REQUIREMENTS_JSON,
         REQUIREMENTS_DOC,
         SKILLS_JSON,
-        SKILLS_DOC,
         *sorted(SKILLS_ROOT.glob("*/SKILL.md")),
     ]
 
@@ -271,7 +267,6 @@ def derived_outputs(
         REQUIREMENTS_JSON: requirements_json,
         REQUIREMENTS_DOC: render_serialized_json(requirements_json, specflow),
         SKILLS_JSON: skills_json,
-        SKILLS_DOC: render_skills(skills_view),
     }
     outputs.update(skill_manual_outputs(skills_view))
     return outputs

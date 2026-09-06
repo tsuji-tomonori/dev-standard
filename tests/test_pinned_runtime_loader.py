@@ -232,7 +232,7 @@ class PinnedRuntimeLoaderTest(unittest.TestCase):
         portable.SKILLS_JSON.write_text('{"contracts": []}\n', encoding="utf-8")
 
         with self.assertRaisesRegex(
-            portable.PortableQuintError, "exactly the expected 18 Skills"
+            portable.PortableQuintError, "exactly the expected 17 Skills"
         ):
             portable._verify_installed_skills(
                 {

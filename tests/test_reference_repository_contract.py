@@ -25,8 +25,6 @@ class ReferenceRepositoryContractTest(unittest.TestCase):
             ROOT / "docs/decisions/ADR-0001-as-built-design-authority-and-scope.md",
             ROOT / "docs/standards/AS-BUILT-DESIGN.md",
             ROOT / "docs/standards/REQUIREMENT-CLASSIFICATION.md",
-            ROOT / "docs/templates/00-request.md",
-            ROOT / "docs/templates/01-traceability.md",
         ]:
             self.assertIn("spec/requirements/requirements.qnt", path.read_text(encoding="utf-8"), path)
         generated = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")

@@ -16,6 +16,33 @@ SPEC.loader.exec_module(audit_consistency)
 
 
 class AuditConsistencyTest(unittest.TestCase):
+    def test_current_links_and_index_are_checked_but_history_is_not_rewritten(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "docs/archive").mkdir(parents=True)
+            (root / ".agents/skills").mkdir(parents=True)
+            (root / "AGENTS.md").write_text("# Instructions\n")
+            (root / "README.md").write_text("[Docs](docs/README.md)\n")
+            (root / "docs/README.md").write_text("[Guide](guide.md)\n")
+            (root / "docs/guide.md").write_text("[Missing](removed.md)\n")
+            (root / "docs/unlisted.md").write_text("Unlisted current instructions.\n")
+            (root / "docs/archive/2026-08-29-audit.md").write_text(
+                "Historical regulated profile; [old path](removed.md).\n"
+            )
+            findings: list[dict[str, str]] = []
+            with mock.patch.object(audit_consistency, "ROOT", root):
+                audit_consistency.audit_docs(findings, {})
+            self.assertEqual(
+                {item["check_id"] for item in findings},
+                {"AUD-DOC-LINK", "AUD-DOC-INDEX"},
+            )
+            (root / "docs/guide.md").write_text("[Index](README.md)\n")
+            (root / "docs/README.md").write_text("[Guide](guide.md)\n[Other](unlisted.md)\n")
+            findings.clear()
+            with mock.patch.object(audit_consistency, "ROOT", root):
+                audit_consistency.audit_docs(findings, {})
+            self.assertEqual(findings, [])
+
     def test_audit_docs_rejects_retired_fixed_profile_triggers(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -26,10 +53,6 @@ class AuditConsistencyTest(unittest.TestCase):
             (root / "README.md").write_text("Current overview.\n", encoding="utf-8")
             (root / "docs/guide.md").write_text(
                 "Create work state for the regulated profile.\n",
-                encoding="utf-8",
-            )
-            (root / "docs/reference/skill-evidence-audit.md").write_text(
-                "tools/audit_consistency.py 2026-08-29\n",
                 encoding="utf-8",
             )
             findings: list[dict[str, str]] = []
@@ -51,7 +74,7 @@ class AuditConsistencyTest(unittest.TestCase):
         }
         self.assertEqual(result["overall"], "合格", result["findings"])
         self.assertEqual(result["blocking_findings"], 0)
-        self.assertEqual(result["metrics"]["skill_count"], 18)
+        self.assertEqual(result["metrics"]["skill_count"], 17)
         self.assertEqual(result["metrics"]["requirement_count"], len(active_ids))
         self.assertLessEqual(audit_consistency.AUTO_REQUIREMENTS, active_ids)
         self.assertEqual(

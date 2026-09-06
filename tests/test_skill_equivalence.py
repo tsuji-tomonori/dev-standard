@@ -12,7 +12,6 @@ from tools.quintflow import extract_skills
 from tools.render_skills import (
     payload_sha256,
     render_skill_manual,
-    render_skills,
     validate_contract_catalog,
     without_generated_block,
 )
@@ -68,17 +67,14 @@ class SkillEquivalenceTest(unittest.TestCase):
             contract["name"]: contract for contract in extract_skills()["contracts"]
         }
 
-    def test_all_18_manual_interface_payloads_are_bound_to_typed_contracts(self) -> None:
+    def test_all_manual_interface_payloads_are_bound_to_typed_contracts(self) -> None:
         skill_names = {
             path.name
             for path in SKILLS_ROOT.iterdir()
             if path.is_dir() and (path / "SKILL.md").is_file()
         }
         self.assertEqual(set(self.contracts), skill_names)
-        self.assertEqual(len(skill_names), 18)
-        evidence_audit = (ROOT / "docs/reference/skill-evidence-audit.md").read_text(
-            encoding="utf-8"
-        )
+        self.assertEqual(len(skill_names), 17)
         for name, contract in self.contracts.items():
             with self.subTest(skill=name):
                 manual = (SKILLS_ROOT / name / "SKILL.md").read_text(encoding="utf-8")
@@ -93,7 +89,6 @@ class SkillEquivalenceTest(unittest.TestCase):
                 for context in contract["activationContexts"]:
                     self.assertIn(context, manual)
                 self.assertIn(f"${name}", interface)
-                self.assertIn(f"`{name}`", evidence_audit)
                 payload_sha256(contract, SKILLS_ROOT / name)
 
     def test_repository_policy_and_runner_effect_flags_are_exact(self) -> None:
@@ -257,7 +252,7 @@ class SkillEquivalenceTest(unittest.TestCase):
         cases.append(("policy-mutation", policy_mutation, "must remain host-owned"))
 
         missing_skill = copy.deepcopy(baseline[:-1])
-        cases.append(("missing-skill", missing_skill, "expected 18 Skills"))
+        cases.append(("missing-skill", missing_skill, "expected 17 Skills"))
 
         unknown_dependency = copy.deepcopy(baseline)
         unknown_dependency[0]["dependencies"] = ["missing-skill"]
@@ -284,7 +279,7 @@ class SkillEquivalenceTest(unittest.TestCase):
                     validate_contract_catalog(contracts)
 
         with self.assertRaisesRegex(ValueError, "64 lowercase hexadecimal"):
-            render_skills({"quint_version": "0.32.0", "contracts": invalid_digest})
+            validate_contract_catalog(invalid_digest)
         with mock.patch.object(
             quintflow_module,
             "extract_state",
@@ -315,14 +310,13 @@ class SkillEquivalenceTest(unittest.TestCase):
                 "target-owned authority evidence JSON",
                 "自己発行",
             ],
-            "implement-frontend-experience": ["宣言済みgeneratorが変更artifactを扱うのに"],
+            "implement-frontend-experience": ["採用した設計契約で必要な"],
             "inspect-quality-gates": [
                 "対象repositoryが既に所有するcommand registry",
                 "target-declared-external",
                 "no_applicable_reason",
                 "process_effect_isolation_provided",
             ],
-            "japanese-git-commit-gitmoji": ["利用者または対象repository"],
             "maintain-canonical-requirements": ["未実装の下流artifactは捏造せず", "将来path"],
             "retrospect-and-improve": ["escaped defect", "lighter alternative", "auto_apply: false"],
             "test-frontend-experience": ["変更、受入条件、riskに該当する層だけ"],
@@ -342,10 +336,6 @@ class SkillEquivalenceTest(unittest.TestCase):
                     self.assertIn(marker, body)
         self.assertEqual(
             self.contracts["retrospect-and-improve"]["requirementIds"], []
-        )
-        self.assertIn(
-            "explicit-user-or-target-repository-style",
-            self.contracts["japanese-git-commit-gitmoji"]["authority"],
         )
 
 

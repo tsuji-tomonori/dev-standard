@@ -524,7 +524,6 @@ def validate_repo(failures: list[str]) -> None:
         "spec/skills/skills.qnt",
         "spec/skills/skills.json",
         "docs/requirements/REQUIREMENTS.md",
-        "docs/reference/FORMAL-SPECIFICATIONS.md",
         "tools/quintflow.py",
         ".github/workflows/governance.yml",
     ]

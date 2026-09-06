@@ -14,7 +14,6 @@ class RequirementQuintflowTest(unittest.TestCase):
             quintflow.REQUIREMENTS_JSON,
             quintflow.REQUIREMENTS_DOC,
             quintflow.SKILLS_JSON,
-            quintflow.SKILLS_DOC,
             *quintflow.SKILLS_ROOT.glob("*/SKILL.md"),
         }
         catalog = {
@@ -67,7 +66,6 @@ class RequirementQuintflowTest(unittest.TestCase):
             quintflow.REQUIREMENTS_JSON: '{"requirements": []}',
             quintflow.REQUIREMENTS_DOC: "requirements\n",
             quintflow.SKILLS_JSON: '{"contracts": []}',
-            quintflow.SKILLS_DOC: "skills\n",
         }
         specflow = mock.Mock()
         with mock.patch.object(quintflow, "snapshot_file_pinned", return_value=mock.sentinel.snapshot), mock.patch.object(
@@ -105,7 +103,6 @@ class RequirementQuintflowTest(unittest.TestCase):
             quintflow.REQUIREMENTS_JSON: '{"requirements": []}',
             quintflow.REQUIREMENTS_DOC: "requirements\n",
             quintflow.SKILLS_JSON: '{"contracts": []}',
-            quintflow.SKILLS_DOC: "skills\n",
         }
         for race_path in [quintflow.REQUIREMENTS_QNT, quintflow.ROOT / "README.md"]:
             with self.subTest(race_path=race_path.relative_to(quintflow.ROOT)):

@@ -989,7 +989,7 @@ module requirements {
         ],
         verification: { method: "自動テスト", evidence: "solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test" },
         traces: {
-          design: ["docs/standards/REQUIREMENT-CLASSIFICATION.md", "docs/reference/development.md", ".agents/skills/maintain-canonical-requirements/references/research-basis.md"],
+          design: ["docs/standards/REQUIREMENT-CLASSIFICATION.md", "docs/guides/getting-started.md", ".agents/skills/maintain-canonical-requirements/references/research-basis.md"],
           implementation: [".agents/skills/maintain-canonical-requirements/SKILL.md", ".agents/skills/chat-first-development/SKILL.md", ".agents/skills/elicit-frontend-requirements/SKILL.md", ".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"],
           tests: ["tests/test_skills.py", "tests/test_specflow.py"],
           standards: ["SWEBOK-V4A"],
@@ -999,6 +999,35 @@ module requirements {
         supersededBy: "",
         scopeName: "product",
         categoryName: "functional",
+      },
+      {
+        id: "REQ-DOCS-003",
+        revision: 1,
+        status: "active",
+        kind: "quality",
+        title: "利用目的に基づく文書の最小保守",
+        subject: "参照repositoryの文書保守",
+        actionName: "maintain",
+        objectName: "現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離すること",
+        rationale: "使われない文書と重複した指示の維持負担を減らし、要件だけの依頼から対象projectへ3本柱を導入できる入口を保つ。",
+        sourceRefs: ["user:2026-09-06"],
+        acceptanceCriteria: [
+          { id: "AC-DOCS-003-1", given: "文書を維持または追加する", when_: "文書索引を確認する", expected: "利用者・目的・更新条件が明示され、現行文書への参照が解決する" },
+          { id: "AC-DOCS-003-2", given: "機能・Skill・配布の変更がある", when_: "保守Skillを実行する", expected: "関連する現行文書と正本・生成器を更新し、不要文書は呼出元ごと削除する。履歴は日付と更新対象外を表示し当時の内容を維持する" },
+          { id: "AC-DOCS-003-3", given: "利用者が参照URLと開発要件を依頼する", when_: "既定導入を行う", expected: "対象projectの構成に合わせて要件初期化・設計生成・関連検査を実行し、文書保守のための追加Skill・承認工程・定型報告書を要求しない" }
+        ],
+        verification: { method: "自動検査と利用経路レビュー", evidence: "現行リンクと索引網羅の検査、既定4 Skillとhost配布の回帰検査、要件初期化・設計生成・検査経路の確認" },
+        traces: {
+          design: ["docs/README.md", "docs/guides/getting-started.md"],
+          implementation: [".agents/skills/maintain-reference-repository/SKILL.md", ".agents/skills/chat-first-development/SKILL.md", "tools/audit_consistency.py"],
+          tests: ["tests/test_audit_consistency.py", "tests/test_install_reference.py", "tests/test_design_adoption.py"],
+          standards: [],
+        },
+        lastChangedBy: "user:2026-09-06",
+        retirementReason: "",
+        supersededBy: "",
+        scopeName: "project",
+        categoryName: "nonfunctional",
       },
       {
         id: "REQ-DOCS-001",
@@ -1313,7 +1342,7 @@ module requirements {
         ],
         verification: { method: "自動検査", evidence: "リポジトリ検証とSkill契約テスト" },
         traces: {
-          design: ["docs/reference/development.md"],
+          design: ["docs/guides/getting-started.md"],
           implementation: [".agents/skills/maintain-canonical-requirements/SKILL.md"],
           tests: ["tests/test_specflow.py"],
           standards: ["SWEBOK-V4A"],
@@ -1614,7 +1643,7 @@ module requirements {
         actionName: "enforce",
         objectName: "mainへのsquashとdevへのmerge commitを分離したbranch別統合契約",
         rationale: "利用者向けrelease履歴と到達可能なengineering履歴のauthorityを案件ごとのmerge判断に依存させないため。",
-        sourceRefs: ["user:2026-07-24", "issue:#20", "docs/decisions/ADR-0002-two-layer-branch-history.md"],
+        sourceRefs: ["user:2026-07-24", "issue:#20", "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"],
         acceptanceCriteria: [
           { id: "AC-REPO-001-1", given: "trial phaseでmainまたはdevをbaseとするPull Requestがある", when_: "branch-policy checkを実行する", expected: "mainはrepositoryのdevまたはhotfixだけをsquashで受け入れ、devはtopic、main、またはhotfix競合を解消したreconcile branchだけをmerge commitで受け入れ、その他の方向を拒否する" },
           { id: "AC-REPO-001-2", given: "mainまたはdevへpushがある", when_: "push auditとGitHub rulesetを評価する", expected: "mainのlinear historyとdevの一回一merge commit更新を監査し、削除またはforce pushを許可しない" },
@@ -1623,7 +1652,7 @@ module requirements {
         ],
         verification: { method: "CIとGitHub ruleset監査", evidence: "branch方向、merge parent、commit subject、protected branch設定のCI結果" },
         traces: {
-          design: ["docs/decisions/ADR-0002-two-layer-branch-history.md", "docs/reference/development.md"],
+          design: ["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md", "docs/guides/getting-started.md"],
           implementation: [],
           tests: [],
           standards: [],
@@ -1644,7 +1673,7 @@ module requirements {
         actionName: "maintain",
         objectName: "release前後のancestor関係、tip tree条件、freezeを含むreconciliation transaction",
         rationale: "squashで記録されない祖先関係を回復し、既出file差分とconflictの再評価を防ぎながら詳細commitを保持するため。",
-        sourceRefs: ["user:2026-07-24", "issue:#20", "Git FAQ: long-running squash merge", "docs/decisions/ADR-0002-two-layer-branch-history.md"],
+        sourceRefs: ["user:2026-07-24", "issue:#20", "Git FAQ: long-running squash merge", "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"],
         acceptanceCriteria: [
           { id: "AC-REPO-002-1", given: "devからmainへ通常releaseをsquash mergeした", when_: "release reconciliationを完了する", expected: "次のtopic統合前にmainをdevへmergeし、mainがdevの祖先であり両tip treeが一致する" },
           { id: "AC-REPO-002-2", given: "mainへhotfixをsquash mergeしdevに未release変更がある", when_: "hotfix reconciliationを完了する", expected: "conflict-freeならmainをdevへ直接mergeし、mainをdevの祖先にするが両tip treeの一致は要求しない" },
@@ -1653,7 +1682,7 @@ module requirements {
         ],
         verification: { method: "branch graph回帰テストとCI", evidence: "一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert" },
         traces: {
-          design: ["docs/decisions/ADR-0002-two-layer-branch-history.md", "docs/reference/development.md"],
+          design: ["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md", "docs/guides/getting-started.md"],
           implementation: [],
           tests: [],
           standards: [],
@@ -1674,7 +1703,7 @@ module requirements {
         actionName: "constrain",
         objectName: "2回のrelease cycleに限定しportable profileへ既定配布しない二層branch試行",
         rationale: "長寿命devは一般解ではなく、追加操作とGitHub上の非原子的なlock制約を受容できるrepositoryだけで評価すべきため。",
-        sourceRefs: ["user:2026-07-24", "issue:#20", "docs/decisions/ADR-0002-two-layer-branch-history.md"],
+        sourceRefs: ["user:2026-07-24", "issue:#20", "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"],
         acceptanceCriteria: [
           { id: "AC-REPO-003-1", given: "二層branch契約のassetを配布profileへ追加しようとする", when_: "distribution contractを検査する", expected: "dev-standard固有のbranch policyとvalidatorをportable profileへ含めず、導入先の既定branch戦略を変更しない" },
           { id: "AC-REPO-003-2", given: "2回のrelease試行が完了していない、または昇格条件を満たさない", when_: "試行結果を判断する", expected: "恒久採用と一般化を行わず、必要時はdevへの新規統合を停止して同期済み状態で凍結する" },
@@ -1687,7 +1716,7 @@ module requirements {
         ],
         verification: { method: "repository contract testと試行後review", evidence: "trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト" },
         traces: {
-          design: ["docs/decisions/ADR-0002-two-layer-branch-history.md"],
+          design: ["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"],
           implementation: [],
           tests: [],
           standards: [],

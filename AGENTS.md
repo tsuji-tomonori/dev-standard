@@ -33,6 +33,10 @@ installerとdistribution profileは、導入先の次の状態を維持します
 
 このrepository自身のGitHub Actionsは参照repositoryを検査するためだけに存在し、導入先へ配布しません。PR作成やCI確認が依頼された場合は、GitHub上の現在設定に従います。
 
+## 文書保守
+
+`docs/README.md`が継続更新する文書の目的・更新条件の索引です。変更した機能に関係する文書だけを `maintain-reference-repository` で更新します。不要な文書は呼出元とともに削除し、時点の記録は日付付き `docs/archive/` へ分離します。利用者の明示指示をSkillの一般ガイドより優先します。
+
 ## Verification
 
 変更に関係する最小のローカル検査を実行してください。repository全体の契約を変更する場合は`make verify`を使用します。外部CIは追加証拠であり、portable contractの前提ではありません。

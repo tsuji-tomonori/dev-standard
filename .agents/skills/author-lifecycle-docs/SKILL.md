@@ -1,82 +1,19 @@
 ---
 name: author-lifecycle-docs
-description: Create lifecycle evidence only when a concrete legal, contractual, safety, production, or audit retention duty requires it. Do not create lifecycle documents for ordinary changes.
+description: Create retained lifecycle evidence only for a concrete legal, contractual, safety, production, audit, or user-specified documentation duty.
 ---
 
 # Author Regulated Lifecycle Documents
 
 形式契約: `spec/skills/skills.qnt`の`name: "author-lifecycle-docs"`（保守・監査時に参照）。
 
-このSkillは、具体的な法令、契約、安全性、production、監査上の保持義務が特定された場合だけ起動する。配布profile名や変更規模だけでは起動しない。
+法令・契約・安全・production・監査または利用者指定による具体的な保持義務がある文書だけを作る。通常変更では要件正本、生成設計、必要なADR、既存の変更・検査記録で足りる。
 
-## 通常変更で作らないもの
+対象projectの書式があればそれを使い、なければ必要内容に合う最小の構成を選ぶ。工程別templateの存在を作成理由にしない。文書ごとに利用者・目的・対象version・保持期間を明記し、根拠となる実装や検査への参照を示す。詳細設計・実装ログ・生のテスト結果を手書きで複製しない。
 
-- `docs/00-request.md`
-- `docs/01-requirements.md`
-- `docs/01-traceability.md`
-- `docs/01-execution-plan.md`
-- 変更ごとのarchitecture、design、test plan
-- implementation log
-- test report
-- security review report
-- operations / maintenance report
-- release report
-- retrospective
+継続更新する利用手順・運用説明は更新条件を既存の文書索引へ記す。変更時点で固定する証拠は日付付きの履歴として分け、後から現在状態へ書き換えない。監査保持が不要な一時状態は `.devflow/run/` に置き、用済みになれば削除する。
 
-通常変更では次を使用する。
-
-- 要件正本
-- 実装由来生成設計
-- 必要なADR
-- Git diffと対象repositoryが既に採用する変更記録
-- 実行したローカル検査、または既存CIへの参照
-
-## Regulatedで作成する条件
-
-文書ごとに、法令、契約、監査、不可逆production操作、安全性、復旧責任等の具体的な必要性がある場合だけ作成する。
-
-単にtemplateが存在することを理由に作らない。
-
-## Workflow
-
-1. regulated起動根拠と必要な文書を列挙する。
-2. 各文書の将来利用者、利用目的、保持期間を定義する。
-3. 要件正本、authority boundary、外部副作用、rollback、停止条件を記載する。
-4. コード、test、生成設計、既存CIから取得できる情報を手書きで複製しない。
-5. 実行結果の生ログを貼り付けない。
-6. 未確定事項は結果へ影響するものだけ解消し、それ以外は明示的なassumptionまたはresidual riskとする。
-7. 対象repositoryが採用する変更記録から文書へ到達できるようにする。
-
-## Document classes
-
-### Current-state authority
-
-今後も維持する必要がある場合だけ、製品の正本へ反映する。
-
-### Immutable regulated evidence
-
-変更時点で固定し、後から現在状態へ合わせて書き換えない。
-
-### Temporary execution state
-
-監査保持が不要なら`.devflow/run/`へ置き、完了後に削除する。
-
-## Boundaries
-
-- template tokenを埋めること自体を目的にしない。
-- コードから生成可能な詳細設計を手書きしない。
-- Git diffから再構成可能なimplementation logを作らない。
-- test resultの生ログを複製しない。
-- CI、branch、merge、commit形式を新たに要求しない。
-- 将来利用者と保持理由がない文書をGitへ追加しない。
-
-## Completion
-
-- 各文書に明確な利用目的と保持規則がある。
-- 正本、変更証跡、一時状態が混在していない。
-- 重複文書がない。
-- 検証証拠があり、生ログを保存していない。
-- regulated案件で必要な証跡だけが残る。
+成果は必要な文書とその根拠・保持規則に限る。保持理由のない文書、CI・branch・merge・commit形式の新たな規則を追加しない。
 
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）

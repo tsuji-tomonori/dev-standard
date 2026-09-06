@@ -44,6 +44,7 @@
 | <code>"REQ-DISC-003"</code> | 6 | 有効 | 機能 | 仕様管理フローは、版と同時更新安全性を保つQuint要件の追加、更新、廃止を**維持する**（<code>"maintain"</code>） | Quint検証と自動テスト |
 | <code>"REQ-DISC-004"</code> | 5 | 有効 | 機能 | 仕様管理フローは、QuintからJSONを経由した日本語の人間向け要件文書を**生成する**（<code>"generate"</code>） | 自動テスト |
 | <code>"REQ-DISC-005"</code> | 2 | 有効 | 機能 | 要件管理Skillは、solution候補と権限ある永続要件を**分離する**（<code>"separate"</code>） | 自動テスト |
+| <code>"REQ-DOCS-003"</code> | 1 | 有効 | 品質 | 参照repositoryの文書保守は、現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離することを**維持する**（<code>"maintain"</code>） | 自動検査と利用経路レビュー |
 | <code>"REQ-DOCS-001"</code> | 1 | 有効 | 品質 | 文書生成フローは、識別子と固有名詞を除いて日本語で統一された利用者向け文書を**提供する**（<code>"provide"</code>） | 自動検査 |
 | <code>"REQ-EXEC-001"</code> | 3 | 有効 | 運用 | 開発実行基盤は、相互に独立した変更範囲、保証水準、計算資源および実行方式を**推定する**（<code>"estimate"</code>） | 自動テスト |
 | <code>"REQ-EXEC-002"</code> | 3 | 有効 | 品質 | 開発実行基盤は、risk tag、成果物、外部副作用および不可逆性から導出したassurance下限を**強制する**（<code>"enforce"</code>） | 自動テスト |
@@ -1195,10 +1196,46 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 検証証跡: solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test
 検証(JSON Object): <code>{"evidence":"solution-only instruction、権限あるtechnology constraint、quality-of-service、ADR、derived requirement、product identityのpositive / negative contract test","method":"自動テスト"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/standards/REQUIREMENT-CLASSIFICATION.md","docs/reference/development.md",".agents/skills/maintain-canonical-requirements/references/research-basis.md"]</code>
+- 設計: <code>["docs/standards/REQUIREMENT-CLASSIFICATION.md","docs/guides/getting-started.md",".agents/skills/maintain-canonical-requirements/references/research-basis.md"]</code>
 - 実装: <code>[".agents/skills/maintain-canonical-requirements/SKILL.md",".agents/skills/chat-first-development/SKILL.md",".agents/skills/elicit-frontend-requirements/SKILL.md",".agents/skills/maintain-canonical-requirements/assets/requirements.schema.json"]</code>
 - テスト: <code>["tests/test_skills.py","tests/test_specflow.py"]</code>
 - 参照資料: <code>["SWEBOK-V4A"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DOCS-003: 利用目的に基づく文書の最小保守
+
+要件ID(JSON): <code>"REQ-DOCS-003"</code>
+タイトル(JSON): <code>"利用目的に基づく文書の最小保守"</code>
+主体(JSON): <code>"参照repositoryの文書保守"</code>
+対象(JSON): <code>"現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離すること"</code>
+参照repositoryの文書保守は、現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離することを**維持する**。
+行為enum: <code>"maintain"</code>
+
+根拠: 使われない文書と重複した指示の維持負担を減らし、要件だけの依頼から対象projectへ3本柱を導入できる入口を保つ。
+根拠(JSON): <code>"使われない文書と重複した指示の維持負担を減らし、要件だけの依頼から対象projectへ3本柱を導入できる入口を保つ。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"user:2026-09-06"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-DOCS-003-1"</code> 前提: 文書を維持または追加する。条件: 文書索引を確認する。期待結果: 利用者・目的・更新条件が明示され、現行文書への参照が解決する。
+  - criterion(JSON Object): <code>{"given":"文書を維持または追加する","id":"AC-DOCS-003-1","then":"利用者・目的・更新条件が明示され、現行文書への参照が解決する","when":"文書索引を確認する"}</code>
+- <code>"AC-DOCS-003-2"</code> 前提: 機能・Skill・配布の変更がある。条件: 保守Skillを実行する。期待結果: 関連する現行文書と正本・生成器を更新し、不要文書は呼出元ごと削除する。履歴は日付と更新対象外を表示し当時の内容を維持する。
+  - criterion(JSON Object): <code>{"given":"機能・Skill・配布の変更がある","id":"AC-DOCS-003-2","then":"関連する現行文書と正本・生成器を更新し、不要文書は呼出元ごと削除する。履歴は日付と更新対象外を表示し当時の内容を維持する","when":"保守Skillを実行する"}</code>
+- <code>"AC-DOCS-003-3"</code> 前提: 利用者が参照URLと開発要件を依頼する。条件: 既定導入を行う。期待結果: 対象projectの構成に合わせて要件初期化・設計生成・関連検査を実行し、文書保守のための追加Skill・承認工程・定型報告書を要求しない。
+  - criterion(JSON Object): <code>{"given":"利用者が参照URLと開発要件を依頼する","id":"AC-DOCS-003-3","then":"対象projectの構成に合わせて要件初期化・設計生成・関連検査を実行し、文書保守のための追加Skill・承認工程・定型報告書を要求しない","when":"既定導入を行う"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06"]</code>
+検証方法: 自動検査と利用経路レビュー
+検証証跡: 現行リンクと索引網羅の検査、既定4 Skillとhost配布の回帰検査、要件初期化・設計生成・検査経路の確認
+検証(JSON Object): <code>{"evidence":"現行リンクと索引網羅の検査、既定4 Skillとhost配布の回帰検査、要件初期化・設計生成・検査経路の確認","method":"自動検査と利用経路レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/README.md","docs/guides/getting-started.md"]</code>
+- 実装: <code>[".agents/skills/maintain-reference-repository/SKILL.md",".agents/skills/chat-first-development/SKILL.md","tools/audit_consistency.py"]</code>
+- テスト: <code>["tests/test_audit_consistency.py","tests/test_install_reference.py","tests/test_design_adoption.py"]</code>
+- 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
 
@@ -1579,7 +1616,7 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 検証証跡: リポジトリ検証とSkill契約テスト
 検証(JSON Object): <code>{"evidence":"リポジトリ検証とSkill契約テスト","method":"自動検査"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/reference/development.md"]</code>
+- 設計: <code>["docs/guides/getting-started.md"]</code>
 - 実装: <code>[".agents/skills/maintain-canonical-requirements/SKILL.md"]</code>
 - テスト: <code>["tests/test_specflow.py"]</code>
 - 参照資料: <code>["SWEBOK-V4A"]</code>
@@ -1952,12 +1989,12 @@ dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分�
 - <code>"AC-REPO-001-4"</code> 前提: 既存devがcurrent mainを祖先に持ち、両tip treeが一致し、まだbranch policyを含まない。条件: 二層branch契約をdev-firstでbootstrap導入する。期待結果: Issue #20を参照する初回bootstrap PRだけをdevへmerge commitで統合し、同じtreeをRelease-Type bootstrapのdevからmainへのsquashで導入できるが、Issueをcloseせず2回の通常releaseへ数えない。
   - criterion(JSON Object): <code>{"given":"既存devがcurrent mainを祖先に持ち、両tip treeが一致し、まだbranch policyを含まない","id":"AC-REPO-001-4","then":"Issue #20を参照する初回bootstrap PRだけをdevへmerge commitで統合し、同じtreeをRelease-Type bootstrapのdevからmainへのsquashで導入できるが、Issueをcloseせず2回の通常releaseへ数えない","when":"二層branch契約をdev-firstでbootstrap導入する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
+要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
 検証方法: CIとGitHub ruleset監査
 検証証跡: branch方向、merge parent、commit subject、protected branch設定のCI結果
 検証(JSON Object): <code>{"evidence":"branch方向、merge parent、commit subject、protected branch設定のCI結果","method":"CIとGitHub ruleset監査"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/decisions/ADR-0002-two-layer-branch-history.md","docs/reference/development.md"]</code>
+- 設計: <code>["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md","docs/guides/getting-started.md"]</code>
 - 実装: <code>[]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
@@ -1990,12 +2027,12 @@ release operatorとCIは、release前後のancestor関係、tip tree条件、fre
 - <code>"AC-REPO-002-4"</code> 前提: hotfix後のmainをdevへ直接mergeするとconflictする。条件: hotfix conflict reconciliationを完了する。期待結果: freeze中のdevからreconcile branchを作り、prior devとcurrent mainをparentに持つ解消mergeをdevへ統合し、outer merge treeとhotfix変更pathを保持してours相当の破棄を拒否する。
   - criterion(JSON Object): <code>{"given":"hotfix後のmainをdevへ直接mergeするとconflictする","id":"AC-REPO-002-4","then":"freeze中のdevからreconcile branchを作り、prior devとcurrent mainをparentに持つ解消mergeをdevへ統合し、outer merge treeとhotfix変更pathを保持してours相当の破棄を拒否する","when":"hotfix conflict reconciliationを完了する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-24","issue:#20","Git FAQ: long-running squash merge","docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
+要求源(JSON List): <code>["user:2026-07-24","issue:#20","Git FAQ: long-running squash merge","docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
 検証方法: branch graph回帰テストとCI
 検証証跡: 一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert
 検証(JSON Object): <code>{"evidence":"一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert","method":"branch graph回帰テストとCI"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/decisions/ADR-0002-two-layer-branch-history.md","docs/reference/development.md"]</code>
+- 設計: <code>["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md","docs/guides/getting-started.md"]</code>
 - 実装: <code>[]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
@@ -2036,12 +2073,12 @@ dev-standardの二層branch試行は、2回のrelease cycleに限定しportable 
 - <code>"AC-REPO-003-8"</code> 前提: 既存の二層branch policyを変更するPull Requestまたはprotected branch pushがある。条件: baseまたはbefore側policyと候補policyを比較する。期待結果: 2回の管理された試行中はtrial.phase以外のmachine contract変更を拒否し、契約変更は試行停止後の別判断として扱う。
   - criterion(JSON Object): <code>{"given":"既存の二層branch policyを変更するPull Requestまたはprotected branch pushがある","id":"AC-REPO-003-8","then":"2回の管理された試行中はtrial.phase以外のmachine contract変更を拒否し、契約変更は試行停止後の別判断として扱う","when":"baseまたはbefore側policyと候補policyを比較する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
+要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
 検証方法: repository contract testと試行後review
 検証証跡: trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト
 検証(JSON Object): <code>{"evidence":"trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト","method":"repository contract testと試行後review"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
+- 設計: <code>["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
 - 実装: <code>[]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>

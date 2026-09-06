@@ -15,7 +15,6 @@ from tools.quintflow import (
     REQUIREMENTS_TEMPLATE_QNT,
     QuintFlowError,
     extract_requirements,
-    extract_skills,
     extract_state,
     verify_requirement_skill_traces,
 )
@@ -26,7 +25,6 @@ from tools.render_skills import (
     manual_body_sha256,
     payload_sha256,
     render_skill_block,
-    render_skills,
     validate_manual_host_paths,
     validate_manual_policy,
     validate_policy_tree,
@@ -137,19 +135,6 @@ class QuintFlowContractTest(unittest.TestCase):
             self.assertNotIn(detail, rendered)
         self.assertIn("外部作用capability: no", rendered)
         self.assertNotIn("適用profile", rendered)
-
-        catalog = extract_skills()
-        aggregate = render_skills(catalog)
-        for item in catalog["contracts"]:
-            for field in ["manualBodySha256", "payloadSha256", "interfaceSha256"]:
-                self.assertIn(item[field], aggregate)
-            for field in ["inputs", "outputs", "obligationIds", "prohibitions", "requiredAssets", "dependencies", "requirementIds"]:
-                for value in item[field]:
-                    self.assertIn(value, aggregate)
-        self.assertIn("起動context: `explicit-review-request`", aggregate)
-        self.assertIn("Repository policy: `ciWorkflow=false`", aggregate)
-        self.assertIn("falseは未モデル化の外部作用", aggregate)
-        self.assertNotIn("適用profile", aggregate)
 
         malformed = dict(contract)
         malformed["repositoryPolicy"] = {"ciWorkflow": False}
@@ -878,9 +863,7 @@ class QuintFlowContractTest(unittest.TestCase):
         self.assertIn("dependenciesAreClosed", skills["invariants"])
         self.assertIn("runnerConformanceIsExplicit", skills["invariants"])
         requirements_doc = (ROOT / "docs/requirements/REQUIREMENTS.md").read_text(encoding="utf-8")
-        skills_doc = (ROOT / "docs/reference/FORMAL-SPECIFICATIONS.md").read_text(encoding="utf-8")
         self.assertIn("requirements.qntを編集すること", requirements_doc)
-        self.assertIn("skills.qntを編集すること", skills_doc)
 
 
 if __name__ == "__main__":

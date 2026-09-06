@@ -1,6 +1,6 @@
 # Evidence map
 
-This map supports the operational rules in `elicit-frontend-requirements`; it does not claim that a short agent interview replaces direct user research or professional ergonomics work. Source classes and the full audit are defined in [`docs/reference/skill-evidence-audit.md`](../../../../docs/reference/skill-evidence-audit.md).
+This map supports the operational rules in `elicit-frontend-requirements`; it does not claim that a short agent interview replaces direct user research or professional ergonomics work. Source classes and the full audit are defined in [`docs/archive/2026-08-29-skill-evidence-audit.md`](../../../../docs/archive/2026-08-29-skill-evidence-audit.md).
 
 | Class | Source | Finding or authority used | Operational rule |
 |---|---|---|---|

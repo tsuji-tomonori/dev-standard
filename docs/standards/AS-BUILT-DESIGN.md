@@ -1,7 +1,7 @@
 # as-built設計標準
 
 - 標準ID: `DEVSTD-AS-BUILT`
-- 版: `2026-08-29`
+- 版: `2026-09-06`
 - 適用対象: このrepositoryから標準を導入するrepository
 - 機械可読checkの正本: `governance/checks/catalog.yaml`
 - 永続要件の正本: `spec/requirements/requirements.qnt`
@@ -58,7 +58,7 @@
 
 ## 3. 生成対象と一次情報
 
-最低生成対象を次に示す。導入先が該当artifactまたは対応generatorを持たない場合、その対象は生成対象へ宣言せず、generator導入を無条件に要求しない。特にfrontendは、導入先が明示的に選択した既存generatorまたはadapterがある場合だけgenerate/check契約へ含める。宣言済み対象はgenerate/check契約へ含める。
+最低生成対象を次に示す。Dev標準の導入・実装では、実際のAPI・data・infra・frontendを棚卸しし、実装が存在する必要領域をgenerate/check契約へ含める。generator未宣言・未接続は省略理由にしない。不足は既存generatorまたはproject adapterで補い、補完できない領域は未完了として報告する。実装が存在しない領域だけを理由付きで非該当とする。[導入・復旧手順](../../.agents/skills/generate-implementation-design/references/adoption.md)を適用し、レイアウト・定量閾値等の任意規約の採用とは区別する。
 
 | 生成対象 | 一次情報 | 抽出契約 | 要件ID |
 |---|---|---|---|
@@ -199,7 +199,7 @@ SQLを使うAPIへのDev標準導入・新規作成・再編では、[SQLと説�
 
 ## 8. 開発フローへの接続
 
-本書は独立した工程オーケストレーションを定義しない。実行profileと進行は`chat-first-development`および`right-size-execution`を正本とする。
+本書は独立した工程オーケストレーションを定義しない。入口は `chat-first-development` とする。下表の四軸は検査を選ぶ判断観点であり、`right-size-execution` の起動・runner・記録作成を通常変更に必須化しない。既存の有効な承認は再利用する。
 
 | Rule ID | Norm | 規則 | 接続先 |
 |---|---|---|---|
