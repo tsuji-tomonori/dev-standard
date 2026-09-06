@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 13,
+  "catalog_revision": 14,
   "product": "dev-standard",
   "requirements": [
     {
@@ -968,6 +968,66 @@
       "verification": {
         "evidence": "schema v2、applicable集合、lexical no-follow、portable pytest static node、TEST_MANIFEST.gen.jsonのpositive fixtureと各failure mutant",
         "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "実装を伴う初回導入または設計に影響する変更がある",
+          "id": "AC-ASBUILT-021-1",
+          "then": "API・data・infra・frontend等を棚卸しし、必要領域はgeneratorまたはadapterを接続して人向けMarkdownを生成する。実装のない領域だけを理由付きで非該当とし、未接続・未対応の必要領域を完了扱いにしない",
+          "when": "導入完了を判定する"
+        },
+        {
+          "given": "導入先所有の生成契約と実装がある",
+          "id": "AC-ASBUILT-021-2",
+          "then": "契約欠落・未分類・未完了・必要なMarkdown欠落/空・drift・checkによる書換えを非0終了で拒否する。CIは導入先運用に従い、CIがなくてもローカルで検証する",
+          "when": "通常の検証入口で設計検査を実行する"
+        },
+        {
+          "given": "作業を再開または完了報告する",
+          "id": "AC-ASBUILT-021-3",
+          "then": "実際の生成Markdown、対象revision、実行commandと結果、残存領域を確認する。install receiptや過去会話の完了報告を生成の証拠に代用しない",
+          "when": "設計生成の証拠を確認する"
+        }
+      ],
+      "action": "verify",
+      "category": "",
+      "id": "REQ-ASBUILT-021",
+      "last_changed_by": "CHG-20260906-as-built-adoption",
+      "object": "必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査",
+      "rationale": "既存generatorだけを起動条件にすると初回導入で生成が省略されるため、接続と生成物の完了確認を2本目の柱に含める。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "",
+      "source_refs": [
+        "user:2026-09-06"
+      ],
+      "status": "active",
+      "subject": "Dev標準を導入する開発agent",
+      "superseded_by": "",
+      "title": "導入時のas-built Markdown生成完了",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/adoption.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/check_design.py",
+          ".agents/skills/chat-first-development/SKILL.md",
+          "distribution/snippets/AGENTS.governance.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_design_adoption.py",
+          "tests/test_portable_distribution.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "生成契約の未設定・Markdown欠落・drift・check書換え・正常例の実行結果とhost別配布検査",
+        "method": "回帰テストと導入検査"
       }
     },
     {
@@ -3090,5 +3150,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-09-05"
+  "updated_at": "2026-09-06"
 }

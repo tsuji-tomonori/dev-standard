@@ -2,9 +2,9 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 13
+- カタログ版: 14
 - Product(JSON): <code>"dev-standard"</code>
-- 更新日(JSON): <code>"2026-09-05"</code>
+- 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
 - 機械可読view: `spec/requirements/requirements.json`
 
@@ -30,6 +30,7 @@
 | <code>"REQ-ASBUILT-018"</code> | 2 | 有効 | 運用 | as-built規約checkは、理由付きRule ID抑制箇所の監査一覧を**生成する**（<code>"generate"</code>） | 定期repository audit |
 | <code>"REQ-ASBUILT-019"</code> | 4 | 有効 | 運用 | inspect-quality-gates runnerは、選択したtest・static analysis・規約check・coverageの結果と未検証範囲を示す一つのlocal summaryまたは対象所有viewを**提供する**（<code>"provide"</code>） | 契約テスト |
 | <code>"REQ-ASBUILT-020"</code> | 2 | 有効 | 品質 | as-built設計generatorは、schema version 2 trace JSONが適用対象として宣言したactive canonical requirement IDからartifactを経てportable pytest static nodeへ至る完全な明示traceを**妥当性確認する**（<code>"validate"</code>） | 自動テスト |
+| <code>"REQ-ASBUILT-021"</code> | 1 | 有効 | 品質 | Dev標準を導入する開発agentは、必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査を**検証する**（<code>"verify"</code>） | 回帰テストと導入検査 |
 | <code>"REQ-DESIGN-001"</code> | 3 | 有効 | 制約 | FastAPI実装フレームは、router.pyのオーケストレーションとfunctions.pyの具体処理に分けたoperationを**構成する**（<code>"structure"</code>） | 自動テスト |
 | <code>"REQ-DESIGN-002"</code> | 2 | 有効 | 機能 | 設計生成器は、FastAPI routerの構文木から得たoperationシーケンス図を**導出する**（<code>"derive"</code>） | 自動テスト |
 | <code>"REQ-DESIGN-003"</code> | 2 | 有効 | インターフェース | 設計生成器は、OpenAPI文書からのAPIとインターフェースの一覧を**導出する**（<code>"derive"</code>） | 自動テスト |
@@ -706,6 +707,42 @@ as-built設計generatorは、schema version 2 trace JSONが適用対象として
 - 設計: <code>["docs/standards/AS-BUILT-DESIGN.md",".agents/skills/generate-implementation-design/references/fastapi-contract.md",".agents/skills/generate-implementation-design/references/cdk-contract.md"]</code>
 - 実装: <code>[".agents/skills/generate-implementation-design/scripts/designflow.py"]</code>
 - テスト: <code>["tests/test_designflow.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ASBUILT-021: 導入時のas-built Markdown生成完了
+
+要件ID(JSON): <code>"REQ-ASBUILT-021"</code>
+タイトル(JSON): <code>"導入時のas-built Markdown生成完了"</code>
+主体(JSON): <code>"Dev標準を導入する開発agent"</code>
+対象(JSON): <code>"必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査"</code>
+Dev標準を導入する開発agentは、必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 既存generatorだけを起動条件にすると初回導入で生成が省略されるため、接続と生成物の完了確認を2本目の柱に含める。
+根拠(JSON): <code>"既存generatorだけを起動条件にすると初回導入で生成が省略されるため、接続と生成物の完了確認を2本目の柱に含める。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260906-as-built-adoption"</code>
+分類: scope=<code>""</code> / category=<code>""</code>
+
+受入条件:
+- <code>"AC-ASBUILT-021-1"</code> 前提: 実装を伴う初回導入または設計に影響する変更がある。条件: 導入完了を判定する。期待結果: API・data・infra・frontend等を棚卸しし、必要領域はgeneratorまたはadapterを接続して人向けMarkdownを生成する。実装のない領域だけを理由付きで非該当とし、未接続・未対応の必要領域を完了扱いにしない。
+  - criterion(JSON Object): <code>{"given":"実装を伴う初回導入または設計に影響する変更がある","id":"AC-ASBUILT-021-1","then":"API・data・infra・frontend等を棚卸しし、必要領域はgeneratorまたはadapterを接続して人向けMarkdownを生成する。実装のない領域だけを理由付きで非該当とし、未接続・未対応の必要領域を完了扱いにしない","when":"導入完了を判定する"}</code>
+- <code>"AC-ASBUILT-021-2"</code> 前提: 導入先所有の生成契約と実装がある。条件: 通常の検証入口で設計検査を実行する。期待結果: 契約欠落・未分類・未完了・必要なMarkdown欠落/空・drift・checkによる書換えを非0終了で拒否する。CIは導入先運用に従い、CIがなくてもローカルで検証する。
+  - criterion(JSON Object): <code>{"given":"導入先所有の生成契約と実装がある","id":"AC-ASBUILT-021-2","then":"契約欠落・未分類・未完了・必要なMarkdown欠落/空・drift・checkによる書換えを非0終了で拒否する。CIは導入先運用に従い、CIがなくてもローカルで検証する","when":"通常の検証入口で設計検査を実行する"}</code>
+- <code>"AC-ASBUILT-021-3"</code> 前提: 作業を再開または完了報告する。条件: 設計生成の証拠を確認する。期待結果: 実際の生成Markdown、対象revision、実行commandと結果、残存領域を確認する。install receiptや過去会話の完了報告を生成の証拠に代用しない。
+  - criterion(JSON Object): <code>{"given":"作業を再開または完了報告する","id":"AC-ASBUILT-021-3","then":"実際の生成Markdown、対象revision、実行commandと結果、残存領域を確認する。install receiptや過去会話の完了報告を生成の証拠に代用しない","when":"設計生成の証拠を確認する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06"]</code>
+検証方法: 回帰テストと導入検査
+検証証跡: 生成契約の未設定・Markdown欠落・drift・check書換え・正常例の実行結果とhost別配布検査
+検証(JSON Object): <code>{"evidence":"生成契約の未設定・Markdown欠落・drift・check書換え・正常例の実行結果とhost別配布検査","method":"回帰テストと導入検査"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/adoption.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/check_design.py",".agents/skills/chat-first-development/SKILL.md","distribution/snippets/AGENTS.governance.md"]</code>
+- テスト: <code>["tests/test_design_adoption.py","tests/test_portable_distribution.py"]</code>
 - 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

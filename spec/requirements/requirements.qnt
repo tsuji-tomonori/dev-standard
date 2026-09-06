@@ -58,9 +58,9 @@ module requirements {
 
   pure val requirementsSource: Catalog = {
     schemaVersion: 1,
-    catalogRevision: 13,
+    catalogRevision: 14,
     product: "dev-standard",
-    updatedAt: "2026-09-05",
+    updatedAt: "2026-09-06",
     requirements: [
       {
         id: "REQ-ASBUILT-001",
@@ -601,6 +601,35 @@ module requirements {
         supersededBy: "",
         scopeName: "product",
         categoryName: "nonfunctional",
+      },
+      {
+        id: "REQ-ASBUILT-021",
+        revision: 1,
+        status: "active",
+        kind: "quality",
+        title: "導入時のas-built Markdown生成完了",
+        subject: "Dev標準を導入する開発agent",
+        actionName: "verify",
+        objectName: "必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査",
+        rationale: "既存generatorだけを起動条件にすると初回導入で生成が省略されるため、接続と生成物の完了確認を2本目の柱に含める。",
+        sourceRefs: ["user:2026-09-06"],
+        acceptanceCriteria: [
+          { id: "AC-ASBUILT-021-1", given: "実装を伴う初回導入または設計に影響する変更がある", when_: "導入完了を判定する", expected: "API・data・infra・frontend等を棚卸しし、必要領域はgeneratorまたはadapterを接続して人向けMarkdownを生成する。実装のない領域だけを理由付きで非該当とし、未接続・未対応の必要領域を完了扱いにしない" },
+          { id: "AC-ASBUILT-021-2", given: "導入先所有の生成契約と実装がある", when_: "通常の検証入口で設計検査を実行する", expected: "契約欠落・未分類・未完了・必要なMarkdown欠落/空・drift・checkによる書換えを非0終了で拒否する。CIは導入先運用に従い、CIがなくてもローカルで検証する" },
+          { id: "AC-ASBUILT-021-3", given: "作業を再開または完了報告する", when_: "設計生成の証拠を確認する", expected: "実際の生成Markdown、対象revision、実行commandと結果、残存領域を確認する。install receiptや過去会話の完了報告を生成の証拠に代用しない" }
+        ],
+        verification: { method: "回帰テストと導入検査", evidence: "生成契約の未設定・Markdown欠落・drift・check書換え・正常例の実行結果とhost別配布検査" },
+        traces: {
+          design: [".agents/skills/generate-implementation-design/references/adoption.md"],
+          implementation: [".agents/skills/generate-implementation-design/scripts/check_design.py", ".agents/skills/chat-first-development/SKILL.md", "distribution/snippets/AGENTS.governance.md"],
+          tests: ["tests/test_design_adoption.py", "tests/test_portable_distribution.py"],
+          standards: ["DEVSTD-AS-BUILT"],
+        },
+        lastChangedBy: "CHG-20260906-as-built-adoption",
+        retirementReason: "",
+        supersededBy: "",
+        scopeName: "",
+        categoryName: "",
       },
       {
         id: "REQ-DESIGN-001",

@@ -12,7 +12,7 @@ description: Complete development requests through a lightweight three-pillar fl
 ## 3本柱
 
 1. 利用者向け挙動、受入条件、恒久制約が変わる場合だけ`$maintain-canonical-requirements`でQuint要件正本を更新する。可逆な実装選択は要件へ固定しない。
-2. 変更artifactを扱う宣言済みgeneratorがある場合だけ`$generate-implementation-design`で実装由来設計とdriftを確認する。生成文書を手直しせず、未対応surfaceを明示する。
+2. Dev標準の導入・実装変更時は`$generate-implementation-design`で必要なMarkdown設計を生成し、欠落とdriftを検査する。初回や未接続ならgenerator/adapterの接続まで行う。未生成の必要領域を残して導入・実装完了としない。
 3. `$inspect-quality-gates`で変更と受入条件に関係する検査を選ぶ。失敗、新しい依存、公開契約への影響が分かった場合だけ検査範囲を広げる。
 
 ## 実行と権限
@@ -25,7 +25,7 @@ description: Complete development requests through a lightweight three-pillar fl
 
 ## 完了
 
-依頼された成果、実際の検証結果、未検証範囲・残存riskを簡潔に伝える。長い作業では実行結果に基づく進捗を伝え、再開情報が必要な場合だけ`.devflow/run/`に目的・承認境界・完了・残件を残す。成功後は無目的な追加検査や文書を増やさない。
+依頼された成果、実際の検証結果、未検証範囲・残存riskを簡潔に伝える。実装を伴う場合は生成Markdownのpathと生成・drift検査結果を含め、Skill配置やCIの成功だけで設計生成完了としない。長い作業では実行結果に基づく進捗を伝え、再開情報が必要な場合だけ`.devflow/run/`に目的・承認境界・完了・残件を残す。成功後は無目的な追加検査や文書を増やさない。
 
 branch構成、merge rule、CI workflow、required check、commit形式、PR template、review YAMLを新たに要求しない。CIがないrepositoryではローカル検証を証拠とする。secret、PII、生ログを保存せず、検査を通すためにtest・型・lint・security controlを弱めない。
 

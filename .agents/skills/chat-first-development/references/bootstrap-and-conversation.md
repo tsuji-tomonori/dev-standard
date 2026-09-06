@@ -7,7 +7,7 @@
 ## 3本柱
 
 1. 永続義務が変わる場合だけQuint要件正本を更新する。
-2. 宣言済みgeneratorがある対象だけas-built設計を生成する。
+2. 導入時・実装変更時に必要なas-built Markdownを生成する。初回はgenerate-implementation-designの`references/adoption.md`に従い、generator接続・対象網羅・欠落/drift検査まで完了する。
 3. 変更に関係するcheckだけを実行する。
 
 入口Skillは3本柱を順序付けるが、それ自体をblocking guardrailにしない。

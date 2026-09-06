@@ -908,6 +908,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     mode = "applied" if args.apply else "dry-run"
     print(f"{mode}: copy={copied} unchanged={unchanged} conflicts={conflicts}")
+    if "generate-implementation-design" in _selected_skills(load_manifest(), args.profile):
+        print(
+            "Asset installation is not as-built completion. Follow "
+            "generate-implementation-design/references/adoption.md: connect generators, "
+            "generate required Markdown, and run missing-design/drift checks."
+        )
     return 0
 
 

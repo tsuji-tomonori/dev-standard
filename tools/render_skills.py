@@ -116,7 +116,7 @@ _ALLOWED_APPLICABILITY = frozenset(
         "when-development-is-requested",
         "when-frontend-design-is-needed",
         "when-frontend-requirements-are-needed",
-        "when-a-declared-generator-supports-the-change",
+        "when-adopting-or-changing-implementation",
         "when-frontend-implementation-is-requested",
         "when-change-relevant-checks-exist",
         "when-user-or-target-selects-style",
@@ -139,7 +139,7 @@ _ALLOWED_ACTIVATION_CONTEXTS = frozenset(
         "frontend-design",
         "frontend-implementation",
         "frontend-testing",
-        "supported-as-built-surface",
+        "as-built-adoption-or-change",
         "selected-checks",
         "target-commit-style",
         "durable-requirement-change",
@@ -187,7 +187,7 @@ _ALLOWED_FAILURE_STATES = frozenset(
         "return-to-requirements",
         "return-to-design",
         "stop-at-authority-boundary",
-        "fail-on-drift",
+        "fail-on-missing-or-drift",
         "fail-on-invalid-catalog",
     }
 )

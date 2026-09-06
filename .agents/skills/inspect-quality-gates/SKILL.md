@@ -11,6 +11,7 @@ description: Select and run only the checks relevant to the current change, usin
 
 ## 検証
 
+- 導入時・設計に影響する実装変更時は、必要なas-built Markdownの欠落・drift検査を必ず選ぶ。generator未接続は検査対象なしではなく導入未完了である。
 - 既存のtest、lint、type check、build、generatorから変更に関係するものを実行し、結果を直接確認する。CIがないこと自体を失敗にしない。
 - 挙動を変えない低影響の文書修正等に、新しいtestや全suiteの反復を一律要求しない。恒久testは実際の回帰riskと既存の運用に応じて残す。
 - 受入条件、生成drift、機密情報、権限境界に関する失敗を隠さない。失敗、新しい依存、未解決risk、既存の必須gateに根拠がある場合だけ検査を広げる。
