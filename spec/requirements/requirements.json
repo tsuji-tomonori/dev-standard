@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 15,
+  "catalog_revision": 16,
   "product": "dev-standard",
   "requirements": [
     {
@@ -3264,6 +3264,162 @@
       "verification": {
         "evidence": "数式範囲テスト、項目数照合、代表シートの描画結果",
         "method": "自動検査と描画確認"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "新規開発またはDev標準導入を依頼された",
+          "id": "AC-EVIDENCE-001-1",
+          "then": "実test一覧・実行結果・静的解析・coverage・生成設計書のadapterと閲覧siteを接続し、空templateを完成としない",
+          "when": "agentが初期実装を行う"
+        },
+        {
+          "given": "新規GitHub projectまたは既存CIを持つprojectがある",
+          "id": "AC-EVIDENCE-001-2",
+          "then": "新規ではPages用target-owned設定を初期構築し、既存では現行CIと公開先を維持して接続する。installerはworkflowをコピーせず、実公開は対象権限に従う",
+          "when": "公開準備を行う"
+        }
+      ],
+      "action": "provide",
+      "category": "nonfunctional",
+      "id": "REQ-EVIDENCE-001",
+      "last_changed_by": "CHG-20260906-default-evidence-portal",
+      "object": "製品要件からframeworkに応じた品質portalと公開準備を初期構築すること",
+      "rationale": "利用者が開発基盤の個別設定を毎回指定する負担をなくす。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "user:2026-09-06",
+        "https://github.com/tsuji-tomonori/CornellNoteWebv2/tree/dev"
+      ],
+      "status": "active",
+      "subject": "開発開始フロー",
+      "superseded_by": "",
+      "title": "品質portalの既定初期構築",
+      "traces": {
+        "design": [
+          ".agents/skills/inspect-quality-gates/references/evidence-portal.md"
+        ],
+        "implementation": [
+          ".agents/skills/inspect-quality-gates/scripts/evidence.py",
+          ".agents/skills/inspect-quality-gates/scripts/test_evidence.py",
+          ".agents/skills/chat-first-development/SKILL.md"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_evidence_portal.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "共通reportと2系統runnerの回帰検証",
+        "method": "契約・adapter・生成drift検証"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "collectorと実行結果がある",
+          "id": "AC-EVIDENCE-002-1",
+          "then": "安定case IDを照合し、失敗・skip・未実行・flaky・missingを区別して保持する",
+          "when": "共通reportへ変換する"
+        },
+        {
+          "given": "E2E・coverage・設計書が該当する",
+          "id": "AC-EVIDENCE-002-2",
+          "then": "GWTの説明と拡大画像、coverageのmetric別実測分母分子、検索・章一覧・目次・Mermaidを持つ設計HTMLへ移動できる",
+          "when": "閲覧siteを生成する"
+        }
+      ],
+      "action": "generate",
+      "category": "nonfunctional",
+      "id": "REQ-EVIDENCE-002",
+      "last_changed_by": "CHG-20260906-default-evidence-portal",
+      "object": "collectorと実行結果に対応する失敗を隠さない共通report",
+      "rationale": "一覧から漏れたtestや未実行を全件成功と誤認することを防ぐ。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "user:2026-09-06",
+        "https://github.com/tsuji-tomonori/CornellNoteWebv2/tree/dev"
+      ],
+      "status": "active",
+      "subject": "品質report生成処理",
+      "superseded_by": "",
+      "title": "エビデンスの実測対応",
+      "traces": {
+        "design": [
+          ".agents/skills/inspect-quality-gates/references/evidence-portal.md"
+        ],
+        "implementation": [
+          ".agents/skills/inspect-quality-gates/scripts/evidence.py",
+          ".agents/skills/inspect-quality-gates/scripts/test_evidence.py",
+          ".agents/skills/chat-first-development/SKILL.md"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_evidence_portal.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "共通reportと2系統runnerの回帰検証",
+        "method": "契約・adapter・生成drift検証"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "reportを生成する",
+          "id": "AC-EVIDENCE-003-1",
+          "then": "revision一致と欠落・driftを検査し、明示allowlist外のfileとsymlink・path逸脱を拒否する",
+          "when": "公開用artifactを作る"
+        },
+        {
+          "given": "CI検査が失敗した",
+          "id": "AC-EVIDENCE-003-2",
+          "then": "有効な失敗reportを生成でき、元の検査失敗を維持する。PR/forkを公開せずtrustedな対象branchと既存権限だけで公開する",
+          "when": "report生成と公開jobを実行する"
+        }
+      ],
+      "action": "constrain",
+      "category": "nonfunctional",
+      "id": "REQ-EVIDENCE-003",
+      "last_changed_by": "CHG-20260906-default-evidence-portal",
+      "object": "同一revision/runの選別済みartifactだけを公開対象にすること",
+      "rationale": "古い成功表示や非公開log混入を防ぎ検査失敗を隠さない。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "user:2026-09-06",
+        "https://github.com/tsuji-tomonori/CornellNoteWebv2/tree/dev"
+      ],
+      "status": "active",
+      "subject": "品質report公開処理",
+      "superseded_by": "",
+      "title": "公開成果のrun境界",
+      "traces": {
+        "design": [
+          ".agents/skills/inspect-quality-gates/references/evidence-portal.md"
+        ],
+        "implementation": [
+          ".agents/skills/inspect-quality-gates/scripts/evidence.py",
+          ".agents/skills/inspect-quality-gates/scripts/test_evidence.py",
+          ".agents/skills/chat-first-development/SKILL.md"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_evidence_portal.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "共通reportと2系統runnerの回帰検証",
+        "method": "契約・adapter・生成drift検証"
       }
     }
   ],

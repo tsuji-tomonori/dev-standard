@@ -2,7 +2,7 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 15
+- カタログ版: 16
 - Product(JSON): <code>"dev-standard"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -72,6 +72,9 @@
 | <code>"REQ-SKILL-001"</code> | 1 | 有効 | 制約 | right-size-executionは、Estimate、ExecuteおよびExpandを一体化した再利用可能な実行制御契約を**提供する**（<code>"provide"</code>） | 自動検査 |
 | <code>"REQ-SKILL-002"</code> | 1 | 有効 | 品質 | Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectoryで実行された証拠を**検証する**（<code>"verify"</code>） | 自動benchmark |
 | <code>"REQ-WORKBOOK-001"</code> | 2 | 有効 | 運用 | チェックリスト生成フローは、実データ範囲だけを集計し決定的に再現できるレビュー用ワークブックを**生成する**（<code>"generate"</code>） | 自動検査と描画確認 |
+| <code>"REQ-EVIDENCE-001"</code> | 1 | 有効 | 品質 | 開発開始フローは、製品要件からframeworkに応じた品質portalと公開準備を初期構築することを**提供する**（<code>"provide"</code>） | 契約・adapter・生成drift検証 |
+| <code>"REQ-EVIDENCE-002"</code> | 1 | 有効 | 品質 | 品質report生成処理は、collectorと実行結果に対応する失敗を隠さない共通reportを**生成する**（<code>"generate"</code>） | 契約・adapter・生成drift検証 |
+| <code>"REQ-EVIDENCE-003"</code> | 1 | 有効 | 品質 | 品質report公開処理は、同一revision/runの選別済みartifactだけを公開対象にすることを**制約する**（<code>"constrain"</code>） | 契約・adapter・生成drift検証 |
 
 ## REQ-ASBUILT-001: as-built生成の決定論性
 
@@ -2140,5 +2143,107 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 - 実装: <code>["update_checklist.py"]</code>
 - テスト: <code>["tests/test_checklist.py"]</code>
 - 参照資料: <code>["SWEBOK-V4A"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-EVIDENCE-001: 品質portalの既定初期構築
+
+要件ID(JSON): <code>"REQ-EVIDENCE-001"</code>
+タイトル(JSON): <code>"品質portalの既定初期構築"</code>
+主体(JSON): <code>"開発開始フロー"</code>
+対象(JSON): <code>"製品要件からframeworkに応じた品質portalと公開準備を初期構築すること"</code>
+開発開始フローは、製品要件からframeworkに応じた品質portalと公開準備を初期構築することを**提供する**。
+行為enum: <code>"provide"</code>
+
+根拠: 利用者が開発基盤の個別設定を毎回指定する負担をなくす。
+根拠(JSON): <code>"利用者が開発基盤の個別設定を毎回指定する負担をなくす。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260906-default-evidence-portal"</code>
+分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-EVIDENCE-001-1"</code> 前提: 新規開発またはDev標準導入を依頼された。条件: agentが初期実装を行う。期待結果: 実test一覧・実行結果・静的解析・coverage・生成設計書のadapterと閲覧siteを接続し、空templateを完成としない。
+  - criterion(JSON Object): <code>{"given":"新規開発またはDev標準導入を依頼された","id":"AC-EVIDENCE-001-1","then":"実test一覧・実行結果・静的解析・coverage・生成設計書のadapterと閲覧siteを接続し、空templateを完成としない","when":"agentが初期実装を行う"}</code>
+- <code>"AC-EVIDENCE-001-2"</code> 前提: 新規GitHub projectまたは既存CIを持つprojectがある。条件: 公開準備を行う。期待結果: 新規ではPages用target-owned設定を初期構築し、既存では現行CIと公開先を維持して接続する。installerはworkflowをコピーせず、実公開は対象権限に従う。
+  - criterion(JSON Object): <code>{"given":"新規GitHub projectまたは既存CIを持つprojectがある","id":"AC-EVIDENCE-001-2","then":"新規ではPages用target-owned設定を初期構築し、既存では現行CIと公開先を維持して接続する。installerはworkflowをコピーせず、実公開は対象権限に従う","when":"公開準備を行う"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06","https://github.com/tsuji-tomonori/CornellNoteWebv2/tree/dev"]</code>
+検証方法: 契約・adapter・生成drift検証
+検証証跡: 共通reportと2系統runnerの回帰検証
+検証(JSON Object): <code>{"evidence":"共通reportと2系統runnerの回帰検証","method":"契約・adapter・生成drift検証"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/inspect-quality-gates/references/evidence-portal.md"]</code>
+- 実装: <code>[".agents/skills/inspect-quality-gates/scripts/evidence.py",".agents/skills/inspect-quality-gates/scripts/test_evidence.py",".agents/skills/chat-first-development/SKILL.md"]</code>
+- テスト: <code>["tests/test_evidence_portal.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-EVIDENCE-002: エビデンスの実測対応
+
+要件ID(JSON): <code>"REQ-EVIDENCE-002"</code>
+タイトル(JSON): <code>"エビデンスの実測対応"</code>
+主体(JSON): <code>"品質report生成処理"</code>
+対象(JSON): <code>"collectorと実行結果に対応する失敗を隠さない共通report"</code>
+品質report生成処理は、collectorと実行結果に対応する失敗を隠さない共通reportを**生成する**。
+行為enum: <code>"generate"</code>
+
+根拠: 一覧から漏れたtestや未実行を全件成功と誤認することを防ぐ。
+根拠(JSON): <code>"一覧から漏れたtestや未実行を全件成功と誤認することを防ぐ。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260906-default-evidence-portal"</code>
+分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-EVIDENCE-002-1"</code> 前提: collectorと実行結果がある。条件: 共通reportへ変換する。期待結果: 安定case IDを照合し、失敗・skip・未実行・flaky・missingを区別して保持する。
+  - criterion(JSON Object): <code>{"given":"collectorと実行結果がある","id":"AC-EVIDENCE-002-1","then":"安定case IDを照合し、失敗・skip・未実行・flaky・missingを区別して保持する","when":"共通reportへ変換する"}</code>
+- <code>"AC-EVIDENCE-002-2"</code> 前提: E2E・coverage・設計書が該当する。条件: 閲覧siteを生成する。期待結果: GWTの説明と拡大画像、coverageのmetric別実測分母分子、検索・章一覧・目次・Mermaidを持つ設計HTMLへ移動できる。
+  - criterion(JSON Object): <code>{"given":"E2E・coverage・設計書が該当する","id":"AC-EVIDENCE-002-2","then":"GWTの説明と拡大画像、coverageのmetric別実測分母分子、検索・章一覧・目次・Mermaidを持つ設計HTMLへ移動できる","when":"閲覧siteを生成する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06","https://github.com/tsuji-tomonori/CornellNoteWebv2/tree/dev"]</code>
+検証方法: 契約・adapter・生成drift検証
+検証証跡: 共通reportと2系統runnerの回帰検証
+検証(JSON Object): <code>{"evidence":"共通reportと2系統runnerの回帰検証","method":"契約・adapter・生成drift検証"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/inspect-quality-gates/references/evidence-portal.md"]</code>
+- 実装: <code>[".agents/skills/inspect-quality-gates/scripts/evidence.py",".agents/skills/inspect-quality-gates/scripts/test_evidence.py",".agents/skills/chat-first-development/SKILL.md"]</code>
+- テスト: <code>["tests/test_evidence_portal.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-EVIDENCE-003: 公開成果のrun境界
+
+要件ID(JSON): <code>"REQ-EVIDENCE-003"</code>
+タイトル(JSON): <code>"公開成果のrun境界"</code>
+主体(JSON): <code>"品質report公開処理"</code>
+対象(JSON): <code>"同一revision/runの選別済みartifactだけを公開対象にすること"</code>
+品質report公開処理は、同一revision/runの選別済みartifactだけを公開対象にすることを**制約する**。
+行為enum: <code>"constrain"</code>
+
+根拠: 古い成功表示や非公開log混入を防ぎ検査失敗を隠さない。
+根拠(JSON): <code>"古い成功表示や非公開log混入を防ぎ検査失敗を隠さない。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260906-default-evidence-portal"</code>
+分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-EVIDENCE-003-1"</code> 前提: reportを生成する。条件: 公開用artifactを作る。期待結果: revision一致と欠落・driftを検査し、明示allowlist外のfileとsymlink・path逸脱を拒否する。
+  - criterion(JSON Object): <code>{"given":"reportを生成する","id":"AC-EVIDENCE-003-1","then":"revision一致と欠落・driftを検査し、明示allowlist外のfileとsymlink・path逸脱を拒否する","when":"公開用artifactを作る"}</code>
+- <code>"AC-EVIDENCE-003-2"</code> 前提: CI検査が失敗した。条件: report生成と公開jobを実行する。期待結果: 有効な失敗reportを生成でき、元の検査失敗を維持する。PR/forkを公開せずtrustedな対象branchと既存権限だけで公開する。
+  - criterion(JSON Object): <code>{"given":"CI検査が失敗した","id":"AC-EVIDENCE-003-2","then":"有効な失敗reportを生成でき、元の検査失敗を維持する。PR/forkを公開せずtrustedな対象branchと既存権限だけで公開する","when":"report生成と公開jobを実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06","https://github.com/tsuji-tomonori/CornellNoteWebv2/tree/dev"]</code>
+検証方法: 契約・adapter・生成drift検証
+検証証跡: 共通reportと2系統runnerの回帰検証
+検証(JSON Object): <code>{"evidence":"共通reportと2系統runnerの回帰検証","method":"契約・adapter・生成drift検証"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/inspect-quality-gates/references/evidence-portal.md"]</code>
+- 実装: <code>[".agents/skills/inspect-quality-gates/scripts/evidence.py",".agents/skills/inspect-quality-gates/scripts/test_evidence.py",".agents/skills/chat-first-development/SKILL.md"]</code>
+- テスト: <code>["tests/test_evidence_portal.py"]</code>
+- 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

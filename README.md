@@ -60,3 +60,9 @@ installerは導入先の`.github/`、branch、merge設定を追加も変更も�
 [導入・復旧手順](.agents/skills/generate-implementation-design/references/adoption.md)に従い、必要な生成物を`.dev-standard/design.json`で明示し、`python <host-skill-path>/scripts/check_design.py --root .`または既存の同等検査を通常のverify入口で実行します。必要なMarkdownの欠落・空・drift・未対応は未完了です。実装がない領域は根拠を示して非該当とします。
 
 完了報告には生成物へのpath、対象revision、生成・検査commandと結果を含めます。installer成功やアプリのtest成功だけでは導入完了になりません。CIとの接続は導入先の既存運用と権限に従います。
+
+## 品質エビデンスの既定公開準備
+
+製品要件だけで開発を始められるよう、新規開発・導入時はテスト一覧と個別結果、GWT画像、静的解析、実測coverage、検索可能な生成設計書をまとめる品質portalを初期成果に含めます。agentがframeworkに応じたadapterを実commandへ接続します。新規GitHub projectはPages公開用設定を準備し、既存projectは既存CI・公開先へ接続します。実公開には対象の権限を適用します。
+
+[品質portalの導入契約](.agents/skills/inspect-quality-gates/references/evidence-portal.md)に共通JSON、同梱rendererとJUnit/Vitest変換、設計HTMLの接続、失敗を隠さない公開job、受入確認を定義しています。空templateや未接続adapterを導入完了としません。
