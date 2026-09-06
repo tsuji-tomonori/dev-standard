@@ -252,11 +252,13 @@
         "authority-boundary"
       ],
       "interfaceSha256": "fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d",
-      "manualBodySha256": "0d682adbd481318858b0f8000b91ff96cec0b359d7b1fff7ab0e5ee997533796",
+      "manualBodySha256": "d833a541c5a4faca6c782caa0bce2d8da772c0c7d93909551060dc18fd2ee8fd",
       "name": "chat-first-development",
       "obligationIds": [
+        "verify-operation-sql-and-typed-query-generation",
+        "verify-japanese-explanations-at-generator-source",
         "classify-durable-requirement-impact",
-        "generate-supported-as-built-design",
+        "complete-as-built-adoption-and-generation",
         "run-only-selected-checks",
         "bind-external-effects-to-authority",
         "perform-pr-operation-only-when-requested"
@@ -266,7 +268,7 @@
         "verification-summary",
         "external-operation-result"
       ],
-      "payloadSha256": "23e2400ebf4e7aad2ff46da62f6a61ad8b0899c21a60ded4d246706395f6ff2c",
+      "payloadSha256": "e3f954a85f0d9c33a7c5ad846747f01ba02a42d0cbe7730386bf7e4c4ee6a3c0",
       "pillar": "auxiliary",
       "postcondition": "the requested outcome and only applicable pillars are complete, and every external effect remains within explicit authority",
       "precondition": "a development outcome is requested",
@@ -291,7 +293,10 @@
       "requirementIds": [
         "REQ-DISC-005",
         "REQ-PORTABLE-001",
-        "REQ-PORTABLE-003"
+        "REQ-PORTABLE-003",
+        "REQ-ASBUILT-021",
+        "REQ-DESIGN-007",
+        "REQ-DOCS-002"
       ],
       "role": "orchestrator",
       "sideEffect": "repository-and-authorized-external-write"
@@ -333,7 +338,7 @@
       "prohibitions": [
         "do not duplicate implementation-derived inventories",
         "do not persist local design detail as ADR",
-        "do not require a generator for unsupported artifacts"
+        "do not mark unsupported required design complete"
       ],
       "repositoryBlocking": false,
       "repositoryPolicy": {
@@ -411,14 +416,14 @@
     },
     {
       "activationContexts": [
-        "supported-as-built-surface"
+        "as-built-adoption-or-change"
       ],
-      "applicability": "when-a-declared-generator-supports-the-change",
+      "applicability": "when-adopting-or-changing-implementation",
       "authority": "implementation",
       "defaultPortable": true,
       "dependencies": [],
       "externalEffect": false,
-      "failureState": "fail-on-drift",
+      "failureState": "fail-on-missing-or-drift",
       "guardrail": true,
       "inputs": [
         "implementation",
@@ -430,9 +435,15 @@
         "test-source"
       ],
       "interfaceSha256": "2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42",
-      "manualBodySha256": "21b5e9950c216b93732ee9e3b2dc7857978c309c5d31f9db62518c6e36650580",
+      "manualBodySha256": "5129ffad0ba1f2037df03a771b80da3d0d6c4d58322f2cf567a177bd980219a5",
       "name": "generate-implementation-design",
       "obligationIds": [
+        "verify-operation-sql-and-typed-query-generation",
+        "verify-japanese-explanations-at-generator-source",
+        "inventory-required-design-surfaces",
+        "connect-missing-generators",
+        "require-human-readable-markdown",
+        "reject-missing-design",
         "run-with-pinned-isolated-runtime",
         "generate-deterministic-as-built",
         "verify-isolation-and-drift",
@@ -445,15 +456,15 @@
         "exact-requirement-artifact-test-trace",
         "structured-unsupported-surface-or-bounded-fail-closed-diagnostic"
       ],
-      "payloadSha256": "972bf2d4303a151c201084447052731f0142c1c73de031a3451c31a9f0f20c68",
+      "payloadSha256": "39610f20062364120d6b19791f5bb749914a9afacdd6a4b7eb47398cc7db78de",
       "pillar": "design",
       "postcondition": "generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes",
-      "precondition": "a declared generator supports the changed surface and explicit trace JSON declares applicable_requirement_ids for that supported surface",
+      "precondition": "adoption or implementation change requires an as-built inventory and generator connection, including first-time setup",
       "prohibitions": [
         "do not modify the target repository virtual environment",
         "do not edit generated design directly",
         "do not infer requirement satisfaction from implementation",
-        "do not require a generator or CI for unsupported artifacts"
+        "do not mark missing required design complete or impose CI policy"
       ],
       "repositoryBlocking": true,
       "repositoryPolicy": {
@@ -466,7 +477,10 @@
         "ruleset": false
       },
       "requiredAssets": [
+        "references/sql-and-language.md",
         "assets/as-built-thresholds.json",
+        "references/adoption.md",
+        "scripts/check_design.py",
         "references/cdk-contract.md",
         "references/fastapi-contract.md",
         "requirements.txt",
@@ -492,12 +506,15 @@
         "REQ-ASBUILT-016",
         "REQ-ASBUILT-018",
         "REQ-ASBUILT-020",
+        "REQ-ASBUILT-021",
         "REQ-DESIGN-001",
         "REQ-DESIGN-002",
         "REQ-DESIGN-003",
         "REQ-DESIGN-004",
         "REQ-DESIGN-005",
-        "REQ-DESIGN-006"
+        "REQ-DESIGN-006",
+        "REQ-DESIGN-007",
+        "REQ-DOCS-002"
       ],
       "role": "as-built-design",
       "sideEffect": "repository-write"
@@ -643,9 +660,11 @@
         "external-authority-if-applicable"
       ],
       "interfaceSha256": "073b20f8a4c4f30a38fac5fb4ae66a56ee7e97caf4cb96beeea189b26e391fd1",
-      "manualBodySha256": "90812190a17d4d86f3610a4a85d312e96478ccf5df930d9d262f4c383871f829",
+      "manualBodySha256": "9a41d0b94433aedeef19a12e316d110dcc5dee70d2094dbe972decf191e14dbb",
       "name": "inspect-quality-gates",
       "obligationIds": [
+        "verify-operation-sql-and-typed-query-generation",
+        "verify-japanese-explanations-at-generator-source",
         "select-minimum-relevant-checks",
         "validate-registry-command-and-declared-effect-when-runner-is-used",
         "execute-selected-checks",
@@ -685,7 +704,9 @@
       ],
       "requirementIds": [
         "REQ-ASBUILT-019",
-        "REQ-QUALITY-002"
+        "REQ-QUALITY-002",
+        "REQ-DESIGN-007",
+        "REQ-DOCS-002"
       ],
       "role": "selected-checks",
       "sideEffect": "target-command-effects"
@@ -1099,7 +1120,7 @@
         "requirement-handoff",
         "generated-sources-doc-when-requested"
       ],
-      "payloadSha256": "1ee8c37168749ce8fb21781a9b4fcf2a794fc7d9216a8ea8c3f9f08391f18f4e",
+      "payloadSha256": "43e8ae228716003160d8796993fb6387c9f3310ec98e9017cf3f50dd4da5cd16",
       "pillar": "auxiliary",
       "postcondition": "only applicable controls have evidence-bounded findings without overriding canonical authority, and any requested generated source document stays repository-confined",
       "precondition": "a relevant standard is selected for the change",

@@ -87,6 +87,8 @@
 
 ## 5. 実装規約
 
+SQLを使うAPIへのDev標準導入・新規作成・再編では、[SQLと説明コメントの契約](../../.agents/skills/generate-implementation-design/references/sql-and-language.md)を完了条件として適用する（`REQ-DESIGN-007`、`REQ-DOCS-002`）。API別SQLを正本にDDL/SQL由来の型付きqueryを生成し、関連lint・境界・生成差分・DBテストを検証する。説明コメント・docstring・生成ヘッダーは別言語の明示指示がなければ日本語とし、生成元から修正する。
+
 ### 5.1 endpoint縦割り
 
 | Rule ID | Norm | 規則 | Check ID |

@@ -52,3 +52,11 @@ installerは導入先の`.github/`、branch、merge設定を追加も変更も�
 最新モデル向けの構成判断と公式根拠は[フロンティアモデルと最小ハーネス](docs/reference/frontier-model-guidance.md)を参照してください。
 
 詳細は[導入とSkills一覧](docs/guides/getting-started.md)、[形式仕様](docs/reference/FORMAL-SPECIFICATIONS.md)、[開発契約](docs/reference/development.md)を参照してください。
+
+## 導入完了の条件
+
+「Dev標準を入れて実装して」という依頼には、Skillの配置に加えて、実装由来のMarkdown設計の初回生成まで含まれます。API・data・infra・frontendの実装対象を棚卸しし、必要なgenerator/adapterを接続してください。生成器が未宣言であることを省略理由にしません。
+
+[導入・復旧手順](.agents/skills/generate-implementation-design/references/adoption.md)に従い、必要な生成物を`.dev-standard/design.json`で明示し、`python <host-skill-path>/scripts/check_design.py --root .`または既存の同等検査を通常のverify入口で実行します。必要なMarkdownの欠落・空・drift・未対応は未完了です。実装がない領域は根拠を示して非該当とします。
+
+完了報告には生成物へのpath、対象revision、生成・検査commandと結果を含めます。installer成功やアプリのtest成功だけでは導入完了になりません。CIとの接続は導入先の既存運用と権限に従います。

@@ -9,7 +9,7 @@ description: Deterministically generate as-built design from implementation arti
 
 実装から現在状態の設計を決定的に生成する。これは2本目のガードレールである。
 
-変更artifactを扱う宣言済みgenerator contractがある場合だけ起動する。generator対象外のartifactはboundedな未生成surfaceとして返し、このSkillを理由に新しいgenerator、設計書、CIを要求しない。
+Dev標準の導入時と、現在状態の設計に影響する実装変更時に起動する。generator未宣言・未接続をno-opの理由にしない。初回または生成不足なら[adoption.md](references/adoption.md)を読み、対象棚卸し、generator/adapter接続、必要なMarkdown生成、欠落・drift検査まで実施する。実装がない領域だけを非該当とし、必要領域の未生成は導入未完了として扱う。
 
 ## Authority order
 
@@ -25,6 +25,7 @@ description: Deterministically generate as-built design from implementation arti
 - route AST、applicationが生成するOpenAPI、handler metadata、error branch、SQL ASTから設計を生成する。
 - executable SQLを正規表現で推測せず、parseできないSQLを拒否する。
 - 作成または再編時は`references/fastapi-contract.md`を読む。
+- SQLがある導入・実装変更では[sql-and-language.md](references/sql-and-language.md)に従い、API別SQL、DDL/SQL由来の型付きquery生成と境界検査を接続する。説明コメントと生成ヘッダーは原則日本語とし、英語が残る生成物は生成元から修正する。
 - 実行例: `python tools/portable_python.py run <host-skill-path>/scripts/designflow.py -- fastapi --source-root <src> --openapi <openapi.json> --sql-root <sql> --requirements <requirements.json> --trace <trace.json> --test-root <tests> --out docs/design/generated/fastapi`
 
 ## AWS CDK
@@ -44,7 +45,7 @@ description: Deterministically generate as-built design from implementation arti
 3. `--check`が既存生成物との差を検出する。
 4. canonical requirements JSON、明示的なartifact trace JSON、test sourceを入力する。trace JSONの`applicable_requirement_ids`は、generatorが扱う変更surfaceに関係するactive requirementだけを明示する。
 5. `applicable_requirement_ids`とrequirement→operation / resource→実在test nodeのmappingを集合として完全一致させる。未知ID、inactive ID、未mapping ID、宣言外の余剰mappingを拒否し、実装から要件充足を推測して新しいtraceを捏造しない。
-6. generator対象外の変更surfaceは、path、理由、support statusを持つstructured `unsupported_surface`として返す。generator対象内で未対応構文を検出した場合はpath、function、line、node kindを持つbounded diagnosticでfail-closedにする。どちらも未生成surfaceへ完全性を主張しない。
+6. generator対象外の変更surfaceは、path、理由、support statusを持つstructured `unsupported_surface`として返し、必要な設計はproject adapterで補う。補完できなければ未完了であり、報告だけで完了へ進めない。generator対象内で未対応構文を検出した場合はpath、function、line、node kindを持つbounded diagnosticでfail-closedにする。どちらも未生成surfaceへ完全性を主張しない。
 
 `--check`はローカルでも対象repositoryが既に持つCIでも実行できる。このSkillはCI workflow、required check、branch protection、merge ruleを作成も要求もしない。生成設計は実装との一致を示すが、実装が要件を満たすことまでは証明しない。
 
@@ -59,10 +60,10 @@ repository policyは導入先が所有します。非該当ならartifactやbloc
 - 柱: design
 - repository blocking: yes
 - 既定portable: yes
-- 適用条件: when-a-declared-generator-supports-the-change
-- 起動context: `supported-as-built-surface`
+- 適用条件: when-adopting-or-changing-implementation
+- 起動context: `as-built-adoption-or-change`
 - 外部作用capability: no
 - Authority: implementation
 - 副作用: repository-write
-- 失敗状態: fail-on-drift
+- 失敗状態: fail-on-missing-or-drift
 <!-- END GENERATED QUINT CONTRACT -->

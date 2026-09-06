@@ -16,7 +16,7 @@
 | `chat-first-development` | orchestrator | 補助 | なし | 含む | `development-request` |
 | `design-frontend-experience` | frontend-design | 補助 | なし | 含めない | `frontend-design` |
 | `elicit-frontend-requirements` | frontend-requirements | 補助 | なし | 含めない | `frontend-requirements` |
-| `generate-implementation-design` | as-built-design | as-built設計 | blocking | 含む | `supported-as-built-surface` |
+| `generate-implementation-design` | as-built-design | as-built設計 | blocking | 含む | `as-built-adoption-or-change` |
 | `govern-development-request` | regulated-orchestration | 補助 | なし | 含めない | `concrete-regulated-duty` |
 | `implement-frontend-experience` | frontend-implementation | 補助 | なし | 含めない | `frontend-implementation` |
 | `inspect-quality-gates` | selected-checks | 選択check | blocking | 含む | `selected-checks` |
@@ -147,13 +147,13 @@
 - 失敗状態: `report-bounded`
 - 入力: `request`, `target-repository-rules`, `authority-boundary`
 - 出力: `change`, `verification-summary`, `external-operation-result`
-- 義務: `classify-durable-requirement-impact`, `generate-supported-as-built-design`, `run-only-selected-checks`, `bind-external-effects-to-authority`, `perform-pr-operation-only-when-requested`
+- 義務: `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `classify-durable-requirement-impact`, `complete-as-built-adoption-and-generation`, `run-only-selected-checks`, `bind-external-effects-to-authority`, `perform-pr-operation-only-when-requested`
 - 禁止事項: `do not impose CI branch or merge policy`, `do not create per-change bureaucracy`, `do not create update comment or merge a PR unless requested`
 - 依存Skill: `maintain-canonical-requirements`, `generate-implementation-design`, `inspect-quality-gates`
 - 必須asset: `references/bootstrap-and-conversation.md`
-- 要件trace: `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`
-- manual digest: `0d682adbd481318858b0f8000b91ff96cec0b359d7b1fff7ab0e5ee997533796`
-- payload digest: `23e2400ebf4e7aad2ff46da62f6a61ad8b0899c21a60ded4d246706395f6ff2c`
+- 要件trace: `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`, `REQ-ASBUILT-021`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `d833a541c5a4faca6c782caa0bce2d8da772c0c7d93909551060dc18fd2ee8fd`
+- payload digest: `e3f954a85f0d9c33a7c5ad846747f01ba02a42d0cbe7730386bf7e4c4ee6a3c0`
 - interface digest: `fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d`
 
 ### design-frontend-experience
@@ -171,7 +171,7 @@
 - 入力: `requirements`, `design-context`, `existing-design-system`, `selected-check`
 - 出力: `design-decisions`, `verification-hooks`, `selected-check-handoff`
 - 義務: `derive-minimum-implementation-decisions`, `cover-applicable-interaction-states`, `handoff-verification-hooks`
-- 禁止事項: `do not duplicate implementation-derived inventories`, `do not persist local design detail as ADR`, `do not require a generator for unsupported artifacts`
+- 禁止事項: `do not duplicate implementation-derived inventories`, `do not persist local design detail as ADR`, `do not mark unsupported required design complete`
 - 依存Skill: なし
 - 必須asset: `references/evidence-map.md`
 - 要件trace: なし
@@ -204,25 +204,25 @@
 
 ### generate-implementation-design
 
-- 前提: a declared generator supports the changed surface and explicit trace JSON declares applicable_requirement_ids for that supported surface
+- 前提: adoption or implementation change requires an as-built inventory and generator connection, including first-time setup
 - 事後条件: generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes
-- 適用条件: `when-a-declared-generator-supports-the-change`
-- 起動context: `supported-as-built-surface`
+- 適用条件: `when-adopting-or-changing-implementation`
+- 起動context: `as-built-adoption-or-change`
 - Authority: `implementation`
 - 副作用: `repository-write`
 - 外部作用capability: `false`
 - Guardrail / repository blocking / 既定portable: `true` / `true` / `true`
 - Repository policy: `ciWorkflow=false`, `requiredCheck=false`, `branchProtection=false`, `ruleset=false`, `mergeStrategy=false`, `prTemplate=false`, `commitFormat=false`
-- 失敗状態: `fail-on-drift`
+- 失敗状態: `fail-on-missing-or-drift`
 - 入力: `implementation`, `generator-contract`, `pinned-isolated-python-runtime`, `canonical-requirements-json`, `explicit-applicable-requirement-ids`, `explicit-artifact-trace`, `test-source`
 - 出力: `generated-design`, `drift-result`, `exact-requirement-artifact-test-trace`, `structured-unsupported-surface-or-bounded-fail-closed-diagnostic`
-- 義務: `run-with-pinned-isolated-runtime`, `generate-deterministic-as-built`, `verify-isolation-and-drift`, `match-explicit-applicable-active-set-exactly`, `reject-unknown-inactive-missing-or-excess-trace`
-- 禁止事項: `do not modify the target repository virtual environment`, `do not edit generated design directly`, `do not infer requirement satisfaction from implementation`, `do not require a generator or CI for unsupported artifacts`
+- 義務: `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `inventory-required-design-surfaces`, `connect-missing-generators`, `require-human-readable-markdown`, `reject-missing-design`, `run-with-pinned-isolated-runtime`, `generate-deterministic-as-built`, `verify-isolation-and-drift`, `match-explicit-applicable-active-set-exactly`, `reject-unknown-inactive-missing-or-excess-trace`
+- 禁止事項: `do not modify the target repository virtual environment`, `do not edit generated design directly`, `do not infer requirement satisfaction from implementation`, `do not mark missing required design complete or impose CI policy`
 - 依存Skill: なし
-- 必須asset: `assets/as-built-thresholds.json`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
-- 要件trace: `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`
-- manual digest: `21b5e9950c216b93732ee9e3b2dc7857978c309c5d31f9db62518c6e36650580`
-- payload digest: `972bf2d4303a151c201084447052731f0142c1c73de031a3451c31a9f0f20c68`
+- 必須asset: `references/sql-and-language.md`, `assets/as-built-thresholds.json`, `references/adoption.md`, `scripts/check_design.py`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
+- 要件trace: `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-ASBUILT-021`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `5129ffad0ba1f2037df03a771b80da3d0d6c4d58322f2cf567a177bd980219a5`
+- payload digest: `39610f20062364120d6b19791f5bb749914a9afacdd6a4b7eb47398cc7db78de`
 - interface digest: `2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42`
 
 ### govern-development-request
@@ -285,12 +285,12 @@
 - 失敗状態: `report-bounded`
 - 入力: `change`, `acceptance`, `target-owned-checks`, `optional-target-owned-command-registry`, `declared-command-effects`, `external-authority-if-applicable`
 - 出力: `selected-check-results`, `declared-effect-report`, `residual-risk`, `repair-handoff`
-- 義務: `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
+- 義務: `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
 - 禁止事項: `do not modify source to hide failures`, `do not claim external-effect absence process isolation or unselected coverage`, `do not execute a declared external effect without explicit authority`, `do not create CI or merge policy`
 - 依存Skill: なし
 - 必須asset: `references/gate-rules.md`, `references/runner-contract.md`, `scripts/inspect.py`
-- 要件trace: `REQ-ASBUILT-019`, `REQ-QUALITY-002`
-- manual digest: `90812190a17d4d86f3610a4a85d312e96478ccf5df930d9d262f4c383871f829`
+- 要件trace: `REQ-ASBUILT-019`, `REQ-QUALITY-002`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `9a41d0b94433aedeef19a12e316d110dcc5dee70d2094dbe972decf191e14dbb`
 - payload digest: `a474c9650ac451e4cebd1d40df9a5bad8acc631c962eced70c6b828f4de77408`
 - interface digest: `073b20f8a4c4f30a38fac5fb4ae66a56ee7e97caf4cb96beeea189b26e391fd1`
 
@@ -452,5 +452,5 @@
 - 必須asset: `assets/standards.registry.json`, `references/as-built-design-check-selection.md`, `references/source-policy.md`, `scripts/standardsflow.py`
 - 要件trace: `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-DOCS-001`, `REQ-QUALITY-001`, `REQ-QUALITY-003`
 - manual digest: `e9dca0bd1c9c450fe0aba6cffa4621b85037ab06e32ebbd7058b7ab7b98398f9`
-- payload digest: `1ee8c37168749ce8fb21781a9b4fcf2a794fc7d9216a8ea8c3f9f08391f18f4e`
+- payload digest: `43e8ae228716003160d8796993fb6387c9f3310ec98e9017cf3f50dd4da5cd16`
 - interface digest: `4849946704e4fff8bf109eb0ad4eff8513f9e717cd21e00f79893f68cdb9cd89`

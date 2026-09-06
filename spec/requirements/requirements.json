@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 13,
+  "catalog_revision": 15,
   "product": "dev-standard",
   "requirements": [
     {
@@ -968,6 +968,184 @@
       "verification": {
         "evidence": "schema v2、applicable集合、lexical no-follow、portable pytest static node、TEST_MANIFEST.gen.jsonのpositive fixtureと各failure mutant",
         "method": "自動テスト"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "実装を伴う初回導入または設計に影響する変更がある",
+          "id": "AC-ASBUILT-021-1",
+          "then": "API・data・infra・frontend等を棚卸しし、必要領域はgeneratorまたはadapterを接続して人向けMarkdownを生成する。実装のない領域だけを理由付きで非該当とし、未接続・未対応の必要領域を完了扱いにしない",
+          "when": "導入完了を判定する"
+        },
+        {
+          "given": "導入先所有の生成契約と実装がある",
+          "id": "AC-ASBUILT-021-2",
+          "then": "契約欠落・未分類・未完了・必要なMarkdown欠落/空・drift・checkによる書換えを非0終了で拒否する。CIは導入先運用に従い、CIがなくてもローカルで検証する",
+          "when": "通常の検証入口で設計検査を実行する"
+        },
+        {
+          "given": "作業を再開または完了報告する",
+          "id": "AC-ASBUILT-021-3",
+          "then": "実際の生成Markdown、対象revision、実行commandと結果、残存領域を確認する。install receiptや過去会話の完了報告を生成の証拠に代用しない",
+          "when": "設計生成の証拠を確認する"
+        }
+      ],
+      "action": "verify",
+      "category": "",
+      "id": "REQ-ASBUILT-021",
+      "last_changed_by": "CHG-20260906-as-built-adoption",
+      "object": "必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査",
+      "rationale": "既存generatorだけを起動条件にすると初回導入で生成が省略されるため、接続と生成物の完了確認を2本目の柱に含める。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "",
+      "source_refs": [
+        "user:2026-09-06"
+      ],
+      "status": "active",
+      "subject": "Dev標準を導入する開発agent",
+      "superseded_by": "",
+      "title": "導入時のas-built Markdown生成完了",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/adoption.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/check_design.py",
+          ".agents/skills/chat-first-development/SKILL.md",
+          "distribution/snippets/AGENTS.governance.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_design_adoption.py",
+          "tests/test_portable_distribution.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "生成契約の未設定・Markdown欠落・drift・check書換え・正常例の実行結果とhost別配布検査",
+        "method": "回帰テストと導入検査"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "SQLを使うAPIを新規作成・再編またはDev標準へ導入する",
+          "id": "AC-DESIGN-007-1",
+          "then": "API別sql/NNN_name.sqlを正本としてDDL/SQL ASTから引数・結果行型とgenerated/queries.pyを生成する。functionsがDB port経由で呼び、業務判定とtransactionを管理する",
+          "when": "実装完了を判定する"
+        },
+        {
+          "given": "API別SQLと生成queryがある",
+          "id": "AC-DESIGN-007-2",
+          "then": "SQL lint、配置・直書き・呼出境界、型生成の決定性と欠落/drift、関連DBテスト、query台帳・CRUD・table/ER Markdown生成を検証する。未接続の必要な検査を完了扱いにしない",
+          "when": "関係する検査を選ぶ"
+        },
+        {
+          "given": "既存SQL配置を修正する",
+          "id": "AC-DESIGN-007-3",
+          "then": "parameter binding、NULL/行数/戻り型、transaction/rollbackと適用済みmigration本文・checksumを維持する。SQLを使わない実装にはSQL層を要求しない",
+          "when": "SQLを移す"
+        }
+      ],
+      "action": "verify",
+      "category": "",
+      "id": "REQ-DESIGN-007",
+      "last_changed_by": "CHG-20260906-sql-japanese-comments",
+      "object": "API別SQL正本、DDL/SQL AST由来の型付きquery生成と関連検査",
+      "rationale": "共通repositoryへのSQL集約や手書き型によってSQL配置・生成契約が省略される再発を防ぐ。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "",
+      "source_refs": [
+        "user:2026-09-06"
+      ],
+      "status": "active",
+      "subject": "SQLを使うAPIの導入・実装agent",
+      "superseded_by": "",
+      "title": "SQLのAPI別正本と型付きquery生成",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/sql-and-language.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py",
+          ".agents/skills/chat-first-development/SKILL.md",
+          ".agents/skills/inspect-quality-gates/SKILL.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_source_conventions.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "SQL配置・直書きSQL・生成物欠落・英語説明・日本語説明・機械用指示の検査結果と導入先の生成差分・型検査・DBテスト",
+        "method": "回帰テストと導入検査・差分レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "説明コメント・docstring・SQL説明・生成コードの説明を新規作成または変更する",
+          "id": "AC-DOCS-002-1",
+          "then": "別言語の明示指示がなければ日本語にする。識別子・固有名詞・機械用指示・ライセンス原文・実行時文字列を誤って翻訳しない",
+          "when": "説明言語を選ぶ"
+        },
+        {
+          "given": "生成物の説明が英語である",
+          "id": "AC-DOCS-002-2",
+          "then": "generator/templateを修正して再生成し、生成物を手修正したり生成directory全体を言語検査から除外したりしない",
+          "when": "修正する"
+        },
+        {
+          "given": "言語検査を実行する",
+          "id": "AC-DOCS-002-3",
+          "then": "対象とcommandと結果を示す。Python/SQLの英語のみの説明は非0終了で検出し、日本語文字の存在を意味の品質保証に代用しない。他言語は対応parser/linterまたは差分レビューで補完する",
+          "when": "完了を報告する"
+        }
+      ],
+      "action": "verify",
+      "category": "",
+      "id": "REQ-DOCS-002",
+      "last_changed_by": "CHG-20260906-sql-japanese-comments",
+      "object": "利用者指定に従う日本語の説明コメントとdocstringと生成ヘッダー",
+      "rationale": "コメントの存在検査だけでは英語を検出できず、生成元が英語なら再生成で戻るため、言語指定と生成元修正を完了条件に含める。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "",
+      "source_refs": [
+        "user:2026-09-06"
+      ],
+      "status": "active",
+      "subject": "導入・実装agent",
+      "superseded_by": "",
+      "title": "説明コメントと生成ヘッダーの日本語",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/sql-and-language.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/qualityflow.py",
+          ".agents/skills/chat-first-development/SKILL.md",
+          ".agents/skills/inspect-quality-gates/SKILL.md"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_source_conventions.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "SQL配置・直書きSQL・生成物欠落・英語説明・日本語説明・機械用指示の検査結果と導入先の生成差分・型検査・DBテスト",
+        "method": "回帰テストと導入検査・差分レビュー"
       }
     },
     {
@@ -3090,5 +3268,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-09-05"
+  "updated_at": "2026-09-06"
 }
