@@ -745,7 +745,7 @@
         "existing-requirement-trace",
         "downstream-trace-handoff"
       ],
-      "payloadSha256": "0fb78c8701a75e149535cd1f3509b4a4a9528bd9b1f0296cb31bafac9d140179",
+      "payloadSha256": "cd80bffd23a82ef3d2b21bcee8a7c1dcd0ec3d46c259b60158a98000be7cb86f",
       "pillar": "requirements",
       "postcondition": "Quint source, verification, derived JSON, and generated docs agree, while only already-existing downstream artifacts require current traces and future trace work is handed downstream",
       "precondition": "a requirements authority is initialized or a durable observable obligation changes",

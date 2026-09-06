@@ -206,7 +206,9 @@ def validate_requirement(item: Any, seen_ac: set[str], trace_root: Path | None) 
         for values in traces.values()
     ):
         raise SpecError(f"{rid}: trace values must be string lists")
-    _validate_trace_paths(rid, traces, trace_root)
+    # 廃止済み要件は当時のtraceを保持する。構文・安全性は検査し、
+    # 現在のfile存在を要求して履歴の書換えを誘発しない。
+    _validate_trace_paths(rid, traces, trace_root if item["status"] == "active" else None)
 
     for field in ["retirement_reason", "superseded_by"]:
         if not isinstance(item[field], str):
@@ -292,6 +294,7 @@ def trace_input_paths(catalog: dict[str, Any], *, trace_root: Path) -> set[Path]
     return {
         trace_root.joinpath(*PurePosixPath(value).parts)
         for item in catalog["requirements"]
+        if item["status"] == "active"
         for key in ("design", "implementation", "tests")
         for value in item["traces"][key]
     }

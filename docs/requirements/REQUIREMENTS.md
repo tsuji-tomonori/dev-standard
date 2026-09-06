@@ -2,7 +2,7 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 16
+- カタログ版: 17
 - Product(JSON): <code>"dev-standard"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -43,7 +43,7 @@
 | <code>"REQ-DISC-002"</code> | 4 | 有効 | データ | 要件カタログは、正本要件IDごとの一つの原子的な義務を**維持する**（<code>"maintain"</code>） | 構造自動テストとhuman semantic review |
 | <code>"REQ-DISC-003"</code> | 6 | 有効 | 機能 | 仕様管理フローは、版と同時更新安全性を保つQuint要件の追加、更新、廃止を**維持する**（<code>"maintain"</code>） | Quint検証と自動テスト |
 | <code>"REQ-DISC-004"</code> | 5 | 有効 | 機能 | 仕様管理フローは、QuintからJSONを経由した日本語の人間向け要件文書を**生成する**（<code>"generate"</code>） | 自動テスト |
-| <code>"REQ-DISC-005"</code> | 2 | 有効 | 機能 | 要件管理Skillは、solution候補と権限ある永続要件を**分離する**（<code>"separate"</code>） | 自動テスト |
+| <code>"REQ-DISC-005"</code> | 3 | 有効 | 機能 | 要件管理Skillは、solution候補と権限ある永続要件を**分離する**（<code>"separate"</code>） | 自動テスト |
 | <code>"REQ-DOCS-003"</code> | 1 | 有効 | 品質 | 参照repositoryの文書保守は、現行文書の利用者・目的・更新条件を明記し、変更と整合させ、不要文書と時点記録を分離することを**維持する**（<code>"maintain"</code>） | 自動検査と利用経路レビュー |
 | <code>"REQ-DOCS-001"</code> | 1 | 有効 | 品質 | 文書生成フローは、識別子と固有名詞を除いて日本語で統一された利用者向け文書を**提供する**（<code>"provide"</code>） | 自動検査 |
 | <code>"REQ-EXEC-001"</code> | 3 | 有効 | 運用 | 開発実行基盤は、相互に独立した変更範囲、保証水準、計算資源および実行方式を**推定する**（<code>"estimate"</code>） | 自動テスト |
@@ -63,7 +63,7 @@
 | <code>"REQ-QUALITY-001"</code> | 2 | 有効 | 運用 | 品質フレームは、SWEBOKとクラウド・AI公式資料の監査可能な出典台帳を**維持する**（<code>"maintain"</code>） | 自動検査 |
 | <code>"REQ-QUALITY-002"</code> | 5 | 有効 | 品質 | 品質フローは、変更と受入条件に関係する検査だけによる成果物検証を**検証する**（<code>"verify"</code>） | 契約テスト |
 | <code>"REQ-QUALITY-003"</code> | 3 | 有効 | 品質 | チェックリスト生成フローは、一項目・一統制・一証跡で独立判定できるチェック項目を**維持する**（<code>"maintain"</code>） | 自動テストと批判的レビュー |
-| <code>"REQ-QUALITY-004"</code> | 1 | 有効 | 制約 | portable blocking guardrailは、要件正本、as-built生成、選択checkの3本柱だけを対象にすることを**制約する**（<code>"constrain"</code>） | Quint invariant verification |
+| <code>"REQ-QUALITY-004"</code> | 2 | 有効 | 制約 | portable blocking guardrailは、要件正本、as-built生成、選択checkの3本柱だけを対象にすることを**制約する**（<code>"constrain"</code>） | Quint invariant verification |
 | <code>"REQ-QUINT-001"</code> | 3 | 有効 | 制約 | 永続要件は、Quint仕様を唯一の編集対象としJSONを派生物として維持することを**維持する**（<code>"maintain"</code>） | Quint typecheckと生成drift検査 |
 | <code>"REQ-QUINT-002"</code> | 3 | 有効 | 機能 | 要件生成器は、Quintから全fieldとList順を保持するJSONを生成し、そのserialized JSONから人向けMarkdownを生成することを**生成する**（<code>"generate"</code>） | 決定的生成とgolden mappingテスト |
 | <code>"REQ-QUINT-003"</code> | 3 | 有効 | 品質 | Skill形式仕様は、すべてのSkillを一対一のQuint契約とactive要件の双方向traceへ対応付けることを**形式化する**（<code>"formalize"</code>） | Quint testと双方向集合比較 |
@@ -1179,8 +1179,8 @@ FastAPI実装フレームは、router.pyのオーケストレーションとfunc
 根拠: 結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。
 根拠(JSON): <code>"結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260829-review-remediation"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1835,8 +1835,8 @@ portable blocking guardrailは、要件正本、as-built生成、選択checkの3
 根拠: 導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。
 根拠(JSON): <code>"導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260827-quint-three-pillars"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"user:2026-09-06"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1989,12 +1989,12 @@ dev-standardのbranch運用は、mainへのsquashとdevへのmerge commitを分�
 - <code>"AC-REPO-001-4"</code> 前提: 既存devがcurrent mainを祖先に持ち、両tip treeが一致し、まだbranch policyを含まない。条件: 二層branch契約をdev-firstでbootstrap導入する。期待結果: Issue #20を参照する初回bootstrap PRだけをdevへmerge commitで統合し、同じtreeをRelease-Type bootstrapのdevからmainへのsquashで導入できるが、Issueをcloseせず2回の通常releaseへ数えない。
   - criterion(JSON Object): <code>{"given":"既存devがcurrent mainを祖先に持ち、両tip treeが一致し、まだbranch policyを含まない","id":"AC-REPO-001-4","then":"Issue #20を参照する初回bootstrap PRだけをdevへmerge commitで統合し、同じtreeをRelease-Type bootstrapのdevからmainへのsquashで導入できるが、Issueをcloseせず2回の通常releaseへ数えない","when":"二層branch契約をdev-firstでbootstrap導入する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
+要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
 検証方法: CIとGitHub ruleset監査
 検証証跡: branch方向、merge parent、commit subject、protected branch設定のCI結果
 検証(JSON Object): <code>{"evidence":"branch方向、merge parent、commit subject、protected branch設定のCI結果","method":"CIとGitHub ruleset監査"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md","docs/guides/getting-started.md"]</code>
+- 設計: <code>["docs/decisions/ADR-0002-two-layer-branch-history.md","docs/reference/development.md"]</code>
 - 実装: <code>[]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
@@ -2027,12 +2027,12 @@ release operatorとCIは、release前後のancestor関係、tip tree条件、fre
 - <code>"AC-REPO-002-4"</code> 前提: hotfix後のmainをdevへ直接mergeするとconflictする。条件: hotfix conflict reconciliationを完了する。期待結果: freeze中のdevからreconcile branchを作り、prior devとcurrent mainをparentに持つ解消mergeをdevへ統合し、outer merge treeとhotfix変更pathを保持してours相当の破棄を拒否する。
   - criterion(JSON Object): <code>{"given":"hotfix後のmainをdevへ直接mergeするとconflictする","id":"AC-REPO-002-4","then":"freeze中のdevからreconcile branchを作り、prior devとcurrent mainをparentに持つ解消mergeをdevへ統合し、outer merge treeとhotfix変更pathを保持してours相当の破棄を拒否する","when":"hotfix conflict reconciliationを完了する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-24","issue:#20","Git FAQ: long-running squash merge","docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
+要求源(JSON List): <code>["user:2026-07-24","issue:#20","Git FAQ: long-running squash merge","docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
 検証方法: branch graph回帰テストとCI
 検証証跡: 一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert
 検証(JSON Object): <code>{"evidence":"一時Git repositoryのancestor、direct tree、three-dot diff、到達可能commitのassert","method":"branch graph回帰テストとCI"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md","docs/guides/getting-started.md"]</code>
+- 設計: <code>["docs/decisions/ADR-0002-two-layer-branch-history.md","docs/reference/development.md"]</code>
 - 実装: <code>[]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
@@ -2073,12 +2073,12 @@ dev-standardの二層branch試行は、2回のrelease cycleに限定しportable 
 - <code>"AC-REPO-003-8"</code> 前提: 既存の二層branch policyを変更するPull Requestまたはprotected branch pushがある。条件: baseまたはbefore側policyと候補policyを比較する。期待結果: 2回の管理された試行中はtrial.phase以外のmachine contract変更を拒否し、契約変更は試行停止後の別判断として扱う。
   - criterion(JSON Object): <code>{"given":"既存の二層branch policyを変更するPull Requestまたはprotected branch pushがある","id":"AC-REPO-003-8","then":"2回の管理された試行中はtrial.phase以外のmachine contract変更を拒否し、契約変更は試行停止後の別判断として扱う","when":"baseまたはbefore側policyと候補policyを比較する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
+要求源(JSON List): <code>["user:2026-07-24","issue:#20","docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
 検証方法: repository contract testと試行後review
 検証証跡: trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト
 検証(JSON Object): <code>{"evidence":"trial設定、base/before validator選択、workflow自己統制限界、distribution非包含、昇格条件とrollbackの契約テスト","method":"repository contract testと試行後review"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"]</code>
+- 設計: <code>["docs/decisions/ADR-0002-two-layer-branch-history.md"]</code>
 - 実装: <code>[]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>

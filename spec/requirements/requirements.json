@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 16,
+  "catalog_revision": 17,
   "product": "dev-standard",
   "requirements": [
     {
@@ -1723,11 +1723,11 @@
       "action": "separate",
       "category": "functional",
       "id": "REQ-DISC-005",
-      "last_changed_by": "CHG-20260829-review-remediation",
+      "last_changed_by": "user:2026-09-06",
       "object": "solution候補と権限ある永続要件",
       "rationale": "結果や品質ではなく可逆な実装手段を正本へ固定すると設計裁量と変更容易性を失う一方、契約、法令、互換性、既存基盤、support境界または親判断に基づく正当な制約は保持する必要があるため。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "product",
       "source_refs": [
         "user:2026-07-24",
@@ -2764,11 +2764,11 @@
       "action": "constrain",
       "category": "nonfunctional",
       "id": "REQ-QUALITY-004",
-      "last_changed_by": "CHG-20260827-quint-three-pillars",
+      "last_changed_by": "user:2026-09-06",
       "object": "要件正本、as-built生成、選択checkの3本柱だけを対象にすること",
       "rationale": "導入時の摩擦とfalse blockerを抑え、repository固有の工程を強制しない。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-08-27",
@@ -3023,7 +3023,7 @@
       "source_refs": [
         "user:2026-07-24",
         "issue:#20",
-        "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"
+        "docs/decisions/ADR-0002-two-layer-branch-history.md"
       ],
       "status": "retired",
       "subject": "dev-standardのbranch運用",
@@ -3031,8 +3031,8 @@
       "title": "mainとdevの役割および統合方式",
       "traces": {
         "design": [
-          "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md",
-          "docs/guides/getting-started.md"
+          "docs/decisions/ADR-0002-two-layer-branch-history.md",
+          "docs/reference/development.md"
         ],
         "implementation": [],
         "standards": [],
@@ -3084,7 +3084,7 @@
         "user:2026-07-24",
         "issue:#20",
         "Git FAQ: long-running squash merge",
-        "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"
+        "docs/decisions/ADR-0002-two-layer-branch-history.md"
       ],
       "status": "retired",
       "subject": "release operatorとCI",
@@ -3092,8 +3092,8 @@
       "title": "release後の祖先関係とtreeを回復するreconciliation契約",
       "traces": {
         "design": [
-          "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md",
-          "docs/guides/getting-started.md"
+          "docs/decisions/ADR-0002-two-layer-branch-history.md",
+          "docs/reference/development.md"
         ],
         "implementation": [],
         "standards": [],
@@ -3168,7 +3168,7 @@
       "source_refs": [
         "user:2026-07-24",
         "issue:#20",
-        "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"
+        "docs/decisions/ADR-0002-two-layer-branch-history.md"
       ],
       "status": "retired",
       "subject": "dev-standardの二層branch試行",
@@ -3176,7 +3176,7 @@
       "title": "試行範囲、非移植性、rollback",
       "traces": {
         "design": [
-          "docs/archive/2026-09-05-ADR-0002-two-layer-branch-history.md"
+          "docs/decisions/ADR-0002-two-layer-branch-history.md"
         ],
         "implementation": [],
         "standards": [],

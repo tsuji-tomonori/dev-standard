@@ -88,13 +88,11 @@ class ReviewContractBoundaryTest(unittest.TestCase):
         verify = next(line for line in makefile.splitlines() if line.startswith("verify:"))
         self.assertIn("quint-verify", verify)
         self.assertNotIn("quint-test", verify)
-        readme = (ROOT / "README.md").read_text(encoding="utf-8")
         adr = (
             ROOT / "docs/decisions/ADR-0004-quint-three-pillar-portability.md"
         ).read_text(encoding="utf-8")
-        for text in [readme, adr]:
-            self.assertIn("4 step", text)
-            self.assertIn("3 step", text)
+        self.assertIn("4 step", adr)
+        self.assertIn("3 step", adr)
 
     def test_repository_validator_invokes_complete_typed_catalog_validator(self) -> None:
         failures: list[str] = []

@@ -370,7 +370,7 @@ module skills {
       failureState: "fail-on-invalid-catalog",
       requirementIds: ["REQ-DISC-001", "REQ-DISC-002", "REQ-DISC-003", "REQ-DISC-004", "REQ-DISC-005", "REQ-DOCS-001", "REQ-FRAME-001", "REQ-QUINT-002"],
       manualBodySha256: "384c51bbc94169ba05caa0c5c4dc60a864c0f471a10dd10467daa9ec543151e8",
-      payloadSha256: "0fb78c8701a75e149535cd1f3509b4a4a9528bd9b1f0296cb31bafac9d140179",
+      payloadSha256: "cd80bffd23a82ef3d2b21bcee8a7c1dcd0ec3d46c259b60158a98000be7cb86f",
       interfaceSha256: "b01e1f0024fed3697ccf71d93c9111cd47755cf531217ecbf61dfb66ec7b6a89",
     },
     {

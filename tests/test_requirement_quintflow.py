@@ -9,6 +9,13 @@ from tools import quintflow
 
 
 class RequirementQuintflowTest(unittest.TestCase):
+    def test_retired_history_is_not_a_live_generation_input(self) -> None:
+        catalog = {"requirements": [
+            {"status": "retired", "traces": {"design": ["removed.md"], "implementation": [], "tests": []}},
+            {"status": "active", "traces": {"design": ["README.md"], "implementation": [], "tests": []}},
+        ]}
+        self.assertEqual(quintflow.requirement_trace_paths(catalog), {quintflow.ROOT / "README.md"})
+
     def test_generation_read_set_covers_formal_sources_skill_payloads_and_traces(self) -> None:
         outputs = {
             quintflow.REQUIREMENTS_JSON,

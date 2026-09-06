@@ -203,6 +203,7 @@ def requirement_trace_paths(catalog: dict[str, Any]) -> set[Path]:
     return {
         ROOT.joinpath(*value.split("/"))
         for requirement in catalog["requirements"]
+        if requirement.get("status", "active") == "active"
         for key in ("design", "implementation", "tests")
         for value in requirement["traces"][key]
     }

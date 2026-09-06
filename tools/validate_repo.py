@@ -563,9 +563,8 @@ def validate_repo(failures: list[str]) -> None:
         fail(f"root Markdown layout is invalid: {sorted(root_markdown)}", failures)
     docs_list = (ROOT / "docs" / "guides" / "getting-started.md").read_text(encoding="utf-8")
     listed = set(re.findall(r"^\| `([a-z0-9-]+)` \|", docs_list, re.MULTILINE))
-    actual = {path.name for path in SKILLS_ROOT.iterdir() if (path / "SKILL.md").is_file()}
-    if listed != actual:
-        fail("getting-started Skill inventory drift", failures)
+    if listed != DEFAULT_SKILLS:
+        fail("getting-started default Skill inventory drift", failures)
 
 
 

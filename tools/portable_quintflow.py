@@ -771,6 +771,7 @@ def _trace_read_preconditions(
         values = [
             value
             for requirement in requirements
+            if requirement.get("status", "active") == "active"
             for key, traces in requirement["traces"].items()
             if key != "standards"
             for value in traces

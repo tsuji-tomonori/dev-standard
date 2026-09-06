@@ -35,6 +35,26 @@ def source_catalog() -> dict[str, object]:
 
 
 class SpecflowTest(unittest.TestCase):
+    def test_retired_traces_preserve_history_without_requiring_current_files(self) -> None:
+        catalog = source_catalog()
+        retired = next(item for item in catalog["requirements"] if item["id"] == "REQ-REPO-001")
+        retired["traces"]["design"] = ["docs/removed-historical-decision.md"]
+        before = copy.deepcopy(retired)
+        specflow.validate_catalog(catalog)
+        self.assertEqual(retired, before)
+        self.assertNotIn(
+            ROOT / "docs/removed-historical-decision.md",
+            specflow.trace_input_paths(catalog, trace_root=ROOT),
+        )
+        for unsafe in ["../outside.md", "/outside.md", "docs//old.md"]:
+            retired["traces"]["design"] = [unsafe]
+            with self.subTest(path=unsafe), self.assertRaises(specflow.SpecError):
+                specflow.validate_catalog(catalog)
+        retired["traces"]["design"] = before["traces"]["design"]
+        retired.update(status="active", retirement_reason="", superseded_by="")
+        with self.assertRaisesRegex(specflow.SpecError, "not a regular repository file"):
+            specflow.validate_catalog(catalog)
+
     def test_generated_json_is_valid_and_markdown_is_current(self) -> None:
         catalog = specflow.validate_catalog(
             specflow.read_json(ROOT / "spec/requirements/requirements.json")
