@@ -1,6 +1,6 @@
 ---
 name: inspect-quality-gates
-description: Select and run only the checks relevant to the current change, using local evidence or an existing project check without creating CI, merge rules, or review bureaucracy.
+description: Select and run only the checks relevant to the current change, connect bootstrap evidence reporting, and preserve target-owned CI and merge policy.
 ---
 
 # Inspect Quality Gates
@@ -8,6 +8,10 @@ description: Select and run only the checks relevant to the current change, usin
 形式契約: `spec/skills/skills.qnt`の`name: "inspect-quality-gates"`（保守・監査時に参照）。
 
 変更差分、受入条件、riskから、失敗を検出できる最小十分な検査を選ぶ。これは3本目のガードレールであり、別の統制層を追加しない。
+
+## 初期導入の既定成果
+
+新規開発・導入時は[evidence-portal.md](references/evidence-portal.md)に従い、選択検査と設計生成のエビデンスを閲覧可能な品質portalへ接続する。実test collectorからの階層一覧、ケース詳細、GWT画像、静的解析結果、coverageの実測分母分子、検索可能な設計HTMLを揃える。framework固有adapterはagentが実装し、空templateを完了としない。新規GitHub projectではPages公開用設定まで初期構築し、既存projectのCIと公開規則は維持する。公開操作は既存の権限に従う。
 
 ## 検証
 
@@ -26,7 +30,7 @@ commandが作るbuild artifact等は対象repositoryの通常の実行効果と�
 
 既存のtarget-owned command registryで複数commandを機械実行する場合だけ[runner-contract.md](references/runner-contract.md)を読み、任意runnerを使う。registryのない導入先へ新規作成を要求しない。
 
-結果と未検証範囲は会話または既存のPR欄へ簡潔に記録する。CI workflow、required check、branch protection、merge rule、review YAML、生ログを新たに要求せず、対象repositoryの規則と権限を維持する。
+結果と未検証範囲は会話または既存のPR欄へ簡潔に記録する。Skill配布だけを理由にCI workflow、required check、branch protection、merge rule、review YAML、生ログを新たに要求せず、対象repositoryの規則と権限を維持する。
 
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）

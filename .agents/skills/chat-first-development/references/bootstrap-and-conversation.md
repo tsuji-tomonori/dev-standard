@@ -19,9 +19,13 @@
 - CIがないことをfailureにせず、対象test等のローカル結果を使う。
 - 利用者へfileのコピーやinstallation commandの実行を求めて作業を停止しない。
 
+## 既定の公開成果
+
+新規GitHubプロジェクトは品質portal・公開用workflowの準備を初期成果に含める。既存projectは既存CI/公開先へ接続する。agentが`inspect-quality-gates/references/evidence-portal.md`に沿って実test collector、実行結果、静的解析、coverage、設計HTMLのadapterを実装し、ローカル閲覧まで確認する。installerのworkflow非配布と、依頼されたプロジェクト初期実装でのtarget-owned設定作成は別の操作である。実公開は対象の権限に従う。
+
 ## 一時状態
 
-再開用の一時情報が必要な場合だけgitignoreされた`.devflow/run/`を使用し、成果へ統合後に削除する。通常変更で恒久的な`work/<id>/`、計画書、implementation log、test reportを作らない。
+再開用の一時情報が必要な場合だけgitignoreされた`.devflow/run/`を使用し、成果へ統合後に削除する。生成された品質siteはrun単位のbuild artifactであり、手書き作業記録とは区別する。通常変更で恒久的な`work/<id>/`、計画書、implementation log、test reportを作らない。
 
 ## 権限境界
 

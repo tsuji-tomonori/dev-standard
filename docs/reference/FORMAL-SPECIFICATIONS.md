@@ -151,9 +151,9 @@
 - 禁止事項: `do not impose CI branch or merge policy`, `do not create per-change bureaucracy`, `do not create update comment or merge a PR unless requested`
 - 依存Skill: `maintain-canonical-requirements`, `generate-implementation-design`, `inspect-quality-gates`
 - 必須asset: `references/bootstrap-and-conversation.md`
-- 要件trace: `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`, `REQ-ASBUILT-021`, `REQ-DESIGN-007`, `REQ-DOCS-002`
-- manual digest: `d833a541c5a4faca6c782caa0bce2d8da772c0c7d93909551060dc18fd2ee8fd`
-- payload digest: `e3f954a85f0d9c33a7c5ad846747f01ba02a42d0cbe7730386bf7e4c4ee6a3c0`
+- 要件trace: `REQ-EVIDENCE-001`, `REQ-EVIDENCE-002`, `REQ-EVIDENCE-003`, `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`, `REQ-ASBUILT-021`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `3ac02001a4d305e0a288973f22260a0df7e2f0ecab48f7509385c3f4bcd67fd5`
+- payload digest: `8a83020c2120104ceed0a93ef6eff17b31c91153ec6c678085642fa0d60689c2`
 - interface digest: `fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d`
 
 ### design-frontend-experience
@@ -284,14 +284,14 @@
 - Repository policy: `ciWorkflow=false`, `requiredCheck=false`, `branchProtection=false`, `ruleset=false`, `mergeStrategy=false`, `prTemplate=false`, `commitFormat=false`
 - 失敗状態: `report-bounded`
 - 入力: `change`, `acceptance`, `target-owned-checks`, `optional-target-owned-command-registry`, `declared-command-effects`, `external-authority-if-applicable`
-- 出力: `selected-check-results`, `declared-effect-report`, `residual-risk`, `repair-handoff`
-- 義務: `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
-- 禁止事項: `do not modify source to hide failures`, `do not claim external-effect absence process isolation or unselected coverage`, `do not execute a declared external effect without explicit authority`, `do not create CI or merge policy`
+- 出力: `public-evidence-site`, `run-provenance`, `selected-check-results`, `declared-effect-report`, `residual-risk`, `repair-handoff`
+- 義務: `connect-framework-evidence-adapters-at-bootstrap`, `preserve-failed-missing-and-unexecuted-results`, `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
+- 禁止事項: `do not modify source to hide failures`, `do not claim external-effect absence process isolation or unselected coverage`, `do not execute a declared external effect without explicit authority`, `do not impose portable CI or merge policy; preserve target-owned bootstrap reporting`
 - 依存Skill: なし
-- 必須asset: `references/gate-rules.md`, `references/runner-contract.md`, `scripts/inspect.py`
-- 要件trace: `REQ-ASBUILT-019`, `REQ-QUALITY-002`, `REQ-DESIGN-007`, `REQ-DOCS-002`
-- manual digest: `9a41d0b94433aedeef19a12e316d110dcc5dee70d2094dbe972decf191e14dbb`
-- payload digest: `a474c9650ac451e4cebd1d40df9a5bad8acc631c962eced70c6b828f4de77408`
+- 必須asset: `assets/evidence.css`, `assets/evidence.js`, `references/evidence-portal.md`, `references/gate-rules.md`, `references/runner-contract.md`, `scripts/evidence.py`, `scripts/inspect.py`, `scripts/test_evidence.py`
+- 要件trace: `REQ-EVIDENCE-001`, `REQ-EVIDENCE-002`, `REQ-EVIDENCE-003`, `REQ-ASBUILT-019`, `REQ-QUALITY-002`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `cc3902f4f3cf14ecbb8dd0e2be3834db6507c49035f4e76a2d917fe2c1924be4`
+- payload digest: `b546736d14fc99429f59718a206dce877683cb88098d01cd90da9a2b5283a5e0`
 - interface digest: `073b20f8a4c4f30a38fac5fb4ae66a56ee7e97caf4cb96beeea189b26e391fd1`
 
 ### japanese-git-commit-gitmoji

@@ -59,3 +59,9 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 完了報告には生成物へのpath、対象revision、生成・検査commandと結果を含めます。installer成功やアプリのtest成功だけでは導入完了になりません。CIとの接続は導入先の既存運用と権限に従います。
 
 SQLを使うAPIでは[SQLと説明コメントの契約](../../.agents/skills/generate-implementation-design/references/sql-and-language.md)も適用します。API別SQLを正本に、DDL/SQLから型付き`generated/queries.py`を生成し、SQL lint・配置/呼出境界・生成差分・関連DBテストを完了させます。適用済みmigrationは書き換えません。説明コメント・docstring・生成ヘッダーは別言語の明示指示がなければ日本語とし、英語が残る生成物はテンプレートから直して再生成します。
+
+## 品質エビデンスの既定公開準備
+
+製品要件だけで開発を始められるよう、新規開発・導入時はテスト一覧と個別結果、GWT画像、静的解析、実測coverage、検索可能な生成設計書をまとめる品質portalを初期成果に含めます。agentがframeworkに応じたadapterを実commandへ接続します。新規GitHub projectはPages公開用設定を準備し、既存projectは既存CI・公開先へ接続します。実公開には対象の権限を適用します。
+
+[品質portalの導入契約](../../.agents/skills/inspect-quality-gates/references/evidence-portal.md)に共通JSON、同梱rendererとJUnit/Vitest変換、設計HTMLの接続、失敗を隠さない公開job、受入確認を定義しています。空templateや未接続adapterを導入完了としません。
