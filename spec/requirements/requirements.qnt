@@ -1780,6 +1780,36 @@ module requirements {
         categoryName: "",
       },
       {
+        id: "REQ-ASBUILT-022",
+        revision: 1,
+        status: "active",
+        kind: "quality",
+        title: "APIの6帳票と要因別単体テストの完全対応",
+        subject: "API設計generatorと導入完了検査",
+        actionName: "generate",
+        objectName: "全operationの詳細設計・interface・ログmessage・query・sequence・unit-test詳細",
+        rationale: "ファイル存在や関数一覧だけではDB入出力・ログ・テスト要因が欠落しても完了になる。",
+        sourceRefs: ["user:2026-09-06-api-six-documents", "https://github.com/tsuji-tomonori/rag-sample/tree/main/docs/spec/40.apis"],
+        acceptanceCriteria: [
+          { id: "AC-ASBUILT-022-1", given: "API実装とOpenAPIが存在する", when_: "生成と導入完了検査を実行する", expected: "全operationに6帳票があり、欠落・余剰operation・driftを拒否する" },
+          { id: "AC-ASBUILT-022-2", given: "DBアクセス・ログを持つAPI", when_: "詳細設計・query・messagesを生成する", expected: "DB/tableの操作と入出力、SQL種別・概要・引数・戻り値・条件、ログlevel・本文・出力条件・項目が実装由来であり、未対応を非該当に偽装しない" },
+          { id: "AC-ASBUILT-022-3", given: "認証・入力制約・分岐・例外から導出した必須要因と要素", when_: "unit-test詳細を生成する", expected: "具体的Given/When/Thenと期待ログ・DB状態を示し、全要因要素がケースと実在単体テストに対応する。欠落を拒否し、実行成功とassert妥当性は別途検証する" },
+          { id: "AC-ASBUILT-022-4", given: "分岐と例外を持つAPI", when_: "interfaceとsequenceを生成する", expected: "Swagger互換OpenAPIと参照schemaを保持し、呼出元・API・DB等のMermaid図で実際の条件分岐・例外順序を示す。未対応構文はadapterで補完するまで未完了にする" }
+        ],
+        verification: { method: "自動テストとadapter内容レビュー", evidence: "6帳票生成、削除・source変更・要因欠落・test node欠落・operation追加の失敗fixture" },
+        traces: {
+          design: ["docs/standards/AS-BUILT-DESIGN.md", ".agents/skills/generate-implementation-design/references/api-documents.md"],
+          implementation: [".agents/skills/generate-implementation-design/scripts/designflow.py", ".agents/skills/generate-implementation-design/scripts/check_design.py"],
+          tests: ["tests/test_api_documents.py", "tests/test_design_adoption.py"],
+          standards: ["DEVSTD-AS-BUILT"],
+        },
+        lastChangedBy: "CHG-20260906-api-six-documents",
+        retirementReason: "",
+        supersededBy: "",
+        scopeName: "",
+        categoryName: "",
+      },
+      {
         id: "REQ-EVIDENCE-001",
         revision: 1,
         status: "active",
@@ -1862,7 +1892,7 @@ module requirements {
         supersededBy: "",
         scopeName: "product",
         categoryName: "nonfunctional",
-      }
+      },
     ],
   }
 

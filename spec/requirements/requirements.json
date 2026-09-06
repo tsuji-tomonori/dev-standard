@@ -3269,6 +3269,73 @@
     {
       "acceptance_criteria": [
         {
+          "given": "API実装とOpenAPIが存在する",
+          "id": "AC-ASBUILT-022-1",
+          "then": "全operationに6帳票があり、欠落・余剰operation・driftを拒否する",
+          "when": "生成と導入完了検査を実行する"
+        },
+        {
+          "given": "DBアクセス・ログを持つAPI",
+          "id": "AC-ASBUILT-022-2",
+          "then": "DB/tableの操作と入出力、SQL種別・概要・引数・戻り値・条件、ログlevel・本文・出力条件・項目が実装由来であり、未対応を非該当に偽装しない",
+          "when": "詳細設計・query・messagesを生成する"
+        },
+        {
+          "given": "認証・入力制約・分岐・例外から導出した必須要因と要素",
+          "id": "AC-ASBUILT-022-3",
+          "then": "具体的Given/When/Thenと期待ログ・DB状態を示し、全要因要素がケースと実在単体テストに対応する。欠落を拒否し、実行成功とassert妥当性は別途検証する",
+          "when": "unit-test詳細を生成する"
+        },
+        {
+          "given": "分岐と例外を持つAPI",
+          "id": "AC-ASBUILT-022-4",
+          "then": "Swagger互換OpenAPIと参照schemaを保持し、呼出元・API・DB等のMermaid図で実際の条件分岐・例外順序を示す。未対応構文はadapterで補完するまで未完了にする",
+          "when": "interfaceとsequenceを生成する"
+        }
+      ],
+      "action": "generate",
+      "category": "",
+      "id": "REQ-ASBUILT-022",
+      "last_changed_by": "CHG-20260906-api-six-documents",
+      "object": "全operationの詳細設計・interface・ログmessage・query・sequence・unit-test詳細",
+      "rationale": "ファイル存在や関数一覧だけではDB入出力・ログ・テスト要因が欠落しても完了になる。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "",
+      "source_refs": [
+        "user:2026-09-06-api-six-documents",
+        "https://github.com/tsuji-tomonori/rag-sample/tree/main/docs/spec/40.apis"
+      ],
+      "status": "active",
+      "subject": "API設計generatorと導入完了検査",
+      "superseded_by": "",
+      "title": "APIの6帳票と要因別単体テストの完全対応",
+      "traces": {
+        "design": [
+          "docs/standards/AS-BUILT-DESIGN.md",
+          ".agents/skills/generate-implementation-design/references/api-documents.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/designflow.py",
+          ".agents/skills/generate-implementation-design/scripts/check_design.py"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT"
+        ],
+        "tests": [
+          "tests/test_api_documents.py",
+          "tests/test_design_adoption.py"
+        ]
+      },
+      "type": "quality",
+      "verification": {
+        "evidence": "6帳票生成、削除・source変更・要因欠落・test node欠落・operation追加の失敗fixture",
+        "method": "自動テストとadapter内容レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
           "given": "新規開発またはDev標準導入を依頼された",
           "id": "AC-EVIDENCE-001-1",
           "then": "実test一覧・実行結果・静的解析・coverage・生成設計書のadapterと閲覧siteを接続し、空templateを完成としない",

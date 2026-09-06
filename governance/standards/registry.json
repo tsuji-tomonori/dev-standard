@@ -191,17 +191,17 @@
       "id": "DEVSTD-AS-BUILT",
       "authority": "dev-standard maintainers",
       "title": "as-built設計標準",
-      "version": "2026-08-29",
+      "version": "2026-09-06",
       "url": "https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md",
-      "checked_at": "2026-08-29",
+      "checked_at": "2026-09-06",
       "refresh_days": 180,
       "profiles": [
         "CORE"
       ],
       "scope": "実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約。標準contract変更とrepository採用scopeを分離し、関係するcheckだけを選択する。",
-      "change_checked_at": "2026-08-29",
-      "change_summary": "Quint要件traceと実在test nodeの照合を追加し、check結果をローカルsummaryまたは導入先が所有する既存viewへ限定。CI・branch・merge policyは要求しない。",
-      "artifact_sha256": "1b8be6f5122715b6b8b5934aba7abc91a11f09e29164a01eb9c0f022240b0ffe"
+      "change_checked_at": "2026-09-06",
+      "change_summary": "APIの6帳票の内容と全operationの生成、要因・要素から実在単体テストへの対応、adapterによる実装由来の抽出と欠落検査を必須化。",
+      "artifact_sha256": "5b74d1e45ed7d91e3f372f71367b07230ad7da83e24b3fedb54f6804945e994f"
     },
     {
       "id": "DEVSTD-AWS-CDK-AS-BUILT",

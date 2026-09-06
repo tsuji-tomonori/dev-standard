@@ -20,6 +20,8 @@ Dev標準の導入時と、現在状態の設計に影響する実装変更時�
 
 出力はgeneratorが完全所有するpathに限定し、symlink、directory置換、管理外pathへの出力を拒否する。
 
+APIを持つ場合は[APIの6帳票契約](references/api-documents.md)を適用し、全operationの詳細設計・OpenAPI interface・ログmessage・query・Mermaid sequence・要因別unit-test詳細を生成する。必須要因／要素から実在テストへの欠落を解消し、6帳票の集合とdriftを検査する。
+
 ## FastAPI
 
 - route AST、applicationが生成するOpenAPI、handler metadata、error branch、SQL ASTから設計を生成する。

@@ -2187,6 +2187,8 @@ def command_templates(kind: str) -> tuple[str, str]:
             "--requirements <requirements.json> --trace <trace.json> --test-root <test-root> "
             "--out <output>"
         )
+    elif kind == "api-documents":
+        arguments = "api-documents --source-root <source-root> --openapi <openapi.json> --model <adapter-model.json> --test-root <test-root> --out <output>"
     elif kind == "cdk":
         arguments = (
             "cdk --template <template.yaml> --requirements <requirements.json> "
@@ -2202,8 +2204,8 @@ def generated_banner(kind: str) -> str:
     generate, check = command_templates(kind)
     return (
         "<!-- AUTO-GENERATED. DO NOT EDIT DIRECTLY.\n"
-        f"Generate: `{generate}`\n"
-        f"Check: `{check}`\n"
+        f"自動生成・直接編集禁止。生成: `{generate}`\n"
+        f"検査: `{check}`\n"
         "-->\n\n"
     )
 
@@ -2321,7 +2323,8 @@ def write_bundle(
                 document = json.loads(content)
             except json.JSONDecodeError as exc:
                 raise DesignError(f"generated JSON is invalid: {name}") from exc
-            if document.get("notice") != "AUTO-GENERATED. DO NOT EDIT DIRECTLY.":
+            notice_key = "x-generated-notice" if name == "OPENAPI.gen.json" else "notice"
+            if document.get(notice_key) != "AUTO-GENERATED. DO NOT EDIT DIRECTLY.":
                 raise DesignError(f"generated JSON requires a direct-edit notice: {name}")
             payload = json.dumps(document, ensure_ascii=False, indent=2) + "\n"
         else:
@@ -2656,6 +2659,225 @@ def compare_bundle(
         raise DesignError(f"generated comparison path is unsafe: {actual}: {exc}") from exc
 
 
+API_DOCUMENT_KINDS = ("detail-design", "interface", "messages", "query", "sequence", "unit-test")
+
+
+def api_text(value: Any, label: str) -> str:
+    """未解決の代用文字列を完成した設計として受理しない。"""
+    if not isinstance(value, str) or not value.strip() or value.strip().lower() in {
+        "-", "todo", "tbd", "unknown", "未確認", "未対応", "要確認",
+    }:
+        raise DesignError(f"{label}: concrete text is required")
+    return value
+
+
+def api_rows(value: Any, label: str, fields: tuple[str, ...]) -> list[dict[str, Any]]:
+    """台帳の構造と識別子重複を検査する。"""
+    if not isinstance(value, list):
+        raise DesignError(f"{label}: array is required")
+    seen = set()
+    for row in value:
+        if not isinstance(row, dict):
+            raise DesignError(f"{label}: object row is required")
+        for field in fields:
+            api_text(row.get(field), f"{label}.{field}")
+        if "id" in fields:
+            if row["id"] in seen:
+                raise DesignError(f"{label}: duplicate ID {row['id']}")
+            seen.add(row["id"])
+    return value
+
+
+def api_cell(value: Any) -> str:
+    """日本語の表で改行と縦棒が列構造を壊さないようにする。"""
+    return str(value).replace("|", "&#124;").replace("\r", "").replace("\n", "<br>")
+
+
+def api_table(rows: list[dict[str, Any]], columns: dict[str, str]) -> str:
+    lines = ["| " + " | ".join(columns.values()) + " |", "|" + "---|" * len(columns)]
+    lines.extend("| " + " | ".join(api_cell(row[key]) for key in columns) + " |" for row in rows)
+    return "\n".join(lines) + "\n"
+
+
+def api_source_ref(value: Any, root: Path, sources: set[Path], label: str) -> None:
+    """事実の根拠を棚卸し済み実装の実在行に束縛する。"""
+    if not isinstance(value, dict) or set(value) != {"path", "line"}:
+        raise DesignError(f"{label}: source requires path and line")
+    relative = api_text(value["path"], label)
+    path = Path(relative)
+    if path.is_absolute() or ".." in path.parts or "\\" in relative:
+        raise DesignError(f"{label}: invalid source path")
+    path = root / path
+    if path not in sources:
+        raise DesignError(f"{label}: source is outside implementation inventory: {relative}")
+    line = value["line"]
+    if type(line) is not int or line < 1 or line > len(read_text_nofollow(path).splitlines()):
+        raise DesignError(f"{label}: source line does not exist")
+
+
+def render_api_documents(
+    model: dict[str, Any], document: dict[str, Any], test_manifest: dict[str, Any],
+    *, root: Path, implementation_sources: set[Path],
+) -> dict[str, str]:
+    """adapterの実装由来モデルを検査し、全operationの6帳票を生成する。"""
+    if not isinstance(model, dict) or model.get("schema_version") != 1:
+        raise DesignError("API document model schema_version must be 1")
+    operations = api_rows(model.get("operations"), "operations", ("id", "summary"))
+    exported = {op["operationId"]: (method, path, op) for method, path, op in openapi_operations(document)}
+    if not exported or {op["id"] for op in operations} != set(exported):
+        raise DesignError("API document operation inventory differs from OpenAPI")
+    files: dict[str, str] = {}
+    for operation in operations:
+        op_id = operation["id"]
+        # operationIdはファイル名やMermaid構文として実行しない。
+        token = hashlib.sha256(op_id.encode()).hexdigest()[:16]
+        method, path, interface = exported[op_id]
+        heading = f"# {api_cell(op_id)} — {method.upper()} {api_cell(path)}\n\n"
+        api_source_ref(operation.get("source"), root, implementation_sources, op_id)
+        inputs = api_rows(operation.get("inputs"), f"{op_id}.inputs", ("name", "type", "description", "origin"))
+        outputs = api_rows(operation.get("outputs"), f"{op_id}.outputs", ("name", "type", "description", "origin"))
+        if not inputs:
+            api_text(operation.get("no_inputs_reason"), f"{op_id}.no_inputs_reason")
+        if not outputs:
+            api_text(operation.get("no_outputs_reason"), f"{op_id}.no_outputs_reason")
+        queries = api_rows(operation.get("queries"), f"{op_id}.queries", (
+            "id", "database", "table", "kind", "summary", "conditions", "returns", "transaction",
+        ))
+        messages = api_rows(operation.get("messages"), f"{op_id}.messages", (
+            "id", "level", "template", "condition", "operator_action",
+        ))
+        resources = api_rows(operation.get("resources"), f"{op_id}.resources", (
+            "id", "database", "table", "action", "input", "output", "condition", "query_id",
+        ))
+        for label, rows in (("queries", queries), ("messages", messages), ("resources", resources)):
+            if not rows:
+                api_text(operation.get(f"no_{label}_reason"), f"{op_id}.no_{label}_reason")
+            for row in rows:
+                api_source_ref(row.get("source"), root, implementation_sources, f"{op_id}.{label}")
+        query_ids = {query["id"] for query in queries}
+        if {resource["query_id"] for resource in resources} != query_ids:
+            raise DesignError(f"{op_id}: detail resource/query inventory mismatch")
+        for resource in resources:
+            query = next(query for query in queries if query["id"] == resource["query_id"])
+            if (resource["database"], resource["table"]) != (query["database"], query["table"]):
+                raise DesignError(f"{op_id}: detail resource/query destination mismatch")
+        for query in queries:
+            arguments = api_rows(query.get("arguments"), "query.arguments", ("name", "type", "description"))
+            if not arguments:
+                api_text(query.get("no_arguments_reason"), "query.no_arguments_reason")
+        for message in messages:
+            if message["level"] not in {"TRACE", "DEBUG", "INFO", "WARNING", "WARN", "ERROR", "CRITICAL", "FATAL"}:
+                raise DesignError(f"{op_id}: invalid log level")
+            fields = api_rows(message.get("fields"), "message.fields", ("name", "type", "description", "masking"))
+            if not fields:
+                api_text(message.get("no_fields_reason"), "message.no_fields_reason")
+        factors = api_rows(operation.get("factors"), f"{op_id}.factors", ("id", "name"))
+        cases = api_rows(operation.get("cases"), f"{op_id}.cases", (
+            "id", "given", "when", "then", "expected_logs", "expected_data",
+        ))
+        if not factors or not cases:
+            raise DesignError(f"{op_id}: test factors and detailed cases are required")
+        required_pairs = set()
+        for factor in factors:
+            api_source_ref(factor.get("source"), root, implementation_sources, "factor")
+            elements = api_rows(factor.get("elements"), "factor.elements", ("id", "description", "expected"))
+            if not elements:
+                raise DesignError(f"{op_id}: factor has no elements")
+            required_pairs.update((factor["id"], element["id"]) for element in elements)
+        covered = set()
+        for case in cases:
+            pairs = case.get("covers")
+            if not isinstance(pairs, list) or not pairs or any(
+                not isinstance(pair, list) or len(pair) != 2 or any(not isinstance(item, str) for item in pair)
+                for pair in pairs
+            ):
+                raise DesignError(f"{op_id}: case covers requires factor/element pairs")
+            actual_pairs = {tuple(pair) for pair in pairs}
+            if not actual_pairs <= required_pairs or len(actual_pairs) != len(pairs):
+                raise DesignError(f"{op_id}: unknown or duplicate factor element")
+            covered |= actual_pairs
+            nodes = case.get("tests")
+            if not isinstance(nodes, list) or not nodes or any(not isinstance(node, str) for node in nodes) or len(nodes) != len(set(nodes)):
+                raise DesignError(f"{op_id}: each case requires actual unit test nodes")
+            for node in nodes:
+                validate_test_node(node, root, root, set(test_manifest["nodes"]))
+        if covered != required_pairs:
+            raise DesignError(f"{op_id}: uncovered factor elements: {sorted(required_pairs - covered)}")
+        # 図はadapterが実際の分岐・例外から構成する。構文検証はadapterのcheckにも必要。
+        sequence = api_text(operation.get("sequence"), f"{op_id}.sequence")
+        if not sequence.startswith("sequenceDiagram\n") or "```" in sequence or "%%{" in sequence:
+            raise DesignError(f"{op_id}: plain Mermaid sequenceDiagram is required")
+        if not any(arrow in sequence for arrow in ("->>", "-->>", "->")):
+            raise DesignError(f"{op_id}: sequence must contain interactions")
+        heading += f"実装根拠: `{operation['source']['path']}:{operation['source']['line']}`\n\n"
+        detail = heading + "## 概要\n\n" + operation["summary"] + "\n\n## 入力\n\n"
+        detail += api_table(inputs, {"name": "項目", "type": "型", "description": "説明", "origin": "取得元"}) if inputs else operation["no_inputs_reason"] + "\n"
+        detail += "\n## 前提・処理条件\n\n" + api_text(operation.get("preconditions"), "preconditions") + "\n\n## データ操作\n\n"
+        detail += api_table(resources, {"database": "データベース", "table": "テーブル／実体", "action": "操作", "input": "入力", "output": "出力", "condition": "条件", "query_id": "Query ID", "source": "実装根拠"}) if resources else operation["no_resources_reason"] + "\n"
+        detail += "\n## 出力\n\n"
+        detail += api_table(outputs, {"name": "項目", "type": "型", "description": "説明", "origin": "取得元"}) if outputs else operation["no_outputs_reason"] + "\n"
+        detail += "\n## 異常・副作用\n\n" + api_text(operation.get("errors"), "errors") + "\n"
+        files[f"{token}.detail-design.gen.md"] = detail
+        # componentsとroot/pathの契約を保持し、$refを欠落させないOpenAPI viewにする。
+        scoped = document
+        files[f"{token}.interface.gen.md"] = heading + "## OpenAPI（Swagger互換）\n\n```json\n" + json.dumps(scoped, ensure_ascii=False, indent=2, sort_keys=True) + "\n```\n"
+        logs = heading + "## ログメッセージ\n\n"
+        for message in messages:
+            logs += "### " + api_cell(message["id"]) + "\n\n"
+            logs += api_table([message], {"level": "レベル", "template": "本文テンプレート", "condition": "出力条件", "operator_action": "運用対応", "source": "出力箇所"})
+            logs += "\n" + (api_table(message["fields"], {"name": "出力項目", "type": "型", "description": "説明", "masking": "マスク規則"}) if message["fields"] else message["no_fields_reason"] + "\n")
+        if not messages:
+            logs += operation["no_messages_reason"] + "\n"
+        files[f"{token}.messages.gen.md"] = logs
+        query_doc = heading + "## データアクセス\n\n"
+        for query in queries:
+            query_doc += "### " + api_cell(query["id"]) + "\n\n"
+            query_doc += api_table([query], {"database": "データベース", "table": "対象テーブル／実体", "kind": "SQL／アクセス種別", "summary": "概要", "conditions": "条件", "returns": "戻り値", "transaction": "トランザクション", "source": "実装根拠"})
+            query_doc += "\n" + (api_table(query["arguments"], {"name": "引数", "type": "型", "description": "説明"}) if query["arguments"] else query["no_arguments_reason"] + "\n")
+        if not queries:
+            query_doc += operation["no_queries_reason"] + "\n"
+        files[f"{token}.query.gen.md"] = query_doc
+        files[f"{token}.sequence.gen.md"] = heading + "```mermaid\n" + sequence.rstrip() + "\n```\n"
+        tests = heading + "## 要因と要素\n\n"
+        for factor in factors:
+            tests += "### " + api_cell(factor["id"] + " " + factor["name"]) + "\n\n"
+            tests += api_table(factor["elements"], {"id": "要素ID", "description": "要素", "expected": "期待結果"}) + "\n"
+        tests += "## テスト詳細\n\n"
+        for case in cases:
+            tests += "### " + api_cell(case["id"]) + "\n\n"
+            tests += api_table([case], {"given": "Given（前提・入力）", "when": "When（操作）", "then": "Then（期待値）", "expected_logs": "期待ログ", "expected_data": "DB・外部状態"})
+            tests += "\n- 要因／要素: " + ", ".join(api_cell("/".join(pair)) for pair in case["covers"]) + "\n"
+            tests += "- 実装済み単体テスト: " + ", ".join(f"`{api_cell(node)}`" for node in case["tests"]) + "\n\n"
+        tests += "実在nodeとの対応を静的検査済み。テストの実行成功・assertの十分性は別途検証する。\n"
+        files[f"{token}.unit-test.gen.md"] = tests
+    files["API_DOCUMENTS.gen.md"] = "# API生成帳票一覧\n\n" + "\n".join(
+        f"- [{name}]({name})" for name in sorted(files)
+    ) + "\n"
+    # Swagger UI等でそのまま読める完全なOpenAPIも出力する。
+    files["OPENAPI.gen.json"] = json.dumps({**document, "x-generated-notice": "AUTO-GENERATED. DO NOT EDIT DIRECTLY."}, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    return files
+
+
+def generate_api_documents(
+    args: argparse.Namespace, out: Path, *, repository_root: Path, candidate: bool = False,
+) -> None:
+    """実装・テストsnapshotへの古いadapter出力を拒否して6帳票を生成する。"""
+    model = load_structured(args.model)
+    implementation = regular_files(args.source_root, repository_root)
+    tests = regular_files(args.test_root, repository_root, suffix=".py", name_prefix="test")
+    sources = sorted(set(implementation + tests + [args.openapi]))
+    expected = {path.relative_to(repository_root).as_posix(): sha(path) for path in sources}
+    if not isinstance(model, dict) or model.get("source_sha256") != expected:
+        raise DesignError("API document adapter snapshot is stale or incomplete; rebuild from implementation")
+    files = render_api_documents(
+        model, load_structured(args.openapi), pytest_collection_manifest(args.test_root, repository_root),
+        root=repository_root, implementation_sources=set(implementation),
+    )
+    sources.append(args.model)
+    write_bundle(out, files, [(path.relative_to(repository_root).as_posix(), path) for path in sources],
+                 "api-documents", repository_root=repository_root, candidate=candidate)
+
+
 def generate_fastapi(
     args: argparse.Namespace,
     out: Path,
@@ -2811,6 +3033,7 @@ def normalize_repository_arguments(
         "trace",
         "test_root",
         "template",
+        "model",
         "out",
     ]:
         value = getattr(args, name, None)
@@ -2845,6 +3068,11 @@ def build_parser() -> argparse.ArgumentParser:
     fastapi.add_argument("--out", required=True, type=Path)
     fastapi.add_argument("--repo-root", type=Path)
     fastapi.add_argument("--check", action="store_true")
+    api_documents = sub.add_parser("api-documents")
+    for name in ("source-root", "openapi", "model", "test-root", "out"):
+        api_documents.add_argument("--" + name, required=True, type=Path)
+    api_documents.add_argument("--repo-root", type=Path)
+    api_documents.add_argument("--check", action="store_true")
     cdk = sub.add_parser("cdk")
     cdk.add_argument("--template", required=True, type=Path)
     cdk.add_argument("--requirements", required=True, type=Path)
@@ -2873,7 +3101,7 @@ def main(argv: list[str] | None = None) -> int:
             )
             with tempfile.TemporaryDirectory(prefix="designflow-check-") as directory:
                 candidate = Path(directory) / actual.name
-                (generate_fastapi if args.kind == "fastapi" else generate_cdk)(
+                {"fastapi": generate_fastapi, "cdk": generate_cdk, "api-documents": generate_api_documents}[args.kind](
                     args,
                     candidate,
                     repository_root=repository_root,
@@ -2887,7 +3115,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
             print(f"generated design current: {actual}")
         else:
-            (generate_fastapi if args.kind == "fastapi" else generate_cdk)(
+            {"fastapi": generate_fastapi, "cdk": generate_cdk, "api-documents": generate_api_documents}[args.kind](
                 args,
                 args.out,
                 repository_root=repository_root,
