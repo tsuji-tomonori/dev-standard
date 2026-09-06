@@ -12,6 +12,8 @@ SQLを含む導入・実装では[SQLと説明コメントの契約](sql-and-lan
 - Declare `APIRouter(prefix=...)` with a literal string. The effective route identity is prefix + decorator path; duplicate effective method/path pairs are invalid.
 - Calls from `router.py` into sibling `functions.py` are expanded recursively in evaluation order. The bundled CFG supports simple expression/assignment/return/raise/assert statements and explicit `if`/`else`; generated sequence diagrams retain each branch. Loops, comprehensions, `try`, `with`, `match`, short-circuit/conditional expressions, nested definitions, local recursion, dynamic route paths/metadata, and dynamic dispatch fail closed instead of being linearized.
 
+API完成条件は[6帳票契約](api-documents.md)。下記の既存`fastapi`出力だけではログ・要因別テスト詳細等が不足するため、project adapterと`api-documents`または同等generatorで補完する。
+
 ## Generated artifacts
 
 | Source | Generated design |

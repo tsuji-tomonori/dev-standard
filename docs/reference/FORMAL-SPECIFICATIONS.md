@@ -216,13 +216,13 @@
 - 失敗状態: `fail-on-missing-or-drift`
 - 入力: `implementation`, `generator-contract`, `pinned-isolated-python-runtime`, `canonical-requirements-json`, `explicit-applicable-requirement-ids`, `explicit-artifact-trace`, `test-source`
 - 出力: `generated-design`, `drift-result`, `exact-requirement-artifact-test-trace`, `structured-unsupported-surface-or-bounded-fail-closed-diagnostic`
-- 義務: `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `inventory-required-design-surfaces`, `connect-missing-generators`, `require-human-readable-markdown`, `reject-missing-design`, `run-with-pinned-isolated-runtime`, `generate-deterministic-as-built`, `verify-isolation-and-drift`, `match-explicit-applicable-active-set-exactly`, `reject-unknown-inactive-missing-or-excess-trace`
+- 義務: `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `inventory-required-design-surfaces`, `connect-missing-generators`, `require-human-readable-markdown`, `generate-six-api-documents-and-cover-test-factors`, `reject-missing-design`, `run-with-pinned-isolated-runtime`, `generate-deterministic-as-built`, `verify-isolation-and-drift`, `match-explicit-applicable-active-set-exactly`, `reject-unknown-inactive-missing-or-excess-trace`
 - 禁止事項: `do not modify the target repository virtual environment`, `do not edit generated design directly`, `do not infer requirement satisfaction from implementation`, `do not mark missing required design complete or impose CI policy`
 - 依存Skill: なし
-- 必須asset: `references/sql-and-language.md`, `assets/as-built-thresholds.json`, `references/adoption.md`, `scripts/check_design.py`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
-- 要件trace: `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-ASBUILT-021`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`, `REQ-DESIGN-007`, `REQ-DOCS-002`
-- manual digest: `5129ffad0ba1f2037df03a771b80da3d0d6c4d58322f2cf567a177bd980219a5`
-- payload digest: `39610f20062364120d6b19791f5bb749914a9afacdd6a4b7eb47398cc7db78de`
+- 必須asset: `references/api-documents.md`, `references/sql-and-language.md`, `assets/as-built-thresholds.json`, `references/adoption.md`, `scripts/check_design.py`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
+- 要件trace: `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-ASBUILT-021`, `REQ-ASBUILT-022`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `2959ea23c39f6ecad7ba12edf956ed22c60fcc05d7e12c4608c4fd881be35d37`
+- payload digest: `fbfcc331fd8f8c2a436ee37e0ab5d9f851a3df57fd500b1098257575d97e2b30`
 - interface digest: `2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42`
 
 ### govern-development-request
@@ -452,5 +452,5 @@
 - 必須asset: `assets/standards.registry.json`, `references/as-built-design-check-selection.md`, `references/source-policy.md`, `scripts/standardsflow.py`
 - 要件trace: `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-DOCS-001`, `REQ-QUALITY-001`, `REQ-QUALITY-003`
 - manual digest: `e9dca0bd1c9c450fe0aba6cffa4621b85037ab06e32ebbd7058b7ab7b98398f9`
-- payload digest: `43e8ae228716003160d8796993fb6387c9f3310ec98e9017cf3f50dd4da5cd16`
+- payload digest: `84be2d7241beb24847ea3d0c784601805c30eb6c7e90cf00ea70fd764f5a2e89`
 - interface digest: `4849946704e4fff8bf109eb0ad4eff8513f9e717cd21e00f79893f68cdb9cd89`
