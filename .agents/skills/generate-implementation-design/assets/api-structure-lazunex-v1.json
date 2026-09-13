@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "lazunex-v1",
+  "reference": {"repository": "https://github.com/tsuji-tomonori/lazunex", "commit": "096e1e580ab1c0670c57e4febad2bd9fdd4698ee", "documents": "docs/spec/40.apis/apis/get_api", "crud": "docs/spec/30.crud", "implementation": "src/app/apis/apis/publish_api"},
+  "layout": "{group}/{api}/{document}",
+  "documents": {
+    "detail-design": {"filename": "detail-design_gen.md", "chapters": ["1. 正常系入力", "2. 正常系前提", "3. 正常系リソース変更", "4. 正常系レスポンス"]},
+    "interface": {"filename": "if_gen.md", "chapters": ["Headers", "Path Parameters", "Query Parameters", "Data", "Responses", "Samples"]},
+    "messages": {"filename": "messages_gen.md", "chapters": ["API", "生成・検証方針", "メッセージ一覧", "ログ詳細", "strict検証で要求する項目"], "repeat": {"under": "ログ詳細", "source": "messages", "level": 3, "children": ["出力項目"]}},
+    "query": {"filename": "query_gen.md", "chapters": [], "repeat": {"source": "queries", "level": 2, "children": ["SQL種別", "SQLの概要", "利用するテーブル", "引数", "戻り値", "条件"]}, "empty_heading": "該当なし", "empty_reason": "no_queries_reason"},
+    "sequence": {"filename": "sequence_gen.md", "chapters": []},
+    "unit-test": {"filename": "unit-test_gen.md", "chapters": ["0. Router層の暗黙処理", "1. 要因ごとの要素", "2. 直積したテストケース一覧", "3. テスト詳細"], "repeat": {"under": "3. テスト詳細", "source": "cases", "level": 3, "children": []}}
+  },
+  "empty_policy": "必須章は保持し、対象実装由来の具体的な非該当理由を本文に記す。参照先の例・挙動・直積網羅を転記しない。",
+  "responsibilities": {"router.py": "HTTP宣言と順序制御", "functions.py": "API固有の業務処理", "schemas.py": "入力と応答の型", "response_builders.py": "応答の組立と検証", "contract.py": "operationとHTTP契約", "samples.py": "実HTTPで検証する例"},
+  "conditional_responsibilities": {"sql/": "当該ownerがSQLを所有する場合", "generated/queries.py": "当該ownerがSQLを所有する場合", "queries.py": "互換再exportが必要な場合だけ"}
+}

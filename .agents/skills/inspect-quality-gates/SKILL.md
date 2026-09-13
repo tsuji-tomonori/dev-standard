@@ -24,6 +24,8 @@ description: Select and run only the checks relevant to the current change, conn
 
 検査と判定はsourceや設定を修正しない。失敗時はcheck、直接証拠、影響範囲を返す。元の開発依頼が修正を許可している場合、呼出元はその権限内で修正し再検証でき、別Skillの導入や再承認は不要である。レビューだけの依頼を変更へ拡張しない。
 
+API構成profileが選択されている場合は設計Skillの`references/api-structure.md`に従い、章・階層・CRUD・責務実接続の検査を選ぶ。品質portalの`hierarchy`、現在位置、親階層を維持する検索とCSV取得を実ブラウザで検証する。
+
 ## 実行境界
 
 commandが作るbuild artifact等は対象repositoryの通常の実行効果として扱う。外部作用は既存の明示権限を確認する。実行できなかったcheckを成功扱いせず、局所検査でprocess外の作用を隔離・完全検知したとは主張しない。

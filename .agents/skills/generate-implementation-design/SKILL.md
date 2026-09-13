@@ -22,6 +22,8 @@ Dev標準の導入時と、現在状態の設計に影響する実装変更時�
 
 APIを持つ場合は[APIの6帳票契約](references/api-documents.md)を適用し、全operationの詳細設計・OpenAPI interface・ログmessage・query・Mermaid sequence・要因別unit-test詳細を生成する。必須要因／要素から実在テストへの欠落を解消し、6帳票の集合とdriftを検査する。
 
+参照repositoryの章構成やAPI責務配置への追従が指定された場合は[構成profile契約](references/api-structure.md)を適用する。選択された版・構成・適用外を要件に記録し、章・階層・CRUDと実接続をdriftとは別に検査する。
+
 ## FastAPI
 
 - route AST、applicationが生成するOpenAPI、handler metadata、error branch、SQL ASTから設計を生成する。

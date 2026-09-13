@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 16,
+  "catalog_revision": 17,
   "product": "dev-standard",
   "requirements": [
     {
@@ -3488,8 +3488,315 @@
         "evidence": "共通reportと2系統runnerの回帰検証",
         "method": "契約・adapter・生成drift検証"
       }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-ASBUILT-023-1",
+          "then": "章削除・順序入替・重複・SQL章全体欠落を拒否し、非該当でも章と具体的理由を保持する。構成一致を意味的完全性と区別する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "functional",
+      "id": "REQ-ASBUILT-023",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "選択版の必須章・階層・順序と繰返し節",
+      "rationale": "存在とdriftだけでは参照構成への不一致を検出できない。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/67"
+      ],
+      "status": "active",
+      "subject": "API帳票の構成検査",
+      "superseded_by": "",
+      "title": "参照帳票の構成適合",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-structure.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_structure.py",
+          ".agents/skills/generate-implementation-design/scripts/check_design.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_structure.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-ASBUILT-024-1",
+          "then": "SQL更新先とJOIN参照先を区別し、runtimeのSQL・適用可能な非SQLアクセスを同一モデルから各形式へ出力する。API追加削除・SQL変更を反映し、アクセスなしのAPIと解析不能を区別する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "functional",
+      "id": "REQ-ASBUILT-024",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "APIと保存先リソースの操作を表す一貫したCSV・表・図・根拠",
+      "rationale": "表示形式ごとの独立推測はアクセスの不一致を生む。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/67"
+      ],
+      "status": "active",
+      "subject": "CRUD generator",
+      "superseded_by": "",
+      "title": "CRUD出力の同一モデル対応",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-structure.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_structure.py",
+          ".agents/skills/generate-implementation-design/scripts/check_design.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_structure.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-ASBUILT-025-1",
+          "then": "既存の選択配置方針を維持して全operationの6帳票と索引を対応付け、旧成果物残存・link切れ・OpenAPI集合不一致を拒否する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "functional",
+      "id": "REQ-ASBUILT-025",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "group→API→帳票の階層と解決可能な索引",
+      "rationale": "フラット一覧ではAPI所属が辿れず移行後の旧成果物も残りうる。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/67"
+      ],
+      "status": "active",
+      "subject": "API帳票generatorと構成検査",
+      "superseded_by": "",
+      "title": "API帳票の所有階層",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-structure.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_structure.py",
+          ".agents/skills/generate-implementation-design/scripts/check_design.py",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_structure.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-DESIGN-008-1",
+          "then": "参照SHA・operation粒度・必須責務と適用外理由を選択profileとして記録し、OpenAPIと所有packageの1対1を検査する。全projectへ参照実装を無条件強制しない。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "nonfunctional",
+      "id": "REQ-DESIGN-008",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "1 operationごとの所有package",
+      "rationale": "ドメイングループとAPI操作を混同すると責務集約が再発する。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/68"
+      ],
+      "status": "active",
+      "subject": "API構成検査",
+      "superseded_by": "",
+      "title": "選択参照のAPI所有粒度",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-structure.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_layout.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_layout.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-DESIGN-009-1",
+          "then": "呼出しとannotation/decorator等の実参照を検査し、空file、未使用import、コメント、未呼出しの関数、古い集約moduleへの単純委譲を適合としない。静的解決不能は対象adapterで補完する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "nonfunctional",
+      "id": "REQ-DESIGN-009",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "router・業務関数・所有query・応答組立・schemas・contract・samplesの接続",
+      "rationale": "責務fileの存在だけでは空実装や未接続を見逃す。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/68"
+      ],
+      "status": "active",
+      "subject": "API構成検査",
+      "superseded_by": "",
+      "title": "API責務の実接続",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-structure.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_layout.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_layout.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-DESIGN-010-1",
+          "then": "明示された共有責務だけを許可し、API間直接依存・共有からAPIへの逆依存・全体共通query生成先・同一生成symbolへのSQL上書きを拒否する。異なるownerの同名SQLは区別して保持する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "nonfunctional",
+      "id": "REQ-DESIGN-010",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "共有の所有者と依存方向および所有先付きSQL識別",
+      "rationale": "API間直接依存やSQL名の衝突が責務境界と設計の対応を壊す。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/68"
+      ],
+      "status": "active",
+      "subject": "API構成検査",
+      "superseded_by": "",
+      "title": "共有責務とSQL所有境界",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-structure.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_layout.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_layout.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-EVIDENCE-004-1",
+          "then": "group→API→帳票の操作、検索後の親階層と現在位置、帳票間link、CRUD図とCSV取得をGWT画像付きブラウザE2Eで検証する。既存のCIと公開規則を維持する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "functional",
+      "id": "REQ-EVIDENCE-004",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "検索と移動で維持されるAPIの所属階層",
+      "rationale": "検索後の所属消失とフラット表示は帳票の理解を妨げる。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/67"
+      ],
+      "status": "active",
+      "subject": "品質portal",
+      "superseded_by": "",
+      "title": "API設計の階層閲覧",
+      "traces": {
+        "design": [
+          ".agents/skills/inspect-quality-gates/references/evidence-portal.md"
+        ],
+        "implementation": [
+          ".agents/skills/inspect-quality-gates/scripts/evidence.py",
+          ".agents/skills/inspect-quality-gates/assets/evidence.js"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_evidence_portal.py",
+          "tests/browser/evidence-hierarchy.mjs"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-09-06"
+  "updated_at": "2026-09-13"
 }

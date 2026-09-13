@@ -311,6 +311,56 @@ def pinned_directory_identity(
     return before.st_dev, before.st_ino, digest
 
 
+def bundle_path(name: str) -> bool:
+    """相対的な階層名だけを生成bundleに許可する。"""
+    return (isinstance(name, str) and bool(name) and not Path(name).is_absolute()
+            and "\\" not in name and all(part not in {"", ".", ".."} for part in name.split("/")))
+
+
+def read_bundle_tree(descriptor: int, root: Path, safe_io: Any) -> dict[str, bytes]:
+    """pinned descriptorから階層を読み、linkと空directoryを拒否する。"""
+    result = {}
+    for name in sorted(os.listdir(descriptor)):
+        info = os.stat(name, dir_fd=descriptor, follow_symlinks=False)
+        flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+        if stat.S_ISDIR(info.st_mode):
+            child = os.open(name, flags | os.O_DIRECTORY, dir_fd=descriptor)
+            try:
+                nested = read_bundle_tree(child, root / name, safe_io)
+            finally:
+                os.close(child)
+            if not nested:
+                raise DesignError(f"empty generated directory: {root / name}")
+            result.update({f"{name}/{key}": value for key, value in nested.items()})
+        elif stat.S_ISREG(info.st_mode):
+            child = os.open(name, flags, dir_fd=descriptor)
+            try:
+                result[name], _ = safe_io._read_open_file(child)
+            finally:
+                os.close(child)
+        else:
+            raise DesignError(f"generated bundle contains a non-regular entry: {root / name}")
+    return result
+
+
+@cache
+def api_helper(name: str) -> Any:
+    """配布済みsiblingの固定コードをno-followで読込む。"""
+    path = Path(__file__).absolute().with_name(name + ".py")
+    portable = sys.modules.get("_dev_standard_portable_imports")
+    if portable is not None:
+        return portable.load_relative(path.relative_to(Path.cwd()).as_posix(), "dev_standard_" + name)
+    own_root = next((parent for parent in path.parents if (parent / ".git").exists()), None)
+    if own_root is None:
+        raise DesignError("helper repository root not found")
+    safe_io = _load_safe_io_module(own_root)
+    source = safe_io.read_bytes_nofollow(path, root=own_root)
+    module = types.ModuleType("dev_standard_" + name)
+    module.__file__ = str(path)
+    exec(compile(source, str(path), "exec"), module.__dict__)
+    return module
+
+
 def validate_managed_bundle(
     out: Path,
     repository_root: Path | None = None,
@@ -360,20 +410,13 @@ def validate_managed_bundle(
                 or any(
                     not item
                     or item == "manifest.json"
-                    or Path(item).name != item
+                    or not bundle_path(item)
                     for item in generated
                 )
             ):
                 raise DesignError(f"generated bundle manifest file list is invalid: {out}")
             expected = {"manifest.json", *generated}
-            actual: set[str] = set()
-            for name in os.listdir(descriptor):
-                info = os.stat(name, dir_fd=descriptor, follow_symlinks=False)
-                if not stat.S_ISREG(info.st_mode):
-                    raise DesignError(
-                        f"managed bundle contains a non-regular entry: {out / name}"
-                    )
-                actual.add(name)
+            actual = set(read_bundle_tree(descriptor, out, safe_io))
             if actual != expected:
                 raise DesignError(f"managed bundle file set differs from manifest: {out}")
             identity_after = pinned_directory_identity(
@@ -2256,8 +2299,21 @@ def rename_directory_noreplace(
 def write_regular_exclusive(directory_fd: int, name: str, content: str) -> None:
     """Write one generated UTF-8 file through a pinned candidate directory."""
 
-    if not name or name in {".", ".."} or Path(name).name != name:
-        raise DesignError(f"generated file must have a plain filename: {name}")
+    if not bundle_path(name):
+        raise DesignError(f"generated file must have a safe relative filename: {name}")
+    if "/" in name:
+        parent, remainder = name.split("/", 1)
+        try:
+            os.mkdir(parent, mode=0o700, dir_fd=directory_fd)
+        except FileExistsError:
+            pass
+        child = os.open(parent, os.O_RDONLY | os.O_DIRECTORY | getattr(os, "O_NOFOLLOW", 0), dir_fd=directory_fd)
+        try:
+            write_regular_exclusive(child, remainder, content)
+            os.fsync(child)
+        finally:
+            os.close(child)
+        return
     descriptor = os.open(
         name,
         os.O_WRONLY
@@ -2316,7 +2372,7 @@ def write_bundle(
     for name, content in files.items():
         if name == "manifest.json":
             raise DesignError("generated files must not replace manifest.json")
-        if name.endswith(".gen.md"):
+        if name.endswith((".gen.md", "_gen.md")):
             payload = banner + content
         elif name.endswith(".gen.json"):
             try:
@@ -2327,8 +2383,10 @@ def write_bundle(
             if document.get(notice_key) != "AUTO-GENERATED. DO NOT EDIT DIRECTLY.":
                 raise DesignError(f"generated JSON requires a direct-edit notice: {name}")
             payload = json.dumps(document, ensure_ascii=False, indent=2) + "\n"
+        elif name.endswith((".gen.csv", ".gen.svg", ".gen.html", "_gen.html")):
+            payload = content
         else:
-            raise DesignError(f"generated file must end with .gen.md or .gen.json: {name}")
+            raise DesignError(f"generated file must end with .gen.md, _gen.md, .gen.json or .gen.csv: {name}")
         payloads[name] = payload
     payloads["manifest.json"] = json.dumps(
         manifest, ensure_ascii=False, indent=2
@@ -2562,26 +2620,6 @@ def compare_bundle(
 
     safe_io = _bootstrap_safe_io(repository_root)
 
-    def read_flat_files(descriptor: int, root: Path) -> dict[str, bytes]:
-        result: dict[str, bytes] = {}
-        for name in sorted(os.listdir(descriptor)):
-            info = os.stat(name, dir_fd=descriptor, follow_symlinks=False)
-            if not stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode):
-                raise DesignError(
-                    f"generated comparison contains a non-regular entry: {root / name}"
-                )
-            file_descriptor = os.open(
-                name,
-                os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0),
-                dir_fd=descriptor,
-            )
-            try:
-                content, _ = safe_io._read_open_file(file_descriptor)
-            finally:
-                os.close(file_descriptor)
-            result[name] = content
-        return result
-
     try:
         with safe_io.trusted_root(expected) as expected_fd, safe_io.trusted_root(
             repository_root
@@ -2604,8 +2642,8 @@ def compare_bundle(
                 raise DesignError(
                     f"generated output changed after validation: {actual}"
                 )
-            expected_files = read_flat_files(expected_fd, expected)
-            actual_files = read_flat_files(actual_fd, actual)
+            expected_files = read_bundle_tree(expected_fd, expected, safe_io)
+            actual_files = read_bundle_tree(actual_fd, actual, safe_io)
             if expected_files.keys() != actual_files.keys():
                 missing = sorted(
                     display(Path(name)) for name in expected_files.keys() - actual_files.keys()
@@ -2855,6 +2893,19 @@ def render_api_documents(
     ) + "\n"
     # Swagger UI等でそのまま読める完全なOpenAPIも出力する。
     files["OPENAPI.gen.json"] = json.dumps({**document, "x-generated-notice": "AUTO-GENERATED. DO NOT EDIT DIRECTLY."}, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    if model.get("structure_profile"):
+        try:
+            structure = api_helper("api_structure")
+            layout = api_helper("api_layout")
+            files = structure.render(model, document)
+            index = layout.Index(root, model["python_root"])
+            access_model = structure.crud(model, root, index)
+            files.update(structure.render_crud(access_model))
+            files["API_DOCUMENTS.gen.md"] += "\n[CRUD対応表・図・CSV](crud/index.gen.md)\n"
+            structure.validate_structure(files, model, document)
+            files.update(structure.html_views(files))
+        except (ValueError, KeyError, SyntaxError) as exc:
+            raise DesignError(f"API structure: {exc}") from exc
     return files
 
 
