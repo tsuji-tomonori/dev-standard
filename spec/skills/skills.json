@@ -438,9 +438,16 @@
         "test-source"
       ],
       "interfaceSha256": "2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42",
-      "manualBodySha256": "2959ea23c39f6ecad7ba12edf956ed22c60fcc05d7e12c4608c4fd881be35d37",
+      "manualBodySha256": "3713700206ec035a55e3f1cb438bc286155a5c0163e0977f3b20ca284403af77",
       "name": "generate-implementation-design",
       "obligationIds": [
+        "verify-exception-log-contract",
+        "require-natural-language-test-units",
+        "verify-reference-flow-semantics",
+        "generate-query-specific-models",
+        "validate-selected-reference-profile",
+        "generate-one-crud-model",
+        "verify-operation-responsibility-connections",
         "verify-operation-sql-and-typed-query-generation",
         "verify-japanese-explanations-at-generator-source",
         "inventory-required-design-surfaces",
@@ -460,7 +467,7 @@
         "exact-requirement-artifact-test-trace",
         "structured-unsupported-surface-or-bounded-fail-closed-diagnostic"
       ],
-      "payloadSha256": "fbfcc331fd8f8c2a436ee37e0ab5d9f851a3df57fd500b1098257575d97e2b30",
+      "payloadSha256": "050f7d57395bc134984c12ed851188e32e2d728c45fb285a9c2ecd775a061021",
       "pillar": "design",
       "postcondition": "generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes",
       "precondition": "adoption or implementation change requires an as-built inventory and generator connection, including first-time setup",
@@ -481,6 +488,15 @@
         "ruleset": false
       },
       "requiredAssets": [
+        "scripts/api_semantics.py",
+        "scripts/api_errors.py",
+        "references/api-semantics.md",
+        "scripts/api_flow.py",
+        "scripts/sql_models.py",
+        "references/api-structure.md",
+        "assets/api-structure-lazunex-v1.json",
+        "scripts/api_structure.py",
+        "scripts/api_layout.py",
         "references/api-documents.md",
         "references/sql-and-language.md",
         "assets/as-built-thresholds.json",
@@ -493,6 +509,18 @@
         "scripts/qualityflow.py"
       ],
       "requirementIds": [
+        "REQ-ASBUILT-027",
+        "REQ-DESIGN-013",
+        "REQ-ASBUILT-028",
+        "REQ-DESIGN-011",
+        "REQ-ASBUILT-026",
+        "REQ-DESIGN-012",
+        "REQ-ASBUILT-023",
+        "REQ-ASBUILT-024",
+        "REQ-ASBUILT-025",
+        "REQ-DESIGN-008",
+        "REQ-DESIGN-009",
+        "REQ-DESIGN-010",
         "REQ-ASBUILT-001",
         "REQ-ASBUILT-002",
         "REQ-ASBUILT-003",
@@ -666,9 +694,10 @@
         "external-authority-if-applicable"
       ],
       "interfaceSha256": "073b20f8a4c4f30a38fac5fb4ae66a56ee7e97caf4cb96beeea189b26e391fd1",
-      "manualBodySha256": "cc3902f4f3cf14ecbb8dd0e2be3834db6507c49035f4e76a2d917fe2c1924be4",
+      "manualBodySha256": "7338696973dac447a0589e08fc8f7ef840c21f47e608a095ea5908c65325fcf3",
       "name": "inspect-quality-gates",
       "obligationIds": [
+        "preserve-api-evidence-hierarchy",
         "connect-framework-evidence-adapters-at-bootstrap",
         "preserve-failed-missing-and-unexecuted-results",
         "verify-operation-sql-and-typed-query-generation",
@@ -687,7 +716,7 @@
         "residual-risk",
         "repair-handoff"
       ],
-      "payloadSha256": "b546736d14fc99429f59718a206dce877683cb88098d01cd90da9a2b5283a5e0",
+      "payloadSha256": "954cbf94fdae0777149bcd3edace149baabf8db16fe18979d2d0933bc304633f",
       "pillar": "checks",
       "postcondition": "selected blockers pass or a bounded failure is reported with declared command effects and a process-effect-not-isolated residual for every command, without claiming unselected coverage or isolation",
       "precondition": "changed artifacts, applicable risks, target-owned checks, declared command effects, and any required external authority are known",
@@ -718,6 +747,7 @@
         "scripts/test_evidence.py"
       ],
       "requirementIds": [
+        "REQ-EVIDENCE-004",
         "REQ-EVIDENCE-001",
         "REQ-EVIDENCE-002",
         "REQ-EVIDENCE-003",

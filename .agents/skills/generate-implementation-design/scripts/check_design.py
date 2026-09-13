@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+import types
 from pathlib import Path
 
 SURFACES = {"api", "data", "infra", "frontend"}
@@ -54,6 +55,63 @@ def snapshot(root: Path, outputs: list[str]) -> dict[str, bytes]:
     return result
 
 
+def helper(name):
+    """同梱した共通検査を独自adapterからも利用する。"""
+    path = Path(__file__).absolute().with_name(name + ".py")
+    if path.is_symlink():
+        raise ValueError("symlink helper")
+    module = types.ModuleType(name)
+    module.__file__ = str(path)
+    exec(compile(path.read_text(encoding="utf-8"), str(path), "exec"), module.__dict__)
+    return module
+
+
+def check_structure(root, surface, document):
+    """選択したprofileの章・階層・CRUD集合をdrift commandとは別に検査する。"""
+    if "structure_model" not in surface:
+        return
+    model = json.loads(confined(root, surface["structure_model"]).read_text(encoding="utf-8"))
+    base = confined(root, surface["structure_root"])
+    files = {}
+    for path in base.rglob("*"):
+        relative = path.relative_to(root).as_posix()
+        confined(root, relative)
+        if path.is_file() and path.name != "manifest.json":
+            files[path.relative_to(base).as_posix()] = path.read_text(encoding="utf-8")
+    structure = helper("api_structure")
+    if model.get("semantic_contract") or model.get("error_contract"):
+        exported = helper("api_layout").operation_ids(document)
+        model = helper("api_semantics").enrich(model, root, exported, helper)
+        expected = structure.render(model, document)
+        for operation in model["operations"]:
+            for name in structure.names(model, operation).values():
+                actual = files.get(name, "")
+                if actual.startswith("<!-- AUTO-GENERATED."):
+                    actual = actual.split("-->\n\n", 1)[-1]
+                if actual != expected[name]:
+                    raise ValueError(f"semantic document/output drift: {name}")
+    structure.validate_structure(files, model, document)
+    for operation in model["operations"]:
+        expected = {kind: (base / name).relative_to(root).as_posix()
+                    for kind, name in structure.names(model, operation).items()}
+        if surface["operation_documents"][operation["id"]] != expected:
+            raise ValueError("operation mapping differs from selected hierarchy")
+    index = helper("api_layout").Index(root, model["python_root"])
+    expected_crud = structure.render_crud(structure.crud(model, root, index))
+    # Markdown bannerはgeneratorの出力のみ除去する。
+    for name, expected in expected_crud.items():
+        actual = files.get(name, "")
+        if actual.startswith("<!-- AUTO-GENERATED."):
+            actual = actual.split("-->\n\n", 1)[-1]
+        if name.endswith(".json"):
+            same = json.loads(actual) == json.loads(expected) if actual else False
+        else:
+            same = actual == expected
+        if not same:
+            raise ValueError(f"CRUD model/output drift: {name}")
+    print("API structure and CRUD conformance passed (semantic completeness requires adapter tests)")
+
+
 def api_outputs(root: Path, surface: dict) -> list[str]:
     """全OpenAPI operationについて6帳票の宣言漏れを拒否する。"""
     path = confined(root, surface.get("openapi"))
@@ -86,6 +144,13 @@ def api_outputs(root: Path, surface: dict) -> list[str]:
         outputs.extend(paths)
     if not set(outputs).issubset(strings(surface.get("markdown"), "api.markdown")):
         raise ValueError("api: operation documents are absent from Markdown drift inventory")
+    if len(outputs) != len(set(outputs)):
+        raise ValueError("documents shared by multiple operations")
+    check_structure(root, surface, document)
+    if "layout_config" in surface:
+        config = json.loads(confined(root, surface["layout_config"]).read_text(encoding="utf-8"))
+        helper("api_layout").inspect(root, config, document)
+        print("API layout conformance passed (static scope)")
     return outputs
 
 

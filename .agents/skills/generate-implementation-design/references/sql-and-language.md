@@ -6,7 +6,7 @@ SQLを使うAPIの新規作成・再編・Dev標準導入と、説明コメン�
 
 - 業務SQLはAPI operationごとの`sql/NNN_name.sql`を正本とし、1 file 1 statement、先頭に日本語の業務目的を置く。共通`repository.py`やrouter/functionsへSQL本文を直書き・集約しない。
 - migration DDLとSQL ASTから引数・結果行の型と読込wrapperを`generated/queries.py`へ決定的に生成する。ファイルを置くだけ、手書きwrapper、`Any`による型の代用を生成完了としない。
-- `functions.py`は生成wrapperをDB port経由で呼び出し、業務判定とtransaction境界を管理する。共通DB portは接続・実行の責任を持ち、API固有SQLを所有しない。
+- `functions.py`は生成wrapperをDB port経由で呼び出し、名前のある個別業務処理を担う。利用者がlazunex構成を選んだ場合、全体フロー・分岐・例外処理・commit/rollbackはrouterが所有する。他の構成のtransaction境界は対象の明示契約に従う。共通DB portは接続・実行の責任を持ち、API固有SQLを所有しない。
 - 共通SQLから移す際はparameter binding、NULL、行数、戻り型、transactionと例外時rollbackの挙動を維持する。適用済みmigrationの本文・checksumを配置や翻訳のために変更しない。schema変更が必要なら新しいmigrationにする。
 - query台帳とAPI別CRUDを実際のSQL・呼出関係から生成する。DDL由来のtable/ER設計も生成する。ファイル名やLLMの推測で対応を捏造しない。
 
@@ -43,3 +43,5 @@ application内にmigration管理用runnerがある場合は`--migration-runner b
 このcommandは読み取り専用で、英語だけの説明、SQL配置違反、空/欠落wrapper、静的SQL文字列を非0終了で検出する。日本語文字の有無は言語品質の証明ではなく、ファイルの存在も型生成・到達可能性の証明ではない。動的SQL構築、型の意味、SQL方言、他言語はproject adapter・型検査・DBテスト・レビューで補完する。同梱SQL解析の未対応構文は未検証として解決し、成功へ読み替えない。
 
 完了報告と必要な再開情報には、SQL正本・型生成元・生成先、説明言語、実行commandと結果、未対応範囲を残す。過去の会話で「対応済み」とあっても、現在のsourceと生成結果を確認する。SQL lintや型生成が未接続なら、単に既存CIが緑であることを完了根拠にしない。
+
+SQL専用モデルとrouter順序の選択検査は[意味契約](api-semantics.md)を参照する。

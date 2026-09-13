@@ -90,3 +90,12 @@ agentは対象の言語setupと既存commandに合わせ、次のjob構造をtar
 
 移植元: [CornellNoteWebv2 dev](https://github.com/tsuji-tomonori/CornellNoteWebv2/tree/dev)のREQ-REPORT、tools/report.py、tools/test_results.py、tools/docs_site.py、frontend/report-tests/report.spec.ts、.github/workflows/verify.yml。製品固有のAWS・認証・branch運用は移植しない。
 公開jobの仕様: [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)。
+
+
+## API設計の階層
+
+各design itemの`hierarchy`へ`["group", "API"]`の親ラベルを設定する。item名を葉の帳票名とし、`path`は公開allowlist内のHTMLとする。従来の`group`だけのreportも読める。検索は階層名も対象とし、該当帳票の祖先を展開して残す。葉の移動で現在位置とaria-currentを更新する。
+
+CRUD itemは`diagram`へ生成SVG、`download`へCSVの相対pathを指定し、両方をdesign.filesのallowlistへ含める。モデルから生成した表・図・CSVを結合し、エビデンスrenderer側でCRUDを再推測しない。通常の生成HTMLの帳票間linkを維持する。
+
+参照repositoryのブラウザ回帰は`npm run test:evidence-hierarchy`。Chromiumを`npx playwright install chromium`で準備するか、既存browserを`PLAYWRIGHT_CHROMIUM_EXECUTABLE`で指定する。GWT画像・ブラウザ結果は一時実行領域へ出力し、任意の公開・CI変更は行わない。

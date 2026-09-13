@@ -216,13 +216,13 @@
 - 失敗状態: `fail-on-missing-or-drift`
 - 入力: `implementation`, `generator-contract`, `pinned-isolated-python-runtime`, `canonical-requirements-json`, `explicit-applicable-requirement-ids`, `explicit-artifact-trace`, `test-source`
 - 出力: `generated-design`, `drift-result`, `exact-requirement-artifact-test-trace`, `structured-unsupported-surface-or-bounded-fail-closed-diagnostic`
-- 義務: `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `inventory-required-design-surfaces`, `connect-missing-generators`, `require-human-readable-markdown`, `generate-six-api-documents-and-cover-test-factors`, `reject-missing-design`, `run-with-pinned-isolated-runtime`, `generate-deterministic-as-built`, `verify-isolation-and-drift`, `match-explicit-applicable-active-set-exactly`, `reject-unknown-inactive-missing-or-excess-trace`
+- 義務: `verify-exception-log-contract`, `require-natural-language-test-units`, `verify-reference-flow-semantics`, `generate-query-specific-models`, `validate-selected-reference-profile`, `generate-one-crud-model`, `verify-operation-responsibility-connections`, `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `inventory-required-design-surfaces`, `connect-missing-generators`, `require-human-readable-markdown`, `generate-six-api-documents-and-cover-test-factors`, `reject-missing-design`, `run-with-pinned-isolated-runtime`, `generate-deterministic-as-built`, `verify-isolation-and-drift`, `match-explicit-applicable-active-set-exactly`, `reject-unknown-inactive-missing-or-excess-trace`
 - 禁止事項: `do not modify the target repository virtual environment`, `do not edit generated design directly`, `do not infer requirement satisfaction from implementation`, `do not mark missing required design complete or impose CI policy`
 - 依存Skill: なし
-- 必須asset: `references/api-documents.md`, `references/sql-and-language.md`, `assets/as-built-thresholds.json`, `references/adoption.md`, `scripts/check_design.py`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
-- 要件trace: `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-ASBUILT-021`, `REQ-ASBUILT-022`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`, `REQ-DESIGN-007`, `REQ-DOCS-002`
-- manual digest: `2959ea23c39f6ecad7ba12edf956ed22c60fcc05d7e12c4608c4fd881be35d37`
-- payload digest: `fbfcc331fd8f8c2a436ee37e0ab5d9f851a3df57fd500b1098257575d97e2b30`
+- 必須asset: `scripts/api_semantics.py`, `scripts/api_errors.py`, `references/api-semantics.md`, `scripts/api_flow.py`, `scripts/sql_models.py`, `references/api-structure.md`, `assets/api-structure-lazunex-v1.json`, `scripts/api_structure.py`, `scripts/api_layout.py`, `references/api-documents.md`, `references/sql-and-language.md`, `assets/as-built-thresholds.json`, `references/adoption.md`, `scripts/check_design.py`, `references/cdk-contract.md`, `references/fastapi-contract.md`, `requirements.txt`, `scripts/designflow.py`, `scripts/qualityflow.py`
+- 要件trace: `REQ-ASBUILT-027`, `REQ-DESIGN-013`, `REQ-ASBUILT-028`, `REQ-DESIGN-011`, `REQ-ASBUILT-026`, `REQ-DESIGN-012`, `REQ-ASBUILT-023`, `REQ-ASBUILT-024`, `REQ-ASBUILT-025`, `REQ-DESIGN-008`, `REQ-DESIGN-009`, `REQ-DESIGN-010`, `REQ-ASBUILT-001`, `REQ-ASBUILT-002`, `REQ-ASBUILT-003`, `REQ-ASBUILT-004`, `REQ-ASBUILT-005`, `REQ-ASBUILT-006`, `REQ-ASBUILT-007`, `REQ-ASBUILT-008`, `REQ-ASBUILT-009`, `REQ-ASBUILT-010`, `REQ-ASBUILT-011`, `REQ-ASBUILT-012`, `REQ-ASBUILT-013`, `REQ-ASBUILT-014`, `REQ-ASBUILT-015`, `REQ-ASBUILT-016`, `REQ-ASBUILT-018`, `REQ-ASBUILT-020`, `REQ-ASBUILT-021`, `REQ-ASBUILT-022`, `REQ-DESIGN-001`, `REQ-DESIGN-002`, `REQ-DESIGN-003`, `REQ-DESIGN-004`, `REQ-DESIGN-005`, `REQ-DESIGN-006`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `3713700206ec035a55e3f1cb438bc286155a5c0163e0977f3b20ca284403af77`
+- payload digest: `050f7d57395bc134984c12ed851188e32e2d728c45fb285a9c2ecd775a061021`
 - interface digest: `2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42`
 
 ### govern-development-request
@@ -285,13 +285,13 @@
 - 失敗状態: `report-bounded`
 - 入力: `change`, `acceptance`, `target-owned-checks`, `optional-target-owned-command-registry`, `declared-command-effects`, `external-authority-if-applicable`
 - 出力: `public-evidence-site`, `run-provenance`, `selected-check-results`, `declared-effect-report`, `residual-risk`, `repair-handoff`
-- 義務: `connect-framework-evidence-adapters-at-bootstrap`, `preserve-failed-missing-and-unexecuted-results`, `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
+- 義務: `preserve-api-evidence-hierarchy`, `connect-framework-evidence-adapters-at-bootstrap`, `preserve-failed-missing-and-unexecuted-results`, `verify-operation-sql-and-typed-query-generation`, `verify-japanese-explanations-at-generator-source`, `select-minimum-relevant-checks`, `validate-registry-command-and-declared-effect-when-runner-is-used`, `execute-selected-checks`, `report-process-effect-isolation-uncertainty-for-every-command`, `bound-verdict-to-observed-evidence`
 - 禁止事項: `do not modify source to hide failures`, `do not claim external-effect absence process isolation or unselected coverage`, `do not execute a declared external effect without explicit authority`, `do not impose portable CI or merge policy; preserve target-owned bootstrap reporting`
 - 依存Skill: なし
 - 必須asset: `assets/evidence.css`, `assets/evidence.js`, `references/evidence-portal.md`, `references/gate-rules.md`, `references/runner-contract.md`, `scripts/evidence.py`, `scripts/inspect.py`, `scripts/test_evidence.py`
-- 要件trace: `REQ-EVIDENCE-001`, `REQ-EVIDENCE-002`, `REQ-EVIDENCE-003`, `REQ-ASBUILT-019`, `REQ-QUALITY-002`, `REQ-DESIGN-007`, `REQ-DOCS-002`
-- manual digest: `cc3902f4f3cf14ecbb8dd0e2be3834db6507c49035f4e76a2d917fe2c1924be4`
-- payload digest: `b546736d14fc99429f59718a206dce877683cb88098d01cd90da9a2b5283a5e0`
+- 要件trace: `REQ-EVIDENCE-004`, `REQ-EVIDENCE-001`, `REQ-EVIDENCE-002`, `REQ-EVIDENCE-003`, `REQ-ASBUILT-019`, `REQ-QUALITY-002`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `7338696973dac447a0589e08fc8f7ef840c21f47e608a095ea5908c65325fcf3`
+- payload digest: `954cbf94fdae0777149bcd3edace149baabf8db16fe18979d2d0933bc304633f`
 - interface digest: `073b20f8a4c4f30a38fac5fb4ae66a56ee7e97caf4cb96beeea189b26e391fd1`
 
 ### japanese-git-commit-gitmoji

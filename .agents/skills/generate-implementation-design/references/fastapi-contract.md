@@ -57,3 +57,5 @@ Static analysis must reject missing direct returns, unparseable Python/SQL/DDL, 
 Target repositoryで初回だけ`python tools/portable_python.py setup`を実行し、以後は`python tools/portable_python.py run <host-skill-path>/scripts/designflow.py -- <args...>`（品質checkは同じ形で`qualityflow.py`）を使う。runnerはSkillのexact-pinned依存をtargetの既存venv/global環境から隔離し、`--`以後の`--repo-root`を含む引数を透過する。`<host-skill-path>`はinstallerが選んだhost-native Skill rootであり、`.agents`を固定しない。
 
 Primary references: [FastAPI OpenAPI generation](https://fastapi.tiangolo.com/how-to/extending-openapi/), [OpenAPI Specification](https://spec.openapis.org/oas/latest.html), and [SQLGlot AST documentation](https://sqlglot.com/sqlglot.html).
+
+参照実装への追従指定では[構成profile](api-structure.md)に従い、1 operation 1 packageと責務の実接続を検査する。router/functionsの名前があるだけでは適合としない。
