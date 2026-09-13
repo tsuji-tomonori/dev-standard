@@ -74,3 +74,5 @@ profileの6責務fileを検査し、OpenAPIとmethod/path/operation IDを照合�
 handlerから業務関数・応答組立へ到達し、schemas・contract・samplesが使用されることを要求する。API間直接依存、共有からAPIへの逆依存、所有者不明の内部依存、全体共通query生成先を拒否する。SQL識別子には所有先pathを含め、同じbasenameを別APIで使用することは許可する。同一ownerで複数SQLを同じ生成symbolへ潰すことは拒否する。互換用`queries.py`は必須ではない。
 
 これは静的に解決できるPython import・call・定数metadataの検査であり、runtimeのroute mounting、任意の動的import、computed SQL、反射、すべての業務意味の汎用検証ではない。解析できないbindingには対象adapterを用意し、その負例と実HTTP sample試験を含める。参照lazunex自身のmetadata-only contractも実接続を示すものではなく、そのまま適合と扱わない。KotoRelayの実行結果を導入先の合格証拠に流用しない。
+
+配置以外の参照指定を[router・SQLの意味契約](api-semantics.md)へ対応付ける。構成適合だけではフロー責務の適合を証明しない。

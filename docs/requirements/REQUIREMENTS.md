@@ -2,7 +2,7 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 17
+- カタログ版: 18
 - Product(JSON): <code>"dev-standard"</code>
 - 更新日(JSON): <code>"2026-09-13"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -83,6 +83,9 @@
 | <code>"REQ-DESIGN-009"</code> | 1 | 有効 | 制約 | API構成検査は、router・業務関数・所有query・応答組立・schemas・contract・samplesの接続を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
 | <code>"REQ-DESIGN-010"</code> | 1 | 有効 | 制約 | API構成検査は、共有の所有者と依存方向および所有先付きSQL識別を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
 | <code>"REQ-EVIDENCE-004"</code> | 1 | 有効 | 機能 | 品質portalは、検索と移動で維持されるAPIの所属階層を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
+| <code>"REQ-DESIGN-011"</code> | 1 | 有効 | 制約 | 選択参照の意味検査は、routerの順序・分岐・反復・例外・transactionの所有を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
+| <code>"REQ-ASBUILT-026"</code> | 1 | 有効 | 機能 | APIフローgeneratorは、実ASTの呼出し順・条件・例外・transactionを**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
+| <code>"REQ-DESIGN-012"</code> | 1 | 有効 | 制約 | SQL model generatorは、束縛引数のみの厳格Paramsと投影・NULLに一致するRowを**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
 
 ## REQ-ASBUILT-001: as-built生成の決定論性
 
@@ -2514,6 +2517,102 @@ API構成検査は、共有の所有者と依存方向および所有先付きSQ
 - 設計: <code>[".agents/skills/inspect-quality-gates/references/evidence-portal.md"]</code>
 - 実装: <code>[".agents/skills/inspect-quality-gates/scripts/evidence.py",".agents/skills/inspect-quality-gates/assets/evidence.js"]</code>
 - テスト: <code>["tests/test_evidence_portal.py","tests/browser/evidence-hierarchy.mjs"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DESIGN-011: routerの実フロー責務
+
+要件ID(JSON): <code>"REQ-DESIGN-011"</code>
+タイトル(JSON): <code>"routerの実フロー責務"</code>
+主体(JSON): <code>"選択参照の意味検査"</code>
+対象(JSON): <code>"routerの順序・分岐・反復・例外・transactionの所有"</code>
+選択参照の意味検査は、routerの順序・分岐・反復・例外・transactionの所有を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 配置一致だけでは全体フローの個別関数への逆流を防げない。
+根拠(JSON): <code>"配置一致だけでは全体フローの個別関数への逆流を防げない。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260913-api-structure"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-DESIGN-011-1"</code> 前提: 対象の参照構成profileが選択され、実装とOpenAPIがある。条件: 生成・構成適合検査を実行する。期待結果: 固定参照の責務と対象差を明示し、routerからDB/providerへの直接呼出し、step間のフロー委譲、step内transactionを拒否する。workerも同じ境界で検証する。。
+  - criterion(JSON Object): <code>{"given":"対象の参照構成profileが選択され、実装とOpenAPIがある","id":"AC-DESIGN-011-1","then":"固定参照の責務と対象差を明示し、routerからDB/providerへの直接呼出し、step間のフロー委譲、step内transactionを拒否する。workerも同じ境界で検証する。","when":"生成・構成適合検査を実行する"}</code>
+
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69"]</code>
+検証方法: 実source fixtureによる自動回帰と独立レビュー
+検証証跡: 正常例と欠落・不一致の負例を実行する
+検証(JSON Object): <code>{"evidence":"正常例と欠落・不一致の負例を実行する","method":"実source fixtureによる自動回帰と独立レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/api-semantics.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/api_flow.py"]</code>
+- テスト: <code>["tests/test_api_semantics.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ASBUILT-026: 実順序によるシーケンス生成
+
+要件ID(JSON): <code>"REQ-ASBUILT-026"</code>
+タイトル(JSON): <code>"実順序によるシーケンス生成"</code>
+主体(JSON): <code>"APIフローgenerator"</code>
+対象(JSON): <code>"実ASTの呼出し順・条件・例外・transaction"</code>
+APIフローgeneratorは、実ASTの呼出し順・条件・例外・transactionを**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 到達SQLのソート集合と定型の図は実際の処理順を表さない。
+根拠(JSON): <code>"到達SQLのソート集合と定型の図は実際の処理順を表さない。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260913-api-structure"</code>
+分類: scope=<code>"product"</code> / category=<code>"functional"</code>
+
+受入条件:
+- <code>"AC-ASBUILT-026-1"</code> 前提: 対象の参照構成profileが選択され、実装とOpenAPIがある。条件: 生成・構成適合検査を実行する。期待結果: 順序・条件・反復・例外の変更を図へ反映し、SQL矢印へ正本の日本語目的を使用する。未解決callを明示failし、存在しない処理を補完しない。。
+  - criterion(JSON Object): <code>{"given":"対象の参照構成profileが選択され、実装とOpenAPIがある","id":"AC-ASBUILT-026-1","then":"順序・条件・反復・例外の変更を図へ反映し、SQL矢印へ正本の日本語目的を使用する。未解決callを明示failし、存在しない処理を補完しない。","when":"生成・構成適合検査を実行する"}</code>
+
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69"]</code>
+検証方法: 実source fixtureによる自動回帰と独立レビュー
+検証証跡: 正常例と欠落・不一致の負例を実行する
+検証(JSON Object): <code>{"evidence":"正常例と欠落・不一致の負例を実行する","method":"実source fixtureによる自動回帰と独立レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/api-semantics.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/api_flow.py",".agents/skills/generate-implementation-design/scripts/designflow.py"]</code>
+- テスト: <code>["tests/test_api_semantics.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DESIGN-012: SQL専用の引数と投影型
+
+要件ID(JSON): <code>"REQ-DESIGN-012"</code>
+タイトル(JSON): <code>"SQL専用の引数と投影型"</code>
+主体(JSON): <code>"SQL model generator"</code>
+対象(JSON): <code>"束縛引数のみの厳格Paramsと投影・NULLに一致するRow"</code>
+SQL model generatorは、束縛引数のみの厳格Paramsと投影・NULLに一致するRowを**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: DDL行型の流用は余剰引数と投影・NULL差異を隠す。
+根拠(JSON): <code>"DDL行型の流用は余剰引数と投影・NULL差異を隠す。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260913-api-structure"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-DESIGN-012-1"</code> 前提: 対象の参照構成profileが選択され、実装とOpenAPIがある。条件: 生成・構成適合検査を実行する。期待結果: DDL/SQL ASTからquery専用型を生成し、余剰・型・NULL不一致を拒否する。SQL/DDL変更、生成物欠落と手編集を検出し、未対応構文を汎用型で補わない。。
+  - criterion(JSON Object): <code>{"given":"対象の参照構成profileが選択され、実装とOpenAPIがある","id":"AC-DESIGN-012-1","then":"DDL/SQL ASTからquery専用型を生成し、余剰・型・NULL不一致を拒否する。SQL/DDL変更、生成物欠落と手編集を検出し、未対応構文を汎用型で補わない。","when":"生成・構成適合検査を実行する"}</code>
+
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69"]</code>
+検証方法: 実source fixtureによる自動回帰と独立レビュー
+検証証跡: 正常例と欠落・不一致の負例を実行する
+検証(JSON Object): <code>{"evidence":"正常例と欠落・不一致の負例を実行する","method":"実source fixtureによる自動回帰と独立レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/api-semantics.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/sql_models.py"]</code>
+- テスト: <code>["tests/test_api_semantics.py"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

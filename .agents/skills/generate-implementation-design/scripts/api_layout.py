@@ -350,7 +350,7 @@ def inspect(root: Path, config: dict, document: dict) -> dict:
                     raise ValueError(f'empty callable responsibility: {symbol}')
             if module in {modules['router.py'], modules['functions.py'], modules['response_builders.py']}:
                 for node in scoped(index.defs[symbol]):
-                    if isinstance(node, ast.Call) and dotted(node.func).split('.')[-1] in {'execute', 'executemany', 'commit', 'rollback', 'cursor'}:
+                    if isinstance(node, ast.Call) and dotted(node.func).split('.')[-1] in ({'execute', 'executemany', 'cursor'} if module == modules['router.py'] else {'execute', 'executemany', 'commit', 'rollback', 'cursor'}):
                         raise ValueError(f'persistence outside owned query: {symbol}:{node.lineno}')
         sql_paths = sorted((root / package / 'sql').glob('*.sql'))
         bindings = item.get('queries', {})

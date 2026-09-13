@@ -441,6 +441,8 @@
       "manualBodySha256": "3713700206ec035a55e3f1cb438bc286155a5c0163e0977f3b20ca284403af77",
       "name": "generate-implementation-design",
       "obligationIds": [
+        "verify-reference-flow-semantics",
+        "generate-query-specific-models",
         "validate-selected-reference-profile",
         "generate-one-crud-model",
         "verify-operation-responsibility-connections",
@@ -463,7 +465,7 @@
         "exact-requirement-artifact-test-trace",
         "structured-unsupported-surface-or-bounded-fail-closed-diagnostic"
       ],
-      "payloadSha256": "77c1eaf046a3238cce6f2c87beb67bf4b794fe57b63cbdbc2d88dec1ebd7cd28",
+      "payloadSha256": "ea58a2678bbe08e5c47b75aa2fe33ce944d76ce8904212ce55ff37945c556452",
       "pillar": "design",
       "postcondition": "generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes",
       "precondition": "adoption or implementation change requires an as-built inventory and generator connection, including first-time setup",
@@ -484,6 +486,9 @@
         "ruleset": false
       },
       "requiredAssets": [
+        "references/api-semantics.md",
+        "scripts/api_flow.py",
+        "scripts/sql_models.py",
         "references/api-structure.md",
         "assets/api-structure-lazunex-v1.json",
         "scripts/api_structure.py",
@@ -500,6 +505,9 @@
         "scripts/qualityflow.py"
       ],
       "requirementIds": [
+        "REQ-DESIGN-011",
+        "REQ-ASBUILT-026",
+        "REQ-DESIGN-012",
         "REQ-ASBUILT-023",
         "REQ-ASBUILT-024",
         "REQ-ASBUILT-025",

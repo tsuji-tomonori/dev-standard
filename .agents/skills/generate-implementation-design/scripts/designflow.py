@@ -2764,6 +2764,25 @@ def render_api_documents(
     exported = {op["operationId"]: (method, path, op) for method, path, op in openapi_operations(document)}
     if not exported or {op["id"] for op in operations} != set(exported):
         raise DesignError("API document operation inventory differs from OpenAPI")
+    if model.get("semantic_contract"):
+        try:
+            import copy
+            model = copy.deepcopy(model)
+            operations = model["operations"]
+            contract = model["semantic_contract"]
+            if set(contract["operations"]) != set(exported):
+                raise ValueError("semantic operation inventory differs from OpenAPI")
+            layout = api_helper("api_layout")
+            flow = api_helper("api_flow")
+            index = layout.Index(root, model["python_root"])
+            if contract.get("sql_models"):
+                api_helper("sql_models").inspect(root, contract["sql_models"], layout.confined)
+            for operation in operations:
+                actual = flow.inspect(index, contract["operations"][operation["id"]])
+                operation["sequence"] = flow.mermaid(actual)
+                operation["flow_evidence"] = actual
+        except (ValueError, KeyError, SyntaxError) as exc:
+            raise DesignError(f"API semantic contract: {exc}") from exc
     files: dict[str, str] = {}
     for operation in operations:
         op_id = operation["id"]
