@@ -256,12 +256,27 @@ def render(model, document):
                 query_text += f'### {title}\n\n{block(value)}\n'
         files[paths['query']] = heading + navigation + (query_text or chapter('該当なし', cell(op['no_queries_reason'])))
         files[paths['sequence']] = heading + navigation + '```mermaid\n' + op['sequence'].rstrip() + '\n```\n'
+        if 'exception_paths' in op:
+            exceptions = table(op['exception_paths'], {'exception': '例外型', 'outcome': '捕捉・継続', 'status': 'HTTP status',
+                               'code': 'code', 'message': '安全な応答', 'log_id': 'ログID', 'level': 'レベル',
+                               'operator_action': '確認・復旧', 'source': '例外根拠', 'response_source': '応答根拠'})
+            files[paths['sequence']] += '\n例外応答と運用ログの対応\n\n' + exceptions
+            files[paths['messages']] += '\n例外応答との対応\n\n' + exceptions
         tests = chapter('0. Router層の暗黙処理', cell(op['router_implicit']))
         factors = ''.join(f'### {cell(f["id"])} {cell(f["name"])}\n\n' + table(f['elements'], {'id': '要素', 'description': '説明', 'expected': '期待結果'}) + '\n' for f in op['factors'])
         tests += chapter('1. 要因ごとの要素', factors)
         tests += chapter('2. 直積したテストケース一覧', '以下は対象実装で対応付けたケースです。未実装の直積全組合せを網羅したとは扱いません。\n\n' +
                          table(op['cases'], {'id': 'ケース', 'covers': '要因・要素', 'tests': '実在テスト'}))
-        tests += chapter('3. テスト詳細', ''.join(f'### {cell(c["id"])}\n\n' + block(c) + '\n' for c in op['cases']))
+        details = ''
+        for case in op['cases']:
+            details += f'### {cell(case["id"])}\n\n'
+            if 'verification_units' in case:
+                details += table(case['verification_units'],
+                    {'given': '前提（Given）', 'when': '操作（When）', 'then': '期待結果（Then）', 'test': 'テスト根拠'})
+                details += '\n期待ログ: ' + cell(case['expected_logs']) + '\n\n期待データ: ' + cell(case['expected_data']) + '\n\n'
+            else:
+                details += block(case) + '\n'
+        tests += chapter('3. テスト詳細', details)
         files[paths['unit-test']] = heading + navigation + tests
         prefix = f'{op["group"]}/{op["slug"]}'
         files[f'{prefix}/index.gen.md'] = heading + navigation

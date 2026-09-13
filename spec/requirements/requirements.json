@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 18,
+  "catalog_revision": 19,
   "product": "dev-standard",
   "requirements": [
     {
@@ -3921,6 +3921,139 @@
         ]
       },
       "type": "constraint",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-ASBUILT-027-1",
+          "then": "実sourceから例外型、捕捉、実status/code/message、log ID/level/運用対応を照合する。内部200/201の失敗結果とworker継続を維持し、未知の動的応答や未対応catchを拒否する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "functional",
+      "id": "REQ-ASBUILT-027",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "例外型・捕捉/再送出・HTTP応答・運用catalogの対応",
+      "rationale": "一般的な例外説明とアクセスログだけでは運用契約の欠落を見逃す。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/70"
+      ],
+      "status": "active",
+      "subject": "例外契約検査",
+      "superseded_by": "",
+      "title": "例外応答と運用ログの実対応",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-semantics.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_errors.py",
+          ".agents/skills/generate-implementation-design/scripts/designflow.py",
+          ".agents/skills/generate-implementation-design/scripts/api_structure.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_errors.py"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-DESIGN-013-1",
+          "then": "catalogの必須項目・例外型・context実型・field値型を照合し、raw例外・JWT/body・extra・未知の動的contextを拒否する。実行時に誤型と機密を含む例外の負例を検査し、静的証拠と本番privacy保証を区別する。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "nonfunctional",
+      "id": "REQ-DESIGN-013",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "実catalogと型付きcontextの接続",
+      "rationale": "型のないloggerと例外生文字列は応答との不一致や機密漏出を生む。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/70"
+      ],
+      "status": "active",
+      "subject": "運用ログ契約検査",
+      "superseded_by": "",
+      "title": "型付き運用ログのprivacy境界",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-semantics.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_errors.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_errors.py"
+        ]
+      },
+      "type": "constraint",
+      "verification": {
+        "evidence": "正常例と欠落・不一致の負例を実行する",
+        "method": "実source fixtureによる自動回帰と独立レビュー"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "対象の参照構成profileが選択され、実装とOpenAPIがある",
+          "id": "AC-ASBUILT-028-1",
+          "then": "実テストsourceのGiven/When/Thenを帳票へ表示し、説明の欠落・重複を拒否する。ASTは補助根拠に限定し、日本語の可読性と例外応答・復旧手順を生成HTMLのブラウザー検査へ含める。",
+          "when": "生成・構成適合検査を実行する"
+        }
+      ],
+      "action": "verify",
+      "category": "functional",
+      "id": "REQ-ASBUILT-028",
+      "last_changed_by": "CHG-20260913-api-structure",
+      "object": "実テストの前提・操作・期待結果",
+      "rationale": "fixture名やAST式の転記だけでは利用者が検証意図を理解できない。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "product",
+      "source_refs": [
+        "https://github.com/tsuji-tomonori/dev-standard/issues/70"
+      ],
+      "status": "active",
+      "subject": "テスト帳票generator",
+      "superseded_by": "",
+      "title": "自然言語のテスト検証単位",
+      "traces": {
+        "design": [
+          ".agents/skills/generate-implementation-design/references/api-semantics.md"
+        ],
+        "implementation": [
+          ".agents/skills/generate-implementation-design/scripts/api_errors.py",
+          ".agents/skills/generate-implementation-design/scripts/api_structure.py"
+        ],
+        "standards": [],
+        "tests": [
+          "tests/test_api_errors.py",
+          "tests/browser/evidence-hierarchy.mjs"
+        ]
+      },
+      "type": "functional",
       "verification": {
         "evidence": "正常例と欠落・不一致の負例を実行する",
         "method": "実source fixtureによる自動回帰と独立レビュー"

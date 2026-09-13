@@ -2,7 +2,7 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 18
+- カタログ版: 19
 - Product(JSON): <code>"dev-standard"</code>
 - 更新日(JSON): <code>"2026-09-13"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -86,6 +86,9 @@
 | <code>"REQ-DESIGN-011"</code> | 1 | 有効 | 制約 | 選択参照の意味検査は、routerの順序・分岐・反復・例外・transactionの所有を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
 | <code>"REQ-ASBUILT-026"</code> | 1 | 有効 | 機能 | APIフローgeneratorは、実ASTの呼出し順・条件・例外・transactionを**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
 | <code>"REQ-DESIGN-012"</code> | 1 | 有効 | 制約 | SQL model generatorは、束縛引数のみの厳格Paramsと投影・NULLに一致するRowを**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
+| <code>"REQ-ASBUILT-027"</code> | 1 | 有効 | 機能 | 例外契約検査は、例外型・捕捉/再送出・HTTP応答・運用catalogの対応を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
+| <code>"REQ-DESIGN-013"</code> | 1 | 有効 | 制約 | 運用ログ契約検査は、実catalogと型付きcontextの接続を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
+| <code>"REQ-ASBUILT-028"</code> | 1 | 有効 | 機能 | テスト帳票generatorは、実テストの前提・操作・期待結果を**検証する**（<code>"verify"</code>） | 実source fixtureによる自動回帰と独立レビュー |
 
 ## REQ-ASBUILT-001: as-built生成の決定論性
 
@@ -2613,6 +2616,102 @@ SQL model generatorは、束縛引数のみの厳格Paramsと投影・NULLに一
 - 設計: <code>[".agents/skills/generate-implementation-design/references/api-semantics.md"]</code>
 - 実装: <code>[".agents/skills/generate-implementation-design/scripts/sql_models.py"]</code>
 - テスト: <code>["tests/test_api_semantics.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ASBUILT-027: 例外応答と運用ログの実対応
+
+要件ID(JSON): <code>"REQ-ASBUILT-027"</code>
+タイトル(JSON): <code>"例外応答と運用ログの実対応"</code>
+主体(JSON): <code>"例外契約検査"</code>
+対象(JSON): <code>"例外型・捕捉/再送出・HTTP応答・運用catalogの対応"</code>
+例外契約検査は、例外型・捕捉/再送出・HTTP応答・運用catalogの対応を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 一般的な例外説明とアクセスログだけでは運用契約の欠落を見逃す。
+根拠(JSON): <code>"一般的な例外説明とアクセスログだけでは運用契約の欠落を見逃す。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260913-api-structure"</code>
+分類: scope=<code>"product"</code> / category=<code>"functional"</code>
+
+受入条件:
+- <code>"AC-ASBUILT-027-1"</code> 前提: 対象の参照構成profileが選択され、実装とOpenAPIがある。条件: 生成・構成適合検査を実行する。期待結果: 実sourceから例外型、捕捉、実status/code/message、log ID/level/運用対応を照合する。内部200/201の失敗結果とworker継続を維持し、未知の動的応答や未対応catchを拒否する。。
+  - criterion(JSON Object): <code>{"given":"対象の参照構成profileが選択され、実装とOpenAPIがある","id":"AC-ASBUILT-027-1","then":"実sourceから例外型、捕捉、実status/code/message、log ID/level/運用対応を照合する。内部200/201の失敗結果とworker継続を維持し、未知の動的応答や未対応catchを拒否する。","when":"生成・構成適合検査を実行する"}</code>
+
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70"]</code>
+検証方法: 実source fixtureによる自動回帰と独立レビュー
+検証証跡: 正常例と欠落・不一致の負例を実行する
+検証(JSON Object): <code>{"evidence":"正常例と欠落・不一致の負例を実行する","method":"実source fixtureによる自動回帰と独立レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/api-semantics.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/api_errors.py",".agents/skills/generate-implementation-design/scripts/designflow.py",".agents/skills/generate-implementation-design/scripts/api_structure.py"]</code>
+- テスト: <code>["tests/test_api_errors.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DESIGN-013: 型付き運用ログのprivacy境界
+
+要件ID(JSON): <code>"REQ-DESIGN-013"</code>
+タイトル(JSON): <code>"型付き運用ログのprivacy境界"</code>
+主体(JSON): <code>"運用ログ契約検査"</code>
+対象(JSON): <code>"実catalogと型付きcontextの接続"</code>
+運用ログ契約検査は、実catalogと型付きcontextの接続を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 型のないloggerと例外生文字列は応答との不一致や機密漏出を生む。
+根拠(JSON): <code>"型のないloggerと例外生文字列は応答との不一致や機密漏出を生む。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260913-api-structure"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-DESIGN-013-1"</code> 前提: 対象の参照構成profileが選択され、実装とOpenAPIがある。条件: 生成・構成適合検査を実行する。期待結果: catalogの必須項目・例外型・context実型・field値型を照合し、raw例外・JWT/body・extra・未知の動的contextを拒否する。実行時に誤型と機密を含む例外の負例を検査し、静的証拠と本番privacy保証を区別する。。
+  - criterion(JSON Object): <code>{"given":"対象の参照構成profileが選択され、実装とOpenAPIがある","id":"AC-DESIGN-013-1","then":"catalogの必須項目・例外型・context実型・field値型を照合し、raw例外・JWT/body・extra・未知の動的contextを拒否する。実行時に誤型と機密を含む例外の負例を検査し、静的証拠と本番privacy保証を区別する。","when":"生成・構成適合検査を実行する"}</code>
+
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70"]</code>
+検証方法: 実source fixtureによる自動回帰と独立レビュー
+検証証跡: 正常例と欠落・不一致の負例を実行する
+検証(JSON Object): <code>{"evidence":"正常例と欠落・不一致の負例を実行する","method":"実source fixtureによる自動回帰と独立レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/api-semantics.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/api_errors.py"]</code>
+- テスト: <code>["tests/test_api_errors.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ASBUILT-028: 自然言語のテスト検証単位
+
+要件ID(JSON): <code>"REQ-ASBUILT-028"</code>
+タイトル(JSON): <code>"自然言語のテスト検証単位"</code>
+主体(JSON): <code>"テスト帳票generator"</code>
+対象(JSON): <code>"実テストの前提・操作・期待結果"</code>
+テスト帳票generatorは、実テストの前提・操作・期待結果を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: fixture名やAST式の転記だけでは利用者が検証意図を理解できない。
+根拠(JSON): <code>"fixture名やAST式の転記だけでは利用者が検証意図を理解できない。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260913-api-structure"</code>
+分類: scope=<code>"product"</code> / category=<code>"functional"</code>
+
+受入条件:
+- <code>"AC-ASBUILT-028-1"</code> 前提: 対象の参照構成profileが選択され、実装とOpenAPIがある。条件: 生成・構成適合検査を実行する。期待結果: 実テストsourceのGiven/When/Thenを帳票へ表示し、説明の欠落・重複を拒否する。ASTは補助根拠に限定し、日本語の可読性と例外応答・復旧手順を生成HTMLのブラウザー検査へ含める。。
+  - criterion(JSON Object): <code>{"given":"対象の参照構成profileが選択され、実装とOpenAPIがある","id":"AC-ASBUILT-028-1","then":"実テストsourceのGiven/When/Thenを帳票へ表示し、説明の欠落・重複を拒否する。ASTは補助根拠に限定し、日本語の可読性と例外応答・復旧手順を生成HTMLのブラウザー検査へ含める。","when":"生成・構成適合検査を実行する"}</code>
+
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70"]</code>
+検証方法: 実source fixtureによる自動回帰と独立レビュー
+検証証跡: 正常例と欠落・不一致の負例を実行する
+検証(JSON Object): <code>{"evidence":"正常例と欠落・不一致の負例を実行する","method":"実source fixtureによる自動回帰と独立レビュー"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/api-semantics.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/scripts/api_errors.py",".agents/skills/generate-implementation-design/scripts/api_structure.py"]</code>
+- テスト: <code>["tests/test_api_errors.py","tests/browser/evidence-hierarchy.mjs"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

@@ -79,6 +79,17 @@ def check_structure(root, surface, document):
         if path.is_file() and path.name != "manifest.json":
             files[path.relative_to(base).as_posix()] = path.read_text(encoding="utf-8")
     structure = helper("api_structure")
+    if model.get("semantic_contract") or model.get("error_contract"):
+        exported = helper("api_layout").operation_ids(document)
+        model = helper("api_semantics").enrich(model, root, exported, helper)
+        expected = structure.render(model, document)
+        for operation in model["operations"]:
+            for name in structure.names(model, operation).values():
+                actual = files.get(name, "")
+                if actual.startswith("<!-- AUTO-GENERATED."):
+                    actual = actual.split("-->\n\n", 1)[-1]
+                if actual != expected[name]:
+                    raise ValueError(f"semantic document/output drift: {name}")
     structure.validate_structure(files, model, document)
     for operation in model["operations"]:
         expected = {kind: (base / name).relative_to(root).as_posix()

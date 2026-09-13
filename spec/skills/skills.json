@@ -441,6 +441,8 @@
       "manualBodySha256": "3713700206ec035a55e3f1cb438bc286155a5c0163e0977f3b20ca284403af77",
       "name": "generate-implementation-design",
       "obligationIds": [
+        "verify-exception-log-contract",
+        "require-natural-language-test-units",
         "verify-reference-flow-semantics",
         "generate-query-specific-models",
         "validate-selected-reference-profile",
@@ -465,7 +467,7 @@
         "exact-requirement-artifact-test-trace",
         "structured-unsupported-surface-or-bounded-fail-closed-diagnostic"
       ],
-      "payloadSha256": "ea58a2678bbe08e5c47b75aa2fe33ce944d76ce8904212ce55ff37945c556452",
+      "payloadSha256": "050f7d57395bc134984c12ed851188e32e2d728c45fb285a9c2ecd775a061021",
       "pillar": "design",
       "postcondition": "generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes",
       "precondition": "adoption or implementation change requires an as-built inventory and generator connection, including first-time setup",
@@ -486,6 +488,8 @@
         "ruleset": false
       },
       "requiredAssets": [
+        "scripts/api_semantics.py",
+        "scripts/api_errors.py",
         "references/api-semantics.md",
         "scripts/api_flow.py",
         "scripts/sql_models.py",
@@ -505,6 +509,9 @@
         "scripts/qualityflow.py"
       ],
       "requirementIds": [
+        "REQ-ASBUILT-027",
+        "REQ-DESIGN-013",
+        "REQ-ASBUILT-028",
         "REQ-DESIGN-011",
         "REQ-ASBUILT-026",
         "REQ-DESIGN-012",

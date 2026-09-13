@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from test_api_errors import enrich_documents
 from test_api_structure import ApiStructureTest, structure
 from test_evidence_portal import evidence, fixture
 
@@ -13,6 +14,7 @@ def build(destination: Path):
     test = ApiStructureTest()
     test.setUp()
     try:
+        enrich_documents(test)
         files = test.render()
         inputs = destination / 'input'
         inputs.mkdir(parents=True, exist_ok=True)

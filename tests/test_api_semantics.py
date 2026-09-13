@@ -32,6 +32,14 @@ class FlowTest(unittest.TestCase):
         updated = flow.mermaid(self.inspect())
         self.assertNotEqual(original, updated)
         self.assertNotIn('tx.commit', updated)
+    def test_shared_model_replaces_handwritten_sequence_without_mutating_input(self):
+        model = {'python_root': 'src', 'semantic_contract': {'operations': {'read': self.config}},
+                 'operations': [{'id': 'read', 'source': {'path': 'src/router.py', 'line': 3}, 'sequence': 'invented flow'}]}
+        enriched = designflow.api_helper('api_semantics').enrich(model, self.root, {'read'}, designflow.api_helper)
+        self.assertIn('tx.commit', enriched['operations'][0]['sequence'])
+        self.assertNotIn('invented', enriched['operations'][0]['sequence'])
+        self.assertEqual(model['operations'][0]['sequence'], 'invented flow')
+
     def test_flow_reversal_direct_port_and_unknown_fail(self):
         original = self.router.read_text()
         for text, message in [(original.replace('steps.load()', 'db.read()'), 'unresolved|direct'),

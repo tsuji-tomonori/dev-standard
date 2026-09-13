@@ -59,3 +59,5 @@ rootは`schema_version: 1`、`source_sha256`、`operations`を持つ。`source_s
 `check_design.py`はOpenAPIの全operationとmappingの集合一致、6種類すべての宣言と存在を検査する。既存のAPI契約はこのmappingを追加して移行する。rendererを使う場合の`check`は、adapterのモデル再構築結果との非破壊比較と`api-documents --check`を両方実行する入口にする。必要な帳票を1つ削除、API追加、SQL条件変更、ログ変更、テスト削除のfixtureで非0終了を確認する。単なるファイル存在検査を内容の完全性の証明として報告しない。
 
 参照構成への追従が指定された場合は[構成profile・階層・CRUD・責務検査](api-structure.md)を追加適用する。従来のフラット配置は未選択時の互換動作である。
+
+例外の捕捉・再送出・HTTP応答・運用ログと、テストソースの自然言語検証単位は[意味契約](api-semantics.md)に従い実接続を確認する。未知の例外を汎用説明で完了扱いにしない。

@@ -73,6 +73,18 @@ try {
     assert.equal(await page.getByRole('heading', { name: 'SQL種別', exact: true }).count(), 1);
     steps.push(await snap('Then', '別帳票の必須章へ辿れる'));
   });
+  await scenario('exceptions', '例外応答と自然言語の検証単位を読める', async (steps, snap) => {
+    await page.locator('aside a', { hasText: /^messages$/ }).click();
+    const selected = await page.locator('aside a', { hasText: /^messages$/ }).getAttribute('href');
+    await page.locator(selected).getByRole('link', { name: '設計HTMLを開く' }).click();
+    steps.push(await snap('When', '運用ログ帳票を開く'));
+    assert.ok(await page.getByText('モデル処理に失敗しました。', { exact: false }).count() > 0);
+    assert.ok(await page.getByText('依存先の状態を確認し再試行する。', { exact: false }).count() > 0);
+    await page.getByRole('link', { name: 'unit-test', exact: true }).first().click();
+    assert.ok(await page.getByText('商品Aが登録されている。', { exact: false }).count() > 0);
+    assert.ok(await page.getByText('前提（Given）', { exact: true }).count() > 0);
+    steps.push(await snap('Then', '安全な応答・復旧手順・日本語の前提操作期待結果を読める'));
+  });
   await scenario('crud', 'CRUD図とCSV取得', async (steps, snap) => {
     await page.locator('#search').fill('CRUD対応');
     const image = page.getByAltText('APIと保存先のCRUD対応図');
@@ -88,7 +100,12 @@ try {
     steps.push(await snap('Then', '実装由来の参照操作Rと同じCSVを取得できる'));
   });
   assert.deepEqual(errors, []);
-  const inputs = ['.agents/skills/generate-implementation-design/scripts/api_structure.py', '.agents/skills/generate-implementation-design/scripts/api_layout.py',
+  const inputs = ['.agents/skills/generate-implementation-design/scripts/api_structure.py',
+    '.agents/skills/generate-implementation-design/scripts/api_errors.py',
+    '.agents/skills/generate-implementation-design/scripts/api_semantics.py',
+    '.agents/skills/generate-implementation-design/scripts/api_flow.py',
+    '.agents/skills/generate-implementation-design/scripts/sql_models.py',
+    'tests/test_api_errors.py', '.agents/skills/generate-implementation-design/scripts/api_layout.py',
     '.agents/skills/generate-implementation-design/scripts/designflow.py', '.agents/skills/generate-implementation-design/assets/api-structure-lazunex-v1.json',
     '.agents/skills/inspect-quality-gates/scripts/evidence.py', '.agents/skills/inspect-quality-gates/assets/evidence.js', '.agents/skills/inspect-quality-gates/assets/evidence.css',
     'tests/build_evidence_hierarchy_fixture.py', 'tests/test_api_structure.py', 'tests/test_api_documents.py', 'tests/test_designflow.py', 'tests/test_evidence_portal.py',
