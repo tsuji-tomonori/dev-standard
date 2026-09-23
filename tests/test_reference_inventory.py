@@ -72,6 +72,25 @@ class ReferenceInventoryTest(unittest.TestCase):
         self.assertEqual(inventory.render(reordered), expected)
         self.assertEqual(CATALOG.with_suffix('.md').read_text(), expected)
 
+    def test_semantic_checks_map_to_their_own_obligations_and_explicit_gaps(self):
+        data = inventory.read_json(CATALOG)
+        files = {item['path']: set(item['requirement_ids']) for item in data['files']}
+        expected = {
+            'check_api_router_ignored_returns.py': {'REQ-DESIGN-018'},
+            'check_constant_bool_returns.py': {'REQ-DESIGN-019'},
+            'check_bool_router_conditions.py': {'REQ-DESIGN-018'},
+            'check_api_function_exception_policy.py': {'REQ-DESIGN-021'},
+        }
+        for name, identities in expected.items():
+            with self.subTest(name=name):
+                self.assertEqual(files['src/tools/' + name], identities)
+        self.assertLessEqual({'REQ-DESIGN-020', 'REQ-DESIGN-021', 'REQ-DESIGN-022'},
+                             files['src/tools/rulecheck/builtin_checks.py'])
+        gaps = {item['requirement_id'] for item in data['gaps']}
+        self.assertLessEqual({'REQ-DESIGN-009', 'REQ-DESIGN-015', 'REQ-DESIGN-018',
+                              'REQ-DESIGN-020', 'REQ-DESIGN-022', 'REQ-DESIGN-023',
+                              'REQ-DESIGN-024', 'REQ-DESIGN-025', 'REQ-ASBUILT-035'}, gaps)
+
     def test_language_independent_fixture_and_explicit_gap(self):
         inventory.validate_inventory(fixture(), ACTIVE)
 

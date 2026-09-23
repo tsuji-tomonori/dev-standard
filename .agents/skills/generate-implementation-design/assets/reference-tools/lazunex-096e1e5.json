@@ -59,6 +59,14 @@
     "REQ-DESIGN-015",
     "REQ-DESIGN-016",
     "REQ-DESIGN-017",
+    "REQ-DESIGN-018",
+    "REQ-DESIGN-019",
+    "REQ-DESIGN-020",
+    "REQ-DESIGN-021",
+    "REQ-DESIGN-022",
+    "REQ-DESIGN-023",
+    "REQ-DESIGN-024",
+    "REQ-DESIGN-025",
     "REQ-DOCS-001",
     "REQ-DOCS-002",
     "REQ-EVIDENCE-001",
@@ -137,14 +145,13 @@
     {
       "path": "src/tools/check_api_function_exception_policy.py",
       "blob_sha": "939adc54d590b47ec8c2ed4b622021d7bc89ea6d",
-      "purpose": "個別処理の例外型と資源未設定時の失敗方針検査",
+      "purpose": "個別業務処理のHTTP例外禁止と資源未設定時の例外方針検査",
       "classification": "static-checker",
       "requirement_ids": [
-        "REQ-DESIGN-011",
-        "REQ-ASBUILT-027"
+        "REQ-DESIGN-021"
       ],
       "adoption": "adapt",
-      "reason": "HTTP例外と業務例外の境界を導入先の例外型体系へ対応させる。",
+      "reason": "HTTPExceptionの直接送出禁止を通信層固有例外の境界へ適応する。固有資源名・例外型を固定せず、別名・同期/非同期の正負例を追加する。",
       "language_assumptions": [
         "Python AST"
       ],
@@ -239,7 +246,7 @@
       "purpose": "意味ある処理戻り値の破棄と副作用検査",
       "classification": "static-checker",
       "requirement_ids": [
-        "REQ-DESIGN-014"
+        "REQ-DESIGN-018"
       ],
       "adoption": "extend",
       "reason": "await式中心の検査を同期/非同期・別名呼出しの負例へ拡張する。",
@@ -384,10 +391,10 @@
       "purpose": "真偽戻り値の条件式利用検査",
       "classification": "static-checker",
       "requirement_ids": [
-        "REQ-DESIGN-011"
+        "REQ-DESIGN-018"
       ],
       "adoption": "adapt",
-      "reason": "条件分岐をendpoint層に置く義務を導入先の制御構造で検査する。",
+      "reason": "真偽値の条件利用を戻り値の実利用検査へ適応し、同期/非同期・別名呼出しの単独破棄を拒否する。",
       "language_assumptions": [
         "Python AST"
       ],
@@ -401,7 +408,7 @@
       "purpose": "定数boolしか返さない判定処理の検査",
       "classification": "static-checker",
       "requirement_ids": [
-        "REQ-DESIGN-014"
+        "REQ-DESIGN-019"
       ],
       "adoption": "adapt",
       "reason": "型付き処理の戻り値を導入先の同期/非同期構造で検査する。",
@@ -864,10 +871,13 @@
         "REQ-DESIGN-014",
         "REQ-DESIGN-015",
         "REQ-DESIGN-016",
-        "REQ-DESIGN-011"
+        "REQ-DESIGN-011",
+        "REQ-DESIGN-020",
+        "REQ-DESIGN-021",
+        "REQ-DESIGN-022"
       ],
       "adoption": "extend",
-      "reason": "checker集合を比較基盤とし、全sourceのendpoint許可symbol・実接続・別名/相対依存の負例を拡張する。",
+      "reason": "配置・依存・flowに加えrouter_error_handling、functions_exception_policy、functions_public_contractを適応する。包括的捕捉・業務層の通信例外・説明欠落を検査し、別名/相対参照・非公開処理も選択profileに沿って拡張する。固有path・命名・固定数量閾値は移植しない。",
       "language_assumptions": [
         "Python AST",
         "FastAPI",
@@ -1030,12 +1040,20 @@
       "reason": "API/data/infra/frontend全領域の接続判定はadapter manifestで補う。"
     },
     {
+      "requirement_id": "REQ-ASBUILT-024",
+      "reason": "CSV・表・図・抽出根拠の単一モデル一致と未解決呼出しの失敗扱いは参照実装から拡張が必要。"
+    },
+    {
       "requirement_id": "REQ-ASBUILT-029",
       "reason": "言語非依存manifest schemaと要件集合照合は共通check_designで新設する。"
     },
     {
       "requirement_id": "REQ-ASBUILT-034",
       "reason": "参照集合の欠落・余剰・blob SHA再照合はreference_inventoryで新設する。"
+    },
+    {
+      "requirement_id": "REQ-ASBUILT-035",
+      "reason": "generation_ioは渡された生成対象だけを比較・書込みする。旧対象残存の拒否と所有出力を毎回空にする二重生成は共通check_designで補う。"
     },
     {
       "requirement_id": "REQ-DESIGN-001",
@@ -1048,6 +1066,42 @@
     {
       "requirement_id": "REQ-DESIGN-006",
       "reason": "導入先generatorの非破壊checkと共通二重生成を接続する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-009",
+      "reason": "参照の配置・metadata検査だけではendpointの応答builder実呼出し、未参照contract/sample、空責務、旧集約への単純委譲を網羅しない。導入先で実call/参照を照合する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-014",
+      "reason": "全endpoint sourceの非endpoint補助関数・入れ子・class/method・lambda・未登録endpointを一律拒否する検査は参照52filesでは確認できない。利用者指定profileの追加checkerとして導入先で実装する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-015",
+      "reason": "参照のimport文字列中心の検査を拡張し、別名・相対importを実所有先へ解決してAPI間直接依存を拒否する。解決不能を依存なしとしない。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-018",
+      "reason": "await中心の参照checkerを同期/非同期の実体・戻り契約・別名呼出しへ拡張する。値なしの検証専用処理は実体照合を維持する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-020",
+      "reason": "参照のgeneric例外名検査を、型指定なし・別名・集合に隠れた包括的捕捉まで拡張する。対象言語の例外階層と宣言済み集合を解決する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-022",
+      "reason": "参照の公開関数docstring検査を選択profileの全対象処理へ適応する。空説明を拒否し、日本語既定と実責務への対応は導入先で確認する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-023",
+      "reason": "個別処理からendpoint/worker共有workflowへの逆依存を一律に拒否する能力は参照toolsだけでは完結しない。別名/相対参照・同期/非同期の正負例と共有workflowの設計追跡を導入先で追加する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-024",
+      "reason": "固定参照の構成粒度・責務・例外/logger/query型/帳票の意味と適用外を導入先要件・版付きprofileへ記録する能力は、全件tool棚卸しに加えて導入先で接続する。"
+    },
+    {
+      "requirement_id": "REQ-DESIGN-025",
+      "reason": "配置変更前後のHTTP・transaction・外部呼出し前後の認可・実保存先回帰・既存E2E・証跡閲覧は導入先の同一revisionの実行テストへ接続する。参照repositoryの検査を導入先成功の証拠としない。"
     },
     {
       "requirement_id": "REQ-DOCS-001",
@@ -1064,14 +1118,6 @@
     {
       "requirement_id": "REQ-EVIDENCE-004",
       "reason": "階層検索・現在位置・CSVのブラウザE2Eは共通portalで追加する。"
-    },
-    {
-      "requirement_id": "REQ-DESIGN-014",
-      "reason": "全endpoint sourceの非endpoint補助関数・入れ子・class/method・lambda・未登録endpointを一律拒否する検査は参照52filesでは確認できない。利用者指定profileの追加checkerとして導入先で実装する。"
-    },
-    {
-      "requirement_id": "REQ-ASBUILT-024",
-      "reason": "CSV・表・図・抽出根拠の単一モデル一致と未解決呼出しの失敗扱いは参照実装から拡張が必要。"
     }
   ]
 }

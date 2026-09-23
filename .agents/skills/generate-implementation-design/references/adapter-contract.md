@@ -9,11 +9,17 @@
 | 所有と責務 | 1 operation 1所有単位、入力/応答型・応答組立・契約・sample・queryの実接続。空・未参照・旧集約処理への単純委譲を拒否。共有責務に所有者を付け、API間の別名/相対参照も含む直接依存を拒否 |
 | endpointの全体フロー | 処理順・分岐・例外・transactionをendpoint層が所有する。個別処理への全体フローの逆流とendpointからの直接DB/provider I/Oを拒否。worker共有flowも所有者・実呼出しを検証 |
 | endpoint専用profile | 許可symbol集合と全sourceの走査を定義。同期/非同期の補助処理、class/method、入れ子、lambda、未登録endpointを負例に含める。登録済み入口だけ走査して完了しない |
+| 戻り値（REQ-DESIGN-018/019） | 同期/非同期の意味ある戻り値の単独破棄と、同じ定数真偽値だけを返す判定処理を拒否。別名呼出しも実体照合し、検証専用の値なし処理と結果を使う処理を正例にする |
+| 例外境界（REQ-DESIGN-020/021） | 全例外・基底例外・別名/集合に隠れた包括的捕捉と、業務層からの通信層固有例外の送出を拒否。宣言済みの具体的例外と境界層の応答変換を同期/非同期で検証 |
+| 処理説明（REQ-DESIGN-022） | 選択profileの処理単位に自然言語の責務説明を要求し、docstringや文書コメントの欠落・空白を拒否。説明言語は既存要件に従う |
+| 逆依存（REQ-DESIGN-023） | 個別処理からendpoint/共有workflowへの逆依存を別名/相対参照も含め拒否。正当なworker共有workflowの所有者・実呼出しを設計へ追跡 |
 | query型 | SQL採用時は所有先を含む一意IDと束縛引数だけの厳格型、SELECT投影とNULLに一致した結果型を生成。余剰引数・投影削減・型/NULL不一致・欠落/手編集/SQL変更の負例を検査。SQL非採用へSQL層を要求しない |
 | 制御フロー設計 | 実call graphの順序・条件・反復・例外・transactionをsequenceへ投影。呼出し順/条件の変更が図を変えることを検査。定型図で未解析箇所を補完しない |
 | 例外とログ | 例外型→catch/rethrow→HTTP status/body→ログID/level/message/運用対応を対応させる。内部catchによる正常statusの失敗結果も区別。型不整合、機密を含む依存例外、応答未解決の負例を検査。生例外・本文・tokenをログへ漏らさない |
 | test設計 | 自然言語GWTを実collectorの検証単位へ対応。fixture名/式の転載は説明の代わりにしない。説明欠落/重複・未実在test・要因欠落を拒否。実行結果とassert妥当性を生成driftから区別 |
 | その他のsurface | dataの属性/制約/関係/CRUD、infraの構築artifact・権限/参照/flow、frontendの画面/状態/依存を実装から生成する。未接続を省略理由にしない |
+
+参照追従時は`REQ-DESIGN-024`に従い、固定SHAと実装・生成器・規則・関連testを比較し、責務の粒度と適用範囲・理由付き適用外を導入先の要件とprofileへ記録する。例外/logger/query型/帳票の意味まで比較対象にし、参照固有のframeworkや閾値を無条件移植しない。責務移行では`REQ-DESIGN-025`に従い、HTTP契約・commit/rollback・外部呼出し前後の認可などの既存挙動を同一revisionの関係する実行テストで検証する。
 
 正本の詳細は`spec/requirements/requirements.qnt`（`REQ-ASBUILT-*`、`REQ-DESIGN-*`、`REQ-DOCS-*`、`REQ-EVIDENCE-*`）。言語・frameworkの具体的な実装は導入先が所有する。
 

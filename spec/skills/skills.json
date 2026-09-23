@@ -438,7 +438,7 @@
         "explicit-artifact-test-trace"
       ],
       "interfaceSha256": "30a20300052931dbf3dba4fbfd8ccc03a7e115512fcd42adbfa4468bb833f6c3",
-      "manualBodySha256": "f8857b672c5f93f0ac75c79e5601888a2ccea983f888cf2061c4ae79b326988f",
+      "manualBodySha256": "8c47f8faa941ba3d599a9ca42a153a897dbd2dc7009f3da642d8b68c67c57007",
       "name": "generate-implementation-design",
       "obligationIds": [
         "inventory-required-design-surfaces",
@@ -462,7 +462,7 @@
         "execution-test-results",
         "unverified-surfaces"
       ],
-      "payloadSha256": "4ff360e19b0c4b42e4fbd8ea3d1f63258b3613a48c8c5f27e8e7b0fe3330913c",
+      "payloadSha256": "232304e4adf2c24a7dc54f3c283bcb9700f2d76acb4ca0cf0e70730e4ee7de31",
       "pillar": "design",
       "postcondition": "language-neutral contracts validate adapter mapping, output ownership, deterministic generation, drift, profiles and reference inventory; semantic analysis is implemented and checked by target-owned commands",
       "precondition": "adoption or implementation change requires target-owned adapters and an inventory of every applicable implementation surface",
@@ -486,6 +486,7 @@
       "requiredAssets": [
         "assets/adapter-manifest.schema.json",
         "assets/api-document-profile-v1.json",
+        "assets/api-document-profile.schema.json",
         "assets/reference-inventory.schema.json",
         "assets/reference-tools/lazunex-096e1e5.json",
         "assets/reference-tools/lazunex-096e1e5.md",
@@ -546,7 +547,15 @@
         "REQ-DESIGN-014",
         "REQ-DESIGN-015",
         "REQ-DESIGN-016",
-        "REQ-DESIGN-017"
+        "REQ-DESIGN-017",
+        "REQ-DESIGN-018",
+        "REQ-DESIGN-019",
+        "REQ-DESIGN-020",
+        "REQ-DESIGN-021",
+        "REQ-DESIGN-022",
+        "REQ-DESIGN-023",
+        "REQ-DESIGN-024",
+        "REQ-DESIGN-025"
       ],
       "role": "as-built-design",
       "sideEffect": "repository-write"
