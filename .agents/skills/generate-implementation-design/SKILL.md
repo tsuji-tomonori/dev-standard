@@ -28,7 +28,7 @@ APIがある場合は[6帳票・構成profile](references/api-documents.md)を�
 
 ## 検証
 
-`python <host-skill-path>/scripts/check_design.py --root .`を既存の検証入口から実行する。manifestと要件集合、出力所有、構成profile、索引・リンク、CRUDの同一モデル、棚卸しを確認し、作業用コピーで`--check`と2回の生成を実行し、byte一致を確認する。既存出力とのbyte不一致と未対応surfaceは失敗とする。`applicable_requirement_ids`に対する未知ID・inactive ID・未mapping・余剰mappingを拒否し、`unsupported_surfaces`が残る場合はfail-closedにする。詳細な負例は導入先adapterにも接続する。
+`python <host-skill-path>/scripts/check_design.py --root .`を既存の検証入口から実行する。manifestと要件集合、出力所有、構成profile、索引・リンク、CRUDの同一モデル、棚卸しを確認し、作業用コピーで非破壊の`--check`を行い、所有出力を毎回空にして2回クリーン生成し、生成集合とbyte一致を確認する。既存出力とのbyte不一致と未対応surfaceは失敗とする。`applicable_requirement_ids`に対する未知ID・inactive ID・未mapping・余剰mappingを拒否し、`unsupported_surfaces`が残る場合はfail-closedにする。詳細な負例は導入先adapterにも接続する。
 
 構成適合・設計drift・実行テスト・未検証範囲を分けて報告する。commandは信頼済みのrepository codeであり、作業用コピーはprocess sandboxではない。CI workflow、required check、branch protection、merge ruleは作成も要求もしない。
 

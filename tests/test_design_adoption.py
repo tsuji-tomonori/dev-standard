@@ -4,7 +4,6 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -287,6 +286,23 @@ Given 項目が存在する。When 一覧を取得する。Then 項目が返る�
         (self.root / 'docs/generated/index.md').unlink()
         self.reject('stale or missing outputs')
 
+    def test_retired_generator_target_is_rejected_even_when_manifest_keeps_it(self):
+        self.templates['docs/generated/retired.md'] = '# 旧生成物\n'
+        self.generate_baseline()
+        del self.templates['docs/generated/retired.md']
+        self.write('templates.json', serialized(self.templates))
+        before = {p: (self.root / p).read_bytes() for p in self.cap['outputs']}
+        result = self.reject('stale or missing outputs')
+        self.assertIn('fixture adapter: check', result.stdout)
+        self.assertIn('retired.md', result.stderr)
+        self.assertEqual(before, {p: (self.root / p).read_bytes() for p in self.cap['outputs']})
+
+    def test_both_generations_start_with_empty_owned_outputs(self):
+        self.write('mode.txt', 'requires-clean-output')
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.count('fixture adapter: generate'), 2)
+
     def test_broken_file_and_fragment_links_are_rejected(self):
         for target in ('absent.md', 'index.md#absent-section'):
             with self.subTest(target=target):
@@ -340,7 +356,6 @@ Given 項目が存在する。When 一覧を取得する。Then 項目が返る�
 
     def test_second_generation_byte_difference_is_rejected(self):
         self.write('mode.txt', 'second-nondeterministic')
-        os.utime(self.root / 'docs/generated/index.md', (1, 1))
         before = (self.root / 'docs/generated/index.md').read_bytes()
         result = self.reject('nondeterministic generation')
         self.assertEqual(result.stdout.count('fixture adapter: generate'), 2)

@@ -366,6 +366,13 @@ def check(root: Path, contract: str) -> dict:
             raise ValueError('outputs changed during copy')
         baseline_files = repository_snapshot(work)
         for phase in ('check', 'generate', 'generate'):
+            if phase == 'generate':
+                # 毎回空から生成し、生成対象から外れた旧fileの残存を防ぐ。
+                for cap in data['capabilities'].values():
+                    if cap['status'] == 'required':
+                        directory = confined(work, cap['output_root'])
+                        shutil.rmtree(directory)
+                        directory.mkdir(parents=True)
             for cap in data['capabilities'].values():
                 if cap['status'] != 'required':
                     continue

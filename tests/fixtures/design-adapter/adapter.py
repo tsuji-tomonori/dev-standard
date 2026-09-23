@@ -1,6 +1,5 @@
 """テスト専用adapter。対象repositoryの生成・checkを別processで実行する。"""
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -16,14 +15,16 @@ if checking and mode == 'rewrite-check':
 if checking:
     sys.exit(any(not Path(path).is_file() or Path(path).read_text() != text for path, text in expected.items()))
 if mode == 'second-nondeterministic':
-    target = Path('docs/generated/index.md')
-    if target.stat().st_mtime == 2:
+    # 検査用一時directory内で、生成物とは独立した外部状態を模擬する。
+    counter = Path('../generation-count')
+    if counter.exists():
         expected['docs/generated/index.md'] += '\nsecond generation differs\n'
+    counter.write_text('1')
+if mode == 'requires-clean-output' and any(Path('docs/generated').iterdir()):
+    sys.exit('generation requires an empty output root')
 for path, text in expected.items():
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     Path(path).write_text(text)
-if mode == 'second-nondeterministic':
-    os.utime('docs/generated/index.md', (2, 2))
 if mode == 'unowned-write':
     Path('unowned.txt').write_text('outside declared ownership')
 if mode == 'delete-output':

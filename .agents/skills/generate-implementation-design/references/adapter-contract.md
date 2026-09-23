@@ -87,6 +87,6 @@ python <host-skill-path>/scripts/reference_inventory.py <inventory.json> --requi
 
 ## 実行境界と検査順
 
-検査器はmanifest・出力の現在状態を先に検査する。その後repositoryの作業用コピーで`--check`、generate、generateを実行し、毎回既存出力とのbyte一致・所有集合・管理外tree不変性を確認する。元repositoryへ生成し直して古い設計を隠さない。commandはコピーのcwdを基準に相対入出力を使い、cacheも含むすべての書込みを所有出力へ限定する。
+検査器はmanifest・出力の現在状態を先に検査する。その後repositoryの作業用コピーで非破壊の`--check`を実行する。所有出力rootを毎回空にしてクリーン生成を2回行い、それぞれ既存出力とのbyte一致・生成集合・管理外tree不変性を確認する。元repositoryへ生成し直して古い設計を隠さない。commandはコピーのcwdを基準に相対入出力を使い、cacheも含むすべての書込みを所有出力へ限定する。
 
 作業用コピーはOS sandboxではなく、信頼済みcommandの絶対path・network等の外部作用は隔離しない。依存runtimeと実行環境は導入先が管理する。未宣言source・動的な実行時意味の完全性は共通検査だけでは証明できず、導入先のsource集合照合と負例試験を併用する。既存branch/CI/merge/PR templateは変更しない。
