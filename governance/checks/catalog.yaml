@@ -1,5 +1,5 @@
 schema_version: 1
-catalog_version: 3
+catalog_version: 4
 authority: governance/checks/catalog.yaml
 initial_import: dev-standard_checklist_restructured.xlsx の 01_必要チェック
 item_count: 42
@@ -210,7 +210,7 @@ items:
   area: Database
   trigger: SQL変更時
   check: SQLを構文解析する
-  acceptance: 生SQLをASTで解析し、対象テーブルと操作を確認する。Fail条件「未解析SQL」に該当しない
+  acceptance: 導入先adapterが保存先アクセスを解析し、参照先・変更先・操作を確認する。Fail条件「未解析SQL」に該当しない
   required_evidence: parserのローカルまたは対象repository既存check結果
   enforcement: blocking-when-selected
   execution_point: SQL変更後
@@ -270,7 +270,7 @@ items:
   area: As-built API
   trigger: 公開API変更時
   check: 実装・仕様・sampleの三点整合を検査する
-  acceptance: handler登録、設計metadata、error分岐、error sampleを静的解析する。Fail条件「登録漏れ、metadata欠落、sample不足」に該当しない
+  acceptance: 導入先adapterがendpoint登録、設計metadata、例外分岐、error sampleを静的解析する。Fail条件「登録漏れ、metadata欠落、sample不足」に該当しない
   required_evidence: 選択したstatic check結果
   enforcement: blocking-when-selected
   execution_point: API・OpenAPI・sample変更後
@@ -280,7 +280,7 @@ items:
   area: As-built Sample
   trigger: 公開API変更時
   check: sampleとtestの整合を検査する
-  acceptance: 設計掲載sampleが対応testから参照され、branch-awareで再代入時に失効するprovenanceにより実responseとのassertに使われることをASTで確認する。明示adapterはauthority IDと認識済みruntime client呼出を持つ場合だけ信頼する。Fail条件「未testまたはfabricated responseのsample」に該当しない
+  acceptance: 導入先adapterが、設計掲載sampleと対応testの接続、実際の応答に対する検証、分岐や再代入で失われる根拠を確認する。架空応答を根拠にせず、接続先と根拠を明示する。Fail条件「未testまたはfabricated responseのsample」に該当しない
   required_evidence: static check / test code / 選択した実行結果
   enforcement: blocking-when-selected
   execution_point: API sample変更後
@@ -290,7 +290,7 @@ items:
   area: As-built E2E
   trigger: SQLまたはE2E変更時
   check: CRUDとE2E状態検証の整合を検査する
-  acceptance: C/U/D APIの正常系E2EがDBまたは外部状態を検証し、異常系が状態不変または理由付き許可変化を検証する。Fail条件「状態assert欠落」に該当しない
+  acceptance: 導入先adapterがC/U/D APIの正常系E2Eによる保存先または外部状態の検証と、異常系による状態不変または理由付き許可変化の検証を確認する。Fail条件「状態assert欠落」に該当しない
   required_evidence: static check / E2E test / 選択した実行結果
   enforcement: blocking-when-selected
   execution_point: SQL・CRUD・E2E変更後
@@ -310,7 +310,7 @@ items:
   area: As-built Test Structure
   trigger: as-built規約適用時
   check: AAA・GWTとtest記述規約を評価する
-  acceptance: unit testのAAA、E2EのGWT、docstring、1 case 1関数をASTで評価する。Fail条件「生成可能なtest構造を満たさない」に該当しない
+  acceptance: 導入先adapterがunit testのAAA、E2EのGWT、自然言語の検証単位、1 case 1個別処理単位を評価する。Fail条件「生成可能なtest構造を満たさない」に該当しない
   required_evidence: static check / test code
   enforcement: advisory
   execution_point: as-built規約の導入・拡張後
@@ -320,7 +320,7 @@ items:
   area: As-built Implementation
   trigger: as-built規約適用時
   check: 解析可能な実装規約を評価する
-  acceptance: endpoint layout、layer分離、生SQL、運用log、generator tool構造を評価する。Fail条件「静的解析でflowまたは一次情報を追跡できない」に該当しない
+  acceptance: 導入先adapterがendpointの所有、責務の実接続、保存先アクセスの所有、運用log、生成tool構造を評価する。Fail条件「静的解析でflowまたは一次情報を追跡できない」に該当しない
   required_evidence: static check / design review
   enforcement: advisory
   execution_point: as-built規約の導入・拡張後
@@ -330,7 +330,7 @@ items:
   area: As-built Thresholds
   trigger: 定量閾値変更時
   check: 規約・設定・委譲先の定量値を一致させる
-  acceptance: 標準Rule ID、machine-readable設定、linter delegationの閾値を比較する。Fail条件「値または委譲mappingの不一致」に該当しない
+  acceptance: 要件IDに対応する閾値と導入先adapterの機械可読設定・実接続先の閾値を比較する。Fail条件「値または委譲mappingの不一致」に該当しない
   required_evidence: standard / config / static check
   enforcement: blocking-when-selected
   execution_point: 閾値またはlinter設定変更後
@@ -340,7 +340,7 @@ items:
   area: As-built Evidence
   trigger: as-built規約適用時
   check: 品質結果を簡潔なsummaryへ集約する
-  acceptance: as-built executorは個別結果をstdoutへ返し、選択したtest、static analysis、規約check、coverageのローカルsummary集約をinspect-quality-gatesへ一本化する。対象repositoryが既に所有するreport viewがある場合だけそこへ提示できる。新しいCIや外部report基盤を要求せず、repositoryへ生ログ本文を保存しない
+  acceptance: 導入先adapterは構成適合・設計drift・実行テスト・未検証範囲を分けて個別結果を返し、選択したtest、static analysis、規約check、coverageのローカルsummary集約をinspect-quality-gatesへ一本化する。対象repositoryが既に所有するreport viewがある場合だけそこへ提示できる。新しいCIや外部report基盤を要求せず、repositoryへ生ログ本文を保存しない
   required_evidence: local summary / target-owned existing report view / artifact policy
   enforcement: advisory
   execution_point: as-built規約の導入・拡張後
@@ -350,7 +350,7 @@ items:
   area: As-built Contract
   trigger: as-built標準・generator・配布contract変更時
   check: as-built標準の正本・配布契約・traceを整合させる
-  acceptance: 要件正本、標準文書、check catalog、generator contract、配布定義、Rule・check・test traceの変更が相互整合し、第二正本を作らない。Fail条件「標準contract間の不一致または回帰test欠落」に該当しない
+  acceptance: 要件正本、標準文書、check catalog、generator contract、配布定義、要件・check・test traceの変更が相互整合し、第二正本を作らない。Fail条件「標準contract間の不一致または回帰test欠落」に該当しない
   required_evidence: standard / catalog / contract test / distribution test
   enforcement: blocking-when-selected
   execution_point: as-built標準・catalog・generator・配布contract変更後
@@ -429,8 +429,8 @@ items:
   timing: periodic
   area: Suppressions
   trigger: 月次
-  check: Rule ID抑制一覧を監査する
-  acceptance: ignore[Rule ID]のpath、理由、重複、失効、孤児を確認する。Fail条件「理由なし抑制または恒久化した不要抑制」に該当しない
+  check: 導入先adapterの抑制一覧を監査する
+  acceptance: 導入先adapterが出す抑制一覧の対象要件ID、path、理由、重複、失効、孤児を確認する。Fail条件「理由なし抑制または恒久化した不要抑制」に該当しない
   required_evidence: suppression inventory / audit report
   enforcement: periodic
   execution_point: 月次

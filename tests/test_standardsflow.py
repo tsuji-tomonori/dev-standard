@@ -65,7 +65,7 @@ class StandardsflowTest(unittest.TestCase):
         standard = ROOT / "docs" / "standards" / "AS-BUILT-DESIGN.md"
         self.assertEqual(by_id["DEVSTD-AS-BUILT"]["artifact_sha256"], hashlib.sha256(standard.read_bytes()).hexdigest())
 
-    def test_aws_cdk_as_built_standard_is_registered_and_mapped(self) -> None:
+    def test_legacy_cdk_standard_links_to_language_independent_migration(self) -> None:
         registry = standardsflow.load(ROOT / "governance/standards/registry.json")
         by_id = {source["id"]: source for source in registry["sources"]}
         standard = ROOT / "docs" / "standards" / "AWS-CDK-AS-BUILT-DESIGN.md"
@@ -83,18 +83,15 @@ class StandardsflowTest(unittest.TestCase):
             / "as-built-design-check-selection.md"
         ).read_text(encoding="utf-8")
         for required in [
-            "docs/design/generated/cdk/",
-            "synthesized template",
-            "CDK-DO-020",
-            "CDK-DO-033",
-            "CDK-DO-047",
-            "IMP-009",
-            "FAST-006",
-            "FAST-012",
-            "AUD-008",
+            "AS-BUILT-DESIGN.md",
+            "spec/requirements/requirements.qnt",
+            ".dev-standard/design.json",
+            "互換alias",
+            "adapter",
         ]:
             self.assertIn(required, content)
-        for required in ["AWS-CDK-AS-BUILT-DESIGN.md", "IMP-009", "FAST-012", "FAST-023"]:
+        self.assertNotIn("CDK-DO-", content)
+        for required in ["adapter-contract.md", "api-documents.md", "未検証範囲"]:
             self.assertIn(required, selection)
 
     def test_expired_source_blocks_current_best_practice_claim(self) -> None:

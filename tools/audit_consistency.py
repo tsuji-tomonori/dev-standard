@@ -51,17 +51,6 @@ AUTO_REQUIREMENTS = {
     "REQ-QUALITY-001",
     "REQ-WORKBOOK-001",
 }
-QUALITY_COMMANDS = {
-    "api": "FAST-016",
-    "samples": "FAST-017",
-    "crud-e2e": "FAST-018",
-    "coverage": "FAST-019",
-    "test-structure": "FAST-020",
-    "implementation": "FAST-021",
-    "thresholds": "FAST-022",
-    "suppressions": "AUD-008",
-}
-
 
 def finding(check_id: str, message: str, path: str) -> dict[str, str]:
     """Create a stable audit finding."""
@@ -238,19 +227,45 @@ def audit_portability(findings: list[dict[str, str]]) -> None:
 
 
 def audit_generated_design(findings: list[dict[str, str]]) -> None:
-    """Require safe output ownership and executable quality contracts."""
+    """Check portable adapter contracts without inspecting language-specific executors."""
 
-    designflow = (ROOT / ".agents/skills/generate-implementation-design/scripts/designflow.py").read_text(encoding="utf-8")
-    for token in ["validate_output_path", "validate_managed_bundle", "docs\" / \"design\" / \"generated", "ERROR_CASES.gen.json", "DB_DESIGN.gen.md", "E2E_SCENARIOS.gen.md", "TEST_EVIDENCE.gen.md", "TOOLS.gen.md"]:
-        if token not in designflow:
-            findings.append(finding("AUD-DESIGN-GENERATOR", f"design generator contract missing: {token}", ".agents/skills/generate-implementation-design/scripts/designflow.py"))
-    qualityflow = (ROOT / ".agents/skills/generate-implementation-design/scripts/qualityflow.py").read_text(encoding="utf-8")
-    tests = (ROOT / "tests/test_qualityflow.py").read_text(encoding="utf-8")
-    for command, check_id in QUALITY_COMMANDS.items():
-        if f'"{command}"' not in qualityflow or check_id not in qualityflow:
-            findings.append(finding("AUD-QUALITY-EXECUTOR", f"quality executor missing: {check_id}/{command}", ".agents/skills/generate-implementation-design/scripts/qualityflow.py"))
-        if check_id not in tests and command not in tests and command.replace("-", "_") not in tests:
-            findings.append(finding("AUD-QUALITY-FIXTURE", f"quality failure fixture missing: {check_id}/{command}", "tests/test_qualityflow.py"))
+    skill = ".agents/skills/generate-implementation-design"
+    required_files = [
+        f"{skill}/scripts/check_design.py",
+        f"{skill}/scripts/reference_inventory.py",
+        f"{skill}/assets/adapter-manifest.schema.json",
+        f"{skill}/assets/reference-inventory.schema.json",
+        f"{skill}/assets/api-document-profile-v1.json",
+        "tests/test_design_adoption.py",
+        "tests/test_reference_inventory.py",
+    ]
+    for name in required_files:
+        path = ROOT / name
+        if not path.is_file() or path.is_symlink():
+            findings.append(finding("AUD-DESIGN-CONTRACT", "portable adapter contract asset is missing or not a regular file", name))
+            continue
+        if path.suffix != ".json":
+            continue
+        try:
+            document = load_json(path)
+            if name.endswith(".schema.json"):
+                required = document.get("required", [])
+                properties = document.get("properties", {})
+                if (not document.get("$schema") or document.get("type") != "object"
+                        or not isinstance(required, list) or not required
+                        or not isinstance(properties, dict)
+                        or not all(isinstance(key, str) and key in properties for key in required)):
+                    raise ValueError("schema requires a dialect, object type, and declared required properties")
+            elif not document:
+                raise ValueError("document profile is empty")
+        except (OSError, ValueError, TypeError) as error:
+            findings.append(finding("AUD-DESIGN-SCHEMA", str(error), name))
+    manifest_path = "distribution/manifest.json"
+    manifest = load_json(ROOT / manifest_path)
+    for profile in ("default", "chat-first"):
+        entries = manifest.get("profiles", {}).get(profile, [])
+        if not any(entry.get("source") == skill for entry in entries):
+            findings.append(finding("AUD-DESIGN-DISTRIBUTION", f"{profile} does not distribute the complete adapter contract Skill", manifest_path))
     check_catalog = (ROOT / "governance/checks/catalog.yaml").read_text(encoding="utf-8")
     match = re.search(r"(?ms)^- id: FAST-023\n(?P<body>.*?)(?=^- id: |\Z)", check_catalog)
     if match is None or "inspect-quality-gates" not in match.group("body"):

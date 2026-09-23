@@ -252,10 +252,10 @@
         "authority-boundary"
       ],
       "interfaceSha256": "fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d",
-      "manualBodySha256": "3ac02001a4d305e0a288973f22260a0df7e2f0ecab48f7509385c3f4bcd67fd5",
+      "manualBodySha256": "b70c1fe79488360e2435c6a5cc8c5e8f419c8708c868b7498c0995153f9b621b",
       "name": "chat-first-development",
       "obligationIds": [
-        "verify-operation-sql-and-typed-query-generation",
+        "verify-target-owned-data-access-and-type-generation",
         "verify-japanese-explanations-at-generator-source",
         "classify-durable-requirement-impact",
         "complete-as-built-adoption-and-generation",
@@ -429,46 +429,49 @@
       "failureState": "fail-on-missing-or-drift",
       "guardrail": true,
       "inputs": [
-        "implementation",
-        "generator-contract",
-        "pinned-isolated-python-runtime",
+        "implementation-surfaces",
+        "target-owned-adapter-manifest",
+        "versioned-document-profile",
+        "reference-tools-inventory",
         "canonical-requirements-json",
         "explicit-applicable-requirement-ids",
-        "explicit-artifact-trace",
-        "test-source"
+        "explicit-artifact-test-trace"
       ],
-      "interfaceSha256": "2d53132a9471f1f73d6578654fd68cb4141b62c915e7d1ace402385808ef9f42",
-      "manualBodySha256": "2959ea23c39f6ecad7ba12edf956ed22c60fcc05d7e12c4608c4fd881be35d37",
+      "interfaceSha256": "30a20300052931dbf3dba4fbfd8ccc03a7e115512fcd42adbfa4468bb833f6c3",
+      "manualBodySha256": "f8857b672c5f93f0ac75c79e5601888a2ccea983f888cf2061c4ae79b326988f",
       "name": "generate-implementation-design",
       "obligationIds": [
-        "verify-operation-sql-and-typed-query-generation",
-        "verify-japanese-explanations-at-generator-source",
         "inventory-required-design-surfaces",
-        "connect-missing-generators",
-        "require-human-readable-markdown",
+        "connect-target-owned-language-adapters",
+        "compare-all-pinned-reference-tools",
+        "verify-reference-inventory-completeness",
+        "validate-adapter-manifest-and-output-ownership",
         "generate-six-api-documents-and-cover-test-factors",
-        "reject-missing-design",
-        "run-with-pinned-isolated-runtime",
+        "verify-versioned-document-profile-and-crud-model",
         "generate-deterministic-as-built",
         "verify-isolation-and-drift",
         "match-explicit-applicable-active-set-exactly",
-        "reject-unknown-inactive-missing-or-excess-trace"
+        "reject-unknown-inactive-missing-or-excess-trace",
+        "fail-on-unsupported-required-surface",
+        "separate-contract-drift-test-and-unverified-results"
       ],
       "outputs": [
         "generated-design",
-        "drift-result",
-        "exact-requirement-artifact-test-trace",
-        "structured-unsupported-surface-or-bounded-fail-closed-diagnostic"
+        "contract-conformance",
+        "design-drift",
+        "execution-test-results",
+        "unverified-surfaces"
       ],
-      "payloadSha256": "fbfcc331fd8f8c2a436ee37e0ab5d9f851a3df57fd500b1098257575d97e2b30",
+      "payloadSha256": "4ff360e19b0c4b42e4fbd8ea3d1f63258b3613a48c8c5f27e8e7b0fe3330913c",
       "pillar": "design",
-      "postcondition": "generated design is deterministic and isolated, matches implementation, and maps exactly the declared applicable active requirement set through operations or resources to existing test nodes",
-      "precondition": "adoption or implementation change requires an as-built inventory and generator connection, including first-time setup",
+      "postcondition": "language-neutral contracts validate adapter mapping, output ownership, deterministic generation, drift, profiles and reference inventory; semantic analysis is implemented and checked by target-owned commands",
+      "precondition": "adoption or implementation change requires target-owned adapters and an inventory of every applicable implementation surface",
       "prohibitions": [
-        "do not modify the target repository virtual environment",
+        "do not ship language-specific parsers or generators",
         "do not edit generated design directly",
         "do not infer requirement satisfaction from implementation",
-        "do not mark missing required design complete or impose CI policy"
+        "do not mark missing or unsupported required design complete",
+        "do not impose CI branch or merge policy"
       ],
       "repositoryBlocking": true,
       "repositoryPolicy": {
@@ -481,16 +484,16 @@
         "ruleset": false
       },
       "requiredAssets": [
-        "references/api-documents.md",
-        "references/sql-and-language.md",
-        "assets/as-built-thresholds.json",
+        "assets/adapter-manifest.schema.json",
+        "assets/api-document-profile-v1.json",
+        "assets/reference-inventory.schema.json",
+        "assets/reference-tools/lazunex-096e1e5.json",
+        "assets/reference-tools/lazunex-096e1e5.md",
+        "references/adapter-contract.md",
         "references/adoption.md",
+        "references/api-documents.md",
         "scripts/check_design.py",
-        "references/cdk-contract.md",
-        "references/fastapi-contract.md",
-        "requirements.txt",
-        "scripts/designflow.py",
-        "scripts/qualityflow.py"
+        "scripts/reference_inventory.py"
       ],
       "requirementIds": [
         "REQ-ASBUILT-001",
@@ -520,7 +523,30 @@
         "REQ-DESIGN-005",
         "REQ-DESIGN-006",
         "REQ-DESIGN-007",
-        "REQ-DOCS-002"
+        "REQ-DOCS-002",
+        "REQ-ASBUILT-023",
+        "REQ-ASBUILT-024",
+        "REQ-ASBUILT-025",
+        "REQ-ASBUILT-026",
+        "REQ-ASBUILT-027",
+        "REQ-ASBUILT-028",
+        "REQ-ASBUILT-029",
+        "REQ-ASBUILT-030",
+        "REQ-ASBUILT-031",
+        "REQ-ASBUILT-032",
+        "REQ-ASBUILT-033",
+        "REQ-ASBUILT-034",
+        "REQ-ASBUILT-035",
+        "REQ-DESIGN-008",
+        "REQ-DESIGN-009",
+        "REQ-DESIGN-010",
+        "REQ-DESIGN-011",
+        "REQ-DESIGN-012",
+        "REQ-DESIGN-013",
+        "REQ-DESIGN-014",
+        "REQ-DESIGN-015",
+        "REQ-DESIGN-016",
+        "REQ-DESIGN-017"
       ],
       "role": "as-built-design",
       "sideEffect": "repository-write"
@@ -666,18 +692,20 @@
         "external-authority-if-applicable"
       ],
       "interfaceSha256": "073b20f8a4c4f30a38fac5fb4ae66a56ee7e97caf4cb96beeea189b26e391fd1",
-      "manualBodySha256": "cc3902f4f3cf14ecbb8dd0e2be3834db6507c49035f4e76a2d917fe2c1924be4",
+      "manualBodySha256": "e13c51917344ff6e7377cd057ce596a39ca378a2df4d2d3c5e7f39eee1bd4cc5",
       "name": "inspect-quality-gates",
       "obligationIds": [
         "connect-framework-evidence-adapters-at-bootstrap",
         "preserve-failed-missing-and-unexecuted-results",
-        "verify-operation-sql-and-typed-query-generation",
+        "verify-target-owned-data-access-and-type-generation",
         "verify-japanese-explanations-at-generator-source",
         "select-minimum-relevant-checks",
         "validate-registry-command-and-declared-effect-when-runner-is-used",
         "execute-selected-checks",
         "report-process-effect-isolation-uncertainty-for-every-command",
-        "bound-verdict-to-observed-evidence"
+        "bound-verdict-to-observed-evidence",
+        "preserve-evidence-hierarchy-and-csv-download",
+        "separate-contract-drift-test-and-unverified-results"
       ],
       "outputs": [
         "public-evidence-site",
@@ -687,7 +715,7 @@
         "residual-risk",
         "repair-handoff"
       ],
-      "payloadSha256": "b546736d14fc99429f59718a206dce877683cb88098d01cd90da9a2b5283a5e0",
+      "payloadSha256": "954cbf94fdae0777149bcd3edace149baabf8db16fe18979d2d0933bc304633f",
       "pillar": "checks",
       "postcondition": "selected blockers pass or a bounded failure is reported with declared command effects and a process-effect-not-isolated residual for every command, without claiming unselected coverage or isolation",
       "precondition": "changed artifacts, applicable risks, target-owned checks, declared command effects, and any required external authority are known",
@@ -724,7 +752,9 @@
         "REQ-ASBUILT-019",
         "REQ-QUALITY-002",
         "REQ-DESIGN-007",
-        "REQ-DOCS-002"
+        "REQ-DOCS-002",
+        "REQ-EVIDENCE-004",
+        "REQ-ASBUILT-031"
       ],
       "role": "selected-checks",
       "sideEffect": "target-command-effects"
@@ -1138,7 +1168,7 @@
         "requirement-handoff",
         "generated-sources-doc-when-requested"
       ],
-      "payloadSha256": "84be2d7241beb24847ea3d0c784601805c30eb6c7e90cf00ea70fd764f5a2e89",
+      "payloadSha256": "45d0516465a1a5c2c012c43053d222de1437b5ba939a8ac63ee8fdf0b191798c",
       "pillar": "auxiliary",
       "postcondition": "only applicable controls have evidence-bounded findings without overriding canonical authority, and any requested generated source document stays repository-confined",
       "precondition": "a relevant standard is selected for the change",
