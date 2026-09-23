@@ -49,17 +49,7 @@
     "module_destination": "tools/<module>.py",
     "allowed_modules": [
       "safe_io"
-    ],
-    "dependency_runtime": {
-      "schema_version": 1,
-      "activation": "selected-skill-has-requirements.txt",
-      "runtime_root": ".dev-standard/python/runtime",
-      "runner": {
-        "source": "tools/portable_python.py",
-        "destination": "tools/portable_python.py",
-        "local_imports": "derive-from-_load_pinned_tool-calls"
-      }
-    }
+    ]
   },
   "portable_runtime": {
     "schema_version": 2,
@@ -257,10 +247,6 @@
       {
         "source": "docs/standards/AS-BUILT-DESIGN.md",
         "destination": "docs/standards/AS-BUILT-DESIGN.md"
-      },
-      {
-        "source": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md",
-        "destination": "docs/standards/AWS-CDK-AS-BUILT-DESIGN.md"
       }
     ],
     "standards-verification": [

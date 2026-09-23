@@ -40,9 +40,6 @@ class PortableDistributionMatrixTest(unittest.TestCase):
             root = Path(directory)
             for profile in sorted(manifest["profiles"]):
                 selected = install_reference._selected_skills(manifest, [profile])
-                has_python_runtime = (
-                    install_reference._dependency_runtime(manifest, selected) is not None
-                )
                 for host in ["codex", "claude-code"]:
                     target = root / f"{profile}-{host}"
                     target.mkdir()
@@ -83,7 +80,7 @@ class PortableDistributionMatrixTest(unittest.TestCase):
                     self.assertEqual(receipt["quint_version"] is not None, has_runtime)
                     self.assertEqual(
                         (target / "tools/portable_python.py").exists(),
-                        has_python_runtime,
+                        False,
                     )
                     for protected in [
                         ".github/workflows",

@@ -35,7 +35,7 @@ class GenerateHostAssetsTest(unittest.TestCase):
             self.assertNotIn("required checkを必須", snippet)
             self.assertTrue((output / "manifest.json").is_file())
             self.assertTrue((output / "tools/quintflow.py").is_file())
-            self.assertTrue((output / "tools/portable_python.py").is_file())
+            self.assertFalse((output / "tools/portable_python.py").exists())
             self.assertTrue((output / "tools/safe_io.py").is_file())
             self.assertTrue((output / ".dev-standard/quint/source/package-lock.json").is_file())
             self.assertTrue((output / "tools/spec_mapping.py").is_file())

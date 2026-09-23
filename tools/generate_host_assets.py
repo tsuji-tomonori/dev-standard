@@ -155,31 +155,23 @@ def populate(host: str, destination: Path, config: dict[str, Any]) -> None:
     distribution = load_json(MANIFEST_PATH)
     runtime = distribution.get("portable_runtime")
     formal = distribution.get("formal_skill_contracts")
-    support = distribution.get("skill_runner_support")
-    dependency_runtime = (
-        support.get("dependency_runtime") if isinstance(support, dict) else None
-    )
     if (
         not isinstance(runtime, dict)
         or not isinstance(runtime.get("mappings"), list)
         or not isinstance(formal, dict)
         or not isinstance(formal.get("mappings"), list)
-        or not isinstance(dependency_runtime, dict)
     ):
         raise HostAssetError("portable runtime mappings are invalid")
     runner = runtime.get("runner")
-    dependency_runner = dependency_runtime.get("runner")
-    if not isinstance(runner, dict) or not isinstance(dependency_runner, dict):
+    if not isinstance(runner, dict):
         raise HostAssetError("portable runner mapping is invalid")
     mappings = [
         *formal["mappings"],
         *runtime["mappings"],
         runner,
-        dependency_runner,
     ]
     for current_runner, required_modules in [
         (runner, {"safe_io", "spec_mapping", "render_requirements", "render_skills"}),
-        (dependency_runner, {"safe_io"}),
     ]:
         runner_source = ROOT / str(current_runner.get("source"))
         try:
@@ -218,7 +210,7 @@ def populate(host: str, destination: Path, config: dict[str, Any]) -> None:
         unique_mappings[destination_text] = mapping
     for mapping in unique_mappings.values():
         allowed = {"source", "destination"}
-        if mapping is runner or mapping is dependency_runner:
+        if mapping is runner:
             allowed.add("local_imports")
         if not isinstance(mapping, dict) or set(mapping) != allowed:
             raise HostAssetError("portable runtime mapping is invalid")

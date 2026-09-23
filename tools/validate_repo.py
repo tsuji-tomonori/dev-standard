@@ -270,40 +270,6 @@ def _manifest_mappings(
     for entry in _runner_local_mappings(runtime, root, failures):
         yield "portable runtime derived import", entry
 
-    support = manifest.get("skill_runner_support")
-    if support is None:
-        return
-    dependency = support.get("dependency_runtime") if isinstance(support, dict) else None
-    if not isinstance(dependency, dict):
-        fail("Skill dependency runtime is invalid", failures)
-        return
-    runtime_root = _relative_manifest_path(
-        dependency.get("runtime_root"),
-        "Skill dependency runtime root",
-        failures,
-    )
-    runner = dependency.get("runner")
-    if runtime_root is None or not isinstance(runner, dict):
-        fail("Skill dependency runtime runner is invalid", failures)
-        return
-    effective_runner = dict(runner)
-    destination = _relative_manifest_path(
-        runner.get("destination"),
-        "Skill dependency runtime runner destination",
-        failures,
-    )
-    if destination is None:
-        return
-    effective_runner["destination"] = (runtime_root / destination).as_posix()
-    yield "Skill dependency runtime runner", effective_runner
-    for entry in _runner_local_mappings(
-        dependency,
-        root,
-        failures,
-        destination_root=runtime_root,
-    ):
-        yield "Skill dependency runtime derived import", entry
-
 
 def _expanded_mapping_leaves(
     root: Path,

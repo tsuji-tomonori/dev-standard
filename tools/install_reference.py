@@ -148,36 +148,6 @@ def _runner_local_modules(
     return sorted(names)
 
 
-def _dependency_runtime(
-    manifest: dict[str, object], selected_skills: list[str]
-) -> dict[str, object] | None:
-    """Return the isolated Python runtime contract when a selected Skill needs it."""
-
-    support = manifest.get("skill_runner_support")
-    runtime = support.get("dependency_runtime") if isinstance(support, dict) else None
-    if (
-        not isinstance(runtime, dict)
-        or set(runtime) != {"schema_version", "activation", "runtime_root", "runner"}
-        or runtime.get("schema_version") != 1
-        or runtime.get("activation") != "selected-skill-has-requirements.txt"
-        or runtime.get("runtime_root") != ".dev-standard/python/runtime"
-    ):
-        raise InstallError("Skill dependency runtime contract is invalid")
-    active = False
-    for name in selected_skills:
-        relative = f".agents/skills/{name}/requirements.txt"
-        path = ROOT / relative
-        try:
-            info = os.lstat(path)
-        except FileNotFoundError:
-            continue
-        if stat.S_ISLNK(info.st_mode) or not stat.S_ISREG(info.st_mode):
-            raise InstallError(f"Skill requirements are unsafe: {relative}")
-        safe_io.read_bytes_nofollow(path, root=ROOT)
-        active = True
-    return runtime if active else None
-
-
 def _skill_runner_modules(
     manifest: dict[str, object], selected_skills: list[str]
 ) -> list[str]:
@@ -413,41 +383,6 @@ def plan(target: Path, profiles: list[str], manifest: dict[str, object], *, host
             if previous and previous.source != item.source:
                 raise InstallError(f"multiple sources target: {item.destination}")
             items[item.destination] = item
-
-    dependency_runtime = _dependency_runtime(manifest, selected_skills)
-    if dependency_runtime is not None:
-        runner = dependency_runtime.get("runner")
-        if (
-            not isinstance(runner, dict)
-            or set(runner) != {"source", "destination", "local_imports"}
-            or runner.get("local_imports")
-            != "derive-from-_load_pinned_tool-calls"
-        ):
-            raise InstallError("Skill dependency runner mapping is invalid")
-        runner_source = str(runner["source"])
-        mappings = [(runner_source, str(runner["destination"]))]
-        mappings.extend(
-            (f"tools/{name}.py", f"tools/{name}.py")
-            for name in _runner_local_modules(
-                ROOT / runner_source, required=frozenset({"safe_io"})
-            )
-        )
-        for source_text, destination_text in mappings:
-            if _protected(destination_text, manifest):
-                raise InstallError(
-                    f"Skill dependency runtime destination is protected: {destination_text}"
-                )
-            for item in expand_mapping(
-                target,
-                source_text,
-                destination_text,
-                host=host,
-                host_source=host_source,
-            ):
-                previous = items.get(item.destination)
-                if previous and previous.source != item.source:
-                    raise InstallError(f"multiple sources target: {item.destination}")
-                items[item.destination] = item
 
     runtime = manifest.get("portable_runtime")
     if not isinstance(runtime, dict) or runtime.get("schema_version") != 2:
@@ -734,8 +669,6 @@ def _validate_existing_metadata(
                 ".dev-standard/quint/source/package-lock.json",
             }
         )
-    if _dependency_runtime(manifest, old_skills) is not None:
-        required_paths.update({"tools/portable_python.py", "tools/safe_io.py"})
     missing_records = required_paths - seen
     if missing_records:
         raise InstallError(
