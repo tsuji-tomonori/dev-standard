@@ -10,6 +10,7 @@ import json
 import os
 import re
 import shutil
+import string
 import subprocess
 import tempfile
 from pathlib import Path
@@ -145,11 +146,44 @@ def local_links(root: Path, source: str) -> set[str]:
     return resolved
 
 
+def validate_profile(profile: dict) -> None:
+    """構成grammarの型と版の同一性を検査し、空値による検査回避を拒否する。"""
+    validate_schema(profile, read_json(ASSETS / 'api-document-profile.schema.json'), 'profile')
+
+    def fields(template: str, expected: list[str]) -> None:
+        parts = list(string.Formatter().parse(template))
+        actual = [field for _, field, _, _ in parts if field is not None]
+        if sorted(actual) != sorted(expected) or any(spec or conversion for _, _, spec, conversion in parts):
+            raise ValueError('profile: invalid template fields')
+
+    fields(profile['layout'], ['group', 'api', 'kind'])
+    confined(Path('/profile'), profile['layout'].format(group='group', api='api', kind='kind'))
+    fields(profile['non_applicable'], ['reason'])
+    for grammar in profile['headings'].values():
+        repeats = set()
+        for section in grammar:
+            if 'repeat' not in section:
+                continue
+            if section['repeat'] in repeats:
+                raise ValueError('profile: duplicate repeat key')
+            repeats.add(section['repeat'])
+            if any(child['level'] <= section['level'] for child in section['children']):
+                raise ValueError('profile: child level must be deeper than repeat level')
+            if section['min'] == 0 and 'empty' not in section:
+                raise ValueError('profile: optional repeat requires not-applicable expression')
+            if 'empty' in section:
+                fields(section['empty'], ['reason'])
+    canonical = read_json(ASSETS / 'api-document-profile-v1.json')
+    if (profile['id'], profile['version']) == (canonical['id'], canonical['version']):
+        for key in ('reference', 'layout', 'headings', 'non_applicable'):
+            if profile[key] != canonical[key]:
+                raise ValueError(f'profile: changed published version contract: {key}')
+
+
 def check_api(root: Path, api: dict, outputs: set[str]) -> None:
     """operation集合・6帳票の章順・階層とindexを検査する。"""
     profile = read_json(confined(root, api['profile']))
-    if profile.get('schema_version') != 1 or not isinstance(profile.get('version'), str) or not profile['version'] or set(profile.get('headings', {})) != API_DOCUMENTS:
-        raise ValueError('invalid versioned document profile')
+    validate_profile(profile)
     actual_operations = read_json(confined(root, api['operation_inventory']))
     identities = [x['id'] for x in api['operations']]
     strings(actual_operations, 'operation inventory')

@@ -251,6 +251,60 @@ Given 項目が存在する。When 一覧を取得する。Then 項目が返る�
                 self.generate_baseline()
                 self.reject('chapter missing/order/duplicate')
 
+    def test_profile_grammar_types_and_section_constraints_are_validated(self):
+        self.api_fixture()
+        profile = json.loads((self.root / 'profile.json').read_text())
+        mutations = [
+            lambda p: p.update(schema_version=True),
+            lambda p: p.update(headings={key: '' for key in p['headings']}),
+            lambda p: p['headings'].update(interface=[]),
+            lambda p: p['headings'].update(sequence=''),
+            lambda p: p['headings']['interface'][0].update(level=True),
+            lambda p: p['headings']['interface'][0].update(level=7),
+            lambda p: p['headings']['interface'][0].update(title=' '),
+            lambda p: p['headings']['interface'][0].update(repeat='mixed'),
+            lambda p: p['headings']['query'][0].update(min=-1),
+            lambda p: p['headings']['query'][0].update(min=True),
+            lambda p: p['headings']['query'][0].update(children=''),
+            lambda p: p['headings']['query'][0]['children'][0].update(level=2),
+            lambda p: p['headings']['query'][0].pop('empty'),
+            lambda p: p['headings']['query'][0].update(empty='該当なし'),
+            lambda p: p.update(non_applicable='{unknown}'),
+            lambda p: p.update(non_applicable='{reason!r}'),
+            lambda p: p.update(layout='{group}/{api}/{unknown}.md'),
+        ]
+        for index, mutate in enumerate(mutations):
+            with self.subTest(index=index):
+                changed = copy.deepcopy(profile)
+                mutate(changed)
+                self.write('profile.json', serialized(changed))
+                self.reject('profile')
+
+    def test_published_profile_cannot_remove_or_change_chapters_under_same_version(self):
+        self.api_fixture()
+        profile = json.loads((self.root / 'profile.json').read_text())
+        for kind in ('detail-design', 'interface', 'messages', 'query', 'unit-test'):
+            for change in ('remove', 'rename'):
+                with self.subTest(kind=kind, change=change):
+                    changed = copy.deepcopy(profile)
+                    section = changed['headings'][kind][0]
+                    if change == 'remove':
+                        changed['headings'][kind].pop(0)
+                    elif 'title' in section:
+                        section['title'] = '改変した章'
+                    else:
+                        section['children'].pop()
+                    self.write('profile.json', serialized(changed))
+                    self.reject('profile')
+
+    def test_explicit_custom_profile_version_is_allowed(self):
+        self.api_fixture()
+        profile = json.loads((self.root / 'profile.json').read_text())
+        profile.update(id='target-profile', version='2.0.0')
+        self.write('profile.json', serialized(profile))
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_interface_response_and_sample_declarations_cannot_be_empty(self):
         self.api_fixture()
         for key in ('responses', 'samples'):

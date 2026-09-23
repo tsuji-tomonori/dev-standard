@@ -41,6 +41,16 @@ def read_json(path: Path):
 def validate_schema(value, schema: dict, label: str = "$", document: dict | None = None) -> None:
     """配布schemaで使用するJSON Schemaの部分集合を外部依存なしで検査する。"""
     document = schema if document is None else document
+    if "oneOf" in schema:
+        matches = 0
+        for alternative in schema["oneOf"]:
+            try:
+                validate_schema(value, alternative, label, document)
+                matches += 1
+            except ValueError:
+                pass
+        if matches != 1:
+            raise ValueError(f"{label}: expected exactly one schema alternative")
     if "$ref" in schema:
         target = document
         for part in schema["$ref"].removeprefix("#/").split("/"):

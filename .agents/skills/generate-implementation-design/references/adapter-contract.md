@@ -47,7 +47,7 @@
 
 `api`は次を持つ。
 
-- `profile`: version付き構成profileのpath。
+- `profile`: [profile schema](../assets/api-document-profile.schema.json)に適合するversion付き構成profileのpath。固定節と繰返し節、level、最小件数、理由を含む非該当表現を検証する。配布済みID・版の章構成は変更できず、独自構成は別IDまたは版を明示する。
 - `operation_inventory`: adapterが実登録集合から生成した重複のないoperation IDのJSON配列のpath。
 - `root`、`index`: 所有するAPI帳票rootと`<root>/index.md`。
 - `group_indexes`: group名→`<root>/<group>/index.md`。
