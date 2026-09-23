@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import html
 import importlib.util
 import io
 import json
@@ -104,25 +105,174 @@ def headings(content: str) -> list[tuple[int, str]]:
     return result
 
 
+def markdown_targets(text: str, source: str) -> list[str]:
+    """生成文書のリンク構文を走査し、未対応の明示リンクを位置付きで拒否する。"""
+    def fail(position: int) -> None:
+        line = text.count('\n', 0, position) + 1
+        raise ValueError(f'unsupported or malformed Markdown link: {source}:{line}')
+
+    def decode(value: str) -> str:
+        return html.unescape(re.sub(r'\\([!"#$%&\'()*+,\-./:;<=>?@\[\]\\^_`{|}~])', r'\1', value))
+
+    def label(value: str) -> str:
+        return ' '.join(value.split()).casefold()
+
+    def skip_space(position: int) -> int:
+        while position < len(text) and text[position].isspace():
+            position += 1
+        return position
+
+    def code_end(position: int) -> int:
+        run = re.match(r'`+', text[position:])[0]
+        end = re.search(r'(?<!`)' + re.escape(run) + r'(?!`)', text[position + len(run):])
+        return position + len(run) + (end.end() if end else 0)
+
+    def quoted(position: int, closing: str) -> int:
+        start = position
+        position += 1
+        while position < len(text):
+            if text[position] == '\\' and position + 1 < len(text):
+                position += 2
+            elif text[position] == closing:
+                return position + 1
+            elif text[position] == '\n' and closing == '>':
+                fail(start)
+            else:
+                position += 1
+        fail(start)
+
+    def destination(position: int, inline: bool) -> tuple[str, int]:
+        start = position
+        position = skip_space(position)
+        if position < len(text) and text[position] == '<':
+            end = quoted(position, '>')
+            target = text[position + 1:end - 1]
+            position = end
+        else:
+            begin = position
+            depth = 0
+            while position < len(text):
+                char = text[position]
+                if char == '\\' and position + 1 < len(text):
+                    position += 2
+                    continue
+                if char.isspace() or (char == ')' and depth == 0):
+                    break
+                if char in '<>':
+                    fail(start)
+                if char == '(':
+                    depth += 1
+                elif char == ')':
+                    depth -= 1
+                position += 1
+            if depth:
+                fail(start)
+            target = text[begin:position]
+        spaced = skip_space(position)
+        if spaced > position and spaced < len(text) and text[spaced] in '\"\'(':
+            position = quoted(spaced, ')' if text[spaced] == '(' else text[spaced])
+        if inline:
+            position = skip_space(position)
+            if position >= len(text) or text[position] != ')':
+                fail(start)
+            position += 1
+        else:
+            while position < len(text) and text[position] in ' \t':
+                position += 1
+            if position < len(text) and text[position] != '\n':
+                fail(start)
+        return decode(target), position
+
+    # fenceは同種かつ同じ長さ以上の閉じmarkerまで除外する。
+    lines = text.splitlines(keepends=True)
+    fence = None
+    for index, line in enumerate(lines):
+        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line.rstrip('\n'))
+        if fence is not None:
+            if marker and marker[1][0] == fence[0] and len(marker[1]) >= len(fence) and not marker[2].strip():
+                fence = None
+            lines[index] = '\n' if line.endswith('\n') else ''
+        elif marker:
+            fence = marker[1]
+            lines[index] = '\n' if line.endswith('\n') else ''
+    text = ''.join(lines)
+    definitions = {}
+    spans = []
+    for match in re.finditer(r'(?m)^ {0,3}\[((?:\\.|[^\]\\\n])+)\]:', text):
+        if any(start <= match.start() < end for start, end in spans):
+            continue
+        target, end = destination(match.end(), inline=False)
+        definitions.setdefault(label(match[1]), target)
+        spans.append((match.start(), end))
+    # 定義を同じ長さの空白へ置換し、参照本文だけを走査する。
+    for start, end in reversed(spans):
+        text = text[:start] + re.sub(r'[^\n]', ' ', text[start:end]) + text[end:]
+    targets = []
+    position = 0
+    while position < len(text):
+        char = text[position]
+        if char == '\\':
+            position += 2
+            continue
+        if char == '`':
+            position = code_end(position)
+            continue
+        if char == '<' and re.match(r'<(?:a|img)\b', text[position:], re.I):
+            fail(position)
+        if char != '[':
+            position += 1
+            continue
+        start = position
+        depth = 1
+        position += 1
+        while position < len(text) and depth:
+            if text[position] == '`':
+                position = code_end(position)
+                continue
+            if text[position] == '\\':
+                position += 2
+                continue
+            if text[position] == '[':
+                depth += 1
+            elif text[position] == ']':
+                depth -= 1
+            position += 1
+        if depth:
+            if '](' in text[start:] or '][' in text[start:]:
+                fail(start)
+            break
+        name = text[start + 1:position - 1]
+        if '[' in name:
+            # リンクlabel内の画像などにも独立した宛先がある。
+            targets.extend(markdown_targets(name, source))
+        if position < len(text) and text[position] == '(':
+            target, position = destination(position + 1, inline=True)
+            targets.append(target)
+        elif position < len(text) and text[position] == '[':
+            end = text.find(']', position + 1)
+            if end < 0:
+                fail(position)
+            key = label(text[position + 1:end] or name)
+            if key not in definitions:
+                raise ValueError(f'broken reference link: {source} [{key}]')
+            targets.append(definitions[key])
+            position = end + 1
+        elif position < len(text) and text[position] == ':':
+            # blockquote/list内の参照定義等は未対応として黙殺しない。
+            fail(start)
+        elif label(name) in definitions:
+            targets.append(definitions[label(name)])
+    return targets
+
+
 def local_links(root: Path, source: str) -> set[str]:
     """Markdownの相対file/fragmentリンクを検査する（外部URLは取得しない）。"""
     path = confined(root, source)
     text = path.read_text(encoding='utf-8')
-    # fence内のコードはリンクとして解釈しない。
-    text = re.sub(r'(?ms)^\s*(`{3,}|~{3,}).*?^\s*\1\s*$', '', text)
-    targets = re.findall(r'!?\[[^\]]*\]\(([^\s)]+)(?:\s+"[^"]*")?\)', text)
-    definitions = dict(re.findall(r'(?m)^\[([^\]]+)\]:\s*(\S+)', text))
-    for label in re.findall(r'\[[^\]]+\]\[([^\]]+)\]', text):
-        if label not in definitions:
-            raise ValueError(f'broken reference link: {source} [{label}]')
-        targets.append(definitions[label])
-    # collapsed/shortcut参照も定義済みlabelから解決する。
-    for label, target in definitions.items():
-        if re.search(r'\[' + re.escape(label) + r'\](?:\[\])?(?!:)', text):
-            targets.append(target)
+    targets = markdown_targets(text, source)
     resolved = set()
     for target in targets:
-        url = urlsplit(target.strip('<>'))
+        url = urlsplit(target)
         if url.scheme or url.netloc:
             continue
         if url.path.startswith('/'):

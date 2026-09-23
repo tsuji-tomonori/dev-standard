@@ -71,6 +71,12 @@
 
 1つのoperation/resourceにつき1rowとし、accessはC/R/U/Dの集合。読み書き両方ならread/writeの根拠を別々に持つ。`crud_renderings`の出力形式によりCSV・表・図・根拠を照合する。これは関係モデルの射影でありSQL parserではない。
 
+## Markdownリンクの検査
+
+[CommonMarkのリンク構文](https://spec.commonmark.org/0.31.2/#links)に基づき、inline/image、山括弧付き宛先、平衡括弧・escape、単一/二重引用符・括弧title、明示/省略参照と定義を解析する。参照labelは大文字小文字と空白を正規化し、宛先の文字参照とURL encodingを解決する。コードfenceとinline codeの例はリンクにしない。外部URLは取得しない。
+
+完全なMarkdown rendererではない。HTMLリンク、container内の参照定義など未対応の明示リンクや解析不能な宛先はsourceと行を示して失敗する。未定義の明示参照も拒否する。通常の角括弧だけの文章を未定義リンクとはみなさない。
+
 ## 参照tools棚卸し
 
 [reference-inventory.schema.json](../assets/reference-inventory.schema.json)は参照実装に依存しない。repository URL、固定40桁Git revision、source_root、全件数、パス/blob一覧のSHA-256、対象要件ID、全fileとgapを記録する。fileごとに用途、分類、要件ID、採用区分、理由、固有前提、実接続先を持つ。

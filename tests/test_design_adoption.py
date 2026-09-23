@@ -364,6 +364,74 @@ Given 項目が存在する。When 一覧を取得する。Then 項目が返る�
                 self.generate_baseline()
                 self.reject('broken')
 
+    def test_markdown_destination_and_title_variants_detect_missing_files(self):
+        links = [
+            "[x](missing.md 'Title')", '[x](<missing file.md>)',
+            '[x](missing.md "Title")', '[x](missing.md (Title))',
+            '[x](<missing file.md> \'Title\')', '[x](missing(part).md)',
+            r'[x](missing\(part\).md)', '[x](missing&amp;file.md)',
+            '[x](missing%20file.md)', "![x](missing.png 'Title')",
+            '[x](\n<missing file.md>\n"Title"\n)',
+            "[x][ref]\n\n[ref]: <missing file.md> 'Title'",
+            '[REF][]\n\n[ref]: missing.md (Title)',
+            '[Some   Label]\n\n[some label]: missing.md',
+            '[![image](missing.png)](index.md)',
+            '[a `]` b](missing.md)', '[a `[` b](missing.md)',
+        ]
+        for link in links:
+            with self.subTest(link=link):
+                self.templates['docs/generated/index.md'] = '# 現在の設計\n\n' + link + '\n'
+                self.generate_baseline()
+                self.reject('broken link')
+
+    def test_supported_markdown_links_resolve_real_destinations(self):
+        for name in ('file name.md', 'file(part).md', 'file&name.md'):
+            self.templates['docs/generated/' + name] = '# リンク先\n'
+        self.templates['docs/generated/index.md'] = '''# 現在の設計
+[single](<file name.md> 'Title')
+[double](file%20name.md "Title")
+[parentheses](file(part).md (Title))
+[entity](file&amp;name.md)
+[explicit][My Label]
+[my label][]
+[MY LABEL]
+
+[my label]: <file name.md>
+  'Title'
+'''
+        self.generate_baseline()
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_unsupported_or_malformed_links_fail_with_source_location(self):
+        links = ['[x](<missing.md)', '[x](missing.md "unterminated)',
+                 '[x](missing file.md)', '<a href="missing.md">x</a>',
+                 '> [ref]: missing.md\n\n[x][ref]']
+        for link in links:
+            with self.subTest(link=link):
+                self.templates['docs/generated/index.md'] = '# 現在の設計\n\n' + link + '\n'
+                self.generate_baseline()
+                result = self.reject('unsupported or malformed Markdown link')
+                self.assertIn('docs/generated/index.md:3', result.stderr)
+
+    def test_link_examples_in_code_and_escaped_brackets_are_not_links(self):
+        self.templates['docs/generated/index.md'] = r'''# 現在の設計
+`[x](missing.md)`
+`` [x](missing.md 'Title') ``
+\[x](missing.md)
+````markdown
+[x](missing.md)
+```
+[x](<missing file.md>)
+````
+~~~markdown
+[x](missing.md)
+~~~~
+'''
+        self.generate_baseline()
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_crud_csv_table_diagram_and_evidence_must_match_model(self):
         self.api_fixture()
         for kind in ('csv', 'table', 'diagram', 'evidence'):
