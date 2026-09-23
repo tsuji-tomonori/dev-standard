@@ -34,6 +34,44 @@ def fixture():
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_hierarchy_and_crud_assets_are_rendered_with_safe_labels(self):
+        from build_evidence_hierarchy_fixture import build
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            build(root)
+            page = (root / "site/design.html").read_text()
+            self.assertIn('data-breadcrumb="items / getItem / interface"', page)
+            self.assertIn('<summary>items</summary><details class="hierarchy" open><summary>getItem</summary>', page)
+            self.assertIn('<a download href="design/crud/access.csv">CSV取得</a>', page)
+            self.assertIn('src="design/crud/diagram.svg"', page)
+            data = json.loads((root / "input/report.json").read_text())
+            data["design"]["items"][0]["hierarchy"] = ['<unsafe>', '"API"']
+            evidence.render(data, root / "input", root / "escaped")
+            self.assertIn('&lt;unsafe&gt;', (root / "escaped/design.html").read_text())
+            self.assertNotIn('<unsafe>', (root / "escaped/design.html").read_text())
+
+    def test_hierarchy_requires_nonempty_string_labels(self):
+        for hierarchy in ([], "group/api", [""], ["  "], [7], [{}]):
+            with self.subTest(hierarchy=hierarchy):
+                data = fixture()
+                data["tests"]["items"][0]["hierarchy"] = hierarchy
+                with self.assertRaisesRegex(ValueError, "hierarchy"):
+                    evidence.validate(data, "abc")
+
+    def test_crud_assets_must_be_allowlisted_and_use_expected_formats(self):
+        from build_evidence_hierarchy_fixture import build
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            build(root)
+            original = json.loads((root / "input/report.json").read_text())
+            for index, (field, value) in enumerate((
+                    ("download", "design/private.csv"), ("download", "design/crud/diagram.svg"),
+                    ("diagram", "design/private.svg"), ("diagram", "design/crud/access.csv"))):
+                data = copy.deepcopy(original)
+                data["design"]["items"][6][field] = value
+                with self.assertRaisesRegex(ValueError, "allowlist or wrong format"):
+                    evidence.render(data, root / "input", root / str(index))
+
     def test_failed_build_can_publish_unavailable_evidence(self):
         data = fixture()
         for name in ("coverage", "design"):

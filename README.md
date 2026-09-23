@@ -55,11 +55,19 @@ installerは導入先の`.github/`、branch、merge設定を追加も変更も�
 
 ## 導入完了の条件
 
-「Dev標準を入れて実装して」という依頼には、Skillの配置に加えて、実装由来のMarkdown設計の初回生成まで含まれます。API・data・infra・frontendの実装対象を棚卸しし、必要なgenerator/adapterを接続してください。生成器が未宣言であることを省略理由にしません。
+Dev標準は言語非依存のガードレールと、導入先adapterが満たす実装要件を配布します。静的解析・as-built生成の実装は導入先repositoryで作成します。「Dev標準を入れて実装して」という依頼には、実装surfaceの棚卸し、adapter接続、必要なMarkdown設計の初回生成と検査まで含まれます。
 
-[導入・復旧手順](.agents/skills/generate-implementation-design/references/adoption.md)に従い、必要な生成物を`.dev-standard/design.json`で明示し、`python <host-skill-path>/scripts/check_design.py --root .`または既存の同等検査を通常のverify入口で実行します。必要なMarkdownの欠落・空・drift・未対応は未完了です。実装がない領域は根拠を示して非該当とします。
+[導入・復旧手順](.agents/skills/generate-implementation-design/references/adoption.md)に従い、固定revisionの参照tools全件を比較して用途・要件対応・採用区分・理由・実接続先を記録します。[lazunexの52ファイル棚卸し](.agents/skills/generate-implementation-design/assets/reference-tools/lazunex-096e1e5.json)を基に、導入先の言語と構造へadapt・extendします。別の参照実装も同じschemaで評価できます。
 
-完了報告には生成物へのpath、対象revision、生成・検査commandと結果を含めます。installer成功やアプリのtest成功だけでは導入完了になりません。CIとの接続は導入先の既存運用と権限に従います。
+schema version 2の`.dev-standard/design.json`へcapabilityごとの生成command、`--check` command、出力root、要件ID、帳票構成profile、棚卸し参照を宣言します。[adapter契約](.agents/skills/generate-implementation-design/references/adapter-contract.md)の検査器は作業コピーで2回生成のbyte一致とdriftを確認し、[APIの6帳票](.agents/skills/generate-implementation-design/references/api-documents.md)の章・順序・階層・索引、旧生成物、リンク、CRUDモデルの整合を検査します。
+
+```bash
+python <host-skill-path>/scripts/check_design.py --root .
+```
+
+`<host-skill-path>`はinstallerが配置したSkillのhost-native rootです。言語固有の解析・型検査・実行テストはmanifestへ接続した導入先commandが担います。実装がない領域だけを根拠付きで非該当とし、未接続・未対応・未生成を成功扱いにしません。完了報告は構成適合、設計drift、実行テスト、未検証範囲を分け、生成物path、対象revision、commandと結果を示します。
+
+旧`designflow.py`・`qualityflow.py`・`portable_python.py`は配布しません。既存利用者はadapterとmanifestを接続してから旧assetと専用runtimeを確認除去してください。installerは既存fileを自動削除しません。`aws-cdk-implementation-design`は汎用`implementation-design`の互換aliasです。CIとの接続は導入先の既存運用に従います。
 
 ## 品質エビデンスの既定公開準備
 

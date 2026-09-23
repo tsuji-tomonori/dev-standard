@@ -16,8 +16,8 @@
 | `GCP-WAF` | Google Cloud | [Google Cloud Well-Architected Framework](https://docs.cloud.google.com/docs/get-started/well-architected-framework) | 継続更新 | Google Cloudおよびクラウド共通の設計原則、柱、運用上のトレードオフ。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, GCP-DELTA | — |
 | `GCP-AIML-WAF` | Google Cloud | [Google Cloud Well-Architected Framework: AI and ML perspective](https://cloud.google.com/architecture/framework/perspectives/ai-ml) | 継続更新 | Google Cloud上のAI/MLデータ、モデル、運用、責任あるAIの設計観点。 | 2026-07-18 | 2026-07-18 | 90日 | AI-CONDITIONAL, GCP-DELTA | — |
 | `OCI-WAF` | Oracle | [Best practices framework for Oracle Cloud Infrastructure](https://docs.oracle.com/en/solutions/oci-best-practices/) | F29550-09 / 2025-05 | OCIおよびクラウド共通の設計原則とベンダー固有差分。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, OCI-DELTA | — |
-| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-09-06 | 実装由来設計の決定論的生成、専用path、整合check、解析可能な実装・test規約。標準contract変更とrepository採用scopeを分離し、関係するcheckだけを選択する。 | 2026-09-06 | 2026-09-06 | 180日 | CORE | `5b74d1e45ed7d91e3f372f71367b07230ad7da83e24b3fedb54f6804945e994f` |
-| `DEVSTD-AWS-CDK-AS-BUILT` | dev-standard maintainers | [AWS CDK実装・as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md) | 2026-08-29 | AWS CDK固有の規範・選択可能な採用scopeと、bundled toolingが実装済みのcapabilityを区別するas-built設計標準。 | 2026-08-29 | 2026-08-29 | 180日 | CORE, AWS-DELTA | `6300dd4f32253286bda0775ef1d09478e5eb6b4198285a7e9bab25baa94c4780` |
+| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-09-23 | Quint正本の言語非依存要件を導入先adapterへ接続し、帳票構成、生成drift、参照tools全件棚卸しと未検証範囲を検査する。 | 2026-09-23 | 2026-09-23 | 180日 | CORE | `707e49c0b010d9f7fd0c19070122b169f4b2117c1e94613f9339108562e71950` |
+| `DEVSTD-AWS-CDK-AS-BUILT` | dev-standard maintainers | [旧AWS CDK as-built標準からの移行](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md) | 2026-09-23 | 過去の標準IDとpathの互換参照。固有規範は廃止し、言語非依存adapter契約への移行を案内する。 | 2026-09-23 | 2026-09-23 | 180日 | CORE, AWS-DELTA | `4c8b7e526c14a532eaf6aaa7416beeba1d964be3da8eff437c852d5ad2951284` |
 
 ## 前版との差分・変更確認
 
@@ -32,5 +32,5 @@
 - `GCP-WAF`: 継続更新型資料として変更確認日を固定し、Cloud CommonとGCP固有差分の重複規則を適用。
 - `GCP-AIML-WAF`: AI/ML perspectiveを一般WAFから分離し、AI-CONDITIONALとGCP差分に対応付け。
 - `OCI-WAF`: 文書版F29550-09を維持し、Cloud Common評価後にOCI固有差分だけを追加する。
-- `DEVSTD-AS-BUILT`: APIの6帳票の内容と全operationの生成、要因・要素から実在単体テストへの対応、adapterによる実装由来の抽出と欠落検査を必須化。
-- `DEVSTD-AWS-CDK-AS-BUILT`: portable bundle自身で確認できるcapabilityだけをcurrently-supportedとし、変更に関係するsubcommandを選択実行する軽量契約へ更新。source repository固有IssueやCI・merge policyへ依存しない。
+- `DEVSTD-AS-BUILT`: 言語固有解析器と旧Rule ID規範を除去し、schema version 2のadapter manifest、2回生成のbyte一致、全件棚卸し、導入先実装への移行を定義。
+- `DEVSTD-AWS-CDK-AS-BUILT`: 旧標準を汎用as-built標準へ統合。旧profileは汎用profileの互換aliasとし、生成器と専用runtimeの移行方法を明示。

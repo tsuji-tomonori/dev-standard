@@ -167,14 +167,14 @@ class InstallReferenceTest(unittest.TestCase):
             },
         )
 
-    def test_skill_python_dependencies_use_an_isolated_runtime_only_when_needed(self) -> None:
+    def test_stdlib_design_adapters_do_not_install_a_dependency_runtime(self) -> None:
         manifest = install_reference.load_manifest()
-        for profile, expected_python, expected_quint in [
-            ("implementation-design", True, False),
-            ("aws-cdk-implementation-design", True, False),
-            ("default", True, True),
-            ("regulated", False, False),
-            ("right-size-execution", False, False),
+        for profile, expected_quint in [
+            ("implementation-design", False),
+            ("aws-cdk-implementation-design", False),
+            ("default", True),
+            ("regulated", False),
+            ("right-size-execution", False),
         ]:
             destinations = {
                 item.destination.relative_to(self.target).as_posix()
@@ -184,7 +184,7 @@ class InstallReferenceTest(unittest.TestCase):
             }
             self.assertEqual(
                 "tools/portable_python.py" in destinations,
-                expected_python,
+                False,
                 profile,
             )
             self.assertEqual(

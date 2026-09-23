@@ -1,21 +1,15 @@
 # as-built設計check選択
 
-`docs/standards/AS-BUILT-DESIGN.md`を具体的なartifact・code scopeへ採用した場合だけ、変更対象に対応するcheckを選ぶ。AWS CDKについては`docs/standards/AWS-CDK-AS-BUILT-DESIGN.md`を併用する。未採用repositoryの無関係な変更へ一律適用しない。
+導入先が採用するas-built要件と、変更対象のsurfaceに関係するcheckを選ぶ。要件の正本は`spec/requirements/requirements.qnt`、実行commandの所有者は導入先repositoryである。dev-standard固有の検査catalogや旧言語固有Rule IDを導入先へ要求しない。
 
-| Artifact / change | 選択候補 | 目的 |
-|---|---|---|
-| as-built標準contract | `FAST-024` | 要件、標準、generator、distribution、traceの整合 |
-| generator入力または生成物 | `FAST-006` | generate/checkの決定論性とbyte一致 |
-| API handler、OpenAPI、error sample | `FAST-016`, `FAST-017` | interfaceとsampleの整合 |
-| SQL CRUD、E2E assertion | `FAST-018` | CRUDとE2E stateの対応 |
-| CDK source、context、stack | `IMP-009`, `FAST-012` | synth、replacement、IAM、network、policy |
-| coverage、test構造、実装規約 | `FAST-019`〜`FAST-021` | 採用scopeの実測。初回はAdvisory |
-| 閾値またはdelegation設定 | `FAST-022` | 文書とmachine-readable設定の一致 |
-| 品質結果とtest evidence | `FAST-023` | 実行範囲に対応する簡潔な結果 |
-| suppression inventory | `AUD-008` | 理由、重複、失効、孤児の定期確認 |
+| 変更 | 選択する証拠 |
+|---|---|
+| adapter契約、参照tools棚卸し | schema、全件集合、要件mapping、採用判断と実接続先 |
+| 実装または生成command | 2回生成のbyte一致、`--check`による設計drift |
+| APIや保存先の処理 | 導入先の責務・制御flow・型・CRUD・例外経路の静的検査 |
+| 帳票profileや生成物 | 章・順序・階層・索引・リンク・旧生成物 |
+| test、品質portal | 実行結果、未検証範囲、階層表示とCSV取得 |
 
-選択条件、採用scope、除外は、会話または対象repositoryが既に採用する変更記録へ必要な分だけ残す。ローカルcommandを既定とし、既存CIがある場合だけ同じcheckを再利用する。
+[adapter契約](../../generate-implementation-design/references/adapter-contract.md)と[APIの6帳票契約](../../generate-implementation-design/references/api-documents.md)を参照する。構成適合、設計drift、実行テスト、未検証範囲は別に報告する。
 
-MUST / SHOULDは採用済みscope内の規範強度、Risk-selected / Advisory / Periodicは検査選択の性質であり、branchやmergeのenforcement stateではない。CI workflow、required check、review YAML、branch protection、merge ruleをこの標準のために追加または要求しない。
-
-deploy、resource削除、production変更、課金操作等の外部副作用だけをauthority boundaryとして扱う。synth、test、設計生成は対象repositoryの既存環境で実行する。
+選択条件と除外は会話または導入先の既存記録へ必要な分だけ残す。ローカルcommandを実行し、既存CIがあれば同じcheckを再利用できる。CI workflow、required check、review YAML、branch protection、merge ruleをこの標準のために追加または要求しない。外部作用は導入先の既存権限に従う。

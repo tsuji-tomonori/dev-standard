@@ -16,13 +16,15 @@ description: Select and run only the checks relevant to the current change, conn
 ## 検証
 
 - 導入時・設計に影響する実装変更時は、必要なas-built Markdownの欠落・drift検査を必ず選ぶ。generator未接続は検査対象なしではなく導入未完了である。
-- SQLを含む導入・実装変更では設計Skillの`references/sql-and-language.md`に従い、SQL lint、API別配置・呼出境界、型付きquery生成差分、関連DBテストを選ぶ。説明コメントの変更では日本語指定を生成元と生成物の両方で確認する。Python/SQLは同Skillの`qualityflow.py source-conventions`を使い、他言語・動的SQL・型の意味は対象adapter/型検査/レビューで補う。
+- 保存先アクセスを含む変更では、導入先adapterに接続された配置・呼出境界、引数型と結果型、生成差分、関連する実行テストを選ぶ。言語固有の解析は導入先で実装し、未対応surfaceを成功へ読み替えない。構成適合、設計drift、実行テスト、未検証範囲は分けて報告する。
 - 既存のtest、lint、type check、build、generatorから変更に関係するものを実行し、結果を直接確認する。CIがないこと自体を失敗にしない。
 - 挙動を変えない低影響の文書修正等に、新しいtestや全suiteの反復を一律要求しない。恒久testは実際の回帰riskと既存の運用に応じて残す。
 - 受入条件、生成drift、機密情報、権限境界に関する失敗を隠さない。失敗、新しい依存、未解決risk、既存の必須gateに根拠がある場合だけ検査を広げる。
 - 検査対象がなければ理由を簡潔に返す。未選択の検査をN/Aで列挙せず、成功後に追加検査を繰り返さない。
 
 検査と判定はsourceや設定を修正しない。失敗時はcheck、直接証拠、影響範囲を返す。元の開発依頼が修正を許可している場合、呼出元はその権限内で修正し再検証でき、別Skillの導入や再承認は不要である。レビューだけの依頼を変更へ拡張しない。
+
+API帳票の構成profileが選択されている場合は、adapter契約に従い、章・階層・CRUD・責務実接続の検査を選ぶ。品質portalの`hierarchy`、現在位置、親階層を維持する検索、帳票間リンク、CSV取得を実ブラウザで検証する。
 
 ## 実行境界
 

@@ -14,9 +14,6 @@ class ProfileBoundaryContractTest(unittest.TestCase):
         collections["portable_runtime"] = manifest["portable_runtime"]["mappings"]
         collections["formal_skill_contracts"] = manifest["formal_skill_contracts"]["mappings"]
         collections["portable_runner"] = [manifest["portable_runtime"]["runner"]]
-        collections["portable_python"] = [
-            manifest["skill_runner_support"]["dependency_runtime"]["runner"]
-        ]
         for profile, entries in collections.items():
             for entry in entries:
                 combined = f"{entry['source']}\n{entry['destination']}".lower()
@@ -70,20 +67,19 @@ class ProfileBoundaryContractTest(unittest.TestCase):
             },
             {"spec/skills/skills.qnt", "spec/skills/skills.json"},
         )
-        dependency_runtime = manifest["skill_runner_support"]["dependency_runtime"]
+        self.assertNotIn("dependency_runtime", manifest["skill_runner_support"])
+
+    def test_legacy_design_profile_is_a_language_independent_alias(self) -> None:
+        manifest = json.loads((ROOT / "distribution/manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(
-            dependency_runtime,
-            {
-                "schema_version": 1,
-                "activation": "selected-skill-has-requirements.txt",
-                "runtime_root": ".dev-standard/python/runtime",
-                "runner": {
-                    "source": "tools/portable_python.py",
-                    "destination": "tools/portable_python.py",
-                    "local_imports": "derive-from-_load_pinned_tool-calls",
-                },
-            },
+            manifest["profiles"]["aws-cdk-implementation-design"],
+            manifest["profiles"]["implementation-design"],
         )
+        design_root = ROOT / ".agents/skills/generate-implementation-design"
+        self.assertFalse((design_root / "requirements.txt").exists())
+        for removed in ["designflow.py", "qualityflow.py"]:
+            self.assertFalse((design_root / "scripts" / removed).exists())
+        self.assertFalse((ROOT / "tools/portable_python.py").exists())
 
     def test_manifest_has_explicit_repository_policy_denylist(self) -> None:
         manifest = json.loads((ROOT / "distribution/manifest.json").read_text(encoding="utf-8"))

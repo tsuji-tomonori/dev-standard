@@ -103,6 +103,11 @@ def validate(data: dict, revision: str) -> None:
             if not isinstance(identity, str) or not identity or identity in identities:
                 raise ValueError(f"{name}: missing or duplicate identity")
             identities.add(identity)
+            hierarchy = item.get("hierarchy")
+            if hierarchy is not None and (not isinstance(hierarchy, list) or not hierarchy or any(
+                not isinstance(part, str) or not part.strip() for part in hierarchy
+            )):
+                raise ValueError(f"{name}/{identity}: hierarchy must be nonempty labels")
             if item.get("status") not in STATES or not item.get("name"):
                 raise ValueError(f"{name}/{identity}: invalid status/name")
             if name in ("tests", "e2e") and not item.get("group"):
@@ -173,7 +178,7 @@ def render(data: dict, root: Path, output: Path) -> None:
             f'<title>{text(title)}</title><link rel="stylesheet" href="evidence.css">'
             f'<header><h1>{text(title)}</h1><p>{provenance}</p><nav>{nav}</nav></header>'
             '<label class="search">このページを検索 <input id="search" type="search"></label>'
-            f'<div class="layout"><aside>{sidebar}</aside><main>{body}</main></div>'
+            f'<nav id="location" aria-label="現在位置">{text(title)}</nav><div class="layout"><aside>{sidebar}</aside><main>{body}</main></div>'
             '<dialog id="zoom"><button autofocus>閉じる</button><img alt="拡大エビデンス"></dialog>'
             '<script src="evidence.js"></script></html>', encoding="utf-8")
 
@@ -188,8 +193,13 @@ def render(data: dict, root: Path, output: Path) -> None:
             body.append(f'<p>対象外: {text(category["reason"])}</p>')
         for number, item in enumerate(category.get("items", [])):
             anchor = f"case-{number}"
-            group = str(item.get("group", LABELS[name]))
-            groups.setdefault(group, []).append(f'<li><a href="#{anchor}">{text(item["name"])}</a></li>')
+            hierarchy = item.get("hierarchy", [str(item.get("group", LABELS[name]))])
+            branch = groups
+            for part in hierarchy:
+                branch = branch.setdefault(part, {"children": {}, "links": []})["children"]
+            branch.setdefault("", {"links": []})["links"].append(
+                f'<li data-target="{anchor}"><a href="#{anchor}">{text(item["name"])}</a></li>')
+            breadcrumb = " / ".join([*hierarchy, item["name"]])
             details = f'<p class="status">{text(item["status"])}</p>'
             for field in ("id", "command", "detail", "expected", "actual", "requirement", "factor"):
                 if field in item:
@@ -204,6 +214,16 @@ def render(data: dict, root: Path, output: Path) -> None:
                 if item["path"] not in declared:
                     raise ValueError("design entry missing from allowlist")
                 details += f'<a href="{text(item["path"])}">設計HTMLを開く</a>'
+            for field, suffix in (("download", ".csv"), ("diagram", ".svg")):
+                if name == "design" and item.get(field):
+                    target = item[field]
+                    if target not in declared or not target.endswith(suffix):
+                        raise ValueError(f"design {field} missing from allowlist or wrong format")
+                    if field == "download":
+                        details += f'<p><a download href="{text(target)}">CSV取得</a></p>'
+                    else:
+                        details += f'<img class="crud-diagram" src="{text(target)}" alt="APIと保存先のCRUD対応図">'
+
             for step in item.get("steps", []):
                 if step.get("phase") not in ("Given", "When", "Then"):
                     raise ValueError("unknown GWT phase")
@@ -216,9 +236,16 @@ def render(data: dict, root: Path, output: Path) -> None:
                     copy(step["image"], destination)
                     details += f'<button class="image"><img src="{destination}" alt="{text(step["phase"])}"></button>'
                 details += '</section>'
-            body.append(f'<article id="{anchor}"><h2>{text(item["name"])}</h2>{details}</article>')
-        sidebar = "".join(f'<details open><summary>{text(group)}</summary><ul>{"".join(links)}</ul></details>'
-                          for group, links in groups.items())
+            body.append(f'<article id="{anchor}" data-breadcrumb="{text(breadcrumb)}"><p class="breadcrumb">{text(breadcrumb)}</p><h2>{text(item["name"])}</h2>{details}</article>')
+        def tree(nodes):
+            content = ""
+            for label, node in nodes.items():
+                if label == "":
+                    content += '<ul>' + ''.join(node['links']) + '</ul>'
+                else:
+                    content += f'<details class="hierarchy" open><summary>{text(label)}</summary>{tree(node["children"])}</details>'
+            return content
+        sidebar = tree(groups)
         page(f"{name}.html", LABELS[name], "".join(body), sidebar)
     for name in ("evidence.css", "evidence.js"):
         shutil.copyfile(ASSETS / name, output / name)
