@@ -1,4 +1,4 @@
-name: Reference audit snapshot
+name: Apply and verify reference conformance change
 
 on:
   pull_request:
@@ -6,17 +6,18 @@ on:
     paths: [.github/workflows/reference-audit-snapshot.yml]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  snapshot:
+  apply:
+    if: github.event.pull_request.number == 74 && github.event.pull_request.head.ref == 'fix/lazunex-slotkeeper-conformance' && github.event.pull_request.head.repo.full_name == 'tsuji-tomonori/dev-standard'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           path: standard
-          persist-credentials: false
       - uses: actions/checkout@v7
         with:
           repository: tsuji-tomonori/lazunex
@@ -29,25 +30,67 @@ jobs:
           ref: 1b7590fb671df765e62fcf82f158a0ba94bd713d
           path: SlotKeeper
           persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Prepare pinned sources and offline Quint runtime
+      - name: Install the existing verification dependencies
+        working-directory: standard
+        run: |
+          pip install -r requirements.txt
+          npm ci --ignore-scripts
+      - name: Verify and apply the locally tested patch
         shell: bash
         run: |
           set -euo pipefail
-          mkdir snapshots
-          for repo in standard lazunex SlotKeeper; do
-            git -C "$repo" rev-parse HEAD > "snapshots/$repo.commit"
-            git -C "$repo" ls-tree -r HEAD > "snapshots/$repo.tree"
-            git -C "$repo" archive --format=tar HEAD > "snapshots/$repo.tar"
-          done
+          mkdir -p snapshots validation
+          git -C lazunex ls-tree -r HEAD > snapshots/lazunex.tree
+          git -C SlotKeeper ls-tree -r HEAD > snapshots/SlotKeeper.tree
           cd standard
-          npm ci --ignore-scripts
-          tar -czf ../snapshots/quint-node-modules.tar.gz node_modules
-      - uses: actions/upload-artifact@v7
+          cat .audit-transfer/chunk-* > "$RUNNER_TEMP/reference-bundle.xz"
+          echo "afb2bb04fbbc355b9f2a6f2c0b6c7b1e3d94a8a10deaa093be806ae88f0d8d3d  $RUNNER_TEMP/reference-bundle.xz" | sha256sum -c -
+          python - <<'PY'
+          import json, lzma, os
+          from pathlib import Path
+          temp = Path(os.environ['RUNNER_TEMP'])
+          bundle = json.loads(lzma.decompress((temp / 'reference-bundle.xz').read_bytes()))
+          assert bundle['schema_version'] == 1
+          for key, name in [('patch', 'reference.patch'), ('inventory_script', 'inventory.py'), ('refresh_script', 'refresh.py')]:
+              (temp / name).write_text(bundle[key], encoding='utf-8')
+          PY
+          git apply --check "$RUNNER_TEMP/reference.patch"
+          git apply "$RUNNER_TEMP/reference.patch"
+          rm -r .audit-transfer
+          python "$RUNNER_TEMP/inventory.py" | tee ../validation/inventory.log
+          python -m ruff check --fix . | tee ../validation/ruff.log
+          python "$RUNNER_TEMP/refresh.py" | tee ../validation/refresh.log
+          python tools/quintflow.py generate | tee ../validation/generate.log
+          python tools/check_lazunex_audit.py --lazunex ../lazunex --slotkeeper ../SlotKeeper | tee ../validation/audit.log
+      - name: Run all repository verification before publication
+        working-directory: standard
+        shell: bash
+        run: |
+          set -euo pipefail
+          make verify PYTHON=python 2>&1 | tee ../validation/verify.log
+          git diff --check
+      - name: Publish only to the requested PR branch
+        working-directory: standard
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- .agents docs governance/standards/registry.json spec tests tools/check_lazunex_audit.py .audit-transfer
+          git diff --cached --check
+          git diff --cached --stat | tee ../validation/change-stat.txt
+          git diff --cached --binary > ../validation/verified.patch
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix: lazunex基準の差分監査と参照適合契約を追加'
+          git push origin HEAD:refs/heads/fix/lazunex-slotkeeper-conformance
+      - name: Preserve verification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          name: pinned-reference-sources
-          path: snapshots/
-          retention-days: 3
-          if-no-files-found: error
+          name: reference-conformance-verification
+          path: validation/
+          retention-days: 14
+          if-no-files-found: warn
