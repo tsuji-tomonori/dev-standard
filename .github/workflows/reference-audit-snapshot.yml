@@ -1,0 +1,53 @@
+name: Reference audit snapshot
+
+on:
+  pull_request:
+    branches: [main]
+    paths: [.github/workflows/reference-audit-snapshot.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: standard
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: tsuji-tomonori/lazunex
+          ref: 096e1e580ab1c0670c57e4febad2bd9fdd4698ee
+          path: lazunex
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: tsuji-tomonori/SlotKeeper
+          ref: 1b7590fb671df765e62fcf82f158a0ba94bd713d
+          path: SlotKeeper
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Prepare pinned sources and offline Quint runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir snapshots
+          for repo in standard lazunex SlotKeeper; do
+            git -C "$repo" rev-parse HEAD > "snapshots/$repo.commit"
+            git -C "$repo" ls-tree -r HEAD > "snapshots/$repo.tree"
+            git -C "$repo" archive --format=tar HEAD > "snapshots/$repo.tar"
+          done
+          cd standard
+          npm ci --ignore-scripts
+          tar -czf ../snapshots/quint-node-modules.tar.gz node_modules
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pinned-reference-sources
+          path: snapshots/
+          retention-days: 3
+          if-no-files-found: error
