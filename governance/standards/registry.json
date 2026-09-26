@@ -191,17 +191,17 @@
       "id": "DEVSTD-AS-BUILT",
       "authority": "dev-standard maintainers",
       "title": "as-built設計標準",
-      "version": "2026-09-23",
+      "version": "2026-09-26",
       "url": "https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md",
-      "checked_at": "2026-09-23",
+      "checked_at": "2026-09-26",
       "refresh_days": 180,
       "profiles": [
         "CORE"
       ],
       "scope": "Quint正本の言語非依存要件を導入先adapterへ接続し、帳票構成、生成drift、参照tools全件棚卸しと未検証範囲を検査する。",
-      "change_checked_at": "2026-09-23",
-      "change_summary": "言語固有解析器と旧Rule ID規範を除去し、schema version 2のadapter manifest、2回生成のbyte一致、全件棚卸し、導入先実装への移行を定義。",
-      "artifact_sha256": "707e49c0b010d9f7fd0c19070122b169f4b2117c1e94613f9339108562e71950"
+      "change_checked_at": "2026-09-26",
+      "change_summary": "lazunex固定参照の個別受入条件とfresh正負例を照合するmanifest v3、API×全資源のCRUD行列、旧v2診断と完了判定の分離を追加。言語固有解析と業務検証は導入先所有を維持。",
+      "artifact_sha256": "356bc6f3ae906e78551283db5bbbb3996121b3a1ffdc41b1402551c0c4edcc03"
     },
     {
       "id": "DEVSTD-AWS-CDK-AS-BUILT",

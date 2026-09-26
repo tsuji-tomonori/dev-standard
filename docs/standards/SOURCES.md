@@ -16,7 +16,7 @@
 | `GCP-WAF` | Google Cloud | [Google Cloud Well-Architected Framework](https://docs.cloud.google.com/docs/get-started/well-architected-framework) | 継続更新 | Google Cloudおよびクラウド共通の設計原則、柱、運用上のトレードオフ。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, GCP-DELTA | — |
 | `GCP-AIML-WAF` | Google Cloud | [Google Cloud Well-Architected Framework: AI and ML perspective](https://cloud.google.com/architecture/framework/perspectives/ai-ml) | 継続更新 | Google Cloud上のAI/MLデータ、モデル、運用、責任あるAIの設計観点。 | 2026-07-18 | 2026-07-18 | 90日 | AI-CONDITIONAL, GCP-DELTA | — |
 | `OCI-WAF` | Oracle | [Best practices framework for Oracle Cloud Infrastructure](https://docs.oracle.com/en/solutions/oci-best-practices/) | F29550-09 / 2025-05 | OCIおよびクラウド共通の設計原則とベンダー固有差分。 | 2026-07-18 | 2026-07-18 | 90日 | CLOUD-COMMON, OCI-DELTA | — |
-| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-09-23 | Quint正本の言語非依存要件を導入先adapterへ接続し、帳票構成、生成drift、参照tools全件棚卸しと未検証範囲を検査する。 | 2026-09-23 | 2026-09-23 | 180日 | CORE | `707e49c0b010d9f7fd0c19070122b169f4b2117c1e94613f9339108562e71950` |
+| `DEVSTD-AS-BUILT` | dev-standard maintainers | [as-built設計標準](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AS-BUILT-DESIGN.md) | 2026-09-26 | Quint正本の言語非依存要件を導入先adapterへ接続し、帳票構成、生成drift、参照tools全件棚卸しと未検証範囲を検査する。 | 2026-09-26 | 2026-09-26 | 180日 | CORE | `356bc6f3ae906e78551283db5bbbb3996121b3a1ffdc41b1402551c0c4edcc03` |
 | `DEVSTD-AWS-CDK-AS-BUILT` | dev-standard maintainers | [旧AWS CDK as-built標準からの移行](https://github.com/tsuji-tomonori/dev-standard/blob/main/docs/standards/AWS-CDK-AS-BUILT-DESIGN.md) | 2026-09-23 | 過去の標準IDとpathの互換参照。固有規範は廃止し、言語非依存adapter契約への移行を案内する。 | 2026-09-23 | 2026-09-23 | 180日 | CORE, AWS-DELTA | `4c8b7e526c14a532eaf6aaa7416beeba1d964be3da8eff437c852d5ad2951284` |
 
 ## 前版との差分・変更確認
@@ -32,5 +32,5 @@
 - `GCP-WAF`: 継続更新型資料として変更確認日を固定し、Cloud CommonとGCP固有差分の重複規則を適用。
 - `GCP-AIML-WAF`: AI/ML perspectiveを一般WAFから分離し、AI-CONDITIONALとGCP差分に対応付け。
 - `OCI-WAF`: 文書版F29550-09を維持し、Cloud Common評価後にOCI固有差分だけを追加する。
-- `DEVSTD-AS-BUILT`: 言語固有解析器と旧Rule ID規範を除去し、schema version 2のadapter manifest、2回生成のbyte一致、全件棚卸し、導入先実装への移行を定義。
+- `DEVSTD-AS-BUILT`: lazunex固定参照の個別受入条件とfresh正負例を照合するmanifest v3、API×全資源のCRUD行列、旧v2診断と完了判定の分離を追加。言語固有解析と業務検証は導入先所有を維持。
 - `DEVSTD-AWS-CDK-AS-BUILT`: 旧標準を汎用as-built標準へ統合。旧profileは汎用profileの互換aliasとし、生成器と専用runtimeの移行方法を明示。

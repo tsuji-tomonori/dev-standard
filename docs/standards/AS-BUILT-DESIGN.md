@@ -34,3 +34,9 @@
 旧版の`GEN-*`、`ALIGN-*`、言語固有Rule IDは現行の独立規範として適用しない。維持する義務はQuintの`REQ-ASBUILT-*`、`REQ-DESIGN-*`、`REQ-EVIDENCE-*`へ再定義している。検査catalogのIDは変更に関係する検査を選ぶための参照であり、旧Rule IDを再導入する根拠にはしない。
 
 旧`designflow.py`・`qualityflow.py`を使用していた導入先は、adapter実装とmanifestを接続し、生成物と検査の移行を確認する。旧`tools/portable_python.py`と専用runtimeは不要になる。installerは既存fileを自動削除しないため、導入先で変更差分と所有者を確認して旧assetを除去する。既存のbranch、CI workflow、required check、merge rule、PR templateは変更しない。
+
+## lazunex参照適合の是正
+
+[固定版比較と是正台帳](../audits/lazunex-slotkeeper/README.md)の差異を受け、APIの通常導入をmanifest v3へ移す。Quint正本の`REQ-ASBUILT-036`と改訂した`REQ-ASBUILT-024/029/030/031/034`に従い、主参照保持・個別受入条件・新規意味検査を完了条件へ接続する。
+
+API帳票は章だけでなく意味内容を比較し、CRUDの正規表示をAPI×全資源行列とする。業務・言語・DB・公開方法は導入先が選択する。共通検査器に言語固有parserを戻さず、3本柱と既存repository policyを維持する。旧v2の明示的な移行診断を実装完了にしない。

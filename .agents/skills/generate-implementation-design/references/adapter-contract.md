@@ -23,9 +23,9 @@
 
 正本の詳細は`spec/requirements/requirements.qnt`（`REQ-ASBUILT-*`、`REQ-DESIGN-*`、`REQ-DOCS-*`、`REQ-EVIDENCE-*`）。言語・frameworkの具体的な実装は導入先が所有する。
 
-## Manifest v2
+## Manifest v3（API参照適合）
 
-配置は既存の`.dev-standard/design.json`を使用する。[schema](../assets/adapter-manifest.schema.json)が構造の正本である。`check_design.py --contract <相対path>`で別配置も指定できる。
+配置は既存の`.dev-standard/design.json`を使用する。APIの通常検査はschema v3と[参照適合契約](conformance.md)の`conformance`を要求する。以下はv2から引き継ぐ共通項目である。APIのv2は明示的なlegacy診断に限定する。[schema](../assets/adapter-manifest.schema.json)が構造の正本である。`check_design.py --contract <相対path>`で別配置も指定できる。
 
 - `requirements`: active IDを読むQuint派生JSON。未知・inactive IDを拒否する。
 - `applicable_requirement_ids`: 適用要件の明示集合。capabilityの`requirement_ids`の和集合と完全一致させる。適用外catalog要件を無条件要求しない。
@@ -60,7 +60,7 @@
 - `api_indexes`: operation ID→`<root>/<group>/<api>/index.md`。
 - `operations`: `id/group/api/documents/sections`を持つ配列。`documents`は6帳票kind→path、`sections`はprofileのrepeat key→実装から列挙した見出し配列。空節には`non_applicable[key]`を付ける。
 
-`crud`は`model/csv/table/diagram/evidence`の5pathを持つ。すべて所有出力に含める。モデルの最小例:
+`crud`は`model/csv/table/diagram/evidence`の5pathと、model v2の各groupについて`groups: {group: {csv, table}}`を持つ。すべて所有出力に含める。旧model v1の関係データ例（v3の完了検査には使えない）:
 
 ```json
 {
@@ -102,3 +102,28 @@ python <host-skill-path>/scripts/reference_inventory.py <inventory.json> --requi
 検査器はmanifest・出力の現在状態を先に検査する。その後repositoryの作業用コピーで非破壊の`--check`を実行する。所有出力rootを毎回空にしてクリーン生成を2回行い、それぞれ既存出力とのbyte一致・生成集合・管理外tree不変性を確認する。元repositoryへ生成し直して古い設計を隠さない。commandはコピーのcwdを基準に相対入出力を使い、cacheも含むすべての書込みを所有出力へ限定する。
 
 作業用コピーはOS sandboxではなく、信頼済みcommandの絶対path・network等の外部作用は隔離しない。依存runtimeと実行環境は導入先が管理する。未宣言source・動的な実行時意味の完全性は共通検査だけでは証明できず、導入先のsource集合照合と負例試験を併用する。既存branch/CI/merge/PR templateは変更しない。
+
+## CRUD model v2
+
+v1の全項目に`resources`を追加し、`schema_version: 2`とする。各資源は`{id, group, kind}`。`kind`は`database`または`external`で、group内に両者を混在させない。資源IDは保存先を含めて一意にし、DDL全テーブル・宣言した全外部資源を実装adapterで列挙する。操作のある資源だけをrowsから逆算しない。
+
+```json
+{
+  "schema_version": 2,
+  "operations": ["getItem", "health"],
+  "resources": [
+    {"id": "db.items", "group": "database", "kind": "database"},
+    {"id": "db.unused", "group": "database", "kind": "database"}
+  ],
+  "rows": [{
+    "operation": "getItem", "resource": "db.items", "access": ["R"],
+    "evidence": [{"path": "src/item.query", "line": 1, "role": "read"}]
+  }],
+  "no_access": {"health": "依存先へアクセスしない"},
+  "unresolved": []
+}
+```
+
+`crud_renderings(model)`が全体のCSV/表/補助図/根拠を返し、同梱`crud_matrix.groups(model)`がgroup→CSV/表を返す。全体とgroup別を所有出力に含め、manifestへpathを列挙する。CSV/表はAPI行×全資源列、セルはC/R/U/D順の組合せ。全APIと未使用列を保持する。根拠は正規化したrowsのJSON。図はMermaid fenceと共有nodeを持ち、Rは資源→API、C/U/DはAPI→資源。no_accessは理由付きの独立nodeで、架空の資源やNONE辺を作らない。これはCRUDでありER関係を描く図ではない。
+
+v1のrendererを凍結して移行診断用に維持する。v3ではv1モデル・縦持ちCSV・group exportの欠落・共通モデルと異なるセルを拒否する。group名のpathへの変換は導入先が安全な相対pathを割り当て、group名そのものをpathとして結合しない。
