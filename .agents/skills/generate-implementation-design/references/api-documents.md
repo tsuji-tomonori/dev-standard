@@ -24,3 +24,11 @@ profile適合は内容の正しさを証明しない。adapterの構成検査に
 API×保存先のCRUDはquery一覧やER図と別のモデルである。参照先Rと変更先C/U/Dを区別し、DB以外の保存先にも同じ関係を使う。未解決動的呼出しは`unresolved`へ残して失敗させる。アクセスしないAPIは理由付き`no_access`へ明示する。
 
 `check_design.crud_renderings(model)`は抽出を行わず、言語非依存JSONモデルからCSV・Markdown表・Mermaid・根拠JSONを決定的に射影する。導入先は同じ形式を使って4出力を生成する。全operation集合とCRUD集合、各rowのread/write根拠、4出力のbyte一致を共通検査器が検査する。根拠の意味と実到達性は導入先adapterが検証する。
+
+## 内容の適合とCRUDの読み方
+
+章構成のv1は変更しない。その上にmanifest v3の[参照適合検査](conformance.md)を接続する。Header/Path/Query/Bodyの同時保持、参照型を展開した項目表、具体的sample対、変更項目と応答の取得元、実loggerと例外の対応、要因/要素/組合せとcollector/実assertまでを導入先で検査する。
+
+CRUDの主表示はlazunexと同じAPI×資源行列。model v2で全資源母集合を明示し、未使用列を含めてDB・外部サービスごとにCSVとMarkdown表を出す。補助MermaidではAPI/資源nodeを共有し、readとwriteの向きを区別する。旧縦持ち一覧、SQL一覧、ER図のどれも行列の代わりにはならない。ERは項目の関係を、CRUDは操作の参照・変更を表すため、それぞれの図を別に保持する。
+
+固定版参照の生成物と実sourceに矛盾があれば、矛盾を台帳へ記録し、実sourceと既存のdrift・未対応拒否要件を優先する。誤った条件の図、未知テーブルやprovider methodを黙殺する挙動を「lazunex準拠」として複製しない。

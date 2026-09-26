@@ -31,6 +31,23 @@ read_json = _INVENTORY.read_json
 validate_inventory = _INVENTORY.validate_inventory
 validate_schema = _INVENTORY.validate_schema
 
+
+
+def sibling(name: str):
+    """隔離実行でも配布済みの同じSkillのhelperだけを読み込む。"""
+    path = Path(__file__).resolve().with_name(name + '.py')
+    if path.is_symlink():
+        raise ValueError('symlink helper is not allowed')
+    spec = importlib.util.spec_from_file_location('design_' + name, path)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_MATRIX = sibling('crud_matrix')
+_CONFORMANCE = sibling('conformance')
+
 SURFACES = {'api', 'data', 'infra', 'frontend'}
 API_DOCUMENTS = {'detail-design', 'interface', 'messages', 'query', 'sequence', 'unit-test'}
 
@@ -393,6 +410,8 @@ def check_api(root: Path, api: dict, outputs: set[str]) -> None:
 
 def crud_renderings(model: dict) -> dict[str, bytes]:
     """同じ言語非依存CRUDモデルからCSV・表・図・根拠を決定的に射影する。"""
+    if model.get('schema_version') == 2:
+        return _MATRIX.renderings(model)
     if set(model) != {'schema_version', 'operations', 'rows', 'no_access', 'unresolved'} or model['schema_version'] != 1:
         raise ValueError('invalid CRUD model')
     operations = set(strings(model['operations'], 'CRUD operations'))
@@ -462,12 +481,24 @@ def validate_outputs(root: Path, data: dict, output: dict[str, bytes]) -> None:
         check_api(root, data['api'], set(output))
     if 'crud' in data:
         config = data['crud']
-        if not set(config.values()) <= output.keys():
+        paths = {config[k] for k in ('model', 'csv', 'table', 'diagram', 'evidence')}
+        paths.update(p for group in config.get('groups', {}).values() for p in group.values())
+        if not paths <= output.keys():
             raise ValueError('CRUD files must be owned outputs')
         model = read_json(confined(root, config['model']))
         if 'api' in data and set(model['operations']) != {op['id'] for op in data['api']['operations']}:
             raise ValueError('CRUD/API operation mismatch')
+        if data['schema_version'] == 3 and model.get('schema_version') != 2:
+            raise ValueError('reference conformance requires CRUD matrix model v2')
         rendered = crud_renderings(model)
+        if model.get('schema_version') == 2:
+            grouped = _MATRIX.groups(model)
+            if set(config.get('groups', {})) != set(grouped):
+                raise ValueError('CRUD store/group exports mismatch')
+            for group, items in grouped.items():
+                for kind, body in items.items():
+                    if output[config['groups'][group][kind]] != body:
+                        raise ValueError('CRUD group export differs from common model')
         for row in model['rows']:
             for evidence in row['evidence']:
                 source = confined(root, evidence['path'])
@@ -496,7 +527,7 @@ def repository_snapshot(root: Path) -> dict:
     return result
 
 
-def check(root: Path, contract: str) -> dict:
+def check(root: Path, contract: str, *, legacy_layout_only: bool = False) -> dict:
     """既存出力を保持したまま作業用コピーでcheckと二重生成を実行する。"""
     root = root.resolve(strict=True)
     data = read_json(confined(root, contract))
@@ -540,6 +571,15 @@ def check(root: Path, contract: str) -> dict:
         inventory_coverage.update(item['requirement_ids'])
     if not applicable <= inventory_coverage:
         raise ValueError('inventory does not cover applicable requirements with tools or explicit gaps')
+    api_required = data['surfaces']['api']['status'] == 'required'
+    if legacy_layout_only and data['schema_version'] == 3:
+        raise ValueError('schema v3 cannot bypass reference conformance')
+    if api_required and not legacy_layout_only and data['schema_version'] != 3:
+        raise ValueError('API adoption requires schema v3 reference conformance; v2 is legacy layout-only, not implementation completion')
+    prepared = None
+    if data['schema_version'] == 3:
+        prepared = _CONFORMANCE.prepare(root, data, ASSETS, confined, read_json)
+    conformance_result = {'status': 'not-checked-legacy' if legacy_layout_only else 'not-applicable'}
     before = snapshot(root, data['capabilities'])
     validate_outputs(root, data, before)
     with tempfile.TemporaryDirectory(prefix='dev-standard-design-') as temporary:
@@ -549,6 +589,12 @@ def check(root: Path, contract: str) -> dict:
         if snapshot(work, data['capabilities']) != before:
             raise ValueError('outputs changed during copy')
         baseline_files = repository_snapshot(work)
+        if prepared is not None:
+            if _CONFORMANCE.source_digest(work, data, confined) != prepared['source_digest']:
+                raise ValueError('conformance sources changed during copy')
+            conformance_result = _CONFORMANCE.execute(work, data, prepared, confined, read_json)
+            if repository_snapshot(work) != baseline_files:
+                raise ValueError('conformance command changed repository files')
         for phase in ('check', 'generate', 'generate'):
             if phase == 'generate':
                 # 毎回空から生成し、生成対象から外れた旧fileの残存を防ぐ。
@@ -569,18 +615,21 @@ def check(root: Path, contract: str) -> dict:
             validate_outputs(work, data, current)
             if repository_snapshot(work) != baseline_files:
                 raise ValueError(f'{phase}: command changed unowned files or directory/link types')
+    if prepared is not None and _CONFORMANCE.source_digest(root, data, confined) != prepared['source_digest']:
+        raise ValueError('conformance original sources changed during verification')
     if snapshot(root, data['capabilities']) != before:
         raise ValueError('original outputs changed during verification')
-    return {'configuration': 'pass', 'design_drift': 'pass', 'execution_tests': {name: read_json(confined(root, cap['report']))['execution_tests'] for name, cap in data['capabilities'].items() if cap['status'] == 'required'}, 'unsupported_surfaces': [], 'files': len(before)}
+    return {'configuration': 'pass', 'design_drift': 'pass', 'reference_conformance': conformance_result, 'execution_tests': {name: read_json(confined(root, cap['report']))['execution_tests'] for name, cap in data['capabilities'].items() if cap['status'] == 'required'}, 'unsupported_surfaces': [], 'files': len(before)}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=Path.cwd())
     parser.add_argument('--contract', default='.dev-standard/design.json')
+    parser.add_argument('--legacy-layout-only', action='store_true', help='Read-only v2 migration diagnosis; never an implementation completion result')
     args = parser.parse_args()
     try:
-        print(json.dumps(check(args.root, args.contract), ensure_ascii=False, sort_keys=True))
+        print(json.dumps(check(args.root, args.contract, legacy_layout_only=args.legacy_layout_only), ensure_ascii=False, sort_keys=True))
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as exc:
         parser.exit(1, f'as-built incomplete: {exc}\n')
 

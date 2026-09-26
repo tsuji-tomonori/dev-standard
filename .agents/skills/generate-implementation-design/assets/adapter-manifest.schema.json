@@ -3,7 +3,11 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": 2
+      "type": "integer",
+      "enum": [
+        2,
+        3
+      ]
     },
     "requirements": {
       "type": "string",
@@ -286,6 +290,27 @@
         "evidence": {
           "type": "string",
           "minLength": 1
+        },
+        "groups": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "csv": {
+                "type": "string",
+                "minLength": 1
+              },
+              "table": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "csv",
+              "table"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [
@@ -294,6 +319,33 @@
         "table",
         "diagram",
         "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "conformance": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mapping": {
+          "type": "string",
+          "minLength": 1
+        },
+        "check": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 2
+        }
+      },
+      "required": [
+        "profile",
+        "mapping",
+        "check"
       ],
       "additionalProperties": false
     }

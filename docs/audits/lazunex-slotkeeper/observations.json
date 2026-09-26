@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "reference_revision": "096e1e580ab1c0670c57e4febad2bd9fdd4698ee",
+  "target_revision": "1b7590fb671df765e62fcf82f158a0ba94bd713d",
+  "operations": {
+    "lazunex": [
+      {
+        "name": "approve_api_access_request",
+        "group": "api_access_requests",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/api_access_requests/approve_api_access_request/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/api_access_requests/approve_api_access_request/if_gen.md",
+          "messages": "docs/spec/40.apis/api_access_requests/approve_api_access_request/messages_gen.md",
+          "query": "docs/spec/40.apis/api_access_requests/approve_api_access_request/query_gen.md",
+          "sequence": "docs/spec/40.apis/api_access_requests/approve_api_access_request/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/api_access_requests/approve_api_access_request/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 条件分岐",
+          "F03 条件分岐",
+          "F04 条件分岐",
+          "F05 条件分岐",
+          "F06 例外処理",
+          "F07 例外処理",
+          "F08 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "reject_api_access_request",
+        "group": "api_access_requests",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/api_access_requests/reject_api_access_request/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/api_access_requests/reject_api_access_request/if_gen.md",
+          "messages": "docs/spec/40.apis/api_access_requests/reject_api_access_request/messages_gen.md",
+          "query": "docs/spec/40.apis/api_access_requests/reject_api_access_request/query_gen.md",
+          "sequence": "docs/spec/40.apis/api_access_requests/reject_api_access_request/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/api_access_requests/reject_api_access_request/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 条件分岐",
+          "F03 条件分岐",
+          "F04 例外処理",
+          "F05 例外処理",
+          "F06 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "get_api",
+        "group": "apis",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/apis/get_api/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/apis/get_api/if_gen.md",
+          "messages": "docs/spec/40.apis/apis/get_api/messages_gen.md",
+          "query": "docs/spec/40.apis/apis/get_api/query_gen.md",
+          "sequence": "docs/spec/40.apis/apis/get_api/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/apis/get_api/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "list_apis",
+        "group": "apis",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/apis/list_apis/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/apis/list_apis/if_gen.md",
+          "messages": "docs/spec/40.apis/apis/list_apis/messages_gen.md",
+          "query": "docs/spec/40.apis/apis/list_apis/query_gen.md",
+          "sequence": "docs/spec/40.apis/apis/list_apis/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/apis/list_apis/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "publish_api",
+        "group": "apis",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/apis/publish_api/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/apis/publish_api/if_gen.md",
+          "messages": "docs/spec/40.apis/apis/publish_api/messages_gen.md",
+          "query": "docs/spec/40.apis/apis/publish_api/query_gen.md",
+          "sequence": "docs/spec/40.apis/apis/publish_api/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/apis/publish_api/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 条件分岐",
+          "F03 条件分岐",
+          "F04 条件分岐",
+          "F05 例外処理",
+          "F06 例外処理",
+          "F07 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "create_api_access_request",
+        "group": "projects",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/projects/create_api_access_request/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/projects/create_api_access_request/if_gen.md",
+          "messages": "docs/spec/40.apis/projects/create_api_access_request/messages_gen.md",
+          "query": "docs/spec/40.apis/projects/create_api_access_request/query_gen.md",
+          "sequence": "docs/spec/40.apis/projects/create_api_access_request/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/projects/create_api_access_request/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 条件分岐",
+          "F03 条件分岐",
+          "F04 条件分岐",
+          "F05 条件分岐",
+          "F06 条件分岐",
+          "F07 条件分岐",
+          "F08 例外処理",
+          "F09 例外処理",
+          "F10 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "create_project",
+        "group": "projects",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/projects/create_project/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/projects/create_project/if_gen.md",
+          "messages": "docs/spec/40.apis/projects/create_project/messages_gen.md",
+          "query": "docs/spec/40.apis/projects/create_project/query_gen.md",
+          "sequence": "docs/spec/40.apis/projects/create_project/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/projects/create_project/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 条件分岐",
+          "F03 例外処理",
+          "F04 例外処理",
+          "F05 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "get_project",
+        "group": "projects",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/projects/get_project/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/projects/get_project/if_gen.md",
+          "messages": "docs/spec/40.apis/projects/get_project/messages_gen.md",
+          "query": "docs/spec/40.apis/projects/get_project/query_gen.md",
+          "sequence": "docs/spec/40.apis/projects/get_project/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/projects/get_project/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "list_project_api_access_requests",
+        "group": "projects",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/projects/list_project_api_access_requests/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/projects/list_project_api_access_requests/if_gen.md",
+          "messages": "docs/spec/40.apis/projects/list_project_api_access_requests/messages_gen.md",
+          "query": "docs/spec/40.apis/projects/list_project_api_access_requests/query_gen.md",
+          "sequence": "docs/spec/40.apis/projects/list_project_api_access_requests/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/projects/list_project_api_access_requests/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "list_project_subscriptions",
+        "group": "projects",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/projects/list_project_subscriptions/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/projects/list_project_subscriptions/if_gen.md",
+          "messages": "docs/spec/40.apis/projects/list_project_subscriptions/messages_gen.md",
+          "query": "docs/spec/40.apis/projects/list_project_subscriptions/query_gen.md",
+          "sequence": "docs/spec/40.apis/projects/list_project_subscriptions/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/projects/list_project_subscriptions/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "list_projects",
+        "group": "projects",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/projects/list_projects/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/projects/list_projects/if_gen.md",
+          "messages": "docs/spec/40.apis/projects/list_projects/messages_gen.md",
+          "query": "docs/spec/40.apis/projects/list_projects/query_gen.md",
+          "sequence": "docs/spec/40.apis/projects/list_projects/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/projects/list_projects/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "update_project_public_client",
+        "group": "projects",
+        "documents": {
+          "detail-design": "docs/spec/40.apis/projects/update_project_public_client/detail-design_gen.md",
+          "interface": "docs/spec/40.apis/projects/update_project_public_client/if_gen.md",
+          "messages": "docs/spec/40.apis/projects/update_project_public_client/messages_gen.md",
+          "query": "docs/spec/40.apis/projects/update_project_public_client/query_gen.md",
+          "sequence": "docs/spec/40.apis/projects/update_project_public_client/sequence_gen.md",
+          "unit-test": "docs/spec/40.apis/projects/update_project_public_client/unit-test_gen.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": false,
+        "factor_headings": [
+          "F01 条件分岐",
+          "F02 条件分岐",
+          "F03 例外処理",
+          "F04 例外処理",
+          "F05 例外処理"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 5
+      },
+      {
+        "name": "health_health_get",
+        "group": "system",
+        "documents": {
+          "interface": "docs/spec/40.apis/system/health_health_get/if_gen.md"
+        },
+        "document_count": 1,
+        "sample_placeholder": false,
+        "factor_headings": [],
+        "sequence_has_mermaid_fence": false,
+        "generated_marker_count": 1
+      }
+    ],
+    "SlotKeeper": [
+      {
+        "name": "reservations_cancel",
+        "group": "reservations",
+        "documents": {
+          "detail-design": "docs/design/generated/api/reservations/reservations_cancel/detail-design.md",
+          "interface": "docs/design/generated/api/reservations/reservations_cancel/interface.md",
+          "messages": "docs/design/generated/api/reservations/reservations_cancel/messages.md",
+          "query": "docs/design/generated/api/reservations/reservations_cancel/query.md",
+          "sequence": "docs/design/generated/api/reservations/reservations_cancel/sequence.md",
+          "unit-test": "docs/design/generated/api/reservations/reservations_cancel/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "reservations_create",
+        "group": "reservations",
+        "documents": {
+          "detail-design": "docs/design/generated/api/reservations/reservations_create/detail-design.md",
+          "interface": "docs/design/generated/api/reservations/reservations_create/interface.md",
+          "messages": "docs/design/generated/api/reservations/reservations_create/messages.md",
+          "query": "docs/design/generated/api/reservations/reservations_create/query.md",
+          "sequence": "docs/design/generated/api/reservations/reservations_create/sequence.md",
+          "unit-test": "docs/design/generated/api/reservations/reservations_create/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "reservations_get",
+        "group": "reservations",
+        "documents": {
+          "detail-design": "docs/design/generated/api/reservations/reservations_get/detail-design.md",
+          "interface": "docs/design/generated/api/reservations/reservations_get/interface.md",
+          "messages": "docs/design/generated/api/reservations/reservations_get/messages.md",
+          "query": "docs/design/generated/api/reservations/reservations_get/query.md",
+          "sequence": "docs/design/generated/api/reservations/reservations_get/sequence.md",
+          "unit-test": "docs/design/generated/api/reservations/reservations_get/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "reservations_list",
+        "group": "reservations",
+        "documents": {
+          "detail-design": "docs/design/generated/api/reservations/reservations_list/detail-design.md",
+          "interface": "docs/design/generated/api/reservations/reservations_list/interface.md",
+          "messages": "docs/design/generated/api/reservations/reservations_list/messages.md",
+          "query": "docs/design/generated/api/reservations/reservations_list/query.md",
+          "sequence": "docs/design/generated/api/reservations/reservations_list/sequence.md",
+          "unit-test": "docs/design/generated/api/reservations/reservations_list/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "resources_create",
+        "group": "resources",
+        "documents": {
+          "detail-design": "docs/design/generated/api/resources/resources_create/detail-design.md",
+          "interface": "docs/design/generated/api/resources/resources_create/interface.md",
+          "messages": "docs/design/generated/api/resources/resources_create/messages.md",
+          "query": "docs/design/generated/api/resources/resources_create/query.md",
+          "sequence": "docs/design/generated/api/resources/resources_create/sequence.md",
+          "unit-test": "docs/design/generated/api/resources/resources_create/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "resources_list",
+        "group": "resources",
+        "documents": {
+          "detail-design": "docs/design/generated/api/resources/resources_list/detail-design.md",
+          "interface": "docs/design/generated/api/resources/resources_list/interface.md",
+          "messages": "docs/design/generated/api/resources/resources_list/messages.md",
+          "query": "docs/design/generated/api/resources/resources_list/query.md",
+          "sequence": "docs/design/generated/api/resources/resources_list/sequence.md",
+          "unit-test": "docs/design/generated/api/resources/resources_list/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "resources_update",
+        "group": "resources",
+        "documents": {
+          "detail-design": "docs/design/generated/api/resources/resources_update/detail-design.md",
+          "interface": "docs/design/generated/api/resources/resources_update/interface.md",
+          "messages": "docs/design/generated/api/resources/resources_update/messages.md",
+          "query": "docs/design/generated/api/resources/resources_update/query.md",
+          "sequence": "docs/design/generated/api/resources/resources_update/sequence.md",
+          "unit-test": "docs/design/generated/api/resources/resources_update/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "schedule",
+        "group": "resources",
+        "documents": {
+          "detail-design": "docs/design/generated/api/resources/schedule/detail-design.md",
+          "interface": "docs/design/generated/api/resources/schedule/interface.md",
+          "messages": "docs/design/generated/api/resources/schedule/messages.md",
+          "query": "docs/design/generated/api/resources/schedule/query.md",
+          "sequence": "docs/design/generated/api/resources/schedule/sequence.md",
+          "unit-test": "docs/design/generated/api/resources/schedule/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      },
+      {
+        "name": "health",
+        "group": "system",
+        "documents": {
+          "detail-design": "docs/design/generated/api/system/health/detail-design.md",
+          "interface": "docs/design/generated/api/system/health/interface.md",
+          "messages": "docs/design/generated/api/system/health/messages.md",
+          "query": "docs/design/generated/api/system/health/query.md",
+          "sequence": "docs/design/generated/api/system/health/sequence.md",
+          "unit-test": "docs/design/generated/api/system/health/unit-test.md"
+        },
+        "document_count": 6,
+        "sample_placeholder": true,
+        "factor_headings": [
+          "入力・権限・状態・競合"
+        ],
+        "sequence_has_mermaid_fence": true,
+        "generated_marker_count": 0
+      }
+    ]
+  },
+  "counts": {
+    "lazunex": {
+      "tracked_files": 868,
+      "documented_operations": 13,
+      "six_document_complete": 12,
+      "sample_placeholders": 0,
+      "generated_marker_documents": 61,
+      "operation_sql_files": 96,
+      "crud_csv_count": 4
+    },
+    "SlotKeeper": {
+      "tracked_files": 268,
+      "documented_operations": 9,
+      "six_document_complete": 9,
+      "sample_placeholders": 9,
+      "generated_marker_documents": 0,
+      "operation_sql_files": 22
+    }
+  }
+}

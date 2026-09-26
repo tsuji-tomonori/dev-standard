@@ -93,3 +93,4 @@
 | REQ-EVIDENCE-001 | 初期品質portalのcollector/framework接続と公開準備は導入先で実装する。 |
 | REQ-EVIDENCE-003 | revision/run・allowlist・公開権限は既存evidence guardrailと導入先collectorで補う。 |
 | REQ-EVIDENCE-004 | 階層検索・現在位置・CSVのブラウザE2Eは共通portalで追加する。 |
+| REQ-ASBUILT-036 | 参照toolsの存在と接続pathだけでは導入先の意味検査成功を示せない。導入先で個別受入条件・collectorの正負例を接続し、共通v3契約で主参照集合と新規実行reportを照合する。 |

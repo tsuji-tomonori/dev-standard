@@ -435,10 +435,13 @@
         "reference-tools-inventory",
         "canonical-requirements-json",
         "explicit-applicable-requirement-ids",
-        "explicit-artifact-test-trace"
+        "explicit-artifact-test-trace",
+        "primary-reference-conformance-profile",
+        "rule-to-target-acceptance-map",
+        "target-owned-semantic-check-command"
       ],
       "interfaceSha256": "30a20300052931dbf3dba4fbfd8ccc03a7e115512fcd42adbfa4468bb833f6c3",
-      "manualBodySha256": "8c47f8faa941ba3d599a9ca42a153a897dbd2dc7009f3da642d8b68c67c57007",
+      "manualBodySha256": "633e3a327cd0f0bc6d54bcba2ad12312f21e6347722f24cbbf57e05a7a4618c2",
       "name": "generate-implementation-design",
       "obligationIds": [
         "inventory-required-design-surfaces",
@@ -453,25 +456,32 @@
         "match-explicit-applicable-active-set-exactly",
         "reject-unknown-inactive-missing-or-excess-trace",
         "fail-on-unsupported-required-surface",
-        "separate-contract-drift-test-and-unverified-results"
+        "separate-contract-drift-test-and-unverified-results",
+        "preserve-primary-reference-and-distinct-acceptance-criteria",
+        "execute-fresh-rule-specific-positive-negative-tests",
+        "generate-api-by-resource-crud-matrices"
       ],
       "outputs": [
         "generated-design",
         "contract-conformance",
         "design-drift",
         "execution-test-results",
-        "unverified-surfaces"
+        "unverified-surfaces",
+        "fresh-reference-conformance-result"
       ],
-      "payloadSha256": "232304e4adf2c24a7dc54f3c283bcb9700f2d76acb4ca0cf0e70730e4ee7de31",
+      "payloadSha256": "01be9dfef7f7971b271571f0568374c5b2c2aa22d227fd429137a98a1fe393c2",
       "pillar": "design",
-      "postcondition": "language-neutral contracts validate adapter mapping, output ownership, deterministic generation, drift, profiles and reference inventory; semantic analysis is implemented and checked by target-owned commands",
+      "postcondition": "language-neutral contracts validate primary reference, rule-specific acceptance, fresh target-owned semantic test reports, CRUD matrices, output ownership, deterministic generation and drift; business execution results remain separate",
       "precondition": "adoption or implementation change requires target-owned adapters and an inventory of every applicable implementation surface",
       "prohibitions": [
         "do not ship language-specific parsers or generators",
         "do not edit generated design directly",
         "do not infer requirement satisfaction from implementation",
         "do not mark missing or unsupported required design complete",
-        "do not impose CI branch or merge policy"
+        "do not impose CI branch or merge policy",
+        "do not treat legacy layout-only success as API conformance",
+        "do not substitute a secondary reference or collapse reference rules into one acceptance criterion",
+        "do not claim business test success from adapter contract tests"
       ],
       "repositoryBlocking": true,
       "repositoryPolicy": {
@@ -494,7 +504,11 @@
         "references/adoption.md",
         "references/api-documents.md",
         "scripts/check_design.py",
-        "scripts/reference_inventory.py"
+        "scripts/reference_inventory.py",
+        "assets/lazunex-conformance-v1.json",
+        "references/conformance.md",
+        "scripts/conformance.py",
+        "scripts/crud_matrix.py"
       ],
       "requirementIds": [
         "REQ-ASBUILT-001",
@@ -555,7 +569,8 @@
         "REQ-DESIGN-022",
         "REQ-DESIGN-023",
         "REQ-DESIGN-024",
-        "REQ-DESIGN-025"
+        "REQ-DESIGN-025",
+        "REQ-ASBUILT-036"
       ],
       "role": "as-built-design",
       "sideEffect": "repository-write"
@@ -1177,7 +1192,7 @@
         "requirement-handoff",
         "generated-sources-doc-when-requested"
       ],
-      "payloadSha256": "45d0516465a1a5c2c012c43053d222de1437b5ba939a8ac63ee8fdf0b191798c",
+      "payloadSha256": "3fed62332d7a7f7455fa547c5b258dfd85278ddffc2ba69b32d913d025f77bba",
       "pillar": "auxiliary",
       "postcondition": "only applicable controls have evidence-bounded findings without overriding canonical authority, and any requested generated source document stays repository-confined",
       "precondition": "a relevant standard is selected for the change",
