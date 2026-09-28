@@ -42,6 +42,7 @@
     "REQ-ASBUILT-033",
     "REQ-ASBUILT-034",
     "REQ-ASBUILT-035",
+    "REQ-ASBUILT-036",
     "REQ-DESIGN-001",
     "REQ-DESIGN-002",
     "REQ-DESIGN-003",
@@ -1118,6 +1119,10 @@
     {
       "requirement_id": "REQ-EVIDENCE-004",
       "reason": "階層検索・現在位置・CSVのブラウザE2Eは共通portalで追加する。"
+    },
+    {
+      "requirement_id": "REQ-ASBUILT-036",
+      "reason": "参照toolsの存在と接続pathだけでは導入先の意味検査成功を示せない。導入先で個別受入条件・collectorの正負例を接続し、共通v3契約で主参照集合と新規実行reportを照合する。"
     }
   ]
 }

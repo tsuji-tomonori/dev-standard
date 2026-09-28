@@ -2,9 +2,9 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 18
+- カタログ版: 19
 - Product(JSON): <code>"dev-standard"</code>
-- 更新日(JSON): <code>"2026-09-23"</code>
+- 更新日(JSON): <code>"2026-09-26"</code>
 - 正本: `spec/requirements/requirements.qnt`
 - 機械可読view: `spec/requirements/requirements.json`
 
@@ -12,28 +12,28 @@
 |---|---:|---|---|---|---|
 | <code>"REQ-ASBUILT-001"</code> | 2 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、同一入力からバイト一致する設計出力を**生成する**（<code>"generate"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-002"</code> | 2 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、一つの生成logicを共有するgenerate modeとcheck modeを**提供する**（<code>"provide"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-003"</code> | 2 | 有効 | 制約 | 導入先repositoryの設計・静的解析adapterは、宣言された専用出力rootで所有が明示された直接編集禁止の生成設計を**分離する**（<code>"separate"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-004"</code> | 3 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、実装と公開interfaceとsampleとデータ操作から得たAPI詳細設計を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-005"</code> | 2 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、endpoint metadataから得た重複のないAPI一覧を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-003"</code> | 3 | 有効 | 制約 | 導入先repositoryの設計・静的解析adapterは、宣言された専用出力rootで所有が明示された直接編集禁止の生成設計を**分離する**（<code>"separate"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-004"</code> | 4 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、実装と公開interfaceとsampleとデータ操作から得たAPI詳細設計を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-005"</code> | 3 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、endpoint metadataから得た重複のないAPI一覧を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-006"</code> | 4 | 有効 | データ | 導入先repositoryの設計・静的解析adapterは、実行経路の保存先アクセスから得たAPIと保存先のCRUD関係を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-007"</code> | 4 | 有効 | データ | 導入先repositoryの設計・静的解析adapterは、正本のデータ定義と実アクセスから得た保存構造・制約・関連・書込みAPIを**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-008"</code> | 3 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、E2E testのGiven When Then構造から得たscenario設計を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-007"</code> | 5 | 有効 | データ | 導入先repositoryの設計・静的解析adapterは、正本のデータ定義と実アクセスから得た保存構造・制約・関連・書込みAPIを**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-008"</code> | 4 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、E2E testのGiven When Then構造から得たscenario設計を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-009"</code> | 5 | 有効 | 運用 | 導入先repositoryの設計・静的解析adapterは、対象repositoryが所有する結果JSONから得た参照限定test evidence viewを**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-010"</code> | 3 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、tool entrypointの実装と説明から得たCLI仕様とflowを**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-010"</code> | 4 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、tool entrypointの実装と説明から得たCLI仕様とflowを**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-011"</code> | 4 | 有効 | データ | 導入先repositoryの設計・静的解析adapterは、API error分岐から得たcatalog全体で一意なID付きmachine-readable error caseを**生成する**（<code>"generate"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-012"</code> | 3 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、endpoint登録と設計metadataとerror sampleの三点整合を**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-ASBUILT-013"</code> | 3 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、設計掲載sampleと実response assertionの対応を**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-012"</code> | 4 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、endpoint登録と設計metadataとerror sampleの三点整合を**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-013"</code> | 4 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、設計掲載sampleと実response assertionの対応を**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-014"</code> | 4 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、DBまたは外部変更effectを持つAPIとeffect別E2E状態assertの対応を**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-015"</code> | 3 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、前提・操作・期待結果と自然言語の説明を持つ独立した検証単位を**構成する**（<code>"structure"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-016"</code> | 4 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、C0命令網羅95%以上とC1分岐網羅90%以上のcoverageを**計測する**（<code>"measure"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-017"</code> | 2 | 有効 | 制約 | as-built規約は、Rule IDからcatalog check IDへ接続された機械可読check定義を**維持する**（<code>"maintain"</code>） | repository契約テスト |
 | <code>"REQ-ASBUILT-018"</code> | 3 | 有効 | 運用 | 導入先repositoryの設計・静的解析adapterは、理由付きRule ID抑制箇所の監査一覧を**生成する**（<code>"generate"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-019"</code> | 4 | 有効 | 運用 | inspect-quality-gates runnerは、選択したtest・static analysis・規約check・coverageの結果と未検証範囲を示す一つのlocal summaryまたは対象所有viewを**提供する**（<code>"provide"</code>） | 契約テスト |
-| <code>"REQ-ASBUILT-020"</code> | 3 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、宣言したactive requirement集合とartifact・実在test識別子の完全な明示traceを**妥当性確認する**（<code>"validate"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-ASBUILT-020"</code> | 4 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、宣言したactive requirement集合とartifact・実在test識別子の完全な明示traceを**妥当性確認する**（<code>"validate"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-ASBUILT-021"</code> | 2 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、必要な実装領域のgenerator接続、Markdown生成、欠落とdrift検査を**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-DESIGN-007"</code> | 2 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、operationが所有するSQL正本からの型付きquery生成を**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-DOCS-002"</code> | 2 | 有効 | 品質 | 導入先repositoryの設計・静的解析adapterは、利用者指定に従う説明コメント・処理単位の説明・生成ヘッダーを**検証する**（<code>"verify"</code>） | 言語非依存契約テストと導入先adapter検証 |
-| <code>"REQ-DESIGN-001"</code> | 4 | 有効 | 制約 | 導入先repositoryの設計・静的解析adapterは、endpoint層の全体フローと個別処理単位の具体処理に分離したoperationを**構成する**（<code>"structure"</code>） | 言語非依存契約テストと導入先adapter検証 |
+| <code>"REQ-DESIGN-001"</code> | 5 | 有効 | 制約 | 導入先repositoryの設計・静的解析adapterは、endpoint層の全体フローと個別処理単位の具体処理に分離したoperationを**構成する**（<code>"structure"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-DESIGN-002"</code> | 3 | 有効 | 機能 | 導入先repositoryの設計・静的解析adapterは、endpoint起点の実call graphから得たoperationシーケンス図を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-DESIGN-003"</code> | 3 | 有効 | インターフェース | 導入先repositoryの設計・静的解析adapterは、実装に接続された公開interface定義からのAPIと入出力一覧を**導出する**（<code>"derive"</code>） | 言語非依存契約テストと導入先adapter検証 |
 | <code>"REQ-DESIGN-004"</code> | 3 | 有効 | データ | 導入先repositoryの設計・静的解析adapterは、実行する保存先操作の意味解析から得たqueryとCRUD設計を**解析する**（<code>"parse"</code>） | 言語非依存契約テストと導入先adapter検証 |
@@ -77,35 +77,36 @@
 | <code>"REQ-EVIDENCE-002"</code> | 1 | 有効 | 品質 | 品質report生成処理は、collectorと実行結果に対応する失敗を隠さない共通reportを**生成する**（<code>"generate"</code>） | 契約・adapter・生成drift検証 |
 | <code>"REQ-EVIDENCE-003"</code> | 1 | 有効 | 品質 | 品質report公開処理は、同一revision/runの選別済みartifactだけを公開対象にすることを**制約する**（<code>"constrain"</code>） | 契約・adapter・生成drift検証 |
 | <code>"REQ-ASBUILT-023"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、6帳票の章・順序・必須節・繰返し節・非該当表現を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-024"</code> | 1 | 有効 | 機能 | 導入先repositoryのadapterは、API×保存先モデルからのCSV・表・図・根拠を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-024"</code> | 2 | 有効 | 機能 | 導入先repositoryのadapterは、API×保存先モデルからのCSV・表・図・根拠を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-ASBUILT-025"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、group→API→帳票の階層と索引を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-026"</code> | 2 | 有効 | 機能 | 導入先repositoryのadapterは、実call graphの呼出順・条件・例外・transactionを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-027"</code> | 2 | 有効 | 機能 | 導入先repositoryのadapterは、例外型→捕捉/再送出→HTTP status/body→ログID/level/message/運用対応を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-028"</code> | 2 | 有効 | 機能 | 導入先repositoryのadapterは、実在testへ対応する具体的Given/When/Thenを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-029"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、capabilityごとの生成command・check command・出力root・要件ID・棚卸しリンクを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-030"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、固定revisionの全file用途と採用判断および実接続先を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-031"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、構成適合・設計drift・実行test・未検証範囲の独立した報告を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-032"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、path・理由・support statusを持つ未対応surfaceを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-026"</code> | 3 | 有効 | 機能 | 導入先repositoryのadapterは、実call graphの呼出順・条件・例外・transactionを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-027"</code> | 3 | 有効 | 機能 | 導入先repositoryのadapterは、例外型→捕捉/再送出→HTTP status/body→ログID/level/message/運用対応を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-028"</code> | 3 | 有効 | 機能 | 導入先repositoryのadapterは、実在testへ対応する具体的Given/When/Thenを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-029"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、capabilityごとの生成command・check command・出力root・要件ID・棚卸しリンクを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-030"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、固定revisionの全file用途と採用判断および実接続先を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-031"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、構成適合・設計drift・実行test・未検証範囲の独立した報告を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-032"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、path・理由・support statusを持つ未対応surfaceを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-ASBUILT-033"</code> | 1 | 有効 | 機能 | 導入先repositoryのadapterは、内部捕捉後に正常HTTP statusの失敗結果へ変換する実経路を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-ASBUILT-034"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、一意な全file集合と要件へのtoolまたは明示gap対応を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ASBUILT-034"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、一意な全file集合と要件へのtoolまたは明示gap対応を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-ASBUILT-035"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、generatorが完全所有するrootと明示出力集合を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-008"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、1 operation 1 所有単位を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-DESIGN-009"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、endpoint・個別処理・query・応答組立・schema・contract・sampleの実参照を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-DESIGN-009"</code> | 3 | 有効 | 制約 | 導入先repositoryのadapterは、endpoint・個別処理・query・応答組立・schema・contract・sampleの実参照を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-010"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、明示された共有責務の所有者と依存方向を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-DESIGN-011"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、endpoint層が所有する順序・分岐・反復・例外・transactionを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-DESIGN-011"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、endpoint層が所有する順序・分岐・反復・例外・transactionを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-012"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、各SQLの束縛引数だけを表す専用型を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-013"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、ログcatalogと型付きcontextの許容fieldを**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-014"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、endpoint層に置けるsymbol集合と全source走査を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-015"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、operation所有単位間の依存境界を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-016"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、owner付きSQLとquery生成先を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
-| <code>"REQ-DESIGN-017"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、各SQLの実投影とNULLに一致した専用結果型を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-DESIGN-017"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、各SQLの実投影とNULLに一致した専用結果型を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 | <code>"REQ-DESIGN-018"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、同期・非同期呼出しの意味ある戻り値を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
 | <code>"REQ-DESIGN-019"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、判定処理の入力と実処理に対応する真偽結果を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
 | <code>"REQ-DESIGN-020"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、API業務フローの捕捉対象を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
 | <code>"REQ-DESIGN-021"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、個別業務処理から送出する例外を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
 | <code>"REQ-DESIGN-022"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、選択profileに含まれる処理単位の責務説明を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
 | <code>"REQ-DESIGN-023"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、個別処理とendpoint・共有workflowの依存方向を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
-| <code>"REQ-DESIGN-024"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、固定参照と導入先の構成profile対応を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
+| <code>"REQ-DESIGN-024"</code> | 2 | 有効 | 制約 | 導入先repositoryのadapterは、固定参照と導入先の構成profile対応を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
+| <code>"REQ-ASBUILT-036"</code> | 1 | 有効 | 品質 | 導入先repositoryの設計adapterと共通契約検査器は、固定参照の個別受入条件と現在sourceに対応する正例・負例の結果を**検証する**（<code>"verify"</code>） | 共通契約の正負例と導入先の意味検査実行 |
 | <code>"REQ-DESIGN-025"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、責務配置変更の前後で維持する観測可能な契約を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
 | <code>"REQ-EVIDENCE-004"</code> | 2 | 有効 | 機能 | 導入先の品質portal adapterは、group→API→帳票の親子関係と現在位置を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
 
@@ -185,15 +186,17 @@
 根拠: 専用path、命名、更新commandにより手書き設計との混在と直接編集を防げる。
 根拠(JSON): <code>"専用path、命名、更新commandにより手書き設計との混在と直接編集を防げる。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 3 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-003-1"</code> 前提: Markdown形式のas-built設計を生成する。条件: 生成物の配置と識別を検査する。期待結果: manifestが宣言する専用rootと出力集合に限り、生成元と更新commandを識別できる直接編集禁止表示を持つ。同じ現在状態の手書き設計を正本化しない。
   - criterion(JSON Object): <code>{"given":"Markdown形式のas-built設計を生成する","id":"AC-ASBUILT-003-1","then":"manifestが宣言する専用rootと出力集合に限り、生成元と更新commandを識別できる直接編集禁止表示を持つ。同じ現在状態の手書き設計を正本化しない","when":"生成物の配置と識別を検査する"}</code>
+- <code>"AC-ASBUILT-003-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 生成帳票を公開または閲覧する。期待結果: 自動生成である表示、生成元と再生成command、直接編集禁止を各帳票に残す。手書きの背景・判断と現在実装の自動生成事実を区別し、raw JSONへのリンクだけを人向け設計の代わりにしない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-003-2","then":"自動生成である表示、生成元と再生成command、直接編集禁止を各帳票に残す。手書きの背景・判断と現在実装の自動生成事実を区別し、raw JSONへのリンクだけを人向け設計の代わりにしない。","when":"生成帳票を公開または閲覧する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -217,15 +220,17 @@
 根拠: APIのinterfaceと実行flowを同じ一次情報から導出すると実装との1対1対応を維持できる。
 根拠(JSON): <code>"APIのinterfaceと実行flowを同じ一次情報から導出すると実装との1対1対応を維持できる。"</code>
 
-項目版: 3 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 4 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-004-1"</code> 前提: 実装と公開interface定義がある。条件: 導入先adapterがAPI詳細設計を生成する。期待結果: endpoint起点のinterface、処理step、全branchを保つ制御flow、error分岐、message、unit-test観点を実装から導出する。
   - criterion(JSON Object): <code>{"given":"実装と公開interface定義がある","id":"AC-ASBUILT-004-1","then":"endpoint起点のinterface、処理step、全branchを保つ制御flow、error分岐、message、unit-test観点を実装から導出する","when":"導入先adapterがAPI詳細設計を生成する"}</code>
+- <code>"AC-ASBUILT-004-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 6帳票の意味内容を検査する。期待結果: 正常入力のHeader/Path/Query/Bodyを同時に保持し、前提条件、DB・外部資源の項目ごとの変更値と取得元、応答項目と取得元を表示する。requestBodyとparametersの片方の選択、SQL名だけの変更説明、response schemaだけの取得元説明を拒否する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-004-2","then":"正常入力のHeader/Path/Query/Bodyを同時に保持し、前提条件、DB・外部資源の項目ごとの変更値と取得元、応答項目と取得元を表示する。requestBodyとparametersの片方の選択、SQL名だけの変更説明、response schemaだけの取得元説明を拒否する。","when":"6帳票の意味内容を検査する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -249,15 +254,17 @@
 根拠: route metadataを正本にすると別管理のAPI台帳を不要にできる。
 根拠(JSON): <code>"route metadataを正本にすると別管理のAPI台帳を不要にできる。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-005-1"</code> 前提: endpoint定義に設計metadataがある。条件: API一覧を生成する。期待結果: operation、API番号、権限、業務概要を重複なく列挙する。
   - criterion(JSON Object): <code>{"given":"endpoint定義に設計metadataがある","id":"AC-ASBUILT-005-1","then":"operation、API番号、権限、業務概要を重複なく列挙する","when":"API一覧を生成する"}</code>
+- <code>"AC-ASBUILT-005-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: API一覧を人向けに表示する。期待結果: method/path/operation ID/業務概要/権限と各API索引を対応付ける。sourceのsummaryやdescriptionの欠落を固定のAPI名から捏造せず、欠落または非該当を明示する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-005-2","then":"method/path/operation ID/業務概要/権限と各API索引を対応付ける。sourceのsummaryやdescriptionの欠落を固定のAPI名から捏造せず、欠落または非該当を明示する。","when":"API一覧を人向けに表示する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -315,15 +322,17 @@
 根拠: DDLとSQLを一次情報にするとDB設計の二重管理を避けられる。
 根拠(JSON): <code>"DDLとSQLを一次情報にするとDB設計の二重管理を避けられる。"</code>
 
-項目版: 4 / 状態: `active` / 種別: `data`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 5 / 状態: `active` / 種別: `data`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-007-1"</code> 前提: 保存構造の正本とAPIのアクセス実装がある。条件: 導入先adapterがデータ設計を生成する。期待結果: 保存先、項目、制約、項目単位の関連元・関連先と書込みAPIを正本から導出する。未解析の関連を推測で補わない。
   - criterion(JSON Object): <code>{"given":"保存構造の正本とAPIのアクセス実装がある","id":"AC-ASBUILT-007-1","then":"保存先、項目、制約、項目単位の関連元・関連先と書込みAPIを正本から導出する。未解析の関連を推測で補わない","when":"導入先adapterがデータ設計を生成する"}</code>
+- <code>"AC-ASBUILT-007-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: テーブル仕様とERを生成する。期待結果: 項目の和名・物理名・型・NULL・PK/unique/default/indexと関連を導出し、物理FKと理由付き論理関連を区別する。カードやDDL全文だけを関連線のあるER図の代わりにせず、存在しないFKを推測しない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-007-2","then":"項目の和名・物理名・型・NULL・PK/unique/default/indexと関連を導出し、物理FKと理由付き論理関連を区別する。カードやDDL全文だけを関連線のあるER図の代わりにせず、存在しないFKを推測しない。","when":"テーブル仕様とERを生成する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -347,15 +356,17 @@
 根拠: test codeをscenarioの正本にすると実行可能な仕様と設計表示を一致させられる。
 根拠(JSON): <code>"test codeをscenarioの正本にすると実行可能な仕様と設計表示を一致させられる。"</code>
 
-項目版: 3 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 4 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-008-1"</code> 前提: E2E testにGiven、When、Then sectionがある。条件: scenario設計を生成する。期待結果: 前提、操作、期待状態をtest codeから順序どおり生成する。
   - criterion(JSON Object): <code>{"given":"E2E testにGiven、When、Then sectionがある","id":"AC-ASBUILT-008-1","then":"前提、操作、期待状態をtest codeから順序どおり生成する","when":"scenario設計を生成する"}</code>
+- <code>"AC-ASBUILT-008-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: E2Eの設計を生成する。期待結果: 実test codeの順序付きstep、前提、操作、HTTP/画面/DB/外部の期待状態とcase IDを対応付ける。テストタイトルやタグの一覧だけをstep設計の代わりにしない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-008-2","then":"実test codeの順序付きstep、前提、操作、HTTP/画面/DB/外部の期待状態とcase IDを対応付ける。テストタイトルやタグの一覧だけをstep設計の代わりにしない。","when":"E2Eの設計を生成する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -411,15 +422,17 @@
 根拠: generator自身を同じ方式で可視化すると抽出可能性をdogfoodingできる。
 根拠(JSON): <code>"generator自身を同じ方式で可視化すると抽出可能性をdogfoodingできる。"</code>
 
-項目版: 3 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 4 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-010-1"</code> 前提: tool entrypointと呼出先関数に処理単位の説明がある。条件: tool設計を生成する。期待結果: CLI argument、制御flow、関数責務を導入先の実装解析と処理単位の説明から生成する。
   - criterion(JSON Object): <code>{"given":"tool entrypointと呼出先関数に処理単位の説明がある","id":"AC-ASBUILT-010-1","then":"CLI argument、制御flow、関数責務を導入先の実装解析と処理単位の説明から生成する","when":"tool設計を生成する"}</code>
+- <code>"AC-ASBUILT-010-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 導入先の設計生成・検査toolsを説明する。期待結果: 各CLIの引数、入力正本、生成物、check/更新方法、制御flowと実testへの対応を残す。参照toolへの接続先pathだけをtools自身の設計・試験仕様の代用にしない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-010-2","then":"各CLIの引数、入力正本、生成物、check/更新方法、制御flowと実testへの対応を残す。参照toolへの接続先pathだけをtools自身の設計・試験仕様の代用にしない。","when":"導入先の設計生成・検査toolsを説明する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -475,15 +488,17 @@
 根拠: 実装、interface情報、設計掲載sampleの片落ちを静的に検出する必要がある。
 根拠(JSON): <code>"実装、interface情報、設計掲載sampleの片落ちを静的に検出する必要がある。"</code>
 
-項目版: 3 / 状態: `active` / 種別: `quality`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 4 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-012-1"</code> 前提: API endpoint、OpenAPI metadata、error sampleがある。条件: 公開API変更の整合checkを実行する。期待結果: endpoint登録漏れ、metadata欠落、error分岐に対応するsample不足を検出する。
   - criterion(JSON Object): <code>{"given":"API endpoint、OpenAPI metadata、error sampleがある","id":"AC-ASBUILT-012-1","then":"endpoint登録漏れ、metadata欠落、error分岐に対応するsample不足を検出する","when":"公開API変更の整合checkを実行する"}</code>
+- <code>"AC-ASBUILT-012-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: interfaceとsampleを生成・検査する。期待結果: 参照schemaを展開した項目表に型・必須・制約・説明を保持し、公開status/分岐ごとの具体的RequestとResponseの対を実契約へ照合する。OpenAPI参照という文だけのsample、未解決参照型、全operationへ根拠なく配る固定sampleを拒否する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-012-2","then":"参照schemaを展開した項目表に型・必須・制約・説明を保持し、公開status/分岐ごとの具体的RequestとResponseの対を実契約へ照合する。OpenAPI参照という文だけのsample、未解決参照型、全operationへ根拠なく配る固定sampleを拒否する。","when":"interfaceとsampleを生成・検査する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -507,15 +522,17 @@
 根拠: 設計書に掲載する例をtest済みに限定すると表示と振る舞いの乖離を防げる。
 根拠(JSON): <code>"設計書に掲載する例をtest済みに限定すると表示と振る舞いの乖離を防げる。"</code>
 
-項目版: 3 / 状態: `active` / 種別: `quality`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 4 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-013-1"</code> 前提: 正常または異常response sampleがある。条件: sample整合checkを実行する。期待結果: 各sampleが対応testから参照され、実responseとのassertに使用されていることを検出する。
   - criterion(JSON Object): <code>{"given":"正常または異常response sampleがある","id":"AC-ASBUILT-013-1","then":"各sampleが対応testから参照され、実responseとのassertに使用されていることを検出する","when":"sample整合checkを実行する"}</code>
+- <code>"AC-ASBUILT-013-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: sampleと実testを対応付ける。期待結果: sample IDとcollectorの正確なcase ID、使用したresponse/status/body assertを対応付ける。ファイル名やtest名の部分一致、無関係な認証testへのfallback、存在するがassertに使わないsampleを拒否する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-013-2","then":"sample IDとcollectorの正確なcase ID、使用したresponse/status/body assertを対応付ける。ファイル名やtest名の部分一致、無関係な認証testへのfallback、存在するがassertに使わないsampleを拒否する。","when":"sampleと実testを対応付ける"}</code>
 
-要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-21","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -731,15 +748,17 @@ inspect-quality-gates runnerは、選択したtest・static analysis・規約che
 根拠: 宣言集合との照合と実在testの確認を分離し、特定言語のtest命名へ固定せず追跡漏れを検出する。
 根拠(JSON): <code>"宣言集合との照合と実在testの確認を分離し、特定言語のtest命名へ固定せず追跡漏れを検出する。"</code>
 
-項目版: 3 / 状態: `active` / 種別: `quality`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 4 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-020-1"</code> 前提: canonical requirementsと適用ID集合とartifact/test traceがある。条件: 導入先adapterと契約検査器がtraceを検査する。期待結果: 未知・inactive・重複ID、未mapping、宣言外mappingを拒否する。導入先adapterは未知artifact・存在しないtest識別子・重複link・metadataとの不一致を拒否し、検査器はそのcheck接続を要求する。実装から要件充足を捏造しない。
   - criterion(JSON Object): <code>{"given":"canonical requirementsと適用ID集合とartifact/test traceがある","id":"AC-ASBUILT-020-1","then":"未知・inactive・重複ID、未mapping、宣言外mappingを拒否する。導入先adapterは未知artifact・存在しないtest識別子・重複link・metadataとの不一致を拒否し、検査器はそのcheck接続を要求する。実装から要件充足を捏造しない","when":"導入先adapterと契約検査器がtraceを検査する"}</code>
+- <code>"AC-ASBUILT-020-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 参照品質要件を導入先の要件へ対応させる。期待結果: 参照の各要件IDを個別のactiveな導入先受入条件IDへ写像する。複数の独立した参照要件を単一の包括的受入条件へ潰すこと、存在しないcollector IDへの対応、未検証をgaps空で隠すことを拒否する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-020-2","then":"参照の各要件IDを個別のactiveな導入先受入条件IDへ写像する。複数の独立した参照要件を単一の包括的受入条件へ潰すこと、存在しないcollector IDへの対応、未検証をgaps空で隠すことを拒否する。","when":"参照品質要件を導入先の要件へ対応させる"}</code>
 
-要求源(JSON List): <code>["user:2026-08-27","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-08-27","docs/standards/AS-BUILT-DESIGN.md","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -863,15 +882,17 @@ inspect-quality-gates runnerは、選択したtest・static analysis・規約che
 根拠: 安定したoperation境界により、処理フローの導出と詳細設計の決定的な検査ができる。
 根拠(JSON): <code>"安定したoperation境界により、処理フローの導出と詳細設計の決定的な検査ができる。"</code>
 
-項目版: 4 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 5 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-DESIGN-001-1"</code> 前提: API operationを実装している。条件: 導入先adapterが責務構成を検査する。期待結果: endpoint層が全体フローを所有し、個別処理単位が具体処理を所有する。特定言語のファイル名で適合を判定しない。
   - criterion(JSON Object): <code>{"given":"API operationを実装している","id":"AC-DESIGN-001-1","then":"endpoint層が全体フローを所有し、個別処理単位が具体処理を所有する。特定言語のファイル名で適合を判定しない","when":"導入先adapterが責務構成を検査する"}</code>
+- <code>"AC-DESIGN-001-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: lazunex基準の責務境界を実装する。期待結果: endpointは処理順・認可分岐・例外/transaction境界を、個別業務処理は判定・DB/provider境界・応答組立を所有する。言語に応じて配置名を変えても、endpoint内のquery wrapper呼出し、入力hashや条件比較・応答model組立等の業務処理集約を同等構成と扱わない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-DESIGN-001-2","then":"endpointは処理順・認可分岐・例外/transaction境界を、個別業務処理は判定・DB/provider境界・応答組立を所有する。言語に応じて配置名を変えても、endpoint内のquery wrapper呼出し、入力hashや条件比較・応答model組立等の業務処理集約を同等構成と扱わない。","when":"lazunex基準の責務境界を実装する"}</code>
 
-要求源(JSON List): <code>["user:2026-07-17","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["user:2026-07-17","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約テストと導入先adapter検証
 検証証跡: manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する
 検証(JSON Object): <code>{"evidence":"manifestの接続・結果契約をdev-standardで検査し、意味解析の正例・負例は導入先のcheck commandで検証する","method":"言語非依存契約テストと導入先adapter検証"}</code>
@@ -2353,15 +2374,19 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: CRUD出力の同一モデル対応を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"CRUD出力の同一モデル対応を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-024-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: CSV・表・図・根拠を一つのモデルから決定的に生成し、全operationのアクセスなしを明示する。形式間の行・操作・根拠の不一致と未解決をアクセスなしとする報告を拒否する。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-024-1","then":"CSV・表・図・根拠を一つのモデルから決定的に生成し、全operationのアクセスなしを明示する。形式間の行・操作・根拠の不一致と未解決をアクセスなしとする報告を拒否する","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-ASBUILT-024-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: lazunex基準のCRUDを表示する。期待結果: APIを行、資源を列、セルをC/R/U/D順の組合せとする行列を正規表示にする。全operationとDDL・外部資源台帳の全資源を母集合とし、未使用列と空セルを落とさない。DBと外部サービス別に同じモデルのCSV・Markdown行列を生成する。縦持ちedge一覧は行列の代わりにしない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-024-2","then":"APIを行、資源を列、セルをC/R/U/D順の組合せとする行列を正規表示にする。全operationとDDL・外部資源台帳の全資源を母集合とし、未使用列と空セルを落とさない。DBと外部サービス別に同じモデルのCSV・Markdown行列を生成する。縦持ちedge一覧は行列の代わりにしない。","when":"lazunex基準のCRUDを表示する"}</code>
+- <code>"AC-ASBUILT-024-3"</code> 前提: CRUD行列と補助関係図を生成する。条件: version付きモデルを射影する。期待結果: model v2ではAPIと資源のnodeを共有し、Rは資源からAPI、C/U/DはAPIから資源へ表示する。MarkdownはMermaid fenceを持ち、no_accessを架空資源へのNONE辺にせず理由として保持する。旧v1の縦持ち形式は明示した移行診断だけに残す。。
+  - criterion(JSON Object): <code>{"given":"CRUD行列と補助関係図を生成する","id":"AC-ASBUILT-024-3","then":"model v2ではAPIと資源のnodeを共有し、Rは資源からAPI、C/U/DはAPIから資源へ表示する。MarkdownはMermaid fenceを持ち、no_accessを架空資源へのNONE辺にせず理由として保持する。旧v1の縦持ち形式は明示した移行診断だけに残す。","when":"version付きモデルを射影する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/67","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/67","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2417,8 +2442,8 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 実順序によるシーケンス生成を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"実順序によるシーケンス生成を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-independent-review-fixes"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -2426,8 +2451,10 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-026-1","then":"順序・分岐・反復・例外・transactionの実装変更を図へ反映し、保存先操作の矢印へ正本の目的を使用する。未解決callを明示し、存在しない処理や定型図での補完を成功扱いにしない","when":"導入先adapterの契約適合を検証する"}</code>
 - <code>"AC-ASBUILT-026-2"</code> 前提: SQLを採用したoperationのシーケンスを生成する。条件: 保存先操作の矢印labelを導出する。期待結果: SQL正本に記述された操作目的の一文説明を矢印labelへ使用し、説明欠落を拒否する。説明言語は別指定がなければ日本語とし、SQL名や実行式だけを目的説明の代わりにしない。
   - criterion(JSON Object): <code>{"given":"SQLを採用したoperationのシーケンスを生成する","id":"AC-ASBUILT-026-2","then":"SQL正本に記述された操作目的の一文説明を矢印labelへ使用し、説明欠落を拒否する。説明言語は別指定がなければ日本語とし、SQL名や実行式だけを目的説明の代わりにしない","when":"保存先操作の矢印labelを導出する"}</code>
+- <code>"AC-ASBUILT-026-3"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: helper・callback・transaction境界がある実行flowを図示する。期待結果: 評価順・early return・認可・例外・commit/rollback・retryの実到達経路を保持する。補助関数やDB層の変更も図へ反映し、ast.walk等の単なる探索順、固定retry文、正常statusへの定型矢印で未解析部分を埋めない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-026-3","then":"評価順・early return・認可・例外・commit/rollback・retryの実到達経路を保持する。補助関数やDB層の変更も図へ反映し、ast.walk等の単なる探索順、固定retry文、正常statusへの定型矢印で未解析部分を埋めない。","when":"helper・callback・transaction境界がある実行flowを図示する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2451,8 +2478,8 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 例外応答と運用ログの対応を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"例外応答と運用ログの対応を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-independent-review-fixes"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -2460,8 +2487,10 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-027-1","then":"実行経路に沿って例外型、捕捉または再送出、HTTP status/body、ログID・level・message・運用対応を照合する。未知の動的応答や未対応catchは未検証として返す","when":"導入先adapterの契約適合を検証する"}</code>
 - <code>"AC-ASBUILT-027-2"</code> 前提: 該当する実装と選択profileがある。条件: 導入先adapterの正例と負例を検証する。期待結果: HTTP境界と内部捕捉の実logger呼出しを追跡し、応答status/bodyとログcatalogのID・型・運用対応の一致を正例と負例で検証する。実装にないログ呼出しを帳票へ補完しない。
   - criterion(JSON Object): <code>{"given":"該当する実装と選択profileがある","id":"AC-ASBUILT-027-2","then":"HTTP境界と内部捕捉の実logger呼出しを追跡し、応答status/bodyとログcatalogのID・型・運用対応の一致を正例と負例で検証する。実装にないログ呼出しを帳票へ補完しない","when":"導入先adapterの正例と負例を検証する"}</code>
+- <code>"AC-ASBUILT-027-3"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: message帳票を実loggerと照合する。期待結果: 実出力箇所に結び付いた安定message ID、level、発生条件、項目型、マスク、運用対応と応答変換を表示する。request結果の共通ログだけで個別異常のcatalogを満たしたとせず、公開された共通statusと各operationで実到達するstatusを区別する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-027-3","then":"実出力箇所に結び付いた安定message ID、level、発生条件、項目型、マスク、運用対応と応答変換を表示する。request結果の共通ログだけで個別異常のcatalogを満たしたとせず、公開された共通statusと各operationで実到達するstatusを区別する。","when":"message帳票を実loggerと照合する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2485,8 +2514,8 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 自然言語の検証単位を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"自然言語の検証単位を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"CHG-20260923-independent-review-fixes"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -2494,8 +2523,10 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-028-1","then":"認証・入力制約・分岐・例外から導出した必須要因と要素ごとに前提・操作・期待結果を自然言語で記述し、実在test識別子へ対応付ける。必要な期待ログとDB状態を含め、未対応要因を拒否する","when":"導入先adapterの契約適合を検証する"}</code>
 - <code>"AC-ASBUILT-028-2"</code> 前提: 該当する実装と選択profileがある。条件: 導入先adapterの正例と負例を検証する。期待結果: 実test collectorの各検証単位に対応する自然言語Given/When/Thenの欠落・重複を拒否する。式やfixture名だけを説明の代わりにせず、既定の説明言語で前提・操作・期待結果を読むことができる。
   - criterion(JSON Object): <code>{"given":"該当する実装と選択profileがある","id":"AC-ASBUILT-028-2","then":"実test collectorの各検証単位に対応する自然言語Given/When/Thenの欠落・重複を拒否する。式やfixture名だけを説明の代わりにせず、既定の説明言語で前提・操作・期待結果を読むことができる","when":"導入先adapterの正例と負例を検証する"}</code>
+- <code>"AC-ASBUILT-028-3"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 要因と組合せを実検証単位へ対応させる。期待結果: 条件の成立/不成立、入力境界、例外・暗黙認証から得た個別要因/要素、到達する組合せ、期待ログ・状態・応答を実collectorのparametrize後のIDへ対応させる。汎用の一要因、test関数名の拾い読み、describe名だけで要因とassertの網羅を主張しない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-028-3","then":"条件の成立/不成立、入力境界、例外・暗黙認証から得た個別要因/要素、到達する組合せ、期待ログ・状態・応答を実collectorのparametrize後のIDへ対応させる。汎用の一要因、test関数名の拾い読み、describe名だけで要因とassertの網羅を主張しない。","when":"要因と組合せを実検証単位へ対応させる"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2519,15 +2550,17 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: adapter manifestの完全性を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"adapter manifestの完全性を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-029-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: manifestの存在とschema適合を要求し、各capabilityに生成command、検査command、出力root、対応active要件ID、参照棚卸しリンクを宣言する。非該当は実装が存在しない理由を記録し、適用要件集合の未知・inactive・未mapping・余剰を拒否する。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-029-1","then":"manifestの存在とschema適合を要求し、各capabilityに生成command、検査command、出力root、対応active要件ID、参照棚卸しリンクを宣言する。非該当は実装が存在しない理由を記録し、適用要件集合の未知・inactive・未mapping・余剰を拒否する","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-ASBUILT-029-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 参照API profileを初回導入または更新する。期待結果: 通常の完了判定にはschema v3の参照適合mappingと意味検査commandを接続する。schema v2の旧帳票診断はlegacy-layout-onlyとして明示し、参照適合・実装完了とは表示しない。v3からlegacyへの検査迂回を拒否する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-029-2","then":"通常の完了判定にはschema v3の参照適合mappingと意味検査commandを接続する。schema v2の旧帳票診断はlegacy-layout-onlyとして明示し、参照適合・実装完了とは表示しない。v3からlegacyへの検査迂回を拒否する。","when":"参照API profileを初回導入または更新する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2551,15 +2584,17 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 参照tools全件棚卸しを明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"参照tools全件棚卸しを明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-030-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: 選んだ参照実装の固定commit SHAと全file一覧を記録し、各fileのpath・blob SHAまたはSHA-256・用途・分類・要件ID・adopt/adapt/extend/not-adopted・理由・言語固有前提・導入先の実接続先を保持する。非採用にも具体的理由を要求する。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-030-1","then":"選んだ参照実装の固定commit SHAと全file一覧を記録し、各fileのpath・blob SHAまたはSHA-256・用途・分類・要件ID・adopt/adapt/extend/not-adopted・理由・言語固有前提・導入先の実接続先を保持する。非採用にも具体的理由を要求する","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-ASBUILT-030-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 参照を選択して導入先へ適用する。期待結果: 利用者が正と指定したrepositoryと固定SHAを主参照として保持し、その全tools集合を照合する。KotoRelay等の二次参照は補助として追加できるが、主参照の台帳を二次参照だけで置換しない。参照変更は要件の明示変更として扱う。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-030-2","then":"利用者が正と指定したrepositoryと固定SHAを主参照として保持し、その全tools集合を照合する。KotoRelay等の二次参照は補助として追加できるが、主参照の台帳を二次参照だけで置換しない。参照変更は要件の明示変更として扱う。","when":"参照を選択して導入先へ適用する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2583,15 +2618,17 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 検証報告の分離を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"検証報告の分離を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-031-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: 構成適合、設計drift、実行テスト、未検証範囲を分けて報告する。章の存在やcheck commandの成功から、実行テスト成功または意味解析の完全性を推定しない。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-031-1","then":"構成適合、設計drift、実行テスト、未検証範囲を分けて報告する。章の存在やcheck commandの成功から、実行テスト成功または意味解析の完全性を推定しない","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-ASBUILT-031-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 適合結果を集約する。期待結果: 構成・drift・新規実行した参照適合・業務実行テスト・適用外/未検証を分ける。generatorの定数passや過去のreport、test pathが存在することだけから意味検査または業務テストの成功を推論しない。Advisoryの未実行/失敗は必須検査の成功へ混ぜず、閾値を無条件blockingへ昇格しない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-031-2","then":"構成・drift・新規実行した参照適合・業務実行テスト・適用外/未検証を分ける。generatorの定数passや過去のreport、test pathが存在することだけから意味検査または業務テストの成功を推論しない。Advisoryの未実行/失敗は必須検査の成功へ混ぜず、閾値を無条件blockingへ昇格しない。","when":"適合結果を集約する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/70","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2615,15 +2652,17 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 未対応surfaceの未完了判定を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"未対応surfaceの未完了判定を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-032-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: 未対応surfaceをpath・理由・support status付きで報告し、未対応構文のdiagnosticには位置と構文種別を含める。導入先adapterで補完するまで必要surfaceを未完了とし、成功または非該当に読み替えない。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-032-1","then":"未対応surfaceをpath・理由・support status付きで報告し、未対応構文のdiagnosticには位置と構文種別を含める。導入先adapterで補完するまで必要surfaceを未完了とし、成功または非該当に読み替えない","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-ASBUILT-032-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 解析対象sourceを分類する。期待結果: 公開登録だけでなく全sourceから定義・呼出し・SQL・provider・test集合を独立に列挙して照合する。新規helper、alias、入れ子、非同期、未登録endpoint、未解決外部readを省略せず、unsupportedを空配列やアクセスなしへ固定する実装を負例で検出する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-032-2","then":"公開登録だけでなく全sourceから定義・呼出し・SQL・provider・test集合を独立に列挙して照合する。新規helper、alias、入れ子、非同期、未登録endpoint、未解決外部readを省略せず、unsupportedを空配列やアクセスなしへ固定する実装を負例で検出する。","when":"解析対象sourceを分類する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2679,15 +2718,17 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 棚卸しの網羅照合を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"棚卸しの網羅照合を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-ASBUILT-034-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: 固定された件数・path一意性・digest・要件ID実在を検証し、宣言した全適用要件がいずれかのtoolまたは理由付きgapへ対応することを照合する。任意の参照root再照合で欠落・余剰・SHA不一致を拒否し、人向け表をJSONから決定的に生成する。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-ASBUILT-034-1","then":"固定された件数・path一意性・digest・要件ID実在を検証し、宣言した全適用要件がいずれかのtoolまたは理由付きgapへ対応することを照合する。任意の参照root再照合で欠落・余剰・SHA不一致を拒否し、人向け表をJSONから決定的に生成する","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-ASBUILT-034-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: tools棚卸しの接続先を評価する。期待結果: 同じ大きなgeneratorとtest fileを全行に記入しただけで採用済みと判定しない。各参照要件を満たす実解析・出力・正例/負例のcollector IDへ対応し、宣言したpath/blob集合を主参照の固定全件集合と照合する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-ASBUILT-034-2","then":"同じ大きなgeneratorとtest fileを全行に記入しただけで採用済みと判定しない。各参照要件を満たす実解析・出力・正例/負例のcollector IDへ対応し、宣言したpath/blob集合を主参照の固定全件集合と照合する。","when":"tools棚卸しの接続先を評価する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/72","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2777,8 +2818,8 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 責務の実接続を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"責務の実接続を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-independent-review-fixes"</code>
+項目版: 3 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -2786,8 +2827,10 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-DESIGN-009-1","then":"責務間の実callまたは実参照を検査し、空file・未使用import・コメントだけの宣言・未参照処理・古い集約実装への単純委譲を適合としない。静的解決不能は未検証にする","when":"導入先adapterの契約適合を検証する"}</code>
 - <code>"AC-DESIGN-009-2"</code> 前提: 該当する実装と選択profileがある。条件: 導入先adapterの正例と負例を検証する。期待結果: endpointから個別処理・所有query・入力応答型・応答builder・contract・sampleへの実接続を照合する。応答builderを定義またはimportしただけで呼ばない負例、空の必須責務、未参照contract/sample、旧集約処理への単純委譲を拒否する。
   - criterion(JSON Object): <code>{"given":"該当する実装と選択profileがある","id":"AC-DESIGN-009-2","then":"endpointから個別処理・所有query・入力応答型・応答builder・contract・sampleへの実接続を照合する。応答builderを定義またはimportしただけで呼ばない負例、空の必須責務、未参照contract/sample、旧集約処理への単純委譲を拒否する","when":"導入先adapterの正例と負例を検証する"}</code>
+- <code>"AC-DESIGN-009-3"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: operation所有を具体化する。期待結果: 入力/応答型・契約・sample・応答組立・業務処理・生成queryの所有と実参照を追跡する。全API固有型を共有domainへ集約する場合や生成物を手書き処理に混在させる場合は責務ごとの差分と理由を明記する。ファイル数だけを合わせた空実装は拒否する。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-DESIGN-009-3","then":"入力/応答型・契約・sample・応答組立・業務処理・生成queryの所有と実参照を追跡する。全API固有型を共有domainへ集約する場合や生成物を手書き処理に混在させる場合は責務ごとの差分と理由を明記する。ファイル数だけを合わせた空実装は拒否する。","when":"operation所有を具体化する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/68","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/68","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -2843,15 +2886,17 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: endpointの全体フロー責務を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"endpointの全体フロー責務を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-DESIGN-011-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: endpoint層の全体flowが個別処理へ逆流する呼出し、個別処理内のoperation transaction、endpoint層からDB/providerへの直接I/O呼出しを検出する。非同期workerにも同じ責務境界を適用する。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-DESIGN-011-1","then":"endpoint層の全体flowが個別処理へ逆流する呼出し、個別処理内のoperation transaction、endpoint層からDB/providerへの直接I/O呼出しを検出する。非同期workerにも同じ責務境界を適用する","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-DESIGN-011-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: endpointから呼ぶ保存先操作を評価する。期待結果: query wrapperもDB access境界とみなし、endpoint内の入れ子callbackやalias経由を含め直接呼出しを拒否する。transaction実行helperが共有であってもoperationの順序と成功応答時点をendpoint側から追跡できるようにする。参照のframework名や固定retry回数は移植しない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-DESIGN-011-2","then":"query wrapperもDB access境界とみなし、endpoint内の入れ子callbackやalias経由を含め直接呼出しを拒否する。transaction実行helperが共有であってもoperationの順序と成功応答時点をendpoint側から追跡できるようにする。参照のframework名や固定retry回数は移植しない。","when":"endpointから呼ぶ保存先操作を評価する"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -3039,15 +3084,17 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: SQL投影と結果型の一致を明示的な契約にして欠落や推測による成功判定を防ぐ。
 根拠(JSON): <code>"SQL投影と結果型の一致を明示的な契約にして欠落や推測による成功判定を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-language-agnostic-adapters"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-DESIGN-017-1"</code> 前提: 該当する実装surfaceとadapter manifestがある。条件: 導入先adapterの契約適合を検証する。期待結果: 各SQLの列・式・alias・join・集約・NULL可能性から結果型を生成し、全table行型の流用による投影差異を拒否する。SQL/データ定義変更、生成物欠落と手編集を検出する。
   - criterion(JSON Object): <code>{"given":"該当する実装surfaceとadapter manifestがある","id":"AC-DESIGN-017-1","then":"各SQLの列・式・alias・join・集約・NULL可能性から結果型を生成し、全table行型の流用による投影差異を拒否する。SQL/データ定義変更、生成物欠落と手編集を検出する","when":"導入先adapterの契約適合を検証する"}</code>
+- <code>"AC-DESIGN-017-2"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: SELECT/RETURNINGの投影が変わる。期待結果: 結果型はSQL投影そのものから生成し、部分列の取得を完全な業務row modelへ合わせるためだけに列を増やさない。列別名、NULL拡張、集約・式・RETURNINGの未対応を明示し、headerに手書きした結果型名だけを一次情報とみなさない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-DESIGN-017-2","then":"結果型はSQL投影そのものから生成し、部分列の取得を完全な業務row modelへ合わせるためだけに列を増やさない。列別名、NULL拡張、集約・式・RETURNINGの未対応を明示し、headerに手書きした結果型名だけを一次情報とみなさない。","when":"SELECT/RETURNINGの投影が変わる"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69","user:2026-09-23-language-agnostic-adapters"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/69","user:2026-09-23-language-agnostic-adapters","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 言語非依存契約検査と導入先adapterの正例・負例検証
 検証証跡: manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する
 検証(JSON Object): <code>{"evidence":"manifest接続と報告契約を検証し、意味解析と実行時の妥当性は導入先の検査結果を区別して確認する","method":"言語非依存契約検査と導入先adapterの正例・負例検証"}</code>
@@ -3275,8 +3322,8 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 根拠: 参照構成の適用範囲記録を原子的な義務にし、配置や生成driftの成功による検査漏れを防ぐ。
 根拠(JSON): <code>"参照構成の適用範囲記録を原子的な義務にし、配置や生成driftの成功による検査漏れを防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"CHG-20260923-independent-review-fixes"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -3284,8 +3331,10 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
   - criterion(JSON Object): <code>{"given":"参照実装への追従を利用者が指定する","id":"AC-DESIGN-024-1","then":"固定SHA、operation粒度、責務、適用する規則と理由付き適用外を導入先要件と版付きprofileへ対応付ける。配置だけでなく例外境界・型付きlogger・query型・生成帳票の意味も比較対象とする","when":"導入先adapterが該当する構成契約を検査する"}</code>
 - <code>"AC-DESIGN-024-2"</code> 前提: 導入先言語のadapterを接続する。条件: 受入検査の正例と負例を実行する。期待結果: 実装、生成器、責務規則、関連テストを比較して適用範囲を確定する。既存の明示制約を優先し、参照固有の言語・framework・業務定数・命名辞書・テスト雛形・固定数量閾値を根拠なく全projectへ固定しない。
   - criterion(JSON Object): <code>{"given":"導入先言語のadapterを接続する","id":"AC-DESIGN-024-2","then":"実装、生成器、責務規則、関連テストを比較して適用範囲を確定する。既存の明示制約を優先し、参照固有の言語・framework・業務定数・命名辞書・テスト雛形・固定数量閾値を根拠なく全projectへ固定しない","when":"受入検査の正例と負例を実行する"}</code>
+- <code>"AC-DESIGN-024-3"</code> 前提: 固定版の参照実装と導入先の実sourceがある。条件: 参照と導入先で構成・文書品質が異なる。期待結果: 実装・生成文書・生成器・規則・testの固定版を比較し、是正必須、業務/技術上の適応、同等保持、参照自体の未解決を分ける。lazunexの意味品質を基準とする一方、health例外、互換shim、固有DB、古い生成図の不整合を無批判に共通義務へ昇格しない。。
+  - criterion(JSON Object): <code>{"given":"固定版の参照実装と導入先の実sourceがある","id":"AC-DESIGN-024-3","then":"実装・生成文書・生成器・規則・testの固定版を比較し、是正必須、業務/技術上の適応、同等保持、参照自体の未解決を分ける。lazunexの意味品質を基準とする一方、health例外、互換shim、固有DB、古い生成図の不整合を無批判に共通義務へ昇格しない。","when":"参照と導入先で構成・文書品質が異なる"}</code>
 
-要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/68","user:2026-09-23-independent-review-fixes","https://github.com/tsuji-tomonori/dev-standard/issues/69","https://github.com/tsuji-tomonori/dev-standard/issues/70"]</code>
+要求源(JSON List): <code>["https://github.com/tsuji-tomonori/dev-standard/issues/68","user:2026-09-23-independent-review-fixes","https://github.com/tsuji-tomonori/dev-standard/issues/69","https://github.com/tsuji-tomonori/dev-standard/issues/70","user:2026-09-26-lazunex-authoritative"]</code>
 検証方法: 要件と棚卸し対応の検査および導入先adapterの受入検査
 検証証跡: 参照repositoryではactive IDとtool/gap対応を検査する。言語固有の意味解析・正例・負例・実行テストは導入先の実接続と結果を確認し、未接続を成功としない
 検証(JSON Object): <code>{"evidence":"参照repositoryではactive IDとtool/gap対応を検査する。言語固有の意味解析・正例・負例・実行テストは導入先の実接続と結果を確認し、未接続を成功としない","method":"要件と棚卸し対応の検査および導入先adapterの受入検査"}</code>
@@ -3293,6 +3342,42 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 - 設計: <code>[".agents/skills/generate-implementation-design/references/adapter-contract.md"]</code>
 - 実装: <code>[".agents/skills/generate-implementation-design/SKILL.md",".agents/skills/generate-implementation-design/assets/reference-tools/lazunex-096e1e5.json"]</code>
 - テスト: <code>["tests/test_reference_inventory.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ASBUILT-036: 参照適合の個別要件と新規実行証拠
+
+要件ID(JSON): <code>"REQ-ASBUILT-036"</code>
+タイトル(JSON): <code>"参照適合の個別要件と新規実行証拠"</code>
+主体(JSON): <code>"導入先repositoryの設計adapterと共通契約検査器"</code>
+対象(JSON): <code>"固定参照の個別受入条件と現在sourceに対応する正例・負例の結果"</code>
+導入先repositoryの設計adapterと共通契約検査器は、固定参照の個別受入条件と現在sourceに対応する正例・負例の結果を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 見出し・接続path・定数passだけでは意味品質の欠落を防げないため、参照の各義務を失わず実行する。
+根拠(JSON): <code>"見出し・接続path・定数passだけでは意味品質の欠落を防げないため、参照の各義務を失わず実行する。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"CHG-20260926-lazunex-conformance"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-ASBUILT-036-1"</code> 前提: 版付き参照適合profileが選択されている。条件: mappingを検査する。期待結果: 主参照の固定repository/SHAと全tools集合、全参照要件とactiveな個別受入条件を照合し、主参照の置換・欠落・重複・包括条件への潰し込みを拒否する。適用外も明示要件と理由を持ち、未実装を免除しない。。
+  - criterion(JSON Object): <code>{"given":"版付き参照適合profileが選択されている","id":"AC-ASBUILT-036-1","then":"主参照の固定repository/SHAと全tools集合、全参照要件とactiveな個別受入条件を照合し、主参照の置換・欠落・重複・包括条件への潰し込みを拒否する。適用外も明示要件と理由を持ち、未実装を免除しない。","when":"mappingを検査する"}</code>
+- <code>"AC-ASBUILT-036-2"</code> 前提: 導入先の意味検査commandが接続されている。条件: 共通の完了検査を実行する。期待結果: 新規一時reportへ検査を実行し、現在の宣言sourceと契約入力のdigest、collectorの正確なID、source位置、正例と負例、各要件結果を照合する。no-op、保存済みpass、未収集ID、fail/skipped/not-run、要件やtestの対応漏れを成功としない。。
+  - criterion(JSON Object): <code>{"given":"導入先の意味検査commandが接続されている","id":"AC-ASBUILT-036-2","then":"新規一時reportへ検査を実行し、現在の宣言sourceと契約入力のdigest、collectorの正確なID、source位置、正例と負例、各要件結果を照合する。no-op、保存済みpass、未収集ID、fail/skipped/not-run、要件やtestの対応漏れを成功としない。","when":"共通の完了検査を実行する"}</code>
+- <code>"AC-ASBUILT-036-3"</code> 前提: 意味解析は導入先が所有し、共通検査器はその結果契約を検査する。条件: 結果と制約を報告する。期待結果: 実解析の正当性と全source発見の責任を導入先へ残し、共通schema検査を意味的証明や業務E2E成功と表示しない。適用外の判定にも実行済みの適用範囲の正負例を要求し、Advisoryは必須検査と別に報告する。。
+  - criterion(JSON Object): <code>{"given":"意味解析は導入先が所有し、共通検査器はその結果契約を検査する","id":"AC-ASBUILT-036-3","then":"実解析の正当性と全source発見の責任を導入先へ残し、共通schema検査を意味的証明や業務E2E成功と表示しない。適用外の判定にも実行済みの適用範囲の正負例を要求し、Advisoryは必須検査と別に報告する。","when":"結果と制約を報告する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-26-lazunex-authoritative","docs/audits/lazunex-slotkeeper/README.md"]</code>
+検証方法: 共通契約の正負例と導入先の意味検査実行
+検証証跡: 固定参照・要件対応・fresh report・実test ID・source digestを共通側で照合し、業務固有の意味解析と回帰は導入先で検証する。
+検証(JSON Object): <code>{"evidence":"固定参照・要件対応・fresh report・実test ID・source digestを共通側で照合し、業務固有の意味解析と回帰は導入先で検証する。","method":"共通契約の正負例と導入先の意味検査実行"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/generate-implementation-design/references/conformance.md","docs/audits/lazunex-slotkeeper/README.md"]</code>
+- 実装: <code>[".agents/skills/generate-implementation-design/SKILL.md",".agents/skills/generate-implementation-design/scripts/check_design.py",".agents/skills/generate-implementation-design/scripts/conformance.py"]</code>
+- テスト: <code>["tests/test_lazunex_conformance.py"]</code>
 - 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

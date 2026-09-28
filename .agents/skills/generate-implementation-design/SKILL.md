@@ -26,11 +26,17 @@ APIがある場合は[6帳票・構成profile](references/api-documents.md)を�
 
 [lazunex全52ファイルの棚卸し](assets/reference-tools/lazunex-096e1e5.md)と元の固定blobを全件比較し、導入先で解析器・生成器を実装する。参照言語・framework・命名辞書・業務定数・固定閾値を無条件移植しない。棚卸しは採用方針のblueprintであり、実接続済みを意味しない。導入先では`target-adoption`へ更新し、全ファイルの採用区分・理由・実接続先とgapを記録する。別参照を選んでも同じ言語非依存schemaを使う。
 
+## 内容と実行の適合
+
+利用者が正と指定した主参照を、補助repositoryへ置換しない。[参照適合契約](references/conformance.md)に従い、API導入はmanifest v3、参照要件ごとのactiveな個別受入条件、実collectorの正例/負例を実行するcommandを接続する。帳票は章だけでなく具体的sample、項目の取得元、例外と運用ログ、factor/要素/期待効果まで検査する。CRUDは全資源を列に持つAPI×資源行列を正規表示とし、DB・外部サービス別のCSV/表も同じmodel v2から生成する。
+
+旧v2の明示的な移行診断を実装完了にしない。参照自体の古い生成図や黙殺する解析器の不整合は複製せず、実sourceと既存の未対応拒否要件を優先する。
+
 ## 検証
 
 `python <host-skill-path>/scripts/check_design.py --root .`を既存の検証入口から実行する。manifestと要件集合、出力所有、構成profile、索引・リンク、CRUDの同一モデル、棚卸しを確認し、作業用コピーで非破壊の`--check`を行い、所有出力を毎回空にして2回クリーン生成し、生成集合とbyte一致を確認する。既存出力とのbyte不一致と未対応surfaceは失敗とする。`applicable_requirement_ids`に対する未知ID・inactive ID・未mapping・余剰mappingを拒否し、`unsupported_surfaces`が残る場合はfail-closedにする。詳細な負例は導入先adapterにも接続する。
 
-構成適合・設計drift・実行テスト・未検証範囲を分けて報告する。commandは信頼済みのrepository codeであり、作業用コピーはprocess sandboxではない。CI workflow、required check、branch protection、merge ruleは作成も要求もしない。
+構成適合・設計drift・新規実行した参照適合・業務実行テスト・適用外/未検証範囲を分けて報告する。commandは信頼済みのrepository codeであり、作業用コピーはprocess sandboxではない。CI workflow、required check、branch protection、merge ruleは作成も要求もしない。
 
 <!-- BEGIN GENERATED QUINT CONTRACT -->
 ## Quint contract（自動生成）

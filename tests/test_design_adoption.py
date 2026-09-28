@@ -87,7 +87,7 @@ class DesignAdoptionTest(unittest.TestCase):
     def invoke(self):
         self.write('contract.json', serialized(self.contract))
         return subprocess.run([sys.executable, str(SCRIPT), '--root', str(self.root),
-                               '--contract', 'contract.json'], text=True, capture_output=True)
+                               '--contract', 'contract.json', '--legacy-layout-only'], text=True, capture_output=True)
 
     def reject(self, expected):
         result = self.invoke()
@@ -598,7 +598,7 @@ Given 項目が存在する。When 一覧を取得する。Then 項目が返る�
         self.reject('unknown fields')
         del self.contract['surprise']
         self.contract['schema_version'] = 1
-        self.reject('expected 2')
+        self.reject('schema_version: invalid value')
 
     def test_unclassified_or_unconnected_surface_is_rejected(self):
         surface = self.contract['surfaces'].pop('data')
