@@ -1,0 +1,101 @@
+{
+  "id": "booking-api",
+  "domain": "会議室予約HTTP API",
+  "opening": "会議室の予約を扱うAPIがほしいです。かぶらないように予約できればよいです。",
+  "persona": {
+    "role": "社内システム担当",
+    "vocabulary": "HTTPとAPIを知るが認証や同時実行制御の専門家ではない",
+    "style": "短く仕様に答え、必要なら日時の具体例を挙げる。"
+  },
+  "requirements": [
+    {
+      "id": "BK-01",
+      "requirement": "部屋名・開始日時・終了日時・予約者を指定して予約を作成できる。",
+      "acceptance": "room=A,start=2026-10-01T09:00:00+09:00,end=10:00,owner=aliceで作成できIDを返す。",
+      "disclosure_topic": "予約の具体例/データ"
+    },
+    {
+      "id": "BK-02",
+      "requirement": "同じ部屋の重なる予約を409で拒否する。",
+      "acceptance": "Aの9-10がある時Aの9:30-10:30は409で件数が増えない。",
+      "disclosure_topic": "かぶる/例外"
+    },
+    {
+      "id": "BK-03",
+      "requirement": "隣接時刻の予約を許可する。",
+      "acceptance": "Aの9-10がある時Aの10-11を作成できる。",
+      "disclosure_topic": "境界/続けて使う"
+    },
+    {
+      "id": "BK-04",
+      "requirement": "別の部屋なら同時刻の予約を許可する。",
+      "acceptance": "Aの9-10がある時Bの9-10を作成できる。",
+      "disclosure_topic": "部屋/スコープ"
+    },
+    {
+      "id": "BK-05",
+      "requirement": "開始が終了以降またはタイムゾーン無しの日時を400で拒否する。",
+      "acceptance": "9-9と10-9およびoffset無しのISO日時は400で保存されない。",
+      "disclosure_topic": "日時/入力の間違い"
+    },
+    {
+      "id": "BK-06",
+      "requirement": "予約一覧を部屋と日付で検索できる。",
+      "acceptance": "Aと2026-10-01で検索するとAの当日予約だけを返し、無しなら空配列を返す。",
+      "disclosure_topic": "見る/空/検索"
+    },
+    {
+      "id": "BK-07",
+      "requirement": "予約者本人だけが自分の予約をキャンセルできる。",
+      "acceptance": "試用固定token alice/bobを提供し、bobがaliceの予約を削除すると403、aliceなら成功となる。",
+      "disclosure_topic": "利用者/権限/削除"
+    },
+    {
+      "id": "BK-08",
+      "requirement": "不明な予約IDのキャンセルは404を返す。",
+      "acceptance": "存在しないIDをキャンセルして404を観測する。",
+      "disclosure_topic": "エラー/例外"
+    },
+    {
+      "id": "BK-09",
+      "requirement": "予約データを再起動後も保持する。",
+      "acceptance": "同じ保存先でAPIを再起動して予約を検索できる。",
+      "disclosure_topic": "保存/再起動"
+    },
+    {
+      "id": "BK-10",
+      "requirement": "キャンセルした予約の個人情報を直ちに削除する。",
+      "acceptance": "キャンセル後は一覧・検索と永続保存の予約レコードに予約者が残らない。履歴や別ログに記録しない。",
+      "disclosure_topic": "個人情報/保持/削除"
+    },
+    {
+      "id": "BK-11",
+      "requirement": "同時に重複予約が来ても最大1件だけ受理する。",
+      "acceptance": "同じ部屋同時間の10並列POSTを送り成功が1件、残りが409となる。",
+      "disclosure_topic": "同時利用/品質"
+    },
+    {
+      "id": "BK-12",
+      "requirement": "ローカル試用だけを対象とし通知と外部ログインを含めない。",
+      "acceptance": "外部ネットワーク無しで起動/作成/検索/キャンセルでき、メール・外部SSOを要求しない。",
+      "disclosure_topic": "配置/制約/対象外/外部I/F"
+    }
+  ],
+  "traps": [
+    {
+      "trigger": "権限を初めて尋ねられた時",
+      "utterance": "みんな自由に消せるのでいいです。いや、他の人の予約を間違って消すのは困ります。",
+      "resolution": "本人だけ消せるようにしてください。固定の試用tokenで十分です。"
+    },
+    {
+      "trigger": "日時の扱いを尋ねられた時",
+      "utterance": "いつもの時間でいいです。",
+      "resolution": "時差つきの日時を入力し、offsetの無い日時は受け付けないでください。"
+    },
+    {
+      "trigger": "通知の必要性を尋ねられた時",
+      "utterance": "通知も便利そうです。",
+      "resolution": "今回は通知無しでよいです。APIの応答だけで確認します。"
+    }
+  ]
+}

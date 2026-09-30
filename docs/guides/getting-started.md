@@ -36,6 +36,7 @@ python tools/install_reference.py --target ../target-repository --profile defaul
 | `chat-first-development` | 通常依頼の入口 |
 | `design-frontend-experience` | UI interaction設計 |
 | `elicit-frontend-requirements` | UI要求の獲得 |
+| `elicit-to-delivery` | 新規システムの聞き取り・確認から実装・検証まで |
 | `generate-implementation-design` | 実装由来設計の生成 |
 | `govern-development-request` | 明示的なregulated work |
 | `implement-frontend-experience` | UI実装 |

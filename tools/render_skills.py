@@ -113,6 +113,7 @@ _ALLOWED_APPLICABILITY = frozenset(
         "when-concrete-duty-exists",
         "when-external-authority-boundary-exists",
         "when-ambiguity-changes-result",
+        "when-new-system-request-has-material-gaps",
         "when-development-is-requested",
         "when-frontend-design-is-needed",
         "when-frontend-requirements-are-needed",
@@ -134,6 +135,7 @@ _ALLOWED_ACTIVATION_CONTEXTS = frozenset(
         "concrete-regulated-duty",
         "external-authority-boundary",
         "material-ambiguity",
+        "new-system-material-gaps",
         "development-request",
         "frontend-requirements",
         "frontend-design",
@@ -201,6 +203,7 @@ EXPECTED_SKILL_NAMES = frozenset(
         "chat-first-development",
         "design-frontend-experience",
         "elicit-frontend-requirements",
+        "elicit-to-delivery",
         "generate-implementation-design",
         "govern-development-request",
         "implement-frontend-experience",
@@ -606,7 +609,7 @@ def _dependency_cycle(graph: Mapping[str, list[str]]) -> list[str] | None:
 
 
 def validate_contract_catalog(contracts: Any) -> None:
-    """Validate the complete 18-Skill catalog before extraction or rendering."""
+    """Validate the complete 19-Skill catalog before extraction or rendering."""
 
     if type(contracts) is not list:
         raise ValueError("Skill catalog contracts must be a list")
@@ -617,9 +620,9 @@ def validate_contract_catalog(contracts: Any) -> None:
     if len(names) != len(set(names)):
         raise ValueError("Skill catalog names must be unique")
     actual_names = set(names)
-    if len(names) != 18 or actual_names != EXPECTED_SKILL_NAMES:
+    if len(names) != 19 or actual_names != EXPECTED_SKILL_NAMES:
         raise ValueError(
-            "Skill catalog must contain exactly the expected 18 Skills: "
+            "Skill catalog must contain exactly the expected 19 Skills: "
             f"missing={sorted(EXPECTED_SKILL_NAMES - actual_names)} "
             f"unknown={sorted(actual_names - EXPECTED_SKILL_NAMES)}"
         )
@@ -644,7 +647,10 @@ def validate_contract_catalog(contracts: Any) -> None:
             raise ValueError(f"{name}: repositoryBlocking is outside the three-pillar boundary")
         if contract["defaultPortable"] != (name in _DEFAULT_PORTABLE_SKILLS):
             raise ValueError(f"{name}: defaultPortable must contain only the entry and three pillars")
-        expected_dependencies = _BLOCKING_SKILLS if name == "chat-first-development" else frozenset()
+        expected_dependencies = {
+            "chat-first-development": _BLOCKING_SKILLS,
+            "elicit-to-delivery": frozenset({"calibrated-collaborative-listening"}),
+        }.get(name, frozenset())
         if set(contract["dependencies"]) != expected_dependencies:
             raise ValueError(f"{name}: dependencies must contain only hard-required Skill edges")
 

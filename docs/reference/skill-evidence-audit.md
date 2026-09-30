@@ -1,6 +1,6 @@
 # Skills根拠資料一覧・整合性監査
 
-- 確認日: 2026-08-29
+- 確認日: 2026-08-29（全体）、2026-09-30（elicit-to-delivery追加照合）
 - 対象: `distribution/manifest.json`の現行inventoryから得たSkills、各Skillの`references/`、`governance/standards/registry.json`
 - 目的: Skillsが参照する研究・規格・公式ガイダンス・実装例を列挙し、主張、適用範囲、訂正、版、運用規則との整合を確認する
 
@@ -181,7 +181,7 @@
 
 ## 9. Quint契約と実体の等価性境界
 
-各Skillの一次契約は`spec/skills/skills.qnt`であり、自然言語本文だけを形式仕様とみなさない。契約は全18 Skillについて次を型付きfieldまたは有限enumとして持つ。
+各Skillの一次契約は`spec/skills/skills.qnt`であり、自然言語本文だけを形式仕様とみなさない。契約は全19 Skillについて次を型付きfieldまたは有限enumとして持つ。
 
 - `repositoryBlocking`、`defaultPortable`、`externalEffect`
 - CI workflow、required check、branch protection、ruleset、merge strategy、PR template、commit formatの7つのrepository policy boolean
@@ -200,6 +200,7 @@
 | `chat-first-development` | development request | user and target repository | 3柱を条件付きで合成し、PR等の外部操作は種類ごとの明示依頼に限定する |
 | `design-frontend-experience` | frontend designが必要 | approved requirements | applicable decisionだけを作り、unsupported generatorを強制しない |
 | `elicit-frontend-requirements` | frontend requirementが必要 | user intent | durable obligationだけを要件正本へ渡す |
+| `elicit-to-delivery` | 新規app/systemで成果を変える不足 | user and target repository | readinessと一度の確認後に自走し、既定値・受入trace・未検証を報告する |
 | `generate-implementation-design` | declared generatorのsupported surface | implementation | explicit `applicable_requirement_ids`とactive requirement / artifact / real test nodeを完全一致させる |
 | `govern-development-request` | concrete lifecycle duty | concrete duty or user | 事前存在するtarget-owned exact-schema JSONを変更せず結合して`init→authorize→verify→close`をstrict replayし、外部anchorはhandoffだけにする |
 | `implement-frontend-experience` | frontend implementation依頼 | requirements and design | applicable stateを実装し、supported generatorだけを起動する |
@@ -212,7 +213,7 @@
 | `test-frontend-experience` | frontend test依頼 | requirements and approved design | change riskにapplicableなtest次元だけを実行し、command effectをauthorityへ結ぶ |
 | `verify-against-engineering-standards` | relevant standard選択 | canonical / target / official standard | default assetを読み、文書生成時だけrepository-confined writeを行う |
 
-機械照合は、Quintのenum / state invariant、Skill directoryとの1対1 coverage、manual generated block、required assetの完全inventory、3 digest、requirement path trace、repository-policy mutation scanを組み合わせる。Quint抽出・文書renderの両入口は全contractのexact field / type、主要listのpairwise uniqueness、64文字lowercase hex digest、依存先の存在・self edge・cycle、18 Skill / 3 blocker / default portable / repository policy境界をfail-closedで再検証する。digestは意味の正しさを単独で証明せず、上表の動作をrunnerのpositive / negative testで反証可能にする。bounded Quint run / Apalache検証も、自然言語全体やPython実装全体の証明とは表現しない。
+機械照合は、Quintのenum / state invariant、Skill directoryとの1対1 coverage、manual generated block、required assetの完全inventory、3 digest、requirement path trace、repository-policy mutation scanを組み合わせる。Quint抽出・文書renderの両入口は全contractのexact field / type、主要listのpairwise uniqueness、64文字lowercase hex digest、依存先の存在・self edge・cycle、19 Skill / 3 blocker / default portable / repository policy境界をfail-closedで再検証する。digestは意味の正しさを単独で証明せず、上表の動作をrunnerのpositive / negative testで反証可能にする。bounded Quint run / Apalache検証も、自然言語全体やPython実装全体の証明とは表現しない。
 
 ## 10. 保守手順
 
@@ -226,3 +227,18 @@
 6. external evidenceとlocal deterministic controlを分ける。
 7. 既存Skillの規則を反転・強化する場合は、要件影響、compatibility、必要なtestを独立に評価する。
 8. standard/guidanceをgateへ使う場合は`governance/standards/registry.json`へ版とscopeを登録する。
+
+## 11. 新規システムの聞き取りから納品まで
+
+`elicit-to-delivery`の書誌・確認URL・利用範囲・限界は[専用evidence map](../../.agents/skills/elicit-to-delivery/references/evidence-map.md)に保持する。ISO 29148:2018、ISO 25010:2023、NASA、EARS、要求面接、surveyの質問設計、anchoring、grounding、repair、Grice、critical incident、reactanceの根拠をR/N/G/Lに分ける。専用mapの現在の一覧はR 13件・N 3件・G 3件・L 3件（Rに理論章・レビューも含む）。Phase A2で停止規則、prompting手法、曖昧性と暗黙知、技法の系統的レビュー、誘導質問、LM明確化判断の6件を追加した。規格previewの公開範囲と未照合の有料本文を区別し、調査面接の研究結果をAI開発対話の効果量へ一般化しない。
+
+質問数は既定1問を維持し、独立した短い低負担回答の場合だけ2〜3問をまとめるL方針。readyになるまでの多ラウンド対話は質問最小化と両立し、全変更へ初回承認を追加しない。auxiliaryの対話停止規則は3本柱以外のportable blocking gateではない。モデル能力は[評価基盤](../../evals/elicit_to_delivery/README.md)で別途検証し、smokeや静的検査だけで保証しない。
+
+| ID | 追加資料・確認URL | 使用箇所と照合範囲・限界 |
+|---|---|---|
+| ED-R08 | Pitts & Browne (2004), [Stopping Behavior](https://www.jmis-web.org/articles/775), JMIS 21(1), 203–226 | readinessの停止判断。54人の分析者の実験室課題、公開abstractまで。本Skillの台帳やLLM効果を実証しない。 |
+| ED-R09 | Browne & Rogich (2001), [Prompting Techniques](https://www.jmis-web.org/articles/134), JMIS 17(4), 223–249 | interviewの質問型。人による3手法比較の公開abstractまで。LLM promptや最適質問数を扱わない。 |
+| ED-R10 | Ferrari, Spoletini & Gnesi (2016), [Ambiguity and tacit knowledge](https://link.springer.com/article/10.1007/s00766-016-0249-3), Requirements Engineering 21(3), 333–355 | interviewの解釈修復。34面接の観察、公開abstractと著者稿のindexed本文。本Skillの分類や完全性保証と区別。 |
+| ED-R11 | Davis, Dieste, Hickey, Juristo & Moreno (2006), [技法の系統的レビュー](https://doi.org/10.1109/RE.2006.17), RE’06, 179–188 | interviewから研究の所在を参照。publisher登録Crossref書誌と著者一覧で照合、一次本文は取得不可。DBLPとの頁の不一致は専用mapに記録し、優越性の主張へ使わない。 |
+| ED-R12 | Loftus & Palmer (1974), [Reconstruction of automobile destruction](https://web.stanford.edu/class/psych205/papers/Loftus-Palmer-1974.pdf), JVLB 13(5), 585–589 | interviewの語彙・前提。原著2実験と登録書誌を照合。映像記憶から要求面接・日本語LLMへ効果量を一般化しない。 |
+| ED-R13 | Zhang & Choi (2025), [Clarify When Necessary](https://aclanthology.org/2025.findings-naacl.306/), Findings NAACL 2025, 5541–5558 | readinessの明確化判断の評価背景。学会abstract・書誌、QA/MT/NLI。gpt-6-lunaの納品能力や本Skillの閾値を実証しない。 |

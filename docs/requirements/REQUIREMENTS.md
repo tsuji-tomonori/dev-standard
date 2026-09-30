@@ -2,9 +2,9 @@
 # dev-standard 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 19
+- カタログ版: 21
 - Product(JSON): <code>"dev-standard"</code>
-- 更新日(JSON): <code>"2026-09-26"</code>
+- 更新日(JSON): <code>"2026-09-30"</code>
 - 正本: `spec/requirements/requirements.qnt`
 - 機械可読view: `spec/requirements/requirements.json`
 
@@ -109,6 +109,9 @@
 | <code>"REQ-ASBUILT-036"</code> | 1 | 有効 | 品質 | 導入先repositoryの設計adapterと共通契約検査器は、固定参照の個別受入条件と現在sourceに対応する正例・負例の結果を**検証する**（<code>"verify"</code>） | 共通契約の正負例と導入先の意味検査実行 |
 | <code>"REQ-DESIGN-025"</code> | 1 | 有効 | 制約 | 導入先repositoryのadapterは、責務配置変更の前後で維持する観測可能な契約を**検証する**（<code>"verify"</code>） | 要件と棚卸し対応の検査および導入先adapterの受入検査 |
 | <code>"REQ-EVIDENCE-004"</code> | 2 | 有効 | 機能 | 導入先の品質portal adapterは、group→API→帳票の親子関係と現在位置を**検証する**（<code>"verify"</code>） | 言語非依存契約検査と導入先adapterの正例・負例検証 |
+| <code>"REQ-ELICIT-001"</code> | 4 | 有効 | 制約 | 情報不足の新規システムを担当するagentは、成果を変える不足が解消された原子的な要件と実装範囲を**妥当性確認する**（<code>"validate"</code>） | 契約検査と分離された多ターン評価 |
+| <code>"REQ-ELICIT-002"</code> | 2 | 有効 | 制約 | 要件サマリを確認済みのagentは、承認済み要件に対応する実装と実検証結果を**提供する**（<code>"provide"</code>） | 契約検査と分離された多ターン評価 |
+| <code>"REQ-ELICIT-003"</code> | 4 | 有効 | 制約 | 新規システムの評価基盤は、被験agentへの隠れ情報漏えいを抑えた要件単位の対話・実装証拠を**検証する**（<code>"verify"</code>） | 契約検査と分離された多ターン評価 |
 
 ## REQ-ASBUILT-001: as-built生成の決定論性
 
@@ -3447,5 +3450,135 @@ Skill検証基盤は、SKILL.mdの主要behavior constraintが代表trajectory�
 - 実装: <code>[".agents/skills/inspect-quality-gates/scripts/evidence.py",".agents/skills/inspect-quality-gates/assets/evidence.js"]</code>
 - テスト: <code>["tests/test_evidence_portal.py"]</code>
 - 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ELICIT-001: 新規システムの実装開始判断
+
+要件ID(JSON): <code>"REQ-ELICIT-001"</code>
+タイトル(JSON): <code>"新規システムの実装開始判断"</code>
+主体(JSON): <code>"情報不足の新規システムを担当するagent"</code>
+対象(JSON): <code>"成果を変える不足が解消された原子的な要件と実装範囲"</code>
+情報不足の新規システムを担当するagentは、成果を変える不足が解消された原子的な要件と実装範囲を**妥当性確認する**。
+行為enum: <code>"validate"</code>
+
+根拠: 曖昧な一言から重要な不足を推測で埋めず、不要な質問を避けながら実装開始を判断する。
+根拠(JSON): <code>"曖昧な一言から重要な不足を推測で埋めず、不要な質問を避けながら実装開始を判断する。"</code>
+
+項目版: 4 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260930-elicit-to-delivery-a5"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-ELICIT-001-1"</code> 前提: 成果を変える未回答・矛盾がある。条件: 実装開始を判断する。期待結果: 利用者の要件サマリへの明示承認まで製品ファイル・テスト・scaffoldを作成・変更せず、未処置の独立低負担項目が複数なら最大3問をまとめ、依存する問い・価値衝突・矛盾修復は1問ずつ必要な回答を得る。
+  - criterion(JSON Object): <code>{"given":"成果を変える未回答・矛盾がある","id":"AC-ELICIT-001-1","then":"利用者の要件サマリへの明示承認まで製品ファイル・テスト・scaffoldを作成・変更せず、未処置の独立低負担項目が複数なら最大3問をまとめ、依存する問い・価値衝突・矛盾修復は1問ずつ必要な回答を得る","when":"実装開始を判断する"}</code>
+- <code>"AC-ELICIT-001-2"</code> 前提: 全該当観点に既知・理由付き非該当・可逆な低リスク既定値の処置がある。条件: 聞き取りを終える。期待結果: 原子ID、受入条件、根拠付き既定値、スコープ外、空の未解決事項を示し要件サマリを明示確認する。重要な不足を既定値の束としてyes/noで承認させず、沈黙やagent自身の確定宣言は承認にしない。
+  - criterion(JSON Object): <code>{"given":"全該当観点に既知・理由付き非該当・可逆な低リスク既定値の処置がある","id":"AC-ELICIT-001-2","then":"原子ID、受入条件、根拠付き既定値、スコープ外、空の未解決事項を示し要件サマリを明示確認する。重要な不足を既定値の束としてyes/noで承認させず、沈黙やagent自身の確定宣言は承認にしない","when":"聞き取りを終える"}</code>
+- <code>"AC-ELICIT-001-3"</code> 前提: 情報不足の新規依頼を受けた。条件: 初回の応答を準備する。期待結果: readinessとinterviewの参照を読み、目的と直近の具体例を開いた質問で聞く。
+  - criterion(JSON Object): <code>{"given":"情報不足の新規依頼を受けた","id":"AC-ELICIT-001-3","then":"readinessとinterviewの参照を読み、目的と直近の具体例を開いた質問で聞く","when":"初回の応答を準備する"}</code>
+- <code>"AC-ELICIT-001-4"</code> 前提: 確認サマリを提示する。条件: 10観点の処置を示す。期待結果: 各観点を1行で確認済みの回答引用、既定値の値・根拠・誤った場合の影響、または非該当の理由とし、空欄・未確認・根拠なしでは確認へ進まない。
+  - criterion(JSON Object): <code>{"given":"確認サマリを提示する","id":"AC-ELICIT-001-4","then":"各観点を1行で確認済みの回答引用、既定値の値・根拠・誤った場合の影響、または非該当の理由とし、空欄・未確認・根拠なしでは確認へ進まない","when":"10観点の処置を示す"}</code>
+- <code>"AC-ELICIT-001-5"</code> 前提: 既定値禁止類型が該当し未処置である。条件: 聞き取りを行う。期待結果: 単一利用者でも他の閲覧・操作主体を1回確認し、権限、保持・削除/取消、主要入力の形式と不正入力、並行競合、外部送信・通知/連携、法的義務・重大なデータ消失の利用者が決める価値判断を推測や一括承認で埋めず質問する。方針確認後の可逆・低リスクな実装細部は個別質問せず、サマリ台帳に値・根拠・誤った場合の影響を示して訂正に委ねる。
+  - criterion(JSON Object): <code>{"given":"既定値禁止類型が該当し未処置である","id":"AC-ELICIT-001-5","then":"単一利用者でも他の閲覧・操作主体を1回確認し、権限、保持・削除/取消、主要入力の形式と不正入力、並行競合、外部送信・通知/連携、法的義務・重大なデータ消失の利用者が決める価値判断を推測や一括承認で埋めず質問する。方針確認後の可逆・低リスクな実装細部は個別質問せず、サマリ台帳に値・根拠・誤った場合の影響を示して訂正に委ねる","when":"聞き取りを行う"}</code>
+- <code>"AC-ELICIT-001-6"</code> 前提: 主要エンティティを聞き取った。条件: 観点台帳の充足を判断する。期待結果: CRUD・状態遷移ごとに誰が・条件・結果・失敗を台帳と要件IDへ対応させ、不要な操作には非該当理由を示し、結果を変える未処置類型だけを質問する。
+  - criterion(JSON Object): <code>{"given":"主要エンティティを聞き取った","id":"AC-ELICIT-001-6","then":"CRUD・状態遷移ごとに誰が・条件・結果・失敗を台帳と要件IDへ対応させ、不要な操作には非該当理由を示し、結果を変える未処置類型だけを質問する","when":"観点台帳の充足を判断する"}</code>
+- <code>"AC-ELICIT-001-7"</code> 前提: 台帳の未処置項目が解消された。条件: 要件サマリの提示前である。期待結果: 起きると困ること・やってはいけないことを開いた質問で1回聞き、回答で生じた不足だけを処置する。研究がこの手順の効果を実証したとは主張しない。
+  - criterion(JSON Object): <code>{"given":"台帳の未処置項目が解消された","id":"AC-ELICIT-001-7","then":"起きると困ること・やってはいけないことを開いた質問で1回聞き、回答で生じた不足だけを処置する。研究がこの手順の効果を実証したとは主張しない","when":"要件サマリの提示前である"}</code>
+- <code>"AC-ELICIT-001-8"</code> 前提: 利用者が値をまだ回答していない。条件: 質問を作る。期待結果: 値を一つだけ候補として埋め込む確認をせず、開いた質問か偏りのない複数選択肢とそれ以外を示す。既回答の修復と自分の既定値を台帳へ提示する行為は区別する。
+  - criterion(JSON Object): <code>{"given":"利用者が値をまだ回答していない","id":"AC-ELICIT-001-8","then":"値を一つだけ候補として埋め込む確認をせず、開いた質問か偏りのない複数選択肢とそれ以外を示す。既回答の修復と自分の既定値を台帳へ提示する行為は区別する","when":"質問を作る"}</code>
+- <code>"AC-ELICIT-001-9"</code> 前提: 小規模な新規アプリを聞き取る。条件: サマリへの進み方を判断する。期待結果: 目的・例、重要類型、締め、サマリを概ね6〜8往復以内の目安で進め、超えそうなら一括化・既定値化を再判断する。上限や研究上の最適回数として不足を打ち切らない。
+  - criterion(JSON Object): <code>{"given":"小規模な新規アプリを聞き取る","id":"AC-ELICIT-001-9","then":"目的・例、重要類型、締め、サマリを概ね6〜8往復以内の目安で進め、超えそうなら一括化・既定値化を再判断する。上限や研究上の最適回数として不足を打ち切らない","when":"サマリへの進み方を判断する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-30-elicit-to-delivery-phase-a","user:2026-09-30-elicit-to-delivery-phase-a2","user:2026-09-30-elicit-to-delivery-phase-a3","user:2026-09-30-elicit-to-delivery-phase-a5"]</code>
+検証方法: 契約検査と分離された多ターン評価
+検証証跡: Skill契約、harness回帰検査、Phase Bの要件単位probeと対話採点
+検証(JSON Object): <code>{"evidence":"Skill契約、harness回帰検査、Phase Bの要件単位probeと対話採点","method":"契約検査と分離された多ターン評価"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/elicit-to-delivery/references/readiness-and-summary.md",".agents/skills/elicit-to-delivery/references/interview.md",".agents/skills/elicit-to-delivery/references/evidence-map.md"]</code>
+- 実装: <code>[".agents/skills/elicit-to-delivery/SKILL.md",".agents/skills/chat-first-development/SKILL.md"]</code>
+- テスト: <code>["tests/test_skills.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ELICIT-002: 確認済み新規システムの納品
+
+要件ID(JSON): <code>"REQ-ELICIT-002"</code>
+タイトル(JSON): <code>"確認済み新規システムの納品"</code>
+主体(JSON): <code>"要件サマリを確認済みのagent"</code>
+対象(JSON): <code>"承認済み要件に対応する実装と実検証結果"</code>
+要件サマリを確認済みのagentは、承認済み要件に対応する実装と実検証結果を**提供する**。
+行為enum: <code>"provide"</code>
+
+根拠: 確認後の形式的な再承認を避け、実受入証拠と達成限界を伴う成果まで完了する。
+根拠(JSON): <code>"確認後の形式的な再承認を避け、実受入証拠と達成限界を伴う成果まで完了する。"</code>
+
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260930-elicit-to-delivery-a2"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-ELICIT-002-1"</code> 前提: 要件サマリとローカル実装範囲が承認されている。条件: 実装と検証を行う。期待結果: 実装開始前にdeliveryの参照を読み、同じ要件への再承認を求めず通常修正を自走し、結果・重要制約・価値選択・権限を変える新事実だけ再質問する。
+  - criterion(JSON Object): <code>{"given":"要件サマリとローカル実装範囲が承認されている","id":"AC-ELICIT-002-1","then":"実装開始前にdeliveryの参照を読み、同じ要件への再承認を求めず通常修正を自走し、結果・重要制約・価値選択・権限を変える新事実だけ再質問する","when":"実装と検証を行う"}</code>
+- <code>"AC-ELICIT-002-2"</code> 前提: 受入条件と実装がある。条件: 完了を報告する。期待結果: 各要件IDと実test・command・結果、仮定、未達・未検証、残存リスク、起動方法を示し、testを弱めたり未実行を成功にしない。
+  - criterion(JSON Object): <code>{"given":"受入条件と実装がある","id":"AC-ELICIT-002-2","then":"各要件IDと実test・command・結果、仮定、未達・未検証、残存リスク、起動方法を示し、testを弱めたり未実行を成功にしない","when":"完了を報告する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-30-elicit-to-delivery-phase-a","user:2026-09-30-elicit-to-delivery-phase-a2"]</code>
+検証方法: 契約検査と分離された多ターン評価
+検証証跡: Skill契約、harness回帰検査、Phase Bの要件単位probeと対話採点
+検証(JSON Object): <code>{"evidence":"Skill契約、harness回帰検査、Phase Bの要件単位probeと対話採点","method":"契約検査と分離された多ターン評価"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/elicit-to-delivery/references/delivery-and-report.md",".agents/skills/elicit-to-delivery/references/evaluation-rubric.md"]</code>
+- 実装: <code>[".agents/skills/elicit-to-delivery/SKILL.md"]</code>
+- テスト: <code>["tests/test_skills.py"]</code>
+- 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-ELICIT-003: 聞き取りと実装の独立評価
+
+要件ID(JSON): <code>"REQ-ELICIT-003"</code>
+タイトル(JSON): <code>"聞き取りと実装の独立評価"</code>
+主体(JSON): <code>"新規システムの評価基盤"</code>
+対象(JSON): <code>"被験agentへの隠れ情報漏えいを抑えた要件単位の対話・実装証拠"</code>
+新規システムの評価基盤は、被験agentへの隠れ情報漏えいを抑えた要件単位の対話・実装証拠を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: Skillありとbaselineを同条件で比較し、自己報告と独立受入を分離してモデル能力の主張を監査可能にする。
+根拠(JSON): <code>"Skillありとbaselineを同条件で比較し、自己報告と独立受入を分離してモデル能力の主張を監査可能にする。"</code>
+
+項目版: 4 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"CHG-20260930-elicit-to-delivery-a5"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-ELICIT-003-1"</code> 前提: ドメインの異なる小規模シナリオとpersona・隠れ要件がある。条件: 被験agentを評価する。期待結果: 評価側情報を被験の祖先・兄弟・一般的な一時探索範囲から離し、新規作業領域とresume対話、承認後に利用者ヒントを追加しない実装・報告、上限turn・時間、gitignore出力を使用する。
+  - criterion(JSON Object): <code>{"given":"ドメインの異なる小規模シナリオとpersona・隠れ要件がある","id":"AC-ELICIT-003-1","then":"評価側情報を被験の祖先・兄弟・一般的な一時探索範囲から離し、新規作業領域とresume対話、承認後に利用者ヒントを追加しない実装・報告、上限turn・時間、gitignore出力を使用する","when":"被験agentを評価する"}</code>
+- <code>"AC-ELICIT-003-2"</code> 前提: 対話と実装が終了した。条件: 結果を判定する。期待結果: 隠れ要件coverage、質問違反、被験test再実行、独立judgeによる実probe、session command監査と承認前の製品増分・承認済み再確認の違反を保存し、未実行・疑わしいアクセスを全面合格へ読み替えない。
+  - criterion(JSON Object): <code>{"given":"対話と実装が終了した","id":"AC-ELICIT-003-2","then":"隠れ要件coverage、質問違反、被験test再実行、独立judgeによる実probe、session command監査と承認前の製品増分・承認済み再確認の違反を保存し、未実行・疑わしいアクセスを全面合格へ読み替えない","when":"結果を判定する"}</code>
+- <code>"AC-ELICIT-003-3"</code> 前提: シミュレータが聞き取りと確認に応答する。条件: 未開示の要件がある。期待結果: 未質問話題を示唆せず、サマリと既存発言に矛盾・誤りがなければ実装への移行を承認し、未開示要件の欠落はcoverageに記録する。
+  - criterion(JSON Object): <code>{"given":"シミュレータが聞き取りと確認に応答する","id":"AC-ELICIT-003-3","then":"未質問話題を示唆せず、サマリと既存発言に矛盾・誤りがなければ実装への移行を承認し、未開示要件の欠落はcoverageに記録する","when":"未開示の要件がある"}</code>
+- <code>"AC-ELICIT-003-4"</code> 前提: 対話と承認後の実装を評価する。条件: 呼出しの上限を適用する。期待結果: 対話、承認後の被験、独立judgeの呼出しにそれぞれ変更可能な時間上限を使い、いずれも全体上限を超えない。
+  - criterion(JSON Object): <code>{"given":"対話と承認後の実装を評価する","id":"AC-ELICIT-003-4","then":"対話、承認後の被験、独立judgeの呼出しにそれぞれ変更可能な時間上限を使い、いずれも全体上限を超えない","when":"呼出しの上限を適用する"}</code>
+- <code>"AC-ELICIT-003-5"</code> 前提: 評価側roleを起動する。条件: cwdを選ぶ。期待結果: repository外で被験の近くや一般的な一時探索範囲を避け、cwdと祖先にAGENTS指示がないことを起動前に確認する。private情報は外部に保存し、集計・監査に必要な証拠だけをgitignore済み出力へコピーし、外部pathも被験アクセス監査へ含める。
+  - criterion(JSON Object): <code>{"given":"評価側roleを起動する","id":"AC-ELICIT-003-5","then":"repository外で被験の近くや一般的な一時探索範囲を避け、cwdと祖先にAGENTS指示がないことを起動前に確認する。private情報は外部に保存し、集計・監査に必要な証拠だけをgitignore済み出力へコピーし、外部pathも被験アクセス監査へ含める","when":"cwdを選ぶ"}</code>
+- <code>"AC-ELICIT-003-6"</code> 前提: judgeの要件単位probe証拠に形式不備がある。条件: 独立受入を集計する。期待結果: 該当要件を理由付きunverifiedへ降格して他要件の集計を続け、機構のCLI失敗・時間切れとは区別する。証拠不足を全面合格にしない。
+  - criterion(JSON Object): <code>{"given":"judgeの要件単位probe証拠に形式不備がある","id":"AC-ELICIT-003-6","then":"該当要件を理由付きunverifiedへ降格して他要件の集計を続け、機構のCLI失敗・時間切れとは区別する。証拠不足を全面合格にしない","when":"独立受入を集計する"}</code>
+- <code>"AC-ELICIT-003-7"</code> 前提: 複数runを並列実行する。条件: 同じシナリオ・variant・評価rootを使う。期待結果: runごとのdirectoryとsessionを分離し、共有lock・counterを介して別runを混同しない。全シナリオのcontextとbaselineを同条件で比較する。
+  - criterion(JSON Object): <code>{"given":"複数runを並列実行する","id":"AC-ELICIT-003-7","then":"runごとのdirectoryとsessionを分離し、共有lock・counterを介して別runを混同しない。全シナリオのcontextとbaselineを同条件で比較する","when":"同じシナリオ・variant・評価rootを使う"}</code>
+- <code>"AC-ELICIT-003-8"</code> 前提: judgeが独立probeを作成する。条件: 作成先と実行証拠を指示する。期待結果: judge用productコピー内の固定directoryへの新規作成と、そのファイルpathをprobe argvへ含めることを明示し、product外の証拠を合格へ読み替えない。
+  - criterion(JSON Object): <code>{"given":"judgeが独立probeを作成する","id":"AC-ELICIT-003-8","then":"judge用productコピー内の固定directoryへの新規作成と、そのファイルpathをprobe argvへ含めることを明示し、product外の証拠を合格へ読み替えない","when":"作成先と実行証拠を指示する"}</code>
+- <code>"AC-ELICIT-003-9"</code> 前提: 対話と実装を保存済みだがjudge時間切れ・証拠形式不備等で採点を再試行する。条件: judgeのみ再実行する。期待結果: 保存済み対話・productと元のprivate scenarioを使い、対話・実装を再実行せず判定と集計を更新する。旧判定・集計・証拠、元の監査・provenanceを保持し、private情報の保存境界と実行証拠の照合基準を維持する。
+  - criterion(JSON Object): <code>{"given":"対話と実装を保存済みだがjudge時間切れ・証拠形式不備等で採点を再試行する","id":"AC-ELICIT-003-9","then":"保存済み対話・productと元のprivate scenarioを使い、対話・実装を再実行せず判定と集計を更新する。旧判定・集計・証拠、元の監査・provenanceを保持し、private情報の保存境界と実行証拠の照合基準を維持する","when":"judgeのみ再実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-30-elicit-to-delivery-phase-a","user:2026-09-30-elicit-to-delivery-phase-a2","user:2026-09-30-elicit-to-delivery-phase-a3","user:2026-09-30-elicit-to-delivery-phase-a5"]</code>
+検証方法: 契約検査と分離された多ターン評価
+検証証跡: Skill契約、harness回帰検査、Phase Bの要件単位probeと対話採点
+検証(JSON Object): <code>{"evidence":"Skill契約、harness回帰検査、Phase Bの要件単位probeと対話採点","method":"契約検査と分離された多ターン評価"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["evals/elicit_to_delivery/README.md"]</code>
+- 実装: <code>["evals/elicit_to_delivery/harness.py"]</code>
+- テスト: <code>["tests/test_elicit_delivery_eval.py"]</code>
+- 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
