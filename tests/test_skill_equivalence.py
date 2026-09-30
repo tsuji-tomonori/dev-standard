@@ -68,14 +68,14 @@ class SkillEquivalenceTest(unittest.TestCase):
             contract["name"]: contract for contract in extract_skills()["contracts"]
         }
 
-    def test_all_18_manual_interface_payloads_are_bound_to_typed_contracts(self) -> None:
+    def test_all_19_manual_interface_payloads_are_bound_to_typed_contracts(self) -> None:
         skill_names = {
             path.name
             for path in SKILLS_ROOT.iterdir()
             if path.is_dir() and (path / "SKILL.md").is_file()
         }
         self.assertEqual(set(self.contracts), skill_names)
-        self.assertEqual(len(skill_names), 18)
+        self.assertEqual(len(skill_names), 19)
         evidence_audit = (ROOT / "docs/reference/skill-evidence-audit.md").read_text(
             encoding="utf-8"
         )
@@ -133,7 +133,9 @@ class SkillEquivalenceTest(unittest.TestCase):
             set(self.contracts["chat-first-development"]["dependencies"]), blockers
         )
         for name, contract in self.contracts.items():
-            if name != "chat-first-development":
+            if name == "elicit-to-delivery":
+                self.assertEqual(contract["dependencies"], ["calibrated-collaborative-listening"], name)
+            elif name != "chat-first-development":
                 self.assertEqual(contract["dependencies"], [], name)
         self.assertEqual(
             self.contracts["govern-development-request"]["sideEffect"],
@@ -257,7 +259,7 @@ class SkillEquivalenceTest(unittest.TestCase):
         cases.append(("policy-mutation", policy_mutation, "must remain host-owned"))
 
         missing_skill = copy.deepcopy(baseline[:-1])
-        cases.append(("missing-skill", missing_skill, "expected 18 Skills"))
+        cases.append(("missing-skill", missing_skill, "expected 19 Skills"))
 
         unknown_dependency = copy.deepcopy(baseline)
         unknown_dependency[0]["dependencies"] = ["missing-skill"]

@@ -101,7 +101,7 @@ class AuditConsistencyTest(unittest.TestCase):
         }
         self.assertEqual(result["overall"], "合格", result["findings"])
         self.assertEqual(result["blocking_findings"], 0)
-        self.assertEqual(result["metrics"]["skill_count"], 18)
+        self.assertEqual(result["metrics"]["skill_count"], 19)
         self.assertEqual(result["metrics"]["requirement_count"], len(active_ids))
         self.assertLessEqual(audit_consistency.AUTO_REQUIREMENTS, active_ids)
         self.assertEqual(

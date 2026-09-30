@@ -1,0 +1,4 @@
+interface:
+  display_name: "聞き取りから実装・検証まで"
+  short_description: "Clarify a new app request, confirm it, and deliver tested code"
+  default_prompt: "Use $elicit-to-delivery to clarify my new app idea, confirm testable requirements, and finish implementation and tests."

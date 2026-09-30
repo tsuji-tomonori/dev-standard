@@ -1,0 +1,101 @@
+{
+  "id": "csv-cli",
+  "domain": "CSV集計CLI",
+  "opening": "毎月の経費CSVをまとめたいです。コマンドで合計が出るものを作れますか。",
+  "persona": {
+    "role": "小規模店舗の経理担当",
+    "vocabulary": "CSVとコマンドを知る。文字コードや丸めの専門用語は不慣れ",
+    "style": "手元の表にある列名と具体例で答える。決めていない表示の細部は任せる。"
+  },
+  "requirements": [
+    {
+      "id": "EX-01",
+      "requirement": "UTF-8 CSVのdate,category,amount列を読む。",
+      "acceptance": "date,category,amountヘッダと2026-09-01,交通,120の行を読み取れる。",
+      "disclosure_topic": "ファイルの具体例/形式"
+    },
+    {
+      "id": "EX-02",
+      "requirement": "指定した年月のカテゴリ別合計を表示する。",
+      "acceptance": "2026-09指定で交通120と交通80は交通200となり2026-08行は含まない。",
+      "disclosure_topic": "月/合計の具体例"
+    },
+    {
+      "id": "EX-03",
+      "requirement": "金額を十進小数で正確に扱い2桁まで表示する。",
+      "acceptance": "0.10と0.20は0.30となる。浮動小数点の誤差を出さない。",
+      "disclosure_topic": "金額/小数/境界"
+    },
+    {
+      "id": "EX-04",
+      "requirement": "負の金額を返品として合計へ含める。",
+      "acceptance": "100.00と-20.00は80.00になる。",
+      "disclosure_topic": "返品/例外"
+    },
+    {
+      "id": "EX-05",
+      "requirement": "不正な日付や金額があると行番号を示して失敗する。",
+      "acceptance": "2行目の不正日付またはamount=abcで非0終了し2行目と原因をstderrに示す。部分集計を成功扱いしない。",
+      "disclosure_topic": "不正な入力/失敗"
+    },
+    {
+      "id": "EX-06",
+      "requirement": "空ファイルやヘッダのみでも明確な結果を返す。",
+      "acceptance": "ヘッダのみなら対象データ無しを正常終了で表示する。完全な空ファイルはヘッダ不足のエラーで非0終了する。",
+      "disclosure_topic": "空の場合/境界"
+    },
+    {
+      "id": "EX-07",
+      "requirement": "CSV入力元を書き換えない。",
+      "acceptance": "正常・失敗どちらでも入力ファイルのバイト列が同一である。",
+      "disclosure_topic": "保持/権限/データ保護"
+    },
+    {
+      "id": "EX-08",
+      "requirement": "利用者はローカルCSVを読める本人だけを想定する。",
+      "acceptance": "アカウントや管理者画面は実装せず、OSのファイル権限で読む。",
+      "disclosure_topic": "利用者/権限"
+    },
+    {
+      "id": "EX-09",
+      "requirement": "50,000行のCSVをローカルで扱える。",
+      "acceptance": "50,000行の集計が評価環境で10秒以内に終了する。計測環境を報告する。",
+      "disclosure_topic": "たくさん/規模/性能"
+    },
+    {
+      "id": "EX-10",
+      "requirement": "入力内容の保存や外部サービス連携をしない。",
+      "acceptance": "集計後にCSVのコピー/明細ログ/別DBを作らず、通信不要で動く。",
+      "disclosure_topic": "保持/削除/外部連携"
+    },
+    {
+      "id": "EX-11",
+      "requirement": "月指定が不正なら使用方法を示して失敗する。",
+      "acceptance": "2026-13または未指定の年月で非0終了し使用方法を示す。",
+      "disclosure_topic": "引数の間違い"
+    },
+    {
+      "id": "EX-12",
+      "requirement": "税計算とグラフは対象外とする。",
+      "acceptance": "税率処理やグラフ表示を要求せずカテゴリ集計だけで完了できる。",
+      "disclosure_topic": "対象外/不要機能"
+    }
+  ],
+  "traps": [
+    {
+      "trigger": "対象外/欲しい表示を初めて尋ねられた時",
+      "utterance": "グラフもほしい気がします。",
+      "resolution": "まず月ごとのカテゴリ合計だけで大丈夫です。グラフは今回要りません。"
+    },
+    {
+      "trigger": "ファイルの大きさを尋ねられた時",
+      "utterance": "たくさんあります。",
+      "resolution": "一番多い月で5万行です。10秒くらいまでなら待てます。"
+    },
+    {
+      "trigger": "不正行を初めて尋ねられた時",
+      "utterance": "間違った行は飛ばしていいかな。でも金額が欠けた合計だと困ります。",
+      "resolution": "飛ばさず、その行番号を示して集計全体をエラーにしてください。"
+    }
+  ]
+}

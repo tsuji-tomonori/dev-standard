@@ -252,7 +252,7 @@
         "authority-boundary"
       ],
       "interfaceSha256": "fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d",
-      "manualBodySha256": "b70c1fe79488360e2435c6a5cc8c5e8f419c8708c868b7498c0995153f9b621b",
+      "manualBodySha256": "e7b193d2941350b827d2b4b6765f5522f63c59267364217fc48abe029a3b59df",
       "name": "chat-first-development",
       "obligationIds": [
         "verify-target-owned-data-access-and-type-generation",
@@ -291,6 +291,7 @@
         "references/bootstrap-and-conversation.md"
       ],
       "requirementIds": [
+        "REQ-ELICIT-001",
         "REQ-EVIDENCE-001",
         "REQ-EVIDENCE-002",
         "REQ-EVIDENCE-003",
@@ -415,6 +416,90 @@
         "REQ-DISC-005"
       ],
       "role": "frontend-requirements",
+      "sideEffect": "repository-write"
+    },
+    {
+      "activationContexts": [
+        "new-system-material-gaps"
+      ],
+      "applicability": "when-new-system-request-has-material-gaps",
+      "authority": "user-and-target-repository",
+      "defaultPortable": false,
+      "dependencies": [
+        "calibrated-collaborative-listening"
+      ],
+      "externalEffect": false,
+      "failureState": "return-for-clarification",
+      "guardrail": false,
+      "inputs": [
+        "request",
+        "existing-authority",
+        "user-answers",
+        "execution-boundary"
+      ],
+      "interfaceSha256": "6ce4529e79f4a4b659865b11a945cfd016d0c7771d2caf1210d4be419c21c87f",
+      "manualBodySha256": "b4e26785ceb15e21759ba7fbfa1506908759505d86578f59063bfc91b22e3be7",
+      "name": "elicit-to-delivery",
+      "obligationIds": [
+        "stop-implementation-until-ready-and-confirmed",
+        "read-references-before-first-response-and-implementation",
+        "start-with-purpose-and-recent-example",
+        "show-ten-viewpoint-dispositions-with-evidence",
+        "ask-applicable-non-defaultable-types",
+        "separate-user-policy-from-safe-implementation-defaults",
+        "batch-independent-low-burden-questions",
+        "scan-entity-crud-and-transitions",
+        "close-with-one-open-negative-scenario-question",
+        "ask-consequential-questions-with-low-burden",
+        "preserve-meaning-and-correctability",
+        "handoff-durable-requirements-to-target-authority",
+        "complete-authorized-implementation-and-tests",
+        "report-actual-evidence-and-limits"
+      ],
+      "outputs": [
+        "confirmed-requirement-summary",
+        "confirmed-viewpoint-ledger",
+        "implementation",
+        "requirement-test-trace",
+        "completion-report"
+      ],
+      "payloadSha256": "770359b93c93a4091ac1849eee7179cfcc588a7c22b887ca032e8f28376392c8",
+      "pillar": "auxiliary",
+      "postcondition": "confirmed atomic requirements are implemented and tested within authority, with actual results and limitations reported",
+      "precondition": "a new app or system request lacks outcome-changing information",
+      "prohibitions": [
+        "do not infer approval from silence",
+        "do not treat self-declaration as approval",
+        "do not bundle consequential defaults for yes-no approval",
+        "do not repeat an approved confirmation",
+        "do not default consequential unknowns",
+        "do not embed a single unanswered value in a confirmation question",
+        "do not weaken tests to pass",
+        "do not impose a fourth portable gate",
+        "do not retain transcripts in portable assets"
+      ],
+      "repositoryBlocking": false,
+      "repositoryPolicy": {
+        "branchProtection": false,
+        "ciWorkflow": false,
+        "commitFormat": false,
+        "mergeStrategy": false,
+        "prTemplate": false,
+        "requiredCheck": false,
+        "ruleset": false
+      },
+      "requiredAssets": [
+        "references/delivery-and-report.md",
+        "references/evaluation-rubric.md",
+        "references/evidence-map.md",
+        "references/interview.md",
+        "references/readiness-and-summary.md"
+      ],
+      "requirementIds": [
+        "REQ-ELICIT-001",
+        "REQ-ELICIT-002"
+      ],
+      "role": "new-system-elicitation-and-delivery",
       "sideEffect": "repository-write"
     },
     {

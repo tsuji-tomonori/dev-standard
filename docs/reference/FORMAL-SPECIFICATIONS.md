@@ -5,7 +5,7 @@
 
 - 正本: `spec/skills/skills.qnt`
 - Quint: `0.32.0`
-- Skill数: 18
+- Skill数: 19
 
 | Skill | 役割 | 柱 | Guardrail | 既定portable | 起動context |
 |---|---|---|---|---|---|
@@ -16,6 +16,7 @@
 | `chat-first-development` | orchestrator | 補助 | なし | 含む | `development-request` |
 | `design-frontend-experience` | frontend-design | 補助 | なし | 含めない | `frontend-design` |
 | `elicit-frontend-requirements` | frontend-requirements | 補助 | なし | 含めない | `frontend-requirements` |
+| `elicit-to-delivery` | new-system-elicitation-and-delivery | 補助 | なし | 含めない | `new-system-material-gaps` |
 | `generate-implementation-design` | as-built-design | as-built設計 | blocking | 含む | `as-built-adoption-or-change` |
 | `govern-development-request` | regulated-orchestration | 補助 | なし | 含めない | `concrete-regulated-duty` |
 | `implement-frontend-experience` | frontend-implementation | 補助 | なし | 含めない | `frontend-implementation` |
@@ -151,8 +152,8 @@
 - 禁止事項: `do not impose CI branch or merge policy`, `do not create per-change bureaucracy`, `do not create update comment or merge a PR unless requested`
 - 依存Skill: `maintain-canonical-requirements`, `generate-implementation-design`, `inspect-quality-gates`
 - 必須asset: `references/bootstrap-and-conversation.md`
-- 要件trace: `REQ-EVIDENCE-001`, `REQ-EVIDENCE-002`, `REQ-EVIDENCE-003`, `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`, `REQ-ASBUILT-021`, `REQ-DESIGN-007`, `REQ-DOCS-002`
-- manual digest: `b70c1fe79488360e2435c6a5cc8c5e8f419c8708c868b7498c0995153f9b621b`
+- 要件trace: `REQ-ELICIT-001`, `REQ-EVIDENCE-001`, `REQ-EVIDENCE-002`, `REQ-EVIDENCE-003`, `REQ-DISC-005`, `REQ-PORTABLE-001`, `REQ-PORTABLE-003`, `REQ-ASBUILT-021`, `REQ-DESIGN-007`, `REQ-DOCS-002`
+- manual digest: `e7b193d2941350b827d2b4b6765f5522f63c59267364217fc48abe029a3b59df`
 - payload digest: `8a83020c2120104ceed0a93ef6eff17b31c91153ec6c678085642fa0d60689c2`
 - interface digest: `fb458bd3bba0d3d1ee4cd64f42523207190dd082f61b7b93cebd0697654a470d`
 
@@ -201,6 +202,29 @@
 - manual digest: `a101def52f60a99c54016e90898a32d917e5dd8667b09be5c8c2fafd9d4b0f4b`
 - payload digest: `9e4bcabfece7a6685a9cb07399e6c8a10ee7a72c760dbbd1b20f91df671f4bb4`
 - interface digest: `01653ab1c807a2841aa48a2eeea4a8da57eaf31227066664929c8dea2cfc4e1b`
+
+### elicit-to-delivery
+
+- 前提: a new app or system request lacks outcome-changing information
+- 事後条件: confirmed atomic requirements are implemented and tested within authority, with actual results and limitations reported
+- 適用条件: `when-new-system-request-has-material-gaps`
+- 起動context: `new-system-material-gaps`
+- Authority: `user-and-target-repository`
+- 副作用: `repository-write`
+- 外部作用capability: `false`
+- Guardrail / repository blocking / 既定portable: `false` / `false` / `false`
+- Repository policy: `ciWorkflow=false`, `requiredCheck=false`, `branchProtection=false`, `ruleset=false`, `mergeStrategy=false`, `prTemplate=false`, `commitFormat=false`
+- 失敗状態: `return-for-clarification`
+- 入力: `request`, `existing-authority`, `user-answers`, `execution-boundary`
+- 出力: `confirmed-requirement-summary`, `confirmed-viewpoint-ledger`, `implementation`, `requirement-test-trace`, `completion-report`
+- 義務: `stop-implementation-until-ready-and-confirmed`, `read-references-before-first-response-and-implementation`, `start-with-purpose-and-recent-example`, `show-ten-viewpoint-dispositions-with-evidence`, `ask-applicable-non-defaultable-types`, `separate-user-policy-from-safe-implementation-defaults`, `batch-independent-low-burden-questions`, `scan-entity-crud-and-transitions`, `close-with-one-open-negative-scenario-question`, `ask-consequential-questions-with-low-burden`, `preserve-meaning-and-correctability`, `handoff-durable-requirements-to-target-authority`, `complete-authorized-implementation-and-tests`, `report-actual-evidence-and-limits`
+- 禁止事項: `do not infer approval from silence`, `do not treat self-declaration as approval`, `do not bundle consequential defaults for yes-no approval`, `do not repeat an approved confirmation`, `do not default consequential unknowns`, `do not embed a single unanswered value in a confirmation question`, `do not weaken tests to pass`, `do not impose a fourth portable gate`, `do not retain transcripts in portable assets`
+- 依存Skill: `calibrated-collaborative-listening`
+- 必須asset: `references/delivery-and-report.md`, `references/evaluation-rubric.md`, `references/evidence-map.md`, `references/interview.md`, `references/readiness-and-summary.md`
+- 要件trace: `REQ-ELICIT-001`, `REQ-ELICIT-002`
+- manual digest: `b4e26785ceb15e21759ba7fbfa1506908759505d86578f59063bfc91b22e3be7`
+- payload digest: `770359b93c93a4091ac1849eee7179cfcc588a7c22b887ca032e8f28376392c8`
+- interface digest: `6ce4529e79f4a4b659865b11a945cfd016d0c7771d2caf1210d4be419c21c87f`
 
 ### generate-implementation-design
 

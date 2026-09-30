@@ -9,6 +9,10 @@ description: Complete development requests through a lightweight three-pillar fl
 
 開発を依頼されたとき、依頼の成果と対象repositoryの規則に従って完了まで進める。相談・評価だけの依頼は回答を成果とし、変更へ拡張しない。
 
+## 新規システムの情報不足
+
+新規アプリ・システムの依頼で、成果を左右する情報が不足している場合だけ、利用可能な`$elicit-to-delivery`を参照し、readiness判定・多ラウンド対話・要件サマリ確認から実装とテストへ進む。これは補助contextであり、通常の十分な依頼に新しい確認やblocking gateを追加しない。未導入なら同Skillの配布profileを利用できるが、Skill配置だけを実装開始条件にしない。
+
 ## 3本柱
 
 1. 利用者向け挙動、受入条件、恒久制約が変わる場合だけ`$maintain-canonical-requirements`でQuint要件正本を更新する。可逆な実装選択は要件へ固定しない。

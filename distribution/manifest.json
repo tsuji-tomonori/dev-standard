@@ -80,6 +80,7 @@
       "chat-first-development",
       "design-frontend-experience",
       "elicit-frontend-requirements",
+      "elicit-to-delivery",
       "generate-implementation-design",
       "govern-development-request",
       "implement-frontend-experience",
@@ -325,6 +326,16 @@
       {
         "source": ".codex/agents",
         "destination": ".codex/agents"
+      }
+    ],
+    "elicit-to-delivery": [
+      {
+        "source": ".agents/skills/elicit-to-delivery",
+        "destination": ".agents/skills/elicit-to-delivery"
+      },
+      {
+        "source": ".agents/skills/calibrated-collaborative-listening",
+        "destination": ".agents/skills/calibrated-collaborative-listening"
       }
     ]
   }

@@ -18,7 +18,7 @@ class SkillContractTest(unittest.TestCase):
 
     def test_every_skill_has_exactly_one_quint_contract_and_trace(self) -> None:
         self.assertEqual(set(self.contracts), self.actual)
-        self.assertEqual(len(self.actual), 18)
+        self.assertEqual(len(self.actual), 19)
         for name in self.actual:
             text = (SKILLS / name / "SKILL.md").read_text(encoding="utf-8")
             self.assertIn("spec/skills/skills.qnt", text, name)

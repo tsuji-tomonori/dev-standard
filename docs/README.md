@@ -3,6 +3,7 @@
 ## 利用者向け
 
 - [導入とSkills一覧](guides/getting-started.md)
+- [曖昧な一言から実装・検証まで](guides/elicit-to-delivery.md)
 - [開発契約](reference/development.md)
 - [Quint形式仕様](reference/FORMAL-SPECIFICATIONS.md)
 - [フロンティアモデルと最小ハーネス](reference/frontier-model-guidance.md)
